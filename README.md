@@ -20,7 +20,7 @@ Version 1.1.5 is the first open source release of libTML. The library was previo
 
   [1]: http://www.libtml.org/info/
   [2]: http://www.libtml.org/specification/
-  [3]: http://doc.libtml.org/libtml-c-html/
+  [3]: http://www.libtml.org/docs/libtml-c-html/
   [4]: https://groups.google.com/forum/#!forum/libtml
   [5]: https://groups.google.com/forum/#!forum/libtml/join
   [6]: http://www.libtml.org/support/
