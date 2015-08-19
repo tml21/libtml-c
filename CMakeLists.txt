@@ -313,9 +313,10 @@ if (${PLATFORM_FOUND} STREQUAL true)
   if (AXL_INCLUDE_DIR AND EXISTS "${AXL_INCLUDE_DIR}/axl/axl.h")
     set(AXL_INCLUDE_DIR ${AXL_INCLUDE_DIR}/axl)
   endif()
+  message("-- ---------------------------------------------------------------")
+  message("-- Automatic path detection:")
   message(STATUS "AXL_LIB_PATH:       " ${AXL_LIB_PATH})
   message(STATUS "AXL_INCLUDE_DIR:    " ${AXL_INCLUDE_DIR})
-  #######################################################
   ## Try to find VORTEX install path automatically:
   find_library(VORTEX_LIB_PATH vortex-1.1)
   if (VORTEX_LIB_PATH AND EXISTS "${VORTEX_LIB_PATH}")
@@ -327,6 +328,9 @@ if (${PLATFORM_FOUND} STREQUAL true)
   endif()
   message(STATUS "VORTEX_LIB_PATH:    " ${VORTEX_LIB_PATH})
   message(STATUS "VORTEX_INCLUDE_DIR: " ${VORTEX_INCLUDE_DIR})
+  message("-- If NOTFOUND- you have to set include/library directories manual")
+  message("-- ---------------------------------------------------------------")
+  #######################################################
 
   #######################################################
   ## Source and destination directories:

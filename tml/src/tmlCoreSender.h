@@ -44,13 +44,7 @@
 #include "tmlMultiAsyncMsg.h"
 
 #ifdef LINUX
-  ///////////////////////////////
-  // The Linux and OS-X
-  #ifdef OS_X
     #define FUNC_STDCALL void*
-  #else //OS_X
-    #define FUNC_STDCALL void*
-  #endif // OS_X
 #else // LINUX
   //The Windows definitions:
   #define FUNC_STDCALL unsigned __stdcall
