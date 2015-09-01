@@ -56,7 +56,7 @@ axl_bool  intern_thread_destroy (TMLThreadDef* threadInfo)
 {
   VortexThread* data = threadInfo->pThreadDef;
   axl_bool bRet = axl_true;
-#ifndef LINUX
+#ifdef INTERNAL
   DWORD err;
   err = WaitForSingleObject(data->handle, INFINITE);
   switch (err) {
@@ -81,7 +81,7 @@ axl_bool  intern_thread_destroy (TMLThreadDef* threadInfo)
   }
   bRet = err == WAIT_OBJECT_0;
 
-#else // LINUX
+#else // INTERNAL
   bRet = vortex_thread_destroy (data, axl_true);
 #endif
   return bRet;
@@ -97,7 +97,7 @@ axl_bool  intern_thread_create (TMLThreadDef* threadInfo, FUNC_STDCALL func(void
 #endif // LINUX
 {
   axl_bool      result = axl_true;
-#ifndef LINUX
+#ifdef INTERNAL
 
   /* windows implementation */
   /* create the thread data to pass it to the proxy function */
@@ -132,7 +132,7 @@ axl_bool  intern_thread_create (TMLThreadDef* threadInfo, FUNC_STDCALL func(void
   else{
     threadInfo->pThreadDef = data;
   }
-#else // LINUX
+#else // INTERNAL
   VortexThread* data = axl_new(VortexThread, 1);
   /* create the thread */
   result = vortex_thread_create (data, (VortexThreadFunc)func, user_data, VORTEX_THREAD_CONF_END);
@@ -144,7 +144,7 @@ axl_bool  intern_thread_create (TMLThreadDef* threadInfo, FUNC_STDCALL func(void
   else{
     threadInfo->pThreadDef = data;
   }
-#endif
+#endif // INTERNAL
   return result;
 }
 
