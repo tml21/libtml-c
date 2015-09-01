@@ -158,7 +158,7 @@ tmlObjWrapper::~tmlObjWrapper()
 
   ////////////////////////////////
   // free memory for char array to set the date attribute
-  delete (m_date);
+  delete[] m_date;
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Cmd_Free", "end", (TML_COMMAND_HANDLE)this);
 #endif //TIMEOUT_LOGGING

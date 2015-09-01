@@ -82,7 +82,7 @@ void tmlDispatcher::tml_DispatcherDismissAllAttributes(){
     delete (m_hashTable);
     m_hashTable = NULL;
     if (NULL != m_profile){
-      delete (m_profile);
+      delete[] m_profile;
       m_profile = NULL;
     }
     m_pDeleteCmdCallback = TML_HANDLE_TYPE_NULL;

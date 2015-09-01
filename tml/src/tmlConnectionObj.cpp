@@ -62,13 +62,13 @@ tmlConnectionObj::tmlConnectionObj(tmlLogHandler* loghandler)
 tmlConnectionObj::~tmlConnectionObj()
 {
   if (NULL != m_sProfile)
-    delete (m_sProfile);
+    delete[] m_sProfile;
   m_sProfile = NULL;
   if (NULL != m_sHost)
-    delete (m_sHost);
+    delete[] m_sHost;
   m_sHost = NULL;
   if (NULL != m_sPort)
-    delete (m_sPort);
+    delete[] m_sPort;
   m_sPort = NULL;
   m_channel = NULL;
   m_channelPool = NULL;

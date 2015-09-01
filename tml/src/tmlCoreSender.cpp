@@ -333,7 +333,7 @@ FUNC_STDCALL TimerThread( void* pParam)
   }while (!bTerminateThread);
   // Thread end
   pThreadData->pLog->log (TML_LOG_CORE_IO, "TMLCoreSender", "TimerThread", "TimerThread", "terminated");
-  delete (handleArray);
+  delete[] handleArray;
 #ifndef LINUX
   _endthreadex( 0 );
 #endif // LINUX
@@ -1805,7 +1805,7 @@ int TMLCoreSender::allocAsyncThreadEventArray(const char*** asyncThreadEventArra
     }
     ////////////////////////////////////////////////////////////////////////////
     // Free sync event array to handle send message:
-    delete (evtArr);
+    delete[] evtArr;
     *senderSyncEventArray = NULL;
   }
 }

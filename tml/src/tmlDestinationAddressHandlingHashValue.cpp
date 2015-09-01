@@ -87,7 +87,7 @@ tmlDestinationAddressHandlingHashValue::tmlDestinationAddressHandlingHashValue(c
 tmlDestinationAddressHandlingHashValue::~tmlDestinationAddressHandlingHashValue()
 {
   if (NULL != m_sProfile)
-    delete (m_sProfile);
+    delete[] m_sProfile;
   m_sProfile = NULL;
 }
 
