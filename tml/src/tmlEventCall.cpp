@@ -105,9 +105,6 @@ FUNC_STDCALL EventMsgHandlingThread (axlPointer pParam)
 
   // Thread end
   pLog->log (TML_LOG_CORE_IO, "tmlEventCall", "EventMsgHandlingThread", "EventMsgHandlingThread", "terminated");
-#ifndef LINUX
-  _endthreadex( 0 );
-#endif // LINUX
   return 0;
 }
 

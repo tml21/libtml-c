@@ -47,7 +47,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////
-// This define will log inplausible ( plausible timeout values:
+// This define will log inplausible / plausible timeout values:
 #define TIMEOUT_CHECK_PLAUSIBILITY_XX
 
 ////////////////////////////////////////////////////////////////////////////
@@ -56,34 +56,8 @@ axl_bool  intern_thread_destroy (TMLThreadDef* threadInfo)
 {
   VortexThread* data = threadInfo->pThreadDef;
   axl_bool bRet = axl_true;
-#ifdef INTERNAL
-  DWORD err;
-  err = WaitForSingleObject(data->handle, INFINITE);
-  switch (err) {
-  default:
-  case WAIT_OBJECT_0:
-    //printf ("thread %p stopped\n", data->handle);
-    break;
-  case WAIT_ABANDONED:
-    //printf ("unable to stop thread %p, wait_abandoned\n", data->handle);
-    break;
 
-  case WAIT_TIMEOUT:
-    //printf ("unable to stop thread %p, wait_timeout\n", data);
-    break;
-  }
-  CloseHandle (data->handle);
-  data->handle = NULL;
-
-  axl_free (data);
-  if (err != WAIT_OBJECT_0){
-    printf ("## intern_thread_destroy / Handle = %d - Err = %d\n", data->handle, err);
-  }
-  bRet = err == WAIT_OBJECT_0;
-
-#else // INTERNAL
   bRet = vortex_thread_destroy (data, axl_true);
-#endif
   return bRet;
 }
 
@@ -97,46 +71,10 @@ axl_bool  intern_thread_create (TMLThreadDef* threadInfo, FUNC_STDCALL func(void
 #endif // LINUX
 {
   axl_bool      result = axl_true;
-#ifdef INTERNAL
 
-  /* windows implementation */
-  /* create the thread data to pass it to the proxy function */
-  VortexThread* data = axl_new(VortexThread, 1);
-  data->data     = user_data;
-  data->handle   = (HANDLE) _beginthreadex (
-    /* use default SECURITY ATTRIBUTES */
-    NULL,
-    /* use default stack size */
-    0,  
-    /* function to execute */
-    func,
-    /* data to be passed to the function */
-    user_data,
-    /* initial state is running */
-    0,
-    /* identifier */
-    &data->id);
-
-  if (0 == data->handle){
-    printf ("intern_thread_create - Handle is 0 / Error on _beginthread\n");
-  }
-  if ((TML_INT64)-1 == (TML_INT64)data->handle){
-      printf ("intern_thread_create - Handle is -1 / Error on _beginthread too many threads\n");
-  }
-  if (data->handle == NULL) {
-    /* free data because thread wasn't created */
-      printf ("intern_thread_create - Handle is Null\n");
-    axl_free (data);
-    result = axl_false;
-  }
-  else{
-    threadInfo->pThreadDef = data;
-  }
-#else // INTERNAL
   VortexThread* data = axl_new(VortexThread, 1);
   /* create the thread */
   result = vortex_thread_create (data, (VortexThreadFunc)func, user_data, VORTEX_THREAD_CONF_END);
-  //printf ("## __intern_thread_create / Handle = %d\n", data->handle);
 
   if (axl_false == result){
     axl_free(data);
@@ -144,7 +82,6 @@ axl_bool  intern_thread_create (TMLThreadDef* threadInfo, FUNC_STDCALL func(void
   else{
     threadInfo->pThreadDef = data;
   }
-#endif // INTERNAL
   return result;
 }
 
@@ -171,9 +108,6 @@ FUNC_STDCALL AsyncHandlingThread (axlPointer pParam)
   // Unlock the mutex to tell the parent process that I'm finished
   pLog->log (TML_LOG_VORTEX_MUTEX, "TMLCoreSender", "AsyncHandlingThread", "Vortex CMD", "vortex_mutex_unlock");
   intern_mutex_unlock (pThreadData->terminationMutex, pLog, "AsyncHandlingThread");
-#ifndef LINUX
-  _endthreadex( 0 );
-#endif // LINUX
   return 0;
 }
 
@@ -334,9 +268,6 @@ FUNC_STDCALL TimerThread( void* pParam)
   // Thread end
   pThreadData->pLog->log (TML_LOG_CORE_IO, "TMLCoreSender", "TimerThread", "TimerThread", "terminated");
   delete[] handleArray;
-#ifndef LINUX
-  _endthreadex( 0 );
-#endif // LINUX
   return 0;
 }
 
