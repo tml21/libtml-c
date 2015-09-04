@@ -67,7 +67,7 @@ public:
      *
      * @returns an instance of sidexFloat.
      */
-    sidexFloat(double newValue);
+    explicit sidexFloat(double newValue);
 
 
     /**

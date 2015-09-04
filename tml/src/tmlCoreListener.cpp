@@ -60,11 +60,6 @@ void listenerFrameReceivedCallback (VortexChannel* channel,
 
 
   ///////////////////////////
-  // IP- Number ID:
-  callbackData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listenerFrameReceivedCallback", "Vortex CMD", "vortex_connection_get_host");
-  const char*  ip = vortex_connection_get_host (connection);
-  ip = NULL; // To suppress "unused variable warnings...
-  ///////////////////////////
   // Die Connection ID:
   callbackData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listenerFrameReceivedCallback", "Vortex CMD", "vortex_connection_get_id");
   int iConnectionID = vortex_connection_get_id(connection);
@@ -391,6 +386,11 @@ TMLCoreListener::TMLCoreListener(tmlLogHandler* loghandler, VortexCtx* ctx, tmlP
   m_connectionsLimitCheckData.pLog = loghandler;
   m_channelsPerConnectionLimitCheckData.iMax = -1;
   m_channelsPerConnectionLimitCheckData.pLog = loghandler;
+  m_FrameReceiveCallback = NULL;
+  m_callbackData.callback= NULL;
+  m_callbackData.pLog = NULL;
+  m_callbackData.tmlcorehandle = TML_HANDLE_TYPE_NULL;
+  m_connection = NULL;
 }
 
 
@@ -734,12 +734,6 @@ int TMLCoreListener::TMLCoreListener_Start(const char* host, const char*port, co
         }
       }
       if (TML_SUCCESS == iRet){
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_get_message");
-        const char* msg = vortex_connection_get_message (m_connection);
-        msg = NULL; // To suppress "unused variable warnings...
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_get_host");
-        const char* sHost = vortex_connection_get_host (m_connection);
-        sHost = NULL; // To suppress "unused variable warnings...
         m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_get_status");
         VortexStatus s = vortex_connection_get_status (m_connection);
         if (VortexOk != s){

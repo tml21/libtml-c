@@ -152,11 +152,11 @@ bool tmlCollectCall::InternalAsyncEventMessageReturnMethod(void* callbackData)
                         ((void(FUNC_C_DECL *)(char16_t*, char16_t*, char16_t*, TML_COMMAND_ID_TYPE, TML_INT32, TML_POINTER))pCBFunc)(utf16profile, utf16host, utf16port, iCmd, iErrorOutOfHeader, pCBData);
                         //m_log->log ("tmlCollectCall:InternalAsyncEventMessageReturnMethod:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
                         //tml_log_A(TML_LOG_EVENT, "tmlCollectCall:InternalAsyncEventMessageReturnMethod:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
-                        delete (utf16port);
+                        delete utf16port;
                       }
-                      delete (utf16host);
+                      delete utf16host;
                     }
-                    delete (utf16profile);
+                    delete utf16profile;
                   }
                 }
                  break;
@@ -517,7 +517,7 @@ void tmlCollectCall::eventQueueOverflowHandling(tmlEventDataQueue* pDataQueue, T
                     ((void(FUNC_C_DECL *)(char16_t*, TML_COMMAND_ID_TYPE, TML_POINTER))pCBFunc)(utf16profile, iCmd, pCBData);
                     //m_log->log ("tmlCollectCall:eventQueueOverflowHandling:eventGetRegisteredCallbackOnQueueOverflow", sHost, sPort, "BACK");
                     //tml_log_A(TML_LOG_EVENT, "tmlCollectCall:eventQueueOverflowHandling:eventGetRegisteredCallbackOnQueueOverflow", sHost, sPort, "BACK");
-                    delete (utf16profile);
+                    delete utf16profile;
                   }
                 }
                 break;
@@ -563,11 +563,12 @@ int tmlCollectCall::eventSendMessage(int iWindowSize, TML_COMMAND_HANDLE tmlhand
       iRet = tml_Cmd_Header_GetCommand(tmlhandle, &iCmd);
     }
   }
-  EventMsgExecutionData* pEventMsgExecutionData = NULL;
   EventMsgData* pEventMsgData = NULL;
   char* profileCopy = NULL;
 
   if (TML_SUCCESS == iRet){
+    EventMsgExecutionData* pEventMsgExecutionData = NULL;
+
     ///////////////////////////////////////////////////////////////
     // Datastructure contains the parameter for the event messages
     pEventMsgData = new EventMsgData;
@@ -629,7 +630,7 @@ int tmlCollectCall::eventSendMessage(int iWindowSize, TML_COMMAND_HANDLE tmlhand
     // Free allocated data in case of an error:
     if (TML_SUCCESS != iRet){
       if (NULL != profileCopy){
-        delete profileCopy;
+        delete[] profileCopy;
       }
       if (NULL != pEventMsgData){
         delete pEventMsgData;
@@ -673,7 +674,6 @@ bool tmlCollectCall::eventSendMessage2ndStep(void* callbackData)
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Begin of critical section / a subscribe or unsubscribe may not be possible during this method execution :
 
-  bool bAnyConnectionFailed = false;
   TML_COMMAND_ID_TYPE iCmd = eventMsgData->iCmd;
 
   char* sHost = NULL;
@@ -684,12 +684,10 @@ bool tmlCollectCall::eventSendMessage2ndStep(void* callbackData)
   data->destinationObj->getMessageDestinationHost(&sHost);
   data->destinationObj->getMessageDestinationPort(&sPort);
 
-  bool bSubscribed = false;
-
   ///////////////////////////////////////////////////////////////////////////////////
   // It may possible that a subscribed destination had a fail during event messages
   // in that case it is no longer valid so check the validity:
-  bSubscribed = m_collectCallDestObjHandler->acquireMessageDestination(profile, sHost, sPort);
+  bool bSubscribed = m_collectCallDestObjHandler->acquireMessageDestination(profile, sHost, sPort);
   if (bSubscribed){
       ////////////////////////////////////////////////////////////////////////////////
       // Send the async message don't mind of the return value (use it only internal):
@@ -708,6 +706,7 @@ bool tmlCollectCall::eventSendMessage2ndStep(void* callbackData)
       // Changed: Since event message queues will be emptied in the destruction
       // I don't have to check for SHUTDOWN:
       //if (1 == 1 || TML_SUCCESS == m_tmlCoreHandle->tmlCoreWrapper_IsAccessible()){
+      bool bAnyConnectionFailed = false;
       {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Event - Logging:
@@ -801,11 +800,11 @@ bool tmlCollectCall::eventSendMessage2ndStep(void* callbackData)
                               ((void(FUNC_C_DECL *)(char16_t*, char16_t*, char16_t*, TML_COMMAND_ID_TYPE, TML_INT32, TML_POINTER))pCBFunc)(utf16profile, utf16host, utf16port, iCmd, iErrorOutOfSendAsyncMessage, pCBData);
                               //m_log->log ("tmlCollectCall:eventSendMessage2ndStep:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
                               //tml_log_A(TML_LOG_EVENT, "tmlCollectCall:eventSendMessage2ndStep:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
-                              delete (utf16port);
+                              delete utf16port;
                             }
-                            delete (utf16host);
+                            delete utf16host;
                           }
-                          delete (utf16profile);
+                          delete utf16profile;
                         }
                       }
                       break;
@@ -854,11 +853,13 @@ bool tmlCollectCall::eventSendMessage2ndStep(void* callbackData)
     if (TML_HANDLE_TYPE_NULL != value){
       tml_Cmd_Free(&value);
     }
-    delete (eventMsgData->cmdStrContent);
-    eventMsgData->cmdStrContent = NULL;
+    if (NULL != eventMsgData->cmdStrContent){
+      delete (eventMsgData->cmdStrContent);
+      eventMsgData->cmdStrContent = NULL;
+    }
   }
 
-  delete data->msgData->profile;
+  delete[] data->msgData->profile;
   delete data->msgData;
   delete data;
 
@@ -1361,7 +1362,7 @@ void tmlCollectCall::getEventDestinationCount(tmlCollectCallDestinationObjHandle
                 char16_t* utf16profile = (char16_t*)UTF8toUTF16((char*)profile, &iUTF16Length);
                 if (NULL != utf16profile){
                     iRet = ((TML_INT32(FUNC_C_DECL *)(char16_t*, TML_POINTER))pCBFunc)(utf16profile, pCBData);
-                  delete (utf16profile);
+                  delete utf16profile;
                 }
                 else{
                   iRet = TML_ERR_UNICODE;
@@ -1425,7 +1426,7 @@ void tmlCollectCall::getLoadBalancedDestinationCount(tmlCollectCallDestinationOb
                 char16_t* utf16profile = (char16_t*)UTF8toUTF16((char*)profile, &iUTF16Length);
                 if (NULL != utf16profile){
                     iRet = ((TML_INT32(FUNC_C_DECL *)(char16_t*, TML_POINTER))pCBFunc)(utf16profile, pCBData);
-                  delete (utf16profile);
+                  delete utf16profile;
                 }
                 else{
                   iRet = TML_ERR_UNICODE;
@@ -1614,7 +1615,7 @@ int tmlCollectCall::getNextLoadBalancedDestination(tmlCollectCallDestinationObjH
         }
         /////////////////////////////////////////////
         // I don't need the activityStateCmd anymore:
-        delete (activityStateCmd);
+        delete[] activityStateCmd;
       }
     }
     //////////////////////////////////////////////////////////////
@@ -1624,7 +1625,7 @@ int tmlCollectCall::getNextLoadBalancedDestination(tmlCollectCallDestinationObjH
         tml_Cmd_Free(&(activityState[i].activityState));
       }
     }
-    delete (activityState);
+    delete[] activityState;
   }
   if (bGetNextRoundRobin){
     ///////////////////////////////////////////////////////////////////////////

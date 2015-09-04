@@ -68,7 +68,7 @@ public:
      *
      * @returns an instance of sidexInteger.
      */
-    sidexInteger(SIDEX_INT64 newValue);
+    explicit sidexInteger(SIDEX_INT64 newValue);
 
 
     /**

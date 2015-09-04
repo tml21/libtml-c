@@ -174,7 +174,7 @@ void tmlEventDataQueue::destroyDataContent(EventMsgExecutionData* data){
   if (NULL != data){
     if (NULL != data->msgData){
       if (NULL != data->msgData->profile){
-        delete(data->msgData->profile);
+        delete[]data->msgData->profile;
       }
       if (NULL != data->msgData->cmdStrContent){
         data->msgData->cmdStrContent->decRef();
@@ -199,9 +199,8 @@ void tmlEventDataQueue::destroyDataContent(EventMsgExecutionData* data){
  */
 axl_bool tmlEventDataQueue::createCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
-  axl_bool bSuccess = axl_true;
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  bSuccess = vortex_mutex_create (mutex);
+  axl_bool bSuccess = vortex_mutex_create (mutex);
   return bSuccess;
 }
 
@@ -211,9 +210,8 @@ axl_bool tmlEventDataQueue::createCriticalSectionObject(int iLogMask, VortexMute
  */
 axl_bool tmlEventDataQueue::destroyCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
-  axl_bool bSuccess = axl_true;
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  bSuccess = vortex_mutex_destroy (mutex);
+  axl_bool bSuccess = vortex_mutex_destroy (mutex);
   return bSuccess;
 }
 

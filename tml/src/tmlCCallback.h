@@ -49,6 +49,7 @@ class TCallback : public CCallback // Inheriting
 		{
 			// Important : zeroing the pointer so we later can check for errors
 			pFunction = 0;
+      cInst = NULL;
 		}
 
 		// (You can change the callback to take more parameters or to return something)

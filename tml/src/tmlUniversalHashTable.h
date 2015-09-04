@@ -78,7 +78,7 @@ public:
      * @brief    Constructor.
      * @returns an instance of TMLUniversalHashTable.
      */
-    TMLUniversalHashTable(tmlLogHandler* log);
+    explicit TMLUniversalHashTable(tmlLogHandler* log);
 
     /**
      * @brief    Destructor.

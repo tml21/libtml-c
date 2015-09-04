@@ -118,7 +118,6 @@ char* UTF32toUTF8(wchar_t* utf16, SIDEX_INT32* iLength)
 char* UTF32toUTF8(wchar_t* utf16, SIDEX_INT32* iLength, const char *fromcode, int fromSize)
 {
   char* utf8 = NULL;
-  char* utf8Out = NULL;
 
   if (NULL == utf16){
     *iLength = 0;
@@ -126,12 +125,13 @@ char* UTF32toUTF8(wchar_t* utf16, SIDEX_INT32* iLength, const char *fromcode, in
   }
 
 #ifdef LINUX
+   char* utf8Out = NULL;
    size_t inbytesleft;
-   size_t outbytesleftIn;
-   size_t outbytesleftOut;
 
    inbytesleft = wcslen(utf16);
    if (0 < inbytesleft){
+     size_t outbytesleftIn;
+     size_t outbytesleftOut;
 
      iconv_t cd = iconv_open (COMMON_UTF8, fromcode);
 
@@ -184,11 +184,7 @@ char* UTF32toUTF8(wchar_t* utf16, SIDEX_INT32* iLength, const char *fromcode, in
  */
 char* UTF16toUTF8(wchar_t* utf16, SIDEX_INT32* iLength)
 {
-  const char *fromcode = "UTF-16LE";
-  int fromSize = 2;
-
   char* utf8 = NULL;
-  char* utf8Out = NULL;
 
   if (NULL == utf16){
     *iLength = 0;
@@ -196,12 +192,16 @@ char* UTF16toUTF8(wchar_t* utf16, SIDEX_INT32* iLength)
   }
 
 #ifdef LINUX
+   int fromSize = 2;
+   char* utf8Out = NULL;
    size_t inbytesleft;
-   size_t outbytesleftIn;
-   size_t outbytesleftOut;
 
    inbytesleft = strlen16((char16_t*)utf16);
    if (0 < inbytesleft){
+     size_t outbytesleftIn;
+     size_t outbytesleftOut;
+
+     const char *fromcode = "UTF-16LE";
 
      iconv_t cd = iconv_open (COMMON_UTF8, fromcode);
 
@@ -276,9 +276,10 @@ wchar_t* UTF8toUTF32(char* utf8, SIDEX_INT32* iLength)
 wchar_t* UTF8toUTF32(char* utf8, SIDEX_INT32* iLength, const char *tocode, int toSize)
 {
   wchar_t* utf16 = NULL;
-  wchar_t* utf16Out = NULL;
 
 #ifdef LINUX
+   wchar_t* utf16Out = NULL;
+
    iconv_t cd = iconv_open (tocode, COMMON_UTF8);
 
    size_t inbytesleft;
@@ -327,12 +328,13 @@ wchar_t* UTF8toUTF32(char* utf8, SIDEX_INT32* iLength, const char *tocode, int t
  */
 wchar_t* UTF8toUTF16(char* utf8, SIDEX_INT32* iLength)
 {
-  const char *tocode = "UTF-16LE";
-  int toSize = 2;
   wchar_t* utf16 = NULL;
-  wchar_t* utf16Out = NULL;
 
 #ifdef LINUX
+   const char *tocode = "UTF-16LE";
+   int toSize = 2;
+   wchar_t* utf16Out = NULL;
+
    iconv_t cd = iconv_open (tocode, COMMON_UTF8);
 
    size_t inbytesleft;
@@ -413,11 +415,12 @@ SIDEX_INT32 UTF8toUTF16_length_request(char* utf8)
  * @brief returns the necessary length for a UTF8 to wchar_t convert operation
  */
 SIDEX_INT32 UTF8toUTF_X_length_request(char* utf8, const char *tocode, int toSize){
-  wchar_t* utf16 = NULL;
-  wchar_t* utf16Out = NULL;
   SIDEX_INT32 iLength = 0;
 
 #ifdef LINUX
+   wchar_t* utf16 = NULL;
+   wchar_t* utf16Out = NULL;
+
    iconv_t cd = iconv_open (tocode, COMMON_UTF8);
 
    size_t inbytesleft;
@@ -438,7 +441,7 @@ SIDEX_INT32 UTF8toUTF_X_length_request(char* utf8, const char *tocode, int toSiz
      iLength = ((outbytesleftIn - outbytesleftOut) / toSize);
    }
    iconv_close (cd);
-   delete utf16;
+   delete[] utf16;
 #else // LINUX
    int len = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, NULL, 0);
    if (len>1)

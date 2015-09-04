@@ -62,11 +62,11 @@ FILE *_fsopen(const char *filename,const char *mode,int shflag)
 {
   struct flock fileshare;
   FILE* stream;
-  int fdescriptor;
 
   if((stream=fopen(filename,mode))!=NULL)
   {
     if (shflag!=_SH_DENYNO) {
+      int fdescriptor;
       if ((fdescriptor=fileno(stream))==-1) {
         fclose(stream);
         return(NULL);
@@ -179,6 +179,10 @@ sidexLogHandler::sidexLogHandler(char* mode){
   m_iShare = _SH_DENYNO;
   m_logFile = (char*) LOG_FILE_NAME;
   m_fileLogMode = mode;
+  m_iAdditionalTimeout = 0;
+  m_iThreadPoolAddPeriod = 0;
+  m_iEventLogPeriod = DEFAULT_EVENT_MSG_LOG_PERIOD;
+  m_iEventQueueRemoveLogPeriod = DEFAULT_EVENT_QUEUE_REMOVE_LOG_PERIOD;
   /////////////////////////////////////
   // Default log value:
   m_iLogValue = TML_LOG_OFF;
@@ -212,6 +216,10 @@ sidexLogHandler::sidexLogHandler(char* mode, int iFileIndex){
   m_iShare = _SH_DENYNO;
   m_logFile = (char*) LOG_FILE_NAME_CONG;
   m_fileLogMode = mode;
+  m_iAdditionalTimeout = 0;
+  m_iThreadPoolAddPeriod = 0;
+  m_iEventLogPeriod = DEFAULT_EVENT_MSG_LOG_PERIOD;
+  m_iEventQueueRemoveLogPeriod = DEFAULT_EVENT_QUEUE_REMOVE_LOG_PERIOD;
   /////////////////////////////////////
   // Default log value:
   m_iLogValue = TML_LOG_OFF;

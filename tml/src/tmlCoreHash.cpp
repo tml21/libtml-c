@@ -68,8 +68,7 @@ char* md5Hash::process(uint8_t *in_msg, size_t in_msg_len, TML_INT64* hRet, TML_
     int new_len;
     uint32_t bits_len;
     int offset;
-    uint32_t *w;
-    uint32_t a, b, c, d, i, f, g, temp;
+    uint32_t b, c, d, i, f, g, temp;
 
     // Note: All variables are unsigned 32 bit and wrap modulo 2^32 when calculating
 
@@ -98,6 +97,8 @@ char* md5Hash::process(uint8_t *in_msg, size_t in_msg_len, TML_INT64* hRet, TML_
     // Process the message in successive 512-bit chunks:
     // for each 512-bit chunk of message:
     for(offset=0; offset<new_len; offset += (512/8)) {
+        uint32_t a;
+        uint32_t *w;
 
         // break chunk into sixteen 32-bit words w[j], 0 = j = 15
         w = (uint32_t *) (msg + offset);
@@ -180,9 +181,13 @@ char* md5Hash::process(uint8_t *in_msg, size_t in_msg_len, TML_INT64* hRet, TML_
 /**
  * @brief constructor
  */
-md5Hash::md5Hash(){};
+md5Hash::md5Hash(){
+  	m_hash = new char[MD5_BLOCK_SIZE + 1]; // add one byte for a terminating \x00
+};
 
 /**
  * @brief destructor
  */
-md5Hash::~md5Hash(){};
+md5Hash::~md5Hash(){
+  delete [] m_hash;
+};

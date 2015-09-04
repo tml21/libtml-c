@@ -55,9 +55,7 @@
 axl_bool  intern_thread_destroy (TMLThreadDef* threadInfo)
 {
   VortexThread* data = threadInfo->pThreadDef;
-  axl_bool bRet = axl_true;
-
-  bRet = vortex_thread_destroy (data, axl_true);
+  axl_bool bRet = vortex_thread_destroy (data, axl_true);
   return bRet;
 }
 
@@ -70,11 +68,9 @@ axl_bool  intern_thread_create (TMLThreadDef* threadInfo, VortexThreadFunc func,
 axl_bool  intern_thread_create (TMLThreadDef* threadInfo, FUNC_STDCALL func(void*), axlPointer user_data)
 #endif // LINUX
 {
-  axl_bool      result = axl_true;
-
   VortexThread* data = axl_new(VortexThread, 1);
   /* create the thread */
-  result = vortex_thread_create (data, (VortexThreadFunc)func, user_data, VORTEX_THREAD_CONF_END);
+  axl_bool result = vortex_thread_create (data, (VortexThreadFunc)func, user_data, VORTEX_THREAD_CONF_END);
 
   if (axl_false == result){
     axl_free(data);
@@ -479,7 +475,7 @@ bool HandleAsyncReply(TML_COMMAND_HANDLE tmlhandle, tmlLogHandler* pLogHandler, 
           // pLogHandler->log ("TMLCoreSender", "HandleAsyncReply", "WARNING", "No registered status callback method");
         }
         if (NULL != sStatus)
-          delete (sStatus);
+          delete[] sStatus;
       }
       else{
         ///////////////////////////////////////////////////////////////////////////
@@ -1916,13 +1912,12 @@ void TMLCoreSender::SetAsyncCmdProcessing(bool bSet){
  */
 int TMLCoreSender::TMLCoreSender_WaitForPendingAsyncCmd(){
   int iRet = TML_SUCCESS;
-  bool bCommandIsPending;
   
   if (m_bValidInitialized){
     m_log->log (TML_LOG_VORTEX_MUTEX, "TMLCoreSender", "WaitForPendingAsyncCmdsAreFinished", "Vortex CMD", "vortex_mutex_lock");
     intern_mutex_lock (&m_mutexAsyncCmdList, m_log, "WaitForPendingAsyncCmdsAreFinished");
 
-    bCommandIsPending = m_bAnyAsyncCmdPending;
+    bool bCommandIsPending = m_bAnyAsyncCmdPending;
 
     m_log->log (TML_LOG_VORTEX_MUTEX, "TMLCoreSender", "WaitForPendingAsyncCmdsAreFinished", "Vortex CMD", "vortex_mutex_unlock");
     intern_mutex_unlock (&m_mutexAsyncCmdList, m_log, "WaitForPendingAsyncCmdsAreFinished");

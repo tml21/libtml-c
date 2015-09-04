@@ -144,7 +144,7 @@ public:
      *
      * @returns an instance of tmlCoreWrapper
      */
-    tmlConnectionObj(tmlLogHandler* loghandler);
+    explicit tmlConnectionObj(tmlLogHandler* loghandler);
 
 
     /**

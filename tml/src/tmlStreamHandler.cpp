@@ -275,7 +275,7 @@ tmlStreamHandler::~tmlStreamHandler()
         }
         /////////////////////////////////
         // Now I have to free the memory:
-        delete (iIds);
+        delete iIds;
         iIds = NULL;
       }
     }
@@ -305,7 +305,7 @@ tmlStreamHandler::~tmlStreamHandler()
         }
         /////////////////////////////////
         // Now I have to free the memory:
-        delete (iIds);
+        delete iIds;
         iIds = NULL;
       }
     }
@@ -1065,8 +1065,7 @@ int tmlStreamHandler::handle_cancelStreamDownload (SIDEX_HANDLE sHandle){
       m_log->log (TML_LOG_VORTEX_CMD, "tmlStreamHandler", "Vortex CMD", "Vortex CMD", "vortex_payload_feeder_pause");
       ////////////////////////////////////////////
       // Cancel the feeder download:
-      axl_bool bRet;
-      bRet = vortex_payload_feeder_pause(feeder, axl_true);
+      axl_bool bRet = vortex_payload_feeder_pause(feeder, axl_true);
       senderStreamObj->setCancelDownload(true);
     }
     else{
@@ -1150,7 +1149,6 @@ int tmlStreamHandler::handle_read (SIDEX_HANDLE sHandle, TML_INT32* bytesRead){
 
   TML_STREAM_ID_TYPE iStreamID;
 
-  char* buffer = NULL;
   tmlSenderStream* senderStreamObj = NULL;
 
   TML_INT32 bytes = 0;
@@ -1173,6 +1171,7 @@ int tmlStreamHandler::handle_read (SIDEX_HANDLE sHandle, TML_INT32* bytesRead){
           TML_INT64 count = 0;
           iRet = sidex_Integer_Read(sHandle, TML_CMD_STREAM_HEADER_GROUP, TML_CMD_HEADER_KEY_STREAM_BUFFER_SIZE, &count);
           if (TML_SUCCESS == iRet){
+            char* buffer = NULL;
             buffer = new char[(int)count];
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // Callback in the manner:

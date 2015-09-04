@@ -190,21 +190,23 @@ bool tmlEventHandler::RemoveEventHandle(const char* cIdentification)
 #ifndef USE_POSIX
     bOk = true;
 #else // USE_POSIX
-    int   retCode;
+    int   retCode = 0;
     TML_INT64* iVal = (TML_INT64*)pHandle;
     // now destroy the event semaphore
+    if (NULL != iVal){
 #ifdef OS_X
-    semaphore_t* sem = (semaphore_t*)*iVal;
-    retCode = semaphore_destroy(mach_task_self(), // task to perform operation
+      semaphore_t* sem = (semaphore_t*)*iVal;
+      retCode = semaphore_destroy(mach_task_self(), // task to perform operation
                                 *sem);            // Event semaphore handle
 #else // OS_X
-    sem_t* sem = (sem_t*)*iVal;
-    retCode = sem_destroy(sem);// Event semaphore handle
+      sem_t* sem = (sem_t*)*iVal;
+      retCode = sem_destroy(sem);// Event semaphore handle
 #endif // OS_X
-    if (-1 != retCode){
-      bOk = true;
+      if (-1 != retCode){
+        bOk = true;
+      }
+      delete sem;
     }
-    delete sem;
 #endif // USE_POSIX
     m_hashTable->removeEntry((char*)cIdentification);
     ////////////////////////////////////////
@@ -218,15 +220,15 @@ bool tmlEventHandler::RemoveEventHandle(const char* cIdentification)
 #endif // USE_POSIX
     }
 #else // LINUX
-    if (CloseHandle(*((HANDLE*)pHandle))){
-      bOk = true;
-      m_hashTable->removeEntry((char*)cIdentification);
-      ////////////////////////////////////////
-      // Delete the value stored in the hash:
-      if (NULL != pHandle){
-        delete ((HANDLE*)pHandle);
-      }
-      ////////////////////////////////////////
+    if (NULL != pHandle){
+      CloseHandle(*((HANDLE*)pHandle));
+    }
+    bOk = true;
+    m_hashTable->removeEntry((char*)cIdentification);
+    ////////////////////////////////////////
+    // Delete the value stored in the hash:
+    if (NULL != pHandle){
+      delete ((HANDLE*)pHandle);
     }
 #endif // LINUX
   }
@@ -335,6 +337,7 @@ bool tmlEventHandler::ResetEventOnHandle(const char* cIdentification)
 #else // OS_X
     sem_t* sem = (sem_t*)*iVal;
     // non blocking call;
+    
     retCode = sem_trywait(sem); // event semaphore handle
 #endif // OS_X
     bOk = true;
@@ -584,7 +587,7 @@ int tmlEventHandler::WaitForMultipleEvent(const char** cIdentifications, DWORD i
       }
     }
   }
-  delete (handleArr);
+  delete[] handleArr;
 #endif // LINUX
   return iRet;
 }
@@ -607,7 +610,7 @@ bool tmlEventHandler::sleepForOneMilliSecondAndCheckTimeout(DWORD* pTimeout){
   nanosleep(&delay, NULL);
   if (timeout != INFINITE){
     --timeout;
-    if (0 >= timeout){
+    if (0 == timeout){
       bTimeOut = true;
     }
     else{

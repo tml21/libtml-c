@@ -305,21 +305,6 @@ class TMLCoreListener
      */
     VortexCtx* m_ctx;
 
-    /**
-     * @brief    signals a pending reply interaction
-     */
-    bool m_bReplyIsPending;
-
-    /**
-     * @brief    the message number of pending reply interaction
-     */
-    int m_iMsgNo;
-
-    /**
-     * @brief    the channel of pending reply interaction
-     */
-    VortexChannel* m_channel;
-
     // Methods:
 
     /**

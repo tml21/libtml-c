@@ -260,7 +260,7 @@ public:
      *
      * @returns an instance of tmlLogHandler
      */
-    tmlLogHandler(char* mode);
+    explicit tmlLogHandler(char* mode);
 
 
     /**

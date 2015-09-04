@@ -533,7 +533,6 @@ bool tmlSingleCall::IsConnectionValid(VortexConnection * connection, VortexChann
   */
 bool tmlSingleCall::AnyConnectionLocked(bool bLockCritical, char* sRefPort, char* sRefHost, char* sRefProfile)
 {
-  bool bFound = false;
   ///////////////////////////////////////////////////////////////////////////
   // Begin of critical section
   if (bLockCritical){
@@ -553,7 +552,6 @@ bool tmlSingleCall::AnyConnectionLocked(bool bLockCritical, char* sRefPort, char
         iRet = m_ConnectionElementHT->getValue(iKeys[i], (void**) &connectionObj);
         if (TML_SUCCESS == iRet){
           if (connectionObj->isEqual(sRefProfile, sRefHost,sRefPort)){
-            bFound = true;
             if (connectionObj->isLocked(true, false)){
               bAnyLockedConnection = true;
             }
@@ -885,10 +883,6 @@ int tmlSingleCall::SearchForConnectionObjInHT(const char* profile, const char* s
   int iSize;
 
   *bFoundRet = false;
-  bool bFound = false;
-  bool bUnlockedFound = false;
-  bool bAnyFound = false;
-  tmlConnectionObj*  intAnyConnectionObj = NULL;
 
   TML_INT32 iRet = m_ConnectionElementHT->hashSize(&iSize);
 
@@ -896,6 +890,10 @@ int tmlSingleCall::SearchForConnectionObjInHT(const char* profile, const char* s
     TML_INT64* iKeys;
     iRet = m_ConnectionElementHT->getKeys(&iKeys);
     if (TML_SUCCESS == iRet){
+      tmlConnectionObj*  intAnyConnectionObj = NULL;
+      bool bFound = false;
+      bool bUnlockedFound = false;
+      bool bAnyFound = false;
       tmlConnectionObj*  intConnectionObj;
       for (int i = 0; i < iSize && TML_SUCCESS == iRet && !bUnlockedFound;++i){
         iRet = m_ConnectionElementHT->getValue(iKeys[i], (void**) &intConnectionObj);
@@ -1095,7 +1093,6 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
 {
   TML_INT32  iRet = TML_SUCCESS;
   int  iMsgNo;
-  TML_INT32 iDebug = 0;
   try{
 
   /////////////////////////////////////////////////
@@ -1105,7 +1102,6 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
     tml_Cmd_Header_SetErrorMessage(tmlhandle, (char*)"", 0);
   }
 
-  iDebug = 1;
   tmlConnectionObj* connectionObj = NULL;
   /////////////////////////////////////////////////////////////////
   // The tmlConnectionObj containing the TMLCoreSender:
@@ -1113,7 +1109,6 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
   if (TML_SUCCESS == iRet){
     iRet = GetConnectionElement(profile, sHost, sPort, &connectionObj, false, bRemoveMarkedObjs);
   }
-  iDebug = 2;
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////
   // Now it's time to leave a critical section if set / look at tmlcollectCall.loadBalancedSendSyncMessage():
@@ -1123,38 +1118,31 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
   }
 
 
-  iDebug = 3;
   TML_COMMAND_ID_TYPE iCmd;
 
   if (TML_SUCCESS == iRet){
     ////////////////////////////////////////////////////////////
     // Check CMD for valid range (if CMD is no an Internal CMD):
     iRet = tml_Cmd_Header_GetCommand(tmlhandle, &iCmd);
-    iDebug = 4;
     if (TML_SUCCESS == iRet){
       ////////////////////////////////////////////////////////////
       // Set the command state:
       iRet = tml_Cmd_Header_SetState(tmlhandle, TMLCOM_CSTATE_CREATED);
-      iDebug = 5;
       if (TML_SUCCESS == iRet){
         ////////////////////////////////////////////////////////////
         // Set the command mode:
         iRet = tml_Cmd_Header_SetMode(tmlhandle, TMLCOM_MODE_SYNC);
-        iDebug = 6;
         if (TML_SUCCESS == iRet){
           ////////////////////////////////////////////////////////////
           // Possible new window size:
           iRet = setChannelWindowSize(connectionObj, iWindowSize);
-          iDebug = 7;
           if (TML_SUCCESS == iRet){
             if (TML_SUCCESS == iRet){
               ////////////////////////////////
               // send the message:
               TMLCoreSender* coreSender;
               connectionObj->getSender(&coreSender);
-              iDebug = 8;
               iRet = coreSender->TMLCoreSender_SendMessage(connectionObj, tmlhandle, iTimeout, &iMsgNo);
-              iDebug = 9;
             }
           }
         }
@@ -1171,7 +1159,7 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
   ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_setLogicalError((int)iRet,DEFAULT_ERROR_MSG);
   }
   catch (...){
-    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "sender_SendSyncMessage", "EXCEPTION / DebugVal", iDebug);
+    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "sender_SendSyncMessage", "EXCEPTION / DebugVal", 0);
   }
   return (int)iRet;
 }
@@ -1183,7 +1171,6 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
 int tmlSingleCall::sender_SendAsyncMessage(const char* profile, const char* sHost, const char* sPort, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, int iMode, bool bLockCritical, bool bRawViaVortexPayloadFeeder)
 {
   TML_INT32  iRet = TML_SUCCESS;
-  TML_INT32 iDebug = 0;
   try{
 
   /////////////////////////////////////////////////
@@ -1192,7 +1179,6 @@ int tmlSingleCall::sender_SendAsyncMessage(const char* profile, const char* sHos
   if (TML_SUCCESS == iRet){
     tml_Cmd_Header_SetErrorMessage(tmlhandle, (char*)"", 0);
   }
-  iDebug = 1;
 
   tmlConnectionObj* connectionObj = NULL;
   /////////////////////////////////////////////////////////////////
@@ -1203,38 +1189,31 @@ int tmlSingleCall::sender_SendAsyncMessage(const char* profile, const char* sHos
   if (TML_SUCCESS == iRet){
     iRet = GetConnectionElement(profile, sHost, sPort, &connectionObj, bRawViaVortexPayloadFeeder, true);
   }
-  iDebug = 2;
 
   TML_COMMAND_ID_TYPE iCmd;
   if (TML_SUCCESS == iRet){
     ////////////////////////////////////////////////////////////
     // Check CMD for valid range (if CMD is no an Internal CMD):
     iRet = tml_Cmd_Header_GetCommand(tmlhandle, &iCmd);
-    iDebug = 3;
     if (TML_SUCCESS == iRet){
       ////////////////////////////////////////////////////////////
       // Set the command state:
       iRet = tml_Cmd_Header_SetState(tmlhandle, TMLCOM_CSTATE_CREATED);
-      iDebug = 4;
       if (TML_SUCCESS == iRet){
         ////////////////////////////////////////////////////////////
         // Set the command mode:
         iRet = tml_Cmd_Header_SetMode(tmlhandle, iMode);
-        iDebug = 5;
         if (TML_SUCCESS == iRet){
           ////////////////////////////////////////////////////////////
           // Possible new window size:
           iRet = setChannelWindowSize(connectionObj, iWindowSize);
-          iDebug = 6;
           if (TML_SUCCESS == iRet){
             if (TML_SUCCESS == iRet){
               ////////////////////////////////
               // send the message:
               TMLCoreSender* coreSender;
               connectionObj->getSender(&coreSender);
-              iDebug = 7;
               iRet = coreSender->TMLCoreSender_SendAsyncMessage(connectionObj, tmlhandle, iTimeout);
-              iDebug = 8;
             }
           }
         }
@@ -1253,7 +1232,7 @@ int tmlSingleCall::sender_SendAsyncMessage(const char* profile, const char* sHos
   //((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_setLogicalError(iRet,DEFAULT_ERROR_MSG);
   }
   catch (...){
-    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "sender_SendAsyncMessage", "EXCEPTION / DebugVal", iDebug);
+    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "sender_SendAsyncMessage", "EXCEPTION / DebugVal", 0);
   }
   return (int)iRet;
 }
@@ -1264,9 +1243,8 @@ int tmlSingleCall::sender_SendAsyncMessage(const char* profile, const char* sHos
  */
 axl_bool tmlSingleCall::createCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
-  axl_bool bSuccess = axl_true;
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  bSuccess = intern_mutex_create (mutex);
+  axl_bool bSuccess = intern_mutex_create (mutex);
   return bSuccess;
 }
 
@@ -1276,9 +1254,8 @@ axl_bool tmlSingleCall::createCriticalSectionObject(int iLogMask, VortexMutex* m
  */
 axl_bool tmlSingleCall::destroyCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
-  axl_bool bSuccess = axl_true;
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  bSuccess = intern_mutex_destroy (mutex, (char*)"tmlSingleCall::destroyCriticalSectionObject");
+  axl_bool bSuccess = intern_mutex_destroy (mutex, (char*)"tmlSingleCall::destroyCriticalSectionObject");
   return bSuccess;
 }
 

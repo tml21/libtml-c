@@ -119,10 +119,8 @@ int sidexTable::countColumns()
 * @brief   Get the table's column names.
 */
 int sidexTable::getColumnNames(char *** columnNames){
-  int iRet = SIDEX_ERR_NOCONTENT;
-
   SIDEX_INT32 iSize;
-  iRet = sidexutilList_Size((SIDEX_VARIANT)m_pColumns, &iSize);
+  int iRet = sidexutilList_Size((SIDEX_VARIANT)m_pColumns, &iSize);
 
   char** names = new char*[iSize];
   for (int i = 0; SIDEX_SUCCESS == iRet && i < iSize; ++i){

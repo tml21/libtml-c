@@ -40,7 +40,7 @@
 class md5Hash
 {
 private:
-	char m_hash[MD5_BLOCK_SIZE + 1]; // add one byte for a terminating \x00
+	char* m_hash;
 
 public:
 

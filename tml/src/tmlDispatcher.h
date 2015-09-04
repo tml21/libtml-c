@@ -108,7 +108,7 @@ public:
      *
      * @returns an instance of tmlDispatcher
      */
-    tmlDispatcher(tmlLogHandler* loghandler);
+    explicit tmlDispatcher(tmlLogHandler* loghandler);
 
 
     /**

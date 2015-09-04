@@ -57,6 +57,12 @@ tmlObjWrapper::tmlObjWrapper()
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Cmd_Create", "INTERNAL", (TML_COMMAND_HANDLE)this);
 #endif //TIMEOUT_LOGGING
+  m_coreHandle  = TML_HANDLE_TYPE_NULL;
+  m_iSessionID = -1;
+  m_objChannelID = -1;
+  m_objChannel = NULL;
+  m_iMessageID = -1;
+  m_iUnicodeForStatusReply = idUNICODE_WCHAR_T;
   m_sidexHandle = SIDEX_HANDLE_TYPE_NULL;
   sidex_Create(TML_ROOT_NODE, &m_sidexHandle);
   m_bCoreHandleIsValid = false;
@@ -76,6 +82,7 @@ tmlObjWrapper::tmlObjWrapper()
   m_pCommandReadyCallback = NULL;
   m_pCommandReadyCallbackData = NULL;
   m_csObj = new tmlCriticalSectionObj();
+
   ////////////////////////////////
   // alloc memory for char array to set the date attribute
   m_date = new char[DATE_STRING_LENGTH];
@@ -91,6 +98,12 @@ tmlObjWrapper::tmlObjWrapper(char* sID)
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Cmd_Create", sID, (TML_COMMAND_HANDLE)this);
 #endif //TIMEOUT_LOGGING
+  m_coreHandle  = TML_HANDLE_TYPE_NULL;
+  m_iSessionID = -1;
+  m_objChannelID = -1;
+  m_objChannel = NULL;
+  m_iMessageID = -1;
+  m_iUnicodeForStatusReply = idUNICODE_WCHAR_T;
   m_sidexHandle = SIDEX_HANDLE_TYPE_NULL;
   sidex_Create(TML_ROOT_NODE, &m_sidexHandle);
   m_bCoreHandleIsValid = false;
@@ -135,7 +148,7 @@ tmlObjWrapper::~tmlObjWrapper()
   m_bCoreHandleIsValid = false;
   m_bProfileIsValid = false;
   if (NULL != m_sProfile){
-    delete (m_sProfile);
+    delete[] m_sProfile;
   }
   m_sProfile=NULL;
   if (NULL != m_sProfileUtf32){
@@ -341,7 +354,7 @@ int tmlObjWrapper::tmlObjWrapper_Attr_Get_Session_ID(TML_INT32* iSesionID){
 void tmlObjWrapper::tmlObjWrapper_Attr_Set_Profile(const char* profile){
 
   if (NULL != m_sProfile){
-    delete (m_sProfile);
+    delete[] m_sProfile;
   }
   if (NULL != m_sProfileUtf32){
     delete (m_sProfileUtf32);
@@ -501,8 +514,6 @@ int tmlObjWrapper::tmlObjWrapper_Attr_Get_Message_ID(TML_INT32* iMessageID){
  * @brief Set the command creation time / mandatory command.
  */
 int tmlObjWrapper::tmlObjWrapper_Header_SetCreationTime(char* time){
-  int iContentSize;
-  iContentSize = (int)strlen(time);
   SIDEX_HANDLE shandle;
   tmlObjWrapper_Acquire_Sidex_Handle(&shandle, (char*)"tmlObjWrapper::tmlObjWrapper_Header_SetCreationTime");
   TML_INT32 iRet = sidex_String_Write (m_sidexHandle, TML_CMD_HEADER_GROUP, TML_CMD_HEADER_KEY_TIMESTAMP, time);
@@ -806,12 +817,12 @@ void tmlObjWrapper::tmlObjWrapper_Header_setLogicalError(int iError, const char*
   int iRet; //Return value - don't pay attention to it !
 
   TML_INT32 iReturnedErr = TML_SUCCESS;
-  bool bAllowedToOverwrite = false;
 
   ////////////////////////////////////
   // Read error ID:
   iRet = tmlObjWrapper_Header_GetError(&iReturnedErr);
   if (TML_SUCCESS == iReturnedErr){
+    bool bAllowedToOverwrite = false;
     char* msg = NULL;
     TML_INT32 iMsgLen = 0;
     ////////////////////////////////////

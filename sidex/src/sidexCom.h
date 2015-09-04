@@ -78,7 +78,7 @@ public:
      *
      * @returns an instance of sidexCom
      */
-    sidexCom(const char *pname);
+    explicit sidexCom(const char *pname);
 
 
     /**

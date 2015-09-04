@@ -116,7 +116,7 @@ void sidexDict::clear(){
       }
     }
     if (NULL != keyArray){
-      delete (keyArray);
+      delete []keyArray;
     }
   }
 }

@@ -66,7 +66,7 @@ tmlProfileHandler::~tmlProfileHandler()
           delete (cKeys[i]);      // The key in the temporary list at the requested index must be removed now
         }
       }
-      delete (cKeys);             // At last I must the temporary array holder 
+      delete[] cKeys;             // At last I must the temporary array holder 
     }
   }
 

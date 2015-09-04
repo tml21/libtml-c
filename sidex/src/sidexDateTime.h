@@ -81,7 +81,7 @@ public:
      *
      * @returns an instance of sidexDateTime.
      */
-    sidexDateTime(char* newValue);
+    explicit sidexDateTime(char* newValue);
 
 
     /**

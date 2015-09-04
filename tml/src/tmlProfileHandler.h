@@ -72,7 +72,7 @@ public:
      *
      * @returns an instance of tmlCoreWrapper
      */
-    tmlProfileHandler(tmlLogHandler* loghandler);
+    explicit tmlProfileHandler(tmlLogHandler* loghandler);
 
 
     /**

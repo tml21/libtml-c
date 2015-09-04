@@ -355,7 +355,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_GeneralDeregistration(TML_CORE_HAN
  * @brief   Changes the callback method for thread creation.
  */
 TML_CORE_API void DLL_CALL_CONV tml_Core_Thread_Set_OnCreate(void* pCBCreate){
-  TML_INT32 iRet;
   try{
     /*
     {//if (0 <= m_iLogFileIndex){
@@ -369,7 +368,6 @@ TML_CORE_API void DLL_CALL_CONV tml_Core_Thread_Set_OnCreate(void* pCBCreate){
     vortex_thread_set_create ((VortexThreadCreateFunc)pCBCreate);
   }
   catch (...){
-    iRet = TML_ERR_COMMON;
   }
 }
 
@@ -378,7 +376,6 @@ TML_CORE_API void DLL_CALL_CONV tml_Core_Thread_Set_OnCreate(void* pCBCreate){
  * @brief   Changes the callback method for thread destruction.
  */
 TML_CORE_API void DLL_CALL_CONV tml_Core_Thread_Set_OnDestroy(void* pCBDestroy){
-  TML_INT32 iRet;
   try{
   /*
   {//if (0 <= m_iLogFileIndex){
@@ -392,7 +389,6 @@ TML_CORE_API void DLL_CALL_CONV tml_Core_Thread_Set_OnDestroy(void* pCBDestroy){
     vortex_thread_set_destroy ((VortexThreadDestroyFunc)pCBDestroy);
   }
   catch (...){
-    iRet = TML_ERR_COMMON;
   }
 }
 
@@ -1415,7 +1411,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_SyncMessage(TML_CORE_HANDLE coreHa
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_SyncMessage_A(TML_CORE_HANDLE coreHandle, TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, TML_UINT32 iTimeout)
 {
-   TML_INT32 iDebug = 0;
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Send_SyncMessage", "begin", tmlhandle);
 #endif //TIMEOUT_LOGGING
@@ -1428,33 +1423,23 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_SyncMessage_A(TML_CORE_HANDLE core
       ////////////////////////////////////////////////////////////////////////////
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      iDebug = 1;
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_SyncMessage");
         iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendSyncMessage(tmlhandle, profile, sHost, sPort, (unsigned int)iTimeout);
-        iDebug = 2;
       }
     }
     catch (...){
       try{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_SyncMessage");
-        iDebug = 3;
         m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "profile", profile);
-        iDebug = 4;
         tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "profile", profile);
-        iDebug = 5;
         m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Host", sHost);
-        iDebug = 6;
         tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Host", sHost);
-        iDebug = 7;
         m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Port", sPort);
-        iDebug = 8;
         tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Port", sPort);
-        iDebug = 9;
       }
       catch (...){
       }
-      tml_logI_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "EXCEPTION / DebugVal", iDebug);
       iRet = TML_ERR_COMMON;
     }
   }
@@ -1538,7 +1523,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncMessage(TML_CORE_HANDLE coreH
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncMessage_A(TML_CORE_HANDLE coreHandle, TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, TML_UINT32 iTimeout)
 {
-   TML_INT32 iDebug = 0;
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Send_AsyncMessage", "begin", tmlhandle);
 #endif //TIMEOUT_LOGGING
@@ -1551,33 +1535,23 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncMessage_A(TML_CORE_HANDLE cor
       ////////////////////////////////////////////////////////////////////////////
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      iDebug = 1;
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_AsyncMessage");
         iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendAsyncMessage(tmlhandle, profile, sHost, sPort, (unsigned int) iTimeout, TMLCOM_MODE_ASYNC);
-        iDebug = 2;
       }
     }
     catch (...){
       try{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_AsyncMessage");
-        iDebug = 3;
         m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "profile", profile);
-        iDebug = 4;
         tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "profile", profile);
-        iDebug = 5;
         m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "Host", sHost);
-        iDebug = 6;
         tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "Host", sHost);
-        iDebug = 7;
         m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "Port", sPort);
-        iDebug = 8;
         tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "Port", sPort);
-        iDebug = 9;
       }
       catch (...){
       }
-      tml_logI_A(TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "EXCEPTION / DebugVal", iDebug);
       iRet = TML_ERR_COMMON;
     }
   }
@@ -1885,7 +1859,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        iRet = TML_ERR_UNICODE;
         TML_INT32 iLengthUtf8;
         char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
 
@@ -1917,7 +1890,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        iRet = TML_ERR_UNICODE;
         TML_INT32 iLengthUtf8;
         char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
 
@@ -2064,7 +2036,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_All_MessageDestinations
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        iRet = TML_ERR_UNICODE;
         TML_INT32 iLengthUtf8;
         char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Unsubscribe_All_MessageDestinations");
@@ -2095,7 +2066,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_All_MessageDestinations
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        iRet = TML_ERR_UNICODE;
         TML_INT32 iLengthUtf8;
         char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Unsubscribe_All_MessageDestinations");
@@ -2903,7 +2873,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        iRet = TML_ERR_UNICODE;
         TML_INT32 iLengthUtf8;
         char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Get_Subscribed_MessageDestinations");
@@ -2934,7 +2903,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        iRet = TML_ERR_UNICODE;
         TML_INT32 iLengthUtf8;
         char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Get_Subscribed_MessageDestinations");
@@ -3081,7 +3049,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_All_MessageDestinations
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        iRet = TML_ERR_UNICODE;
         TML_INT32 iLengthUtf8;
         char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Unsubscribe_All_MessageDestinations");
@@ -3112,7 +3079,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_All_MessageDestinations
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        iRet = TML_ERR_UNICODE;
         TML_INT32 iLengthUtf8;
         char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Unsubscribe_All_MessageDestinations");
@@ -3379,7 +3345,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SyncMessage(TML_CORE_HANDLE co
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SyncMessage_A(TML_CORE_HANDLE coreHandle, TML_COMMAND_HANDLE tmlhandle, const char* profile, TML_UINT32 iTimeout)
 {
-  TML_INT32 iDebug = 0;
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Bal_Send_SyncMessage", "begin", tmlhandle);
 #endif //TIMEOUT_LOGGING
@@ -3392,25 +3357,20 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SyncMessage_A(TML_CORE_HANDLE 
       ////////////////////////////////////////////////////////////////////////////
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      iDebug = 1;
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_SyncMessage");
         iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendSyncMessage(tmlhandle, profile, (unsigned int)iTimeout);
-        iDebug = 2;
       }
     }
     catch (...){
       try{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_SyncMessage");
-        iDebug = 3;
         m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Bal_Send_SyncMessage", "profile", profile);
-        iDebug = 4;
         tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Bal_Send_SyncMessage", "profile", profile);
-        iDebug = 5;
       }
       catch (...){
       }
-      tml_logI_A(TML_LOG_EVENT, "TMLCore", "tml_Bal_Send_SyncMessage", "EXCEPTION / DebugVal", iDebug);
+      tml_logI_A(TML_LOG_EVENT, "TMLCore", "tml_Bal_Send_SyncMessage", "EXCEPTION / DebugVal", 0);
     }
   }
 #ifdef TIMEOUT_LOGGING
@@ -3472,7 +3432,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_AsyncMessage(TML_CORE_HANDLE c
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_AsyncMessage_A(TML_CORE_HANDLE coreHandle, TML_COMMAND_HANDLE tmlhandle, const char* profile, TML_UINT32 iTimeout)
 {
-   TML_INT32 iDebug = 0;
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Bal_Send_AsyncMessage", "begin", tmlhandle);
 #endif //TIMEOUT_LOGGING
@@ -3485,25 +3444,19 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_AsyncMessage_A(TML_CORE_HANDLE
       ////////////////////////////////////////////////////////////////////////////
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      iDebug = 1;
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_AsyncMessage");
         iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendAsyncMessage(tmlhandle, profile, (unsigned int)iTimeout);
-        iDebug = 2;
       }
     }
     catch (...){
       try{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_AsyncMessage");
-        iDebug = 3;
         m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Bal_Send_AsyncMessage", "profile", profile);
-        iDebug = 4;
         tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Bal_Send_AsyncMessage", "profile", profile);
-        iDebug = 5;
       }
       catch (...){
       }
-      tml_logI_A(TML_LOG_EVENT, "TMLCore", "tml_Bal_Send_AsyncMessage", "EXCEPTION / DebugVal", iDebug);
       iRet = TML_ERR_COMMON;
     }
   }

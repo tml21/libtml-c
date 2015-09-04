@@ -320,9 +320,8 @@ int tmlDestinationAddressHandlingHashValue::getSubscribedDestinationCount(){
   if (NULL != nextElement){
     //////////////////////////////////////////////
     // now count the entrys:
-    tmlCollectCallDestinationObj* destinationObj = NULL;
     do{
-      destinationObj = nextElement->destinationObj;
+      tmlCollectCallDestinationObj* destinationObj = nextElement->destinationObj;
       if (NULL != destinationObj){
         if (!destinationObj->isSubscriptionEmpty()){
           ++iInternalCount;

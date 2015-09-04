@@ -48,6 +48,7 @@ sidexString::sidexString()
    wValueLength = 0;
    xValue = NULL;
    wValue = NULL;
+   sValue = NULL;
    m_stringFormatX = SIDEX_HANDLE_TYPE_NULL;
    m_stringFormatW = SIDEX_HANDLE_TYPE_NULL;
 
@@ -142,7 +143,7 @@ sidexString::~sidexString()
 void sidexString::cleanUp(){
   if (getRef())
     if (decRef() == 0){
-      delete(sValue);
+      delete[] sValue;
       if (NULL != xValue){
         delete xValue;
         xValueLength = 0;
@@ -194,35 +195,6 @@ char* sidexString::toString()
 #endif
      outbuf[size] = '\0';
      return outbuf;
-  }
-}
-
-
-/**
-* @brief   Set the char string value of this object.
- */
-void sidexString::setValue(char* newValue)
-{
-  sValue = newValue;
-  size = (int)strlen(newValue);
-
-  if (NULL != xValue){
-    delete xValue;
-    xValueLength = 0;
-    xValue = NULL;
-  }
-  if (NULL != wValue){
-    delete wValue;
-    wValueLength = 0;
-    wValue = NULL;
-  }
-  if (SIDEX_HANDLE_TYPE_NULL != m_stringFormatX){
-    delete m_stringFormatX;
-    m_stringFormatX = SIDEX_HANDLE_TYPE_NULL;
-  }
-  if (SIDEX_HANDLE_TYPE_NULL != m_stringFormatW){
-    delete m_stringFormatW;
-    m_stringFormatW = SIDEX_HANDLE_TYPE_NULL;
   }
 }
 

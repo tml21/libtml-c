@@ -92,7 +92,7 @@ sidexCom::~sidexCom()
 
 #ifndef USESTREAMS
   if (NULL != m_strRepresentation){
-    delete (m_strRepresentation);
+    delete []m_strRepresentation;
     m_strRepresentation = NULL;
   }
 #endif // USESTREAMS
@@ -113,13 +113,13 @@ int sidexCom::sidexcom_Set_DocumentName(const char *pname){
     ////////////////////////////////////
     // Make a copy of the wchar_t string:
     if (m_utf32DocName != NULL){
-      delete (m_utf32DocName);
+      delete m_utf32DocName;
     }
     m_utf32DocName = UTF8toUTF32((char*)pname, &iSize);
     ////////////////////////////////////
     // Make a copy of the wchar_t string:
     if (m_utf16DocName != NULL){
-      delete (m_utf16DocName);
+      delete m_utf16DocName;
     }
     m_utf16DocName = (char16_t*)UTF8toUTF16((char*)pname, &iSize);
 
@@ -177,7 +177,7 @@ void sidexCom::sidexcom_Clear(){
  setDocument(axl_doc_create("1.0", "UTF-8", true));
  setRootnode(axl_node_create (sTemp));
  axl_doc_set_root((axlDoc*)(getDocument()), (axlNode*)(getRootnode()));
- delete (sTemp);
+ delete []sTemp;
 }
 
 
@@ -302,22 +302,22 @@ int sidexCom::sidexcom_Load_Content(const char *path){
   //////////////////////////////////////
   // Maybe we are in the unicode world:
   if (NULL != m_utf16DocName){
-    delete (m_utf16DocName);
+    delete m_utf16DocName;
     m_utf16DocName = NULL;
   }
   if (NULL != m_utf32DocName){
-    delete (m_utf32DocName);
+    delete m_utf32DocName;
     m_utf32DocName = NULL;
   }
 
-  char* content = NULL;
-  SIDEX_INT32 lSize = 0;
   doc = NULL;
 
   ////////////////////////////
   // Open File:
   FILE* fp = _fsopen(path, "rb", _SH_DENYNO);
   if (NULL != fp){
+    SIDEX_INT32 lSize = 0;
+    char* content = NULL;
     ////////////////////////////
     // File size:
     fseek (fp ,0 ,SEEK_END);
@@ -335,7 +335,7 @@ int sidexCom::sidexcom_Load_Content(const char *path){
     doc = axl_doc_parse (content, lSize, &error);
     ////////////////////////////
     // free memory;
-    delete (content);
+    delete []content;
 
     ////////////////////////////
     // Set document:
@@ -400,16 +400,15 @@ int sidexCom::sidexcom_Set_Content(char *content){
   //////////////////////////////////////
   // Maybe we are in the unicode world:
   if (NULL != m_utf16DocName){
-    delete (m_utf16DocName);
+    delete m_utf16DocName;
     m_utf16DocName = NULL;
   }
   if (NULL != m_utf32DocName){
-    delete (m_utf32DocName);
+    delete m_utf32DocName;
     m_utf32DocName = NULL;
   }
 
   // parse the provided file
-  doc = NULL;
   doc = axl_doc_parse (content, (int)strlen(content), &error);
 
   setDocument(doc);
@@ -611,7 +610,7 @@ int sidexCom::sidexcom_StringFromNode(SIDEX_NODE node, sidexString** sString)
         if (SIDEX_ENCODE_BASE64 == iEncoding){
           ///////////////////////////////////////////////////////////////
           // In case of base64 encoding I have to free memory now:
-          delete (content);
+          delete[] content;
         }
         else{
           ///////////////////////////////////////////////////////////////
@@ -830,9 +829,9 @@ int sidexCom::sidexcom_WriteListTree(SIDEX_NODE node, sidexList* sList)
   axl_node_set_attribute((axlNode*)node,SIDEX_TYPE_ATTR,SIDEX_TYPE_ATTR_LIST);
 
   sidexList::listElement *e = sList->getFirst();
-  sidexBase *eValue;
   while (NULL != e && SIDEX_SUCCESS == iRet)
   {
+    sidexBase *eValue;
     eValue = (sidexBase* )e->value;
     axlNode* subNode;
     char* cStringRepresentation;
@@ -853,7 +852,7 @@ int sidexCom::sidexcom_WriteListTree(SIDEX_NODE node, sidexList* sList)
           axl_node_set_content(subNode, cStringRepresentation, -1);
           // The returned character array is owned by the sidexBoolean 
           // Thus, the caller must not modify or free the memory !
-          //delete(cStringRepresentation);
+          //delete[] cStringRepresentation;
           axl_node_set_child((axlNode *) node, subNode);
         }
         break;
@@ -865,7 +864,7 @@ int sidexCom::sidexcom_WriteListTree(SIDEX_NODE node, sidexList* sList)
           axl_node_set_content(subNode, cStringRepresentation, -1);
           // The returned character array is owned by the sidexInteger 
           // Thus, the caller must not modify or free the memory !
-          //delete(cStringRepresentation);
+          //delete[] cStringRepresentation;
           axl_node_set_child((axlNode *) node, subNode);
         }
         break;
@@ -877,7 +876,7 @@ int sidexCom::sidexcom_WriteListTree(SIDEX_NODE node, sidexList* sList)
           axl_node_set_content(subNode, cStringRepresentation, -1);
           // The returned character array is owned by the sidexFloat 
           // Thus, the caller must not modify or free the memory !
-          //delete(cStringRepresentation);
+          //delete[] cStringRepresentation
           axl_node_set_child((axlNode *) node, subNode);
         }
         break;
@@ -885,11 +884,11 @@ int sidexCom::sidexcom_WriteListTree(SIDEX_NODE node, sidexList* sList)
         iRet =  sidexcom_CreateNode(node, SIDEX_LIST_ITEM, (SIDEX_NODE*) &subNode);
         if (SIDEX_SUCCESS == iRet){
           axl_node_set_attribute(subNode,SIDEX_TYPE_ATTR,SIDEX_TYPE_ATTR_DATETIME);
-          cStringRepresentation = ( (sidexFloat *)(e->value) ) ->toString();
+          cStringRepresentation = ( (sidexDateTime *)(e->value) ) ->toString();
           axl_node_set_content(subNode, cStringRepresentation, -1);
           // The returned character array is owned by the sidexDateTime 
           // Thus, the caller must not modify or free the memory !
-          //delete(cStringRepresentation);
+          //delete[] cStringRepresentation
           axl_node_set_child((axlNode *) node, subNode);
         }
         break;
@@ -905,7 +904,7 @@ int sidexCom::sidexcom_WriteListTree(SIDEX_NODE node, sidexList* sList)
           cStringRepresentation = ((sidexString *)(e->value) ) ->toString();
           axl_node_set_content(subNode, cStringRepresentation, -1);
           // The character array from sidexString.toString() has to be dallocated:
-          delete(cStringRepresentation);
+          delete[] cStringRepresentation;
           axl_node_set_child((axlNode *) node, subNode);
         }
         break;
@@ -917,7 +916,7 @@ int sidexCom::sidexcom_WriteListTree(SIDEX_NODE node, sidexList* sList)
           cStringRepresentation = ((sidexString *)(e->value) ) ->toString();
           axl_node_set_content(subNode, cStringRepresentation, -1);
           // The character array from sidexString.toString() has to be dallocated:
-          delete(cStringRepresentation);
+          delete[] cStringRepresentation;
           axl_node_set_child((axlNode *) node, subNode);
         }
         break;
@@ -961,8 +960,6 @@ int sidexCom::sidexcom_WriteDictTree(SIDEX_NODE node, sidexDict* sDict)
   // set the dict attribute:
   axl_node_set_attribute((axlNode*)node,SIDEX_TYPE_ATTR,SIDEX_TYPE_ATTR_DICT);
 
-  char *sDictKey;
-   
   int dictSize = sDict->getNumberOfDictEntrys();
   char** keyArray = NULL;
 
@@ -991,10 +988,12 @@ int sidexCom::sidexcom_WriteDictTree(SIDEX_NODE node, sidexDict* sDict)
 
 
       SIDEX_VARIANT sDictValue;
+      char *sDictKey;
+
       sDictKey = keyArray[i];
       iRet = sDict->getValue(sDictKey, &sDictValue);
       if (SIDEX_SUCCESS != iRet){
-        delete (keyArray);
+        delete[] keyArray;
       }
 
       if (SIDEX_SUCCESS == iRet){
@@ -1077,7 +1076,7 @@ int sidexCom::sidexcom_WriteDictTree(SIDEX_NODE node, sidexDict* sDict)
               cStringRepresentation = ((sidexString *)(sDictValue))->toString();
               axl_node_set_content(subNode, cStringRepresentation, -1);
               // The character array from sidexString.toString() has to be dallocated:
-              delete(cStringRepresentation);
+              delete[]cStringRepresentation;
             }
             break;
           case SIDEX_DATA_TYPE_BINARY:
@@ -1088,7 +1087,7 @@ int sidexCom::sidexcom_WriteDictTree(SIDEX_NODE node, sidexDict* sDict)
               cStringRepresentation = ((sidexString *)(sDictValue))->toString();
               axl_node_set_content(subNode, cStringRepresentation, -1);
               // The character array from sidexString.toString() has to be dallocated:
-              delete(cStringRepresentation);
+              delete[]cStringRepresentation;
             }
             break;
           case SIDEX_DATA_TYPE_LIST:
@@ -1119,7 +1118,7 @@ int sidexCom::sidexcom_WriteDictTree(SIDEX_NODE node, sidexDict* sDict)
       }
   }
   if (NULL != keyArray){
-    delete (keyArray);
+    delete[] keyArray;
   }
   return iRet;
 }
@@ -1640,10 +1639,11 @@ int sidexCom::sidexcom_ReadDict(SIDEX_NODE node, sidexDict* sDict)
     sidexList* tempDictKey = new sidexList();
     sidexList* tempDictValue = new sidexList();
     axlNode* item = axl_node_get_first_child((axlNode *)node);
-    char* itemName; 
     int iIndex = 0;
     while (NULL != item && SIDEX_SUCCESS == iRet) 
     {
+      char* itemName;
+
       axlNode *itemContent = axl_node_get_first_child((axlNode *)item);
 
       itemName = (char *) axl_node_get_name(item);  	
@@ -1760,7 +1760,7 @@ int sidexCom::sidexcom_ReadTable(SIDEX_NODE node, sidexTable* sTable)
             iRet =sidexutilTable_SetField((SIDEX_VARIANT)sTable, iRow, sKeys[i], vCell);
           }
         }
-        delete(sKeys);
+        delete[]sKeys;
         
         row = axl_node_get_next(row);  // next Row
         ++iRow;
@@ -1982,7 +1982,7 @@ int sidexCom::sidexcom_WriteString(char* ngroup, char* nkey, const char *value, 
      );
      // In case of SIDEX_ENCODE_BASE64 I have to deallocate memory:
      if (SIDEX_ENCODE_BASE64 == encoding)
-       delete (content);
+       delete[] content;
    }
    return iRet;
 }

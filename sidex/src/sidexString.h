@@ -93,7 +93,7 @@ public:
      *
      * @returns an instance of sidexString.
      */
-    sidexString(char* newValue);
+    explicit sidexString(char* newValue);
 
 
     /**
@@ -151,14 +151,6 @@ public:
      * @returns the string representation.
      */
     char* toString();
-
-
-    /**
-     * @brief   Set the char string value of this object.
-     *
-     * @param   string the value to set.
-     */
-    void  setValue(char* string);
 
 
     /**

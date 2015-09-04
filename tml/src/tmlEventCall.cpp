@@ -133,8 +133,7 @@ tmlEventCall::tmlEventCall(tmlLogHandler* loghandler, void* pCBFunc)
 
   ////////////////////////////////////////////////////////////////////////////
   // create the mutex that protect critial section about communication data:
-  axl_bool bSuccess;
-  bSuccess = createCriticalSectionObject(TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, "tmlEventCall", "tmlEventCall", "Vortex CMD", "vortex_mutex_create");
+  axl_bool bSuccess = createCriticalSectionObject(TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, "tmlEventCall", "tmlEventCall", "Vortex CMD", "vortex_mutex_create");
   m_iMutexCriticalSectionLockCount = 0;
   m_bInShutdown = false;
 }
@@ -187,7 +186,6 @@ int tmlEventCall::performBackendEventMessage(void* pCBFunc, EventMsgExecutionDat
 {
   const char*** handlingEventArray = &m_eventMessageHandlingEventArray;
   int iRet = TML_SUCCESS;
-  char* sidexStr = NULL;
 
   ///////////////////////////////////////////////////////
   // START PREPARE THREAD- ATTRIBUTES FIRST TIME
@@ -253,16 +251,13 @@ int tmlEventCall::performBackendEventMessage(void* pCBFunc, EventMsgExecutionDat
     // Free allocated data in case of an error:
     if (TML_SUCCESS != iRet){
       if (NULL != profileCopy){
-        delete profileCopy;
+        delete[] profileCopy;
       }
       if (NULL != pEventMsgData){
         delete pEventMsgData;
       }
       if (NULL != pEventMsgExecutionData){
         delete pEventMsgExecutionData;
-      }
-      if (NULL != sidexStr){
-        delete (sidexStr);
       }
     }
   }
@@ -310,7 +305,7 @@ int tmlEventCall::allocEventMessageThreadEventArray(const char*** asyncThreadEve
     }
     ////////////////////////////////////////////////////////////////////////////
     // Free sync event array to handle send message:
-    delete (evtArr);
+    delete[] evtArr;
     *senderSyncEventArray = NULL;
   }
 }
@@ -453,9 +448,8 @@ axl_bool tmlEventCall::createCriticalSectionObject(int iLogMask, VortexMutex* mu
  */
 axl_bool tmlEventCall::destroyCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
-  axl_bool bSuccess = axl_true;
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  bSuccess = intern_mutex_destroy (mutex, (char*)"tmlEventCall::destroyCriticalSectionObject");
+  axl_bool bSuccess = intern_mutex_destroy (mutex, (char*)"tmlEventCall::destroyCriticalSectionObject");
   return bSuccess;
 }
 

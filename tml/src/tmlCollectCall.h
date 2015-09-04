@@ -97,11 +97,6 @@ private:
     EventMsgHandlingParams m_EventMessageHandlingParams;
 
     /**
-     * @brief    The debug log handler
-     */
-    tmlLogHandler* m_log;
-
-    /**
      * @brief    The maximum load balanced connection fail counter for subscribed load balanced destinations.
      */
     unsigned int m_iMaxLoadBalancedConnectionFails;

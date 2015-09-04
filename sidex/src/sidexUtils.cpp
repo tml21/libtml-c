@@ -41,7 +41,7 @@
 char* sidexutil_encodeBase64(const char *rawtext, int* iSize)
 {
    static const char cb64[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-   int i = 0, j = 0;
+   int i = 0;
 
    int size = *iSize;
    if (*iSize == -1)
@@ -57,15 +57,11 @@ char* sidexutil_encodeBase64(const char *rawtext, int* iSize)
 
    int outpidx = 0;
 
-   unsigned char in0;
-   unsigned char in1;
-   unsigned char in2;
-
    for (i=0; i<blocks; i++)
    {
-      in0 = rawtext[i*3];
-      in1 = rawtext[i*3+1];
-      in2 = rawtext[i*3+2];
+      unsigned char in0 = rawtext[i*3];
+      unsigned char in1 = rawtext[i*3+1];
+      unsigned char in2 = rawtext[i*3+2];
 
       outbuf[outpidx++] = cb64[ in0 >> 2 ];
       outbuf[outpidx++] = cb64[ ((in0 & 0x03) << 4) | ((in1 & 0xf0) >> 4) ];
@@ -113,7 +109,7 @@ char ceCalc(char c)
  */
 char* sidexutil_decodeBase64(const char *encodedtext, SIDEX_INT32* iSize)
 {
-   int i = 0, j = 0;
+   int i = 0;
 
    SIDEX_INT32 size;
    if (*iSize == -1)
@@ -128,9 +124,10 @@ char* sidexutil_decodeBase64(const char *encodedtext, SIDEX_INT32* iSize)
       return NULL;
 
    int outidx = 0;
-   char in0, in1, in2, in3;
    for( i = 0; i < size; i = i+4)
    {  
+      char in0, in1, in2, in3;
+
       in0 = ceCalc(encodedtext[i]);
       in1 = ceCalc(encodedtext[i+1]);
       in2 = ceCalc(encodedtext[i+2]);
@@ -853,7 +850,7 @@ int sidexutilDict_Keys(SIDEX_VARIANT variant, SIDEX_VARIANT* varKeys){
             // Decrement of the refcounter:
             ((sidexBase*)keyItem)->decRef();
           }
-          delete (sKeys);
+          delete []sKeys;
         }
         else{
           iRet = SIDEX_ERR_NOCONTENT;
@@ -987,7 +984,7 @@ int sidexutilDict_HasKey(SIDEX_VARIANT variant, char* sKey, SIDEX_BOOL* bRet){
             else{
               *bRet = SIDEX_FALSE;
             }
-            delete (sNames);
+            delete[] sNames;
           }
           break;
         case SIDEX_ERR_NOCONTENT:
@@ -1067,7 +1064,7 @@ int sidexutilTable_ColumnNames(SIDEX_VARIANT variant, SIDEX_VARIANT* varNames){
           }
         }
         *varNames = (SIDEX_VARIANT)list;
-        delete (sNames);
+        delete[] sNames;
       }
     }
     else{
@@ -1105,7 +1102,7 @@ int sidexutil_TableHasColumn(SIDEX_VARIANT variant, char* sColumnName, SIDEX_BOO
         else{
           *bRet = SIDEX_FALSE;
         }
-        delete (sNames);
+        delete[] sNames;
       }
     }
     else{
@@ -1307,8 +1304,6 @@ int sidexutilString_Value_Length_A(SIDEX_VARIANT variant, SIDEX_INT32* iLength){
 
   SIDEX_DATA_TYPE type = ((sidexBase*)(variant))->getType();
   if (type == SIDEX_DATA_TYPE_STRING || type == SIDEX_DATA_TYPE_BINARY){
-    char* retValue;
-    retValue = ((sidexString*)variant)->getValue_A();
     *iLength = ((sidexString*)variant)->getSize();
   }
   else{

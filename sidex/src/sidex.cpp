@@ -403,14 +403,12 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Get_DocumentName_W(SIDEX_HANDLE shandl
  * @brief    Remove the XML tree content except of the root node / document name of the provided handle.
  */
 SIDEX_API void DLL_CALL_CONV sidex_Clear(SIDEX_HANDLE shandle){
-  SIDEX_INT32 iRet = SIDEX_SUCCESS;
   if (SIDEX_HANDLE_TYPE_NULL != shandle){
     try{
       ((sidexCom*)shandle)->sidexcom_Clear();
     }
     catch (...){
       sidex_log(0xFFFFFFFF, "sidex", "sidex_Clear", "exception", "caught", 66);
-      iRet = SIDEX_ERR_COMMON;
     }
   }
   return;
@@ -421,7 +419,6 @@ SIDEX_API void DLL_CALL_CONV sidex_Clear(SIDEX_HANDLE shandle){
  * @brief    Releases memory allocated in sidex_Create().
  */
 SIDEX_API void DLL_CALL_CONV sidex_Free(SIDEX_HANDLE* shandle) {
-  SIDEX_INT32 iRet = SIDEX_SUCCESS;
   try{
     sidex_Free_ReadString_W(m_cVersionW);
     sidex_Free_ReadString_W(m_cCopyrightW);
@@ -437,7 +434,6 @@ SIDEX_API void DLL_CALL_CONV sidex_Free(SIDEX_HANDLE* shandle) {
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free", "exception", "caught", 66);
-    iRet = SIDEX_ERR_COMMON;
   }
   return;
 }
@@ -756,13 +752,11 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_Content(SIDEX_CTSTR *string);
  * char* API
 **/
 SIDEX_API void DLL_CALL_CONV sidex_Free_Content_A(char *string){
-  SIDEX_INT32 iRet = SIDEX_SUCCESS;
   try{
     axl_free(string);
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_Content_A", "exception", "caught", 66);
-    iRet = SIDEX_ERR_COMMON;
   }
   return;
 }
@@ -770,13 +764,11 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_Content_A(char *string){
  * wchar_t* API
 **/
 SIDEX_API void DLL_CALL_CONV sidex_Free_Content_X(wchar_t *string){
-  SIDEX_INT32 iRet = SIDEX_SUCCESS;
   try{
     delete string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_Content_X", "exception", "caught", 66);
-    iRet = SIDEX_ERR_COMMON;
   }
   return;
 }
@@ -784,13 +776,11 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_Content_X(wchar_t *string){
  * char16_t* API
 **/
 SIDEX_API void DLL_CALL_CONV sidex_Free_Content_W(char16_t *string){
-  SIDEX_INT32 iRet = SIDEX_SUCCESS;
   try{
     delete string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_Content_W", "exception", "caught", 66);
-    iRet = SIDEX_ERR_COMMON;
   }
   return;
 }
@@ -818,13 +808,11 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_DecRef(SIDEX_VARIANT variant)
  */
 SIDEX_API void DLL_CALL_CONV sidex_Variant_IncRef(SIDEX_VARIANT variant) 
 {
-  SIDEX_INT32 iRet = SIDEX_SUCCESS;
   try{
     sidexutil_Variant_IncRef(variant);
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Variant_IncRef", "exception", "caught", 66);
-    iRet = SIDEX_ERR_COMMON;
   }
   return;
 }
@@ -1096,10 +1084,10 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_String_SetFormat_A(SIDEX_VARIA
 SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_String_SetFormat_X(SIDEX_VARIANT variant, const wchar_t* format){
   SIDEX_INT32 iRet = SIDEX_ERR_UNICODE;
   try{
-    SIDEX_INT32 iLengthUtf8 = 0;
-    char* utf8Str = NULL;
-
     if (NULL != format){
+      SIDEX_INT32 iLengthUtf8 = 0;
+      char* utf8Str = NULL;
+
       utf8Str = UTF32toUTF8((wchar_t*) format, &iLengthUtf8);
       iRet = sidex_Variant_String_SetFormat_A(variant, utf8Str);
       if (NULL != utf8Str){
@@ -1120,10 +1108,10 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_String_SetFormat_X(SIDEX_VARIA
 SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_String_SetFormat_W(SIDEX_VARIANT variant, const char16_t* format){
   SIDEX_INT32 iRet = SIDEX_ERR_UNICODE;
   try{
-    SIDEX_INT32 iLengthUtf8 = 0;
-    char* utf8Str = NULL;
-
     if (NULL != format){
+      SIDEX_INT32 iLengthUtf8 = 0;
+      char* utf8Str = NULL;
+
       utf8Str = UTF16toUTF8((wchar_t*) format, &iLengthUtf8);
       iRet = sidex_Variant_String_SetFormat_A(variant, utf8Str);
       if (NULL != utf8Str){
@@ -3461,7 +3449,7 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString(SIDEX_CTSTR* string);
 SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_A(char* string){
   try{
     if (NULL != string)
-      delete (string);
+      delete []string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_ReadString_A", "exception", "caught", 66);
@@ -3473,7 +3461,7 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_A(char* string){
 SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_X(wchar_t* string){
   try{
     if (NULL != string)
-      delete (string);
+      delete string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_ReadString_X", "exception", "caught", 66);
@@ -3485,7 +3473,7 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_X(wchar_t* string){
 SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_W(char16_t* string){
   try{
     if (NULL != string)
-      delete (string);
+      delete string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_ReadString_W", "exception", "caught", 66);
@@ -3499,7 +3487,7 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_W(char16_t* string){
 SIDEX_API void DLL_CALL_CONV sidex_Free_Binary_ReadString(unsigned char* string){
   try{
     if (NULL != string)
-      delete (string);
+      delete[] string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_Binary_ReadString", "exception", "caught", 66);

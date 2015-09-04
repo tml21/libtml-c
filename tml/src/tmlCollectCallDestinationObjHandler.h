@@ -263,7 +263,7 @@ public:
      *
      * @returns an instance of tmlCollectCallDestinationObjHandler
      */
-    tmlCollectCallDestinationObjHandler(tmlLogHandler* loghandler);
+    explicit tmlCollectCallDestinationObjHandler(tmlLogHandler* loghandler);
 
 
     /**

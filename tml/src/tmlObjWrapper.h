@@ -111,7 +111,7 @@ public:
      *
      * @returns an instance of tmlObjWrapper
      */
-    tmlObjWrapper(char* sID);
+    explicit tmlObjWrapper(char* sID);
 
 
     /**

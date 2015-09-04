@@ -67,7 +67,7 @@ public:
      *
      * @returns an instance of sidexBoolean.
      */
-    sidexBoolean(bool newValue);
+    explicit sidexBoolean(bool newValue);
 
 
     /**

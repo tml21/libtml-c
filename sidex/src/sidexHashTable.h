@@ -164,7 +164,7 @@ public:
      *
      * @returns an instance of sidexHashTable.
      */
-    sidexHashTable(long tableSize);
+    explicit sidexHashTable(long tableSize);
 
     
     /**

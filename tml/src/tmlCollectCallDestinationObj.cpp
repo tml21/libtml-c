@@ -58,7 +58,7 @@ tmlCollectCallDestinationObj::tmlCollectCallDestinationObj(const char* profile, 
   int iSize;
 
   if (NULL != m_sProfile)
-    delete (m_sProfile);
+    delete[] m_sProfile;
   iSize = (int)strlen(profile)+1;
   m_sProfile = new char[iSize];
 #if defined (LINUX) || defined (MINGW_BUILD)
@@ -84,11 +84,11 @@ tmlCollectCallDestinationObj::~tmlCollectCallDestinationObj()
   // First wait until the all event Messages have been done:
   m_eventCall->stopEventMessageHandlingThread();
   if (NULL != m_sProfile)
-    delete (m_sProfile);
+    delete[] m_sProfile;
   if (NULL != m_sHost)
-    delete (m_sHost);
+    delete[] m_sHost;
   if (NULL != m_sPort)
-    delete (m_sPort);
+    delete[] m_sPort;
   ////////////////////////////////////////////////////////////////////////////
   //  Afterwards destroy event message handling:
   delete (m_eventCall);
@@ -105,7 +105,7 @@ void tmlCollectCallDestinationObj::subscribeMessageDestination(const char* sHost
 
   // Host:
   if (NULL != m_sHost)
-    delete (m_sHost);
+    delete[] m_sHost;
   iSize = (int)strlen(sHost)+1;
   m_sHost = new char[iSize];
 #if defined (LINUX) || defined (MINGW_BUILD)
@@ -116,7 +116,7 @@ void tmlCollectCallDestinationObj::subscribeMessageDestination(const char* sHost
 
   // Port:
   if (NULL != m_sPort)
-    delete (m_sPort);
+    delete[] m_sPort;
   iSize = (int)strlen(sPort)+1;
   m_sPort = new char[iSize];
 #if defined (LINUX) || defined (MINGW_BUILD)

@@ -83,7 +83,7 @@ public:
      *
      * @returns an instance of tmlEventDataQueue
      */
-    tmlEventDataQueue(tmlLogHandler* loghandler);
+    explicit tmlEventDataQueue(tmlLogHandler* loghandler);
 
     /**
      * @brief    Destructor.

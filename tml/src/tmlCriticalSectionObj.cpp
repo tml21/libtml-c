@@ -79,8 +79,7 @@ tmlCriticalSectionObj::tmlCriticalSectionObj()
     }
   }
 #else // LINUX
-  axl_bool bSuccess = axl_true;
-  bSuccess = vortex_mutex_create (&m_csCriticalSection);
+  axl_bool bSuccess = vortex_mutex_create (&m_csCriticalSection);
   m_bCreated = (axl_true == bSuccess);
 #endif // LINUX  axl_bool bSuccess = axl_true;
 }

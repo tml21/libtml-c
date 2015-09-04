@@ -55,11 +55,11 @@ FILE *_fsopen(const char *filename,const char *mode,int shflag)
 {
   struct flock fileshare;
   FILE* stream;
-  int fdescriptor;
 
   if((stream=fopen(filename,mode))!=NULL)
   {
     if (shflag!=_SH_DENYNO) {
+      int fdescriptor;
       if ((fdescriptor=fileno(stream))==-1) {
         fclose(stream);
         return(NULL);
@@ -96,6 +96,7 @@ tmlLogHandler::tmlLogHandler(){
   m_logFile = (char*) LOG_FILE_NAME;
   m_fileLogMode = (char*) LOG_FILE_OPEN_MODE;
   m_iAdditionalTimeout = 0;
+  m_iEventLogPeriod = 0;
   m_iThreadPoolAddPeriod = 0;
   m_iEventLogPeriod = DEFAULT_EVENT_MSG_LOG_PERIOD;
   m_iEventQueueRemoveLogPeriod = DEFAULT_EVENT_QUEUE_REMOVE_LOG_PERIOD;
@@ -179,6 +180,11 @@ tmlLogHandler::tmlLogHandler(char* mode){
   /////////////////////////////////////
   // Default log value:
   m_iLogValue = TML_LOG_OFF;
+  m_iAdditionalTimeout = 0;
+  m_iEventLogPeriod = 0;
+  m_iThreadPoolAddPeriod = 0;
+  m_iEventLogPeriod = DEFAULT_EVENT_MSG_LOG_PERIOD;
+  m_iEventQueueRemoveLogPeriod = DEFAULT_EVENT_QUEUE_REMOVE_LOG_PERIOD;
 
   ////////////////////////////////////////////////////////////////////////////
   // create the mutex that protect critial section about communication data:
@@ -213,6 +219,10 @@ tmlLogHandler::tmlLogHandler(char* mode, int iFileIndex){
   m_iShare = _SH_DENYNO;
   m_logFile = (char*) LOG_FILE_NAME_CONG;
   m_fileLogMode = mode;
+  m_iAdditionalTimeout = 0;
+  m_iEventLogPeriod = 0;
+  m_iThreadPoolAddPeriod = 0;
+  m_iEventQueueRemoveLogPeriod = DEFAULT_EVENT_QUEUE_REMOVE_LOG_PERIOD;
   /////////////////////////////////////
   // Default log value:
   m_iLogValue = TML_LOG_OFF;

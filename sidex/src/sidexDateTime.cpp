@@ -103,30 +103,32 @@ bool sidexDateTime::sidexDateCheck(char* sDateTime){
   if (NULL == sDateTime){
     bRet = false;
   }
-  ///////////////////
-  // Length:
-  if (bRet && DATE_TIME_STR_LENGTH-1 != strlen(sDateTime)){
-    bRet = false;
-  }
-  ///////////////////
-  // Spaces:
-  if (bRet && sDateTime[4] != '-'){
-    bRet = false;
-  }
-  if (bRet && sDateTime[7] != '-'){
-    bRet = false;
-  }
-  if (bRet && sDateTime[10] != ' '){
-    bRet = false;
-  }
-  if (bRet && sDateTime[13] != ':'){
-    bRet = false;
-  }
-  if (bRet && sDateTime[16] != ':'){
-    bRet = false;
-  }
-  if (bRet && sDateTime[19] != ':'){
-    bRet = false;
+  else{
+    ///////////////////
+    // Length:
+    if (bRet && DATE_TIME_STR_LENGTH-1 != strlen(sDateTime)){
+      bRet = false;
+    }
+    ///////////////////
+    // Spaces:
+    if (bRet && sDateTime[4] != '-'){
+      bRet = false;
+    }
+    if (bRet && sDateTime[7] != '-'){
+      bRet = false;
+    }
+    if (bRet && sDateTime[10] != ' '){
+      bRet = false;
+    }
+    if (bRet && sDateTime[13] != ':'){
+      bRet = false;
+    }
+    if (bRet && sDateTime[16] != ':'){
+      bRet = false;
+    }
+    if (bRet && sDateTime[19] != ':'){
+      bRet = false;
+    }
   }
   ///////////////////
   // undefined date:
@@ -241,7 +243,7 @@ bool sidexDateTime::sidexDateCheck(char* sDateTime){
 void sidexDateTime::cleanUp(){
   if (getRef()){
     if (decRef() == 0){
-      delete(value);
+      delete[] value;
       value = NULL;
       if (NULL != xValue){
         delete xValue;

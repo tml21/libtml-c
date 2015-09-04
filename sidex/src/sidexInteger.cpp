@@ -40,6 +40,9 @@ using namespace std;
  */
 sidexInteger::sidexInteger()
 {
+#ifndef USESTREAMS
+   m_strRepresentation = new char[64];
+#endif // USESTREAMS
    value = 0;
    incRef();
 }
@@ -76,7 +79,7 @@ void sidexInteger::cleanUp(){
     if (decRef() == 0){
 #ifndef USESTREAMS
       if (NULL != m_strRepresentation){
-        delete (m_strRepresentation);
+        delete []m_strRepresentation;
         m_strRepresentation = NULL;
       }
 #endif // USESTREAMS

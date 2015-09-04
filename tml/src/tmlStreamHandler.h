@@ -101,7 +101,7 @@ public:
      *
      * @returns an instance of tmlStreamHandler
      */
-    tmlStreamHandler(tmlLogHandler* tmlLogHandler);
+    explicit tmlStreamHandler(tmlLogHandler* tmlLogHandler);
 
 
     /**

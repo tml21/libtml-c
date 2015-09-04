@@ -74,7 +74,7 @@ void tmlDispatcher::tml_DispatcherDismissAllAttributes(){
         }
         /////////////////////////////////
         // Now I have to free the memory:
-        delete (iKeys);
+        delete iKeys;
         iKeys = NULL;
       }
     }

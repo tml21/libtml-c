@@ -45,6 +45,7 @@
 tmlCollectCallDestinationObjHandler::tmlCollectCallDestinationObjHandler(tmlLogHandler* loghandler)
 {
   m_log = loghandler;
+  m_iMutexCriticalSectionCount = 0;
   m_eventDestinationAddressHashTable = new TMLUniversalHashTable(loghandler);
   m_eventDestinationAddressHashTable->createHashTable(true);
   m_loadBalancedDestinationAddressHashTable = new TMLUniversalHashTable(loghandler);
@@ -291,16 +292,14 @@ bool tmlCollectCallDestinationObjHandler::acquireMessageDestination(TMLUniversal
     linkList = hashValue->getLinkList();
   }
   if (NULL != linkList){
-    DestinationAddressHandlingListElement* actualElement = NULL;
     //////////////////////////////////////////////
     // look if the destination entry is known:
-    tmlCollectCallDestinationObj* destinationObj = NULL;
     do{
+      tmlCollectCallDestinationObj* destinationObj = NULL;
       destinationObj = linkList->destinationObj;
       if (NULL!= destinationObj){
         if (destinationObj->isEqual(profile, sHost, sPort)){
           if (!destinationObj->isMarkedToBeRemoved()){
-            actualElement = linkList; // remember the actual entry
             bFound = true;
           }
           else{
@@ -473,15 +472,13 @@ int tmlCollectCallDestinationObjHandler::unsubscribeMessageDestination(TMLUniver
   * @brief    Unsubscribe all destinations for the provided profile / event.
   */
 int tmlCollectCallDestinationObjHandler::unsubscribeAllEventMessageDestinations(const char* profile){
-  TML_INT32 iRet = TML_SUCCESS;
-
   SIDEX_VARIANT subscriptions = SIDEX_HANDLE_TYPE_NULL;
 
   enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionCount, "tmlCollectCallDestinationObjHandler", "unsubscribeAllMessageDestinations", "Vortex CMD", "vortex_mutex_lock");
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Begin of critical section / a send command may not be possible during this method execution :
 
-  iRet = (TML_INT32) GetSubscribedEventMessageDestinations(profile, &subscriptions, false);
+  TML_INT32 iRet = (TML_INT32) GetSubscribedEventMessageDestinations(profile, &subscriptions, false);
   if (TML_SUCCESS == iRet && SIDEX_HANDLE_TYPE_NULL != subscriptions){
     TML_INT32 iRows;
     iRet = sidex_Variant_Table_Rows (subscriptions, &iRows);
@@ -530,15 +527,13 @@ int tmlCollectCallDestinationObjHandler::unsubscribeAllEventMessageDestinations(
   * @brief    Unsubscribe all destinations for the provided profile / load balanced.
   */
 int tmlCollectCallDestinationObjHandler::unsubscribeAllLoadBalancedMessageDestinations(const char* profile){
-  TML_INT32 iRet = TML_SUCCESS;
-
   SIDEX_VARIANT subscriptions = SIDEX_HANDLE_TYPE_NULL;
 
   enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionCount, "tmlCollectCallDestinationObjHandler", "unsubscribeAllMessageDestinations", "Vortex CMD", "vortex_mutex_lock");
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Begin of critical section / a send command may not be possible during this method execution :
 
-  iRet = (TML_INT32) GetSubscribedLoadBalancedMessageDestinations(profile, &subscriptions, false);
+  TML_INT32 iRet = (TML_INT32) GetSubscribedLoadBalancedMessageDestinations(profile, &subscriptions, false);
   if (TML_SUCCESS == iRet && SIDEX_HANDLE_TYPE_NULL != subscriptions){
     TML_INT32 iRows;
     iRet = sidex_Variant_Table_Rows (subscriptions, &iRows);
@@ -636,7 +631,7 @@ void tmlCollectCallDestinationObjHandler::freeMessageHandlingHashTable(TMLUniver
       }
       /////////////////////////////////
       // Now I have to free the memory:
-      delete (sKeys);
+      delete sKeys;
     }
   }
   delete (hashTable);
@@ -712,7 +707,7 @@ bool tmlCollectCallDestinationObjHandler::waitForPendingEventMessagesProfileInde
         }
         /////////////////////////////////
         // Now I have to free the memory:
-        delete (sKeys);
+        delete sKeys;
       }
     }
 
@@ -1014,7 +1009,7 @@ int tmlCollectCallDestinationObjHandler::GetSubscribedMessageDestinations(TMLUni
     for (int i = 0; i < iProfiles; ++i){
       delete (sProfiles[i]);
     }
-    delete (sProfiles);
+    delete sProfiles;
   }
   if (TML_SUCCESS == iRet){
     *subscriptions = sTable;
@@ -1233,11 +1228,11 @@ int tmlCollectCallDestinationObjHandler::getLoadBalancedRegisteredPopulateCallba
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Begin of critical section / a send command may not be possible during this method execution :
 
-  tmlDestinationAddressHandlingHashValue* hashValue;
   void* hashItem;
 
   m_loadBalancedDestinationAddressHashTable->getValue((char*)profile, &hashItem);
   if (NULL != hashItem){
+    tmlDestinationAddressHandlingHashValue* hashValue;
     //////////////////////////////////////////////
     // entry exists in the hashtable:
     hashValue = (tmlDestinationAddressHandlingHashValue*) hashItem;
@@ -1309,11 +1304,11 @@ int tmlCollectCallDestinationObjHandler::getEventRegisteredPopulateCallback(cons
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Begin of critical section / a send command may not be possible during this method execution :
 
-  tmlDestinationAddressHandlingHashValue* hashValue;
   void* hashItem;
 
   m_eventDestinationAddressHashTable->getValue((char*)profile, &hashItem);
   if (NULL != hashItem){
+    tmlDestinationAddressHandlingHashValue* hashValue;
     //////////////////////////////////////////////
     // entry exists in the hashtable:
     hashValue = (tmlDestinationAddressHandlingHashValue*) hashItem;
@@ -1380,7 +1375,6 @@ int tmlCollectCallDestinationObjHandler::loadBalancedRegisterOnPeerCallback(cons
 int tmlCollectCallDestinationObjHandler::getRegisteredLoadBalancedOnPeerCallback(const char* profile, TML_ON_PEER_REGISTRATION_CB_FUNC* pCBFunc,TML_POINTER* pCBData, tmlUnicodeID* iUnicode){
   int iRet = TML_SUCCESS;
 
-  tmlDestinationAddressHandlingHashValue* hashValue;
   void* hashItem;
 
   enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionCount, "tmlCollectCallDestinationObjHandler", "getRegisteredOnPeerCallback", "Vortex CMD", "vortex_mutex_lock");
@@ -1389,6 +1383,7 @@ int tmlCollectCallDestinationObjHandler::getRegisteredLoadBalancedOnPeerCallback
 
   m_loadBalancedDestinationAddressHashTable->getValue((char*)profile, &hashItem);
   if (NULL != hashItem){
+    tmlDestinationAddressHandlingHashValue* hashValue;
     //////////////////////////////////////////////
     // entry exists in the hashtable:
     hashValue = (tmlDestinationAddressHandlingHashValue*) hashItem;
@@ -1455,7 +1450,6 @@ int tmlCollectCallDestinationObjHandler::eventRegisterOnPeerCallback(const char*
 int tmlCollectCallDestinationObjHandler::getRegisteredEventOnPeerCallback(const char* profile, TML_ON_PEER_REGISTRATION_CB_FUNC* pCBFunc,TML_POINTER* pCBData, tmlUnicodeID* iUnicode){
   int iRet = TML_SUCCESS;
 
-  tmlDestinationAddressHandlingHashValue* hashValue;
   void* hashItem;
 
   enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionCount, "tmlCollectCallDestinationObjHandler", "getRegisteredOnPeerCallback", "Vortex CMD", "vortex_mutex_lock");
@@ -1464,6 +1458,7 @@ int tmlCollectCallDestinationObjHandler::getRegisteredEventOnPeerCallback(const 
 
   m_eventDestinationAddressHashTable->getValue((char*)profile, &hashItem);
   if (NULL != hashItem){
+    tmlDestinationAddressHandlingHashValue* hashValue;
     //////////////////////////////////////////////
     // entry exists in the hashtable:
     hashValue = (tmlDestinationAddressHandlingHashValue*) hashItem;
@@ -1531,7 +1526,6 @@ int tmlCollectCallDestinationObjHandler::loadBalancedRegisterBusyStatusCallback(
 int tmlCollectCallDestinationObjHandler::getRegisteredBusyStatusCallback(const char* profile, TML_ON_BAL_BUSYSTATUS_REQ_CB_FUNC* pCBFunc, TML_POINTER* pCBData){
   int iRet = TML_SUCCESS;
 
-  tmlDestinationAddressHandlingHashValue* hashValue;
   void* hashItem;
 
   enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionCount, "tmlCollectCallDestinationObjHandler", "getRegisteredBusyStatusCallback", "Vortex CMD", "vortex_mutex_lock");
@@ -1540,6 +1534,7 @@ int tmlCollectCallDestinationObjHandler::getRegisteredBusyStatusCallback(const c
 
   m_loadBalancedDestinationAddressHashTable->getValue((char*)profile, &hashItem);
   if (NULL != hashItem){
+    tmlDestinationAddressHandlingHashValue* hashValue;
     //////////////////////////////////////////////
     // entry exists in the hashtable:
     hashValue = (tmlDestinationAddressHandlingHashValue*) hashItem;
@@ -1615,7 +1610,6 @@ int tmlCollectCallDestinationObjHandler::registerLoadBalanceCalculator(const cha
 int tmlCollectCallDestinationObjHandler::getRegisteredLoadBalanceCalculator(const char* profile, TML_ON_BAL_CALCULATION_REQ_CB_FUNC* pCBFunc, TML_POINTER* pCBData){
   int iRet = TML_SUCCESS;
 
-  tmlDestinationAddressHandlingHashValue* hashValue;
   void* hashItem;
 
   enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionCount, "tmlCollectCallDestinationObjHandler", "getRegisteredLoadBalanceCalculator", "Vortex CMD", "vortex_mutex_lock");
@@ -1624,6 +1618,7 @@ int tmlCollectCallDestinationObjHandler::getRegisteredLoadBalanceCalculator(cons
 
   m_loadBalancedDestinationAddressHashTable->getValue((char*)profile, &hashItem);
   if (NULL != hashItem){
+    tmlDestinationAddressHandlingHashValue* hashValue;
     //////////////////////////////////////////////
     // entry exists in the hashtable:
     hashValue = (tmlDestinationAddressHandlingHashValue*) hashItem;
@@ -1752,7 +1747,6 @@ int tmlCollectCallDestinationObjHandler::loadBalancedDeregisterAll(){
  */
 int tmlCollectCallDestinationObjHandler::deregisterAll(TMLUniversalHashTable* hashTable)
 {
-  int iRet = TML_SUCCESS;
   void* hashItem;
 
   enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionCount, "tmlCollectCallDestinationObjHandler", "eventRegisterCallbackOnQueueOverflow", "Vortex CMD", "vortex_mutex_lock");
@@ -1764,7 +1758,7 @@ int tmlCollectCallDestinationObjHandler::deregisterAll(TMLUniversalHashTable* ha
 
   ///////////////////////////////////////////
   // Event message handling hash table:
-  iRet = hashTable->getKeys(&sKeys);
+  int iRet = hashTable->getKeys(&sKeys);
   if (TML_SUCCESS == iRet){
     if (NULL != sKeys){
       int iSize;
@@ -1794,7 +1788,7 @@ int tmlCollectCallDestinationObjHandler::deregisterAll(TMLUniversalHashTable* ha
         }
       }
     }
-    delete (sKeys);
+    delete sKeys;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////
@@ -1890,7 +1884,6 @@ int tmlCollectCallDestinationObjHandler::skipNextLoadBalancedDestination(const c
 
   int iRet = TML_SUCCESS;
 
-  tmlDestinationAddressHandlingHashValue* hashValue;
   void* hashItem;
 
   enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionCount, "tmlCollectCallDestinationObjHandler", "skipNextLoadBalancedDestination", "Vortex CMD", "vortex_mutex_lock");
@@ -1899,6 +1892,7 @@ int tmlCollectCallDestinationObjHandler::skipNextLoadBalancedDestination(const c
 
   m_loadBalancedDestinationAddressHashTable->getValue((char*)profile, &hashItem);
   if (NULL != hashItem){
+    tmlDestinationAddressHandlingHashValue* hashValue;
     //////////////////////////////////////////////
     // a link list entry exists in the hashtable:
     hashValue = (tmlDestinationAddressHandlingHashValue*) hashItem;
@@ -1971,9 +1965,8 @@ void tmlCollectCallDestinationObjHandler::unregisterFailedEventConnectionDestina
   // Begin of critical section / a send command may not be possible during this method execution :
 
   if (iMaxFail){
-    int iRet = TML_SUCCESS;
     int iDestinations = 0;
-    iRet = getSubscribedEventDestinationCount(profile, &iDestinations, false);
+    int iRet = getSubscribedEventDestinationCount(profile, &iDestinations, false);
     if (TML_SUCCESS == iRet){
       tmlDestinationAddressHandlingHashValue* hashValue;
       void* hashItem;
@@ -2017,9 +2010,8 @@ void tmlCollectCallDestinationObjHandler::unregisterFailedLoadBalancedConnection
   // Begin of critical section / a send command may not be possible during this method execution :
 
   if (iMaxFail){
-    int iRet = TML_SUCCESS;
     int iDestinations = 0;
-    iRet = getSubscribedLoadBalancedDestinationCount(profile, &iDestinations, false);
+    int iRet = getSubscribedLoadBalancedDestinationCount(profile, &iDestinations, false);
     if (TML_SUCCESS == iRet){
       tmlDestinationAddressHandlingHashValue* hashValue;
       void* hashItem;
@@ -2057,9 +2049,8 @@ void tmlCollectCallDestinationObjHandler::unregisterFailedLoadBalancedConnection
  */
 axl_bool tmlCollectCallDestinationObjHandler::createCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
-  axl_bool bSuccess = axl_true;
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  bSuccess = intern_mutex_create (mutex);
+  axl_bool bSuccess = intern_mutex_create (mutex);
   return bSuccess;
 }
 
@@ -2069,9 +2060,8 @@ axl_bool tmlCollectCallDestinationObjHandler::createCriticalSectionObject(int iL
  */
 axl_bool tmlCollectCallDestinationObjHandler::destroyCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
-  axl_bool bSuccess = axl_true;
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  bSuccess = intern_mutex_destroy (mutex, (char*)"tmlCollectCallDestinationObjHandler::destroyCriticalSectionObject");
+  axl_bool bSuccess = intern_mutex_destroy (mutex, (char*)"tmlCollectCallDestinationObjHandler::destroyCriticalSectionObject");
   return bSuccess;
 }
 
@@ -2083,18 +2073,8 @@ void tmlCollectCallDestinationObjHandler::enterCriticalSection(int iLogMask, Vor
 {
   //printf ("#####   tmlCollectCallDestinationObjHandler / enterCriticalSection   #####\n");
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-    intern_mutex_lock (mutex, m_log, sMethod);
-    return;
-  m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  if (0 == *iLockCount){
-    intern_mutex_lock (mutex, m_log, sMethod);
-    *iLockCount +=1;
-  }
-  else{
-    printf ("##########################################################\n");
-    printf ("#    enterCriticalSection / iLockCount = %d   ###\n", *iLockCount);
-    printf ("##########################################################\n");
-  }
+  intern_mutex_lock (mutex, m_log, sMethod);
+  return;
 }
 
 
@@ -2105,11 +2085,6 @@ void tmlCollectCallDestinationObjHandler::leaveCriticalSection(int iLogMask, Vor
 {
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
   //printf ("#####   tmlCollectCallDestinationObjHandler / leaveCriticalSection   #####\n");
-    intern_mutex_unlock (mutex, m_log, sMethod);
-    return;
-  m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  if (1 == *iLockCount){
-    intern_mutex_unlock (mutex, m_log, sMethod);
-    *iLockCount -=1;
-  }
+  intern_mutex_unlock (mutex, m_log, sMethod);
+  return;
 }

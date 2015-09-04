@@ -100,15 +100,15 @@ sidexHashTable::~sidexHashTable()
         /////////////////////////////////////////////////////////////
         // Hashtable allocated internal memory for key / stringcompare:
         if (NULL != m_data[i].key){
-          delete (m_data[i].key);
+          delete[] m_data[i].key;
           m_data[i].key = NULL;
         }
         if (NULL != m_data[i].xkey){
-          delete (m_data[i].xkey);
+          delete m_data[i].xkey;
           m_data[i].xkey = NULL;
         }
         if (NULL != m_data[i].wkey){
-          delete (m_data[i].wkey);
+          delete m_data[i].wkey;
           m_data[i].wkey = NULL;
         }
       }
@@ -120,15 +120,15 @@ sidexHashTable::~sidexHashTable()
         /////////////////////////////////////////////////////////////
         // Hashtable allocated internal memory for key / stringcompare:
         if (NULL != m_data[i].key){
-          delete (m_data[i].key);
+          delete[]  m_data[i].key;
           m_data[i].key = NULL;
         }
         if (NULL != m_data[i].xkey){
-          delete (m_data[i].xkey);
+          delete m_data[i].xkey;
           m_data[i].xkey = NULL;
         }
         if (NULL != m_data[i].wkey){
-          delete (m_data[i].wkey);
+          delete m_data[i].wkey;
           m_data[i].wkey = NULL;
         }
       }
@@ -138,7 +138,7 @@ sidexHashTable::~sidexHashTable()
   m_NumOfEntries = 0;
 
   if (NULL != m_data){
-	  delete (m_data);
+	  delete[] m_data;
     m_data = NULL;
   }
 }
@@ -150,9 +150,10 @@ sidexHashTable::~sidexHashTable()
 int sidexHashTable::getValue(char *key, SIDEX_VARIANT* variant)
 {
   int iRet = SIDEX_ERR_NOCONTENT;
-  long nKey;
 
   try{
+    long nKey;
+
     // The hash- Value:
 	  nKey = createHash(m_tableSize, key);
 		if (m_data[nKey].used)
@@ -236,9 +237,10 @@ int sidexHashTable::setValue(char *key, SIDEX_VARIANT value)
 int sidexHashTable::setValue(char *key, SIDEX_VARIANT value, SIDEX_INT32* numOfEntries)
 {
   int iRet = SIDEX_SUCCESS;
-  long nKey;
 
   try{
+    long nKey;
+
     // The hash- Value:
 	  nKey = createHash(m_tableSize, key);
 		if (m_data[nKey].used)
@@ -325,9 +327,10 @@ int sidexHashTable::setValue(char *key, SIDEX_VARIANT value, SIDEX_INT32* numOfE
  */
  int sidexHashTable::removeEntry(char *key, SIDEX_INT32* numOfEntries){
   int iRet = SIDEX_ERR_NOCONTENT;
-  long nKey;
 
   try{
+    long nKey;
+
     // The hash- Value:
 	  nKey = createHash(m_tableSize, key);
 		if (m_data[nKey].used)
@@ -351,15 +354,15 @@ int sidexHashTable::setValue(char *key, SIDEX_VARIANT value, SIDEX_INT32* numOfE
             /////////////////////////////////////////////////////////////
             // Hashtable allocated internal memory for key / stringcompare:
             if (NULL != m_data[nKey].key){
-              delete (m_data[nKey].key);
+              delete[] m_data[nKey].key;
               m_data[nKey].key = NULL;
             }
             if (NULL != m_data[nKey].xkey){
-              delete (m_data[nKey].xkey);
+              delete m_data[nKey].xkey;
               m_data[nKey].xkey = NULL;
             }
             if (NULL != m_data[nKey].wkey){
-              delete (m_data[nKey].wkey);
+              delete m_data[nKey].wkey;
               m_data[nKey].wkey = NULL;
             }
             iRet = SIDEX_SUCCESS;
@@ -486,14 +489,12 @@ int sidexHashTable::next_A(char** sKey, SIDEX_VARIANT* variant)
   int iRet = SIDEX_SUCCESS;
   SIDEX_VARIANT value = SIDEX_HANDLE_TYPE_NULL;
 
-  bool bFound = false;
-
   if (0 > m_walkerIndex){
     *variant = SIDEX_HANDLE_TYPE_NULL;
     iRet = SIDEX_ERR_FIRST_NEXT;
   }
   else{
-    bFound = getNextVariant_A(sKey, &value);
+    bool bFound = getNextVariant_A(sKey, &value);
     if (!bFound){
       *variant = SIDEX_HANDLE_TYPE_NULL;
       iRet = SIDEX_ERR_NOCONTENT;
@@ -514,14 +515,12 @@ int sidexHashTable::next_X(wchar_t** sKey, SIDEX_VARIANT* variant)
   int iRet = SIDEX_SUCCESS;
   SIDEX_VARIANT value = SIDEX_HANDLE_TYPE_NULL;
 
-  bool bFound = false;
-
   if (0 > m_walkerIndex){
     *variant = SIDEX_HANDLE_TYPE_NULL;
     iRet = SIDEX_ERR_FIRST_NEXT;
   }
   else{
-    bFound = getNextVariant_X(sKey, &value);
+    bool bFound = getNextVariant_X(sKey, &value);
     if (!bFound){
       *variant = SIDEX_HANDLE_TYPE_NULL;
       iRet = SIDEX_ERR_NOCONTENT;
@@ -542,14 +541,12 @@ int sidexHashTable::next_W(char16_t** sKey, SIDEX_VARIANT* variant)
   int iRet = SIDEX_SUCCESS;
   SIDEX_VARIANT value = SIDEX_HANDLE_TYPE_NULL;
 
-  bool bFound = false;
-
   if (0 > m_walkerIndex){
     *variant = SIDEX_HANDLE_TYPE_NULL;
     iRet = SIDEX_ERR_FIRST_NEXT;
   }
   else{
-    bFound = getNextVariant_W(sKey, &value);
+    bool bFound = getNextVariant_W(sKey, &value);
     if (!bFound){
       *variant = SIDEX_HANDLE_TYPE_NULL;
       iRet = SIDEX_ERR_NOCONTENT;

@@ -182,7 +182,7 @@ public:
      *
      * @returns an instance of tmlCoreWrapper
      */
-    tmlDestinationAddressHandlingHashValue(const char* profile);
+    explicit tmlDestinationAddressHandlingHashValue(const char* profile);
 
 
     /**

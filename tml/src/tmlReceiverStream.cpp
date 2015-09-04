@@ -52,10 +52,8 @@
  */
 int getLastErrorInternCB(comParamStruct* cp)
 {
-  int iRet = TML_SUCCESS;
-
   tmlObjWrapper* command = new tmlObjWrapper();
-  iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_STREAM_GET_LAST_ERR);
+  int iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_STREAM_GET_LAST_ERR);
   ///////////////////////////////////////////////
   // Acquire critical section use: 
   SIDEX_HANDLE sHandle;
@@ -104,10 +102,8 @@ int getLastErrorInternCB(comParamStruct* cp)
  * @brief    Cancel a download stream operation.
  */
 int cancelDownload(comParamStruct* cp){
-  int iRet = TML_SUCCESS;
-
   tmlObjWrapper* command = new tmlObjWrapper();
-  iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_STREAM_CANCEL_DOWNLOAD);
+  int iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_STREAM_CANCEL_DOWNLOAD);
   ///////////////////////////////////////////////
   // Acquire critical section use: 
   SIDEX_HANDLE sHandle;
@@ -135,14 +131,12 @@ int cancelDownload(comParamStruct* cp){
  * @brief  callback method for the end of a download
  */
 void FUNC_C_DECL downloadReadyReturnMethod(TML_COMMAND_HANDLE tmlHandle, TML_POINTER data){
-  TML_INT32 iRet = TML_ERR_STREAM_READ_FAILED;
-
   comParamStruct* cp = (comParamStruct*) data;
   tmlObjWrapper* command = (tmlObjWrapper*) tmlHandle;
 
   ////////////////////////////////////////////
   // Maybe someone has called the exit /close:
-  iRet = ((tmlCoreWrapper*)cp->coreHandle)->tmlCoreWrapper_IsAccessible();
+  TML_INT32 iRet = ((tmlCoreWrapper*)cp->coreHandle)->tmlCoreWrapper_IsAccessible();
   if (TML_SUCCESS == iRet){
     cp->log->log (TML_LOG_STREAM_HANDLING, "tmlReceiverStream", "downloadReadyReturnMethod", "CMD_INTERNAL_STREAM_DOWNLOAD finished", cp->iStreamID);
     ////////////// NO LAST ERROR //////////////
@@ -255,6 +249,7 @@ tmlReceiverStream::tmlReceiverStream(TML_CORE_HANDLE coreHandle, tmlCollectCall*
   m_log = loghandler;
   m_iLastErr = TML_SUCCESS;
   m_bOpenState = CLOSED;
+  m_cp = NULL;
 }
 
 
@@ -306,7 +301,7 @@ int tmlReceiverStream::open(TML_STREAM_ID_TYPE iStreamID, const char* sPort, con
           /////////////////////////////
           // Profile:
           if (NULL != m_sProfile)
-            delete (m_sProfile);
+            delete[] m_sProfile;
           iSize = (int)strlen(profile)+1;
           m_sProfile = new char[iSize];
       #if defined (LINUX) || defined (MINGW_BUILD)
@@ -317,7 +312,7 @@ int tmlReceiverStream::open(TML_STREAM_ID_TYPE iStreamID, const char* sPort, con
           /////////////////////////////
           // Host:
           if (NULL != m_sHost)
-            delete (m_sHost);
+            delete[] m_sHost;
           iSize = (int)strlen(sHost)+1;
           m_sHost = new char[iSize];
       #if defined (LINUX) || defined (MINGW_BUILD)
@@ -328,7 +323,7 @@ int tmlReceiverStream::open(TML_STREAM_ID_TYPE iStreamID, const char* sPort, con
           /////////////////////////////
           // Port:
           if (NULL != m_sPort)
-            delete (m_sPort);
+            delete[] m_sPort;
           iSize = (int)strlen(sPort)+1;
           m_sPort = new char[iSize];
       #if defined (LINUX) || defined (MINGW_BUILD)
@@ -343,7 +338,7 @@ int tmlReceiverStream::open(TML_STREAM_ID_TYPE iStreamID, const char* sPort, con
           /////////////////////////////
           // Key:
           if (NULL != m_sKey)
-            delete (m_sKey);
+            delete[] m_sKey;
           iSize = (int)strlen(profile) + (int)strlen(sHost) + (int)strlen (sPort) + 32 + 3 + 1;
           m_sKey = new char[iSize];
       #if defined (LINUX) || defined (MINGW_BUILD)
@@ -417,14 +412,13 @@ void tmlReceiverStream::getID(TML_STREAM_ID_TYPE* iID){
  * @brief    Helper method resets all parameter.
  */
 void tmlReceiverStream::reset(bool bSendCancel){
-  TML_INT32 iRet = TML_ERR_STREAM_INVALID_IDENTIFIER;
 
   if (CLOSED != m_bOpenState && bSendCancel){
     m_bOpenState = CLOSED;
     ////////////////////////////////////////////////////////
     // Inform the sender stream that I'm closing:
     tmlObjWrapper* command = new tmlObjWrapper();
-    iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_STREAM_CLOSE);
+    TML_INT32 iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_STREAM_CLOSE);
     ///////////////////////////////////////////////
     // Acquire critical section use: 
     SIDEX_HANDLE sHandle;
@@ -448,17 +442,17 @@ void tmlReceiverStream::reset(bool bSendCancel){
     delete (command);
   }
   if (NULL != m_sProfile)
-    delete (m_sProfile);
+    delete[] m_sProfile;
   m_sProfile = NULL;
   if (NULL != m_sHost)
-    delete (m_sHost);
+    delete[] m_sHost;
   m_sHost = NULL;
   if (NULL != m_sPort)
-    delete (m_sPort);
+    delete[] m_sPort;
   m_sPort = NULL;
 
   if (NULL != m_sKey)
-    delete (m_sKey);
+    delete[] m_sKey;
   m_sKey = NULL;
 
   m_iStreamID = 0;

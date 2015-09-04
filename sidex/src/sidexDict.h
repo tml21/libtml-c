@@ -67,7 +67,7 @@ public:
      *
      * @returns an instance of sidexDict.
      */
-    sidexDict(long dictSize);
+    explicit  sidexDict(long dictSize);
 
     
     /**

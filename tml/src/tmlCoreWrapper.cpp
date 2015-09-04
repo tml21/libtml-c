@@ -734,8 +734,8 @@ int tmlCoreWrapper::rawCmdDispatch(TML_COMMAND_HANDLE tmlhandle, SIDEX_HANDLE sH
               // Init download & get the size:
               iRet = m_streamHandler->handle_readPreparation(sHandle, &iStreamID);
               VortexPayloadFeeder* feeder = NULL;
-              VortexPayloadStreamFeederData* data = NULL;
               if (TML_SUCCESS == iRet){
+                VortexPayloadStreamFeederData* data = NULL;
                 ////////////////////////////////////////
                 // Communication data struct:
                 data = new VortexPayloadStreamFeederData;
@@ -897,17 +897,17 @@ vortex_ctx_unref (&m_ctx);
   
   ////////////////////////////////
   // attributes:
-  delete (m_sListenerIP);
+  delete m_sListenerIP;
   m_sListenerIP = NULL;
-  delete (m_sListenerIP_w);
+  delete m_sListenerIP_w;
   m_sListenerIP_w = NULL;
-  delete (m_sListenerIP_x);
+  delete m_sListenerIP_x;
   m_sListenerIP_x = NULL;
-  delete (m_sListenerPort);
+  delete m_sListenerPort;
   m_sListenerPort = NULL;
-  delete (m_sListenerPort_w);
+  delete m_sListenerPort_w;
   m_sListenerPort_w = NULL;
-  delete (m_sListenerPort_x);
+  delete m_sListenerPort_x;
   m_sListenerPort_x = NULL;
 
   ////////////////////////////////
@@ -1060,7 +1060,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Get_Registered_Profiles(SIDEX_VARIANT* profil
       if (NULL != retProfiles)
         ////////////////////////////////////////
         // Free memory allocated for keys array
-        delete (retProfiles);
+        delete retProfiles;
     }
     else{
       iRet = TML_ERR_NOPROFILES;
@@ -1092,7 +1092,7 @@ void tmlCoreWrapper::unregisterAll_Registered_Profiles()
       if (NULL != retProfiles)
         ////////////////////////////////////////
         // Free memory allocated for keys array
-        delete (retProfiles);
+        delete retProfiles;
     }
   }
 }
@@ -1118,7 +1118,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Is_Profile_Registered(char* profile, bool* bR
         }
       }
       if (NULL != retProfiles)
-        delete (retProfiles);
+        delete retProfiles;
     }
     else{
       // Nothing to do in case of no registered profile
@@ -1210,9 +1210,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerPort_A(char* sPort){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete (m_sListenerPort);
-    delete (m_sListenerPort_w);
-    delete (m_sListenerPort_x);
+    delete  m_sListenerPort;
+    delete  m_sListenerPort_w;
+    delete  m_sListenerPort_x;
     m_sListenerPort_x = UTF8toUTF32(sPort, &iLength);
     m_sListenerPort = UTF32toUTF8(m_sListenerPort_x, &iLength);
     m_sListenerPort_w = (char16_t*)UTF8toUTF16(m_sListenerPort, &iLength);
@@ -1233,9 +1233,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerPort_X(wchar_t* sPort){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete (m_sListenerPort);
-    delete (m_sListenerPort_w);
-    delete (m_sListenerPort_x);
+    delete  m_sListenerPort;
+    delete  m_sListenerPort_w;
+    delete  m_sListenerPort_x;
     m_sListenerPort = UTF32toUTF8(sPort, &iLength);
     m_sListenerPort_w = (char16_t*)UTF8toUTF16(m_sListenerPort, &iLength);
     m_sListenerPort_x = UTF8toUTF32(m_sListenerPort, &iLength);
@@ -1256,9 +1256,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerPort_W(char16_t* sPort){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete (m_sListenerPort);
-    delete (m_sListenerPort_w);
-    delete (m_sListenerPort_x);
+    delete  m_sListenerPort;
+    delete  m_sListenerPort_w;
+    delete  m_sListenerPort_x;
     m_sListenerPort = UTF16toUTF8((wchar_t*)sPort, &iLength);
     m_sListenerPort_w = (char16_t*)UTF8toUTF16(m_sListenerPort, &iLength);
     m_sListenerPort_x = UTF8toUTF32(m_sListenerPort, &iLength);
@@ -1312,9 +1312,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerIP_A(char* sIP){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete (m_sListenerIP);
-    delete (m_sListenerIP_w);
-    delete (m_sListenerIP_x);
+    delete m_sListenerIP;
+    delete m_sListenerIP_w;
+    delete m_sListenerIP_x;
     m_sListenerIP_x = UTF8toUTF32(sIP, &iLength);
     m_sListenerIP = UTF32toUTF8(m_sListenerIP_x, &iLength);
     m_sListenerIP_w = (char16_t*)UTF8toUTF16(m_sListenerIP, &iLength);
@@ -1336,9 +1336,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerIP_X(wchar_t* sIP){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete (m_sListenerIP);
-    delete (m_sListenerIP_w);
-    delete (m_sListenerIP_x);
+    delete m_sListenerIP;
+    delete m_sListenerIP_w;
+    delete m_sListenerIP_x;
     m_sListenerIP = UTF32toUTF8(sIP, &iLength);
     m_sListenerIP_w = (char16_t*)UTF8toUTF16(m_sListenerIP, &iLength);
     m_sListenerIP_x = UTF8toUTF32(m_sListenerIP, &iLength);
@@ -1360,9 +1360,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerIP_W(char16_t* sIP){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete (m_sListenerIP);
-    delete (m_sListenerIP_w);
-    delete (m_sListenerIP_x);
+    delete m_sListenerIP;
+    delete m_sListenerIP_w;
+    delete m_sListenerIP_x;
     m_sListenerIP = UTF16toUTF8((wchar_t*)sIP, &iLength);
     m_sListenerIP_w = (char16_t*)UTF8toUTF16(m_sListenerIP, &iLength);
     m_sListenerIP_x = UTF8toUTF32(m_sListenerIP, &iLength);
@@ -1449,7 +1449,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Enable_Listener(bool bEnable){
               m_CoreListener->TMLCoreListener_RegisterProfile(retProfiles[i], (TML_CORE_HANDLE)this);
               delete (retProfiles[i]);
             }
-            delete (retProfiles);
+            delete retProfiles;
           }
         }
       }

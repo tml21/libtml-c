@@ -223,7 +223,7 @@ int tmlEventCallHandler::allocEventMessageThreadEventArray(const char*** asyncTh
     }
     ////////////////////////////////////////////////////////////////////////////
     // Free sync event array to handle send message:
-    delete (evtArr);
+    delete[] evtArr;
     *senderSyncEventArray = NULL;
   }
 }

@@ -62,6 +62,8 @@ tmlSenderStream::tmlSenderStream()
   m_pCBFuncOnError = NULL;
   m_pCBDataOnError = NULL;
 
+  m_feeder = NULL;
+
   // Connection parameter:  
   m_sProfile = NULL;
   m_sHost = NULL;
@@ -162,7 +164,7 @@ int tmlSenderStream::open(TML_STREAM_ID_TYPE* iStreamID, const char* sPort, cons
     /////////////////////////////
     // Profile:
     if (NULL != m_sProfile)
-      delete (m_sProfile);
+      delete[] m_sProfile;
     iSize = (int)strlen(profile)+1;
     m_sProfile = new char[iSize];
 #if defined (LINUX) || defined (MINGW_BUILD)
@@ -173,7 +175,7 @@ int tmlSenderStream::open(TML_STREAM_ID_TYPE* iStreamID, const char* sPort, cons
     /////////////////////////////
     // Host:
     if (NULL != m_sHost)
-      delete (m_sHost);
+      delete[] m_sHost;
     iSize = (int)strlen(sHost)+1;
     m_sHost = new char[iSize];
 #if defined (LINUX) || defined (MINGW_BUILD)
@@ -184,7 +186,7 @@ int tmlSenderStream::open(TML_STREAM_ID_TYPE* iStreamID, const char* sPort, cons
     /////////////////////////////
     // Port:
     if (NULL != m_sPort)
-      delete (m_sPort);
+      delete[] m_sPort;
     iSize = (int)strlen(sPort)+1;
     m_sPort = new char[iSize];
 #if defined (LINUX) || defined (MINGW_BUILD)
@@ -219,7 +221,7 @@ int tmlSenderStream::open(TML_STREAM_ID_TYPE* iStreamID, const char* sPort, cons
     /////////////////////////////
     // Key:
     if (NULL != m_sKey)
-      delete (m_sKey);
+      delete[] m_sKey;
     iSize = (int)strlen(profile) + (int)strlen(sHost) + (int)strlen (sPort) + 32 + 3 + 1;
     m_sKey = new char[iSize];
 #if defined (LINUX) || defined (MINGW_BUILD)
@@ -316,17 +318,17 @@ void tmlSenderStream::reset(){
   m_pCBDataOnError = NULL;
 
   if (NULL != m_sProfile)
-    delete (m_sProfile);
+    delete[] m_sProfile;
   m_sProfile = NULL;
   if (NULL != m_sHost)
-    delete (m_sHost);
+    delete[] m_sHost;
   m_sHost = NULL;
   if (NULL != m_sPort)
-    delete (m_sPort);
+    delete[] m_sPort;
   m_sPort = NULL;
 
   if (NULL != m_sKey)
-    delete (m_sKey);
+    delete[] m_sKey;
   m_sKey = NULL;
 
   m_iStreamID = 0;

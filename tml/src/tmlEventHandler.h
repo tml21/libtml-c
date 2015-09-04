@@ -105,7 +105,7 @@ public:
      *
      * @returns an instance of tmlEventHandler
      */
-    tmlEventHandler(tmlLogHandler* log);
+    explicit tmlEventHandler(tmlLogHandler* log);
 
 
     /**

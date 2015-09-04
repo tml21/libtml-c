@@ -248,7 +248,7 @@ public:
      *
      * @returns an instance of sidexLogHandler
      */
-    sidexLogHandler(char* mode);
+    explicit sidexLogHandler(char* mode);
 
 
     /**

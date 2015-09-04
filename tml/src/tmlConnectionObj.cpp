@@ -50,6 +50,7 @@ tmlConnectionObj::tmlConnectionObj(tmlLogHandler* loghandler)
   m_bLocked = false;
   m_bRawViaVortexPayloadFeeder = false;
   m_log = loghandler;
+  m_bPendingToBeRemoved = false;
   ////////////////////////////////////////////////////////////////////////////
   // create the mutex that protect critial section about communication data:
   createCriticalSectionObject(TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, "tmlConnectionObj", "tmlConnectionObj", "Vortex CMD", "vortex_mutex_create");
@@ -368,9 +369,8 @@ bool tmlConnectionObj::isEqual(const char* profile, const char* sHost, const cha
  */
 axl_bool tmlConnectionObj::createCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
-  axl_bool bSuccess = axl_true;
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  bSuccess = vortex_mutex_create (mutex);
+  axl_bool bSuccess = vortex_mutex_create (mutex);
   return bSuccess;
 }
 
@@ -380,9 +380,8 @@ axl_bool tmlConnectionObj::createCriticalSectionObject(int iLogMask, VortexMutex
  */
 axl_bool tmlConnectionObj::destroyCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
-  axl_bool bSuccess = axl_true;
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  bSuccess = vortex_mutex_destroy (mutex);
+  axl_bool bSuccess = vortex_mutex_destroy (mutex);
   return bSuccess;
 }
 

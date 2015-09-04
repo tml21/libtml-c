@@ -59,7 +59,7 @@ public:
      *
      * @returns an instance of tmlEventData.
      */
-    tmlEventData(TML_COMMAND_HANDLE eValue);
+    explicit tmlEventData(TML_COMMAND_HANDLE eValue);
 
 
     /**

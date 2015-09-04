@@ -55,10 +55,12 @@
 TMLUniversalHashTable::TMLUniversalHashTable()
 {
   m_hash = SIDEX_HANDLE_TYPE_NULL;
+  m_bHashIsString = true;
 }
  
 TMLUniversalHashTable::TMLUniversalHashTable(tmlLogHandler* log){
   m_hash = SIDEX_HANDLE_TYPE_NULL;
+  m_bHashIsString = true;
 }
 
 /**
@@ -77,7 +79,7 @@ TMLUniversalHashTable::~TMLUniversalHashTable()
           iRet = removeEntry(sKeys[i]);
           delete sKeys[i];
         }
-        delete sKeys;
+        delete[] sKeys;
       }
       else{
         SIDEX_INT64* iKeys;
@@ -85,7 +87,7 @@ TMLUniversalHashTable::~TMLUniversalHashTable()
         for (SIDEX_INT32 i = 0; i < iSize && SIDEX_SUCCESS == iRet; ++i){
           iRet = removeEntry(iKeys[i]);
         }
-        delete iKeys;
+        delete[] iKeys;
       }
     }
 
