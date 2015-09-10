@@ -30,6 +30,9 @@
  */
 
 #include <stdio.h>
+#ifdef LINUX
+  #include <wchar.h> 
+#endif // LINUX
 #include <string.h>
 #include <sidex.h>
 #include <tmlCore.h>
@@ -232,7 +235,13 @@ bool senderTest01()
   /////////////////////////////////////////////////////////////////////////
   // send command / message 
   if (TML_SUCCESS == iErr){
+#ifdef TML_UNICODE
+    fwprintf (stderr, L"Sending command 4711 to %ls -->\n", DESTINATION_HOST_IP);
+#else// TML_UNICODE
     printf ("Sending command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
+
+
     iErr = tml_Send_SyncMessage(coreHandle, cmdMsg, IO_PROFILE, DESTINATION_HOST_IP, IO_PORT, 10000);
   }
 
@@ -281,7 +290,11 @@ bool sendAndListenTest01()
   /////////////////////////////////////////////////////////////////////////
   // send a loop of command / messages
   for (int i = 0; i < 10 && TML_SUCCESS == iErr; ++i){
+#ifdef TML_UNICODE
+    fwprintf (stderr, L"Sending sync command 4711 to %ls -->\n", DESTINATION_HOST_IP);
+#else// TML_UNICODE
     printf ("Sending sync command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
     iErr = tml_Send_SyncMessage(coreSenderHandle, cmdMsg, IO_PROFILE, DESTINATION_HOST_IP, IO_PORT, 10000);
   }
   ///////////////////////////////////////////////////////////////////////
@@ -333,7 +346,11 @@ bool sendAndListenTest02()
     if (TML_SUCCESS == iErr)
       iErr = createCmd4711(&cmdMsg, true);
     if (TML_SUCCESS == iErr){
+#ifdef TML_UNICODE
+      fwprintf (stderr, L"Sending async command 4711 to %ls -->\n", DESTINATION_HOST_IP);
+#else// TML_UNICODE
       printf ("Sending async command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
       iErr = tml_Send_AsyncMessage(coreSenderHandle, cmdMsg, IO_PROFILE, DESTINATION_HOST_IP, IO_PORT, 500);
     }
   }
