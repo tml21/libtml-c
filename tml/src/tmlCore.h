@@ -357,8 +357,6 @@ TML_CORE_API void DLL_CALL_CONV tml_Configure_Thread_Pool_Handling(TML_INT32 iIn
  * @ingroup  coreHandle
  * @brief   Open an instance of a TMLCore.
  *
- * Note: The user name and password has to be set before any TML_CORE_HANDLE instantiation to get licensed product access  / see tml_Core_Set_Password().
- *
  * @param   coreHandle  reference to TML core handle (TML_CORE_HANDLE)
  * @param   iLogValue   logging value (see tml_Core_Set_LoggingValue())
  *
