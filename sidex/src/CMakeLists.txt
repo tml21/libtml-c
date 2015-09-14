@@ -147,6 +147,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(AXLLIB libaxl.so)
+  set(ICONVLIB libiconv.so)
+
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS ("-m32")
   set(CMAKE_CXX_FLAGS "-m32")
@@ -164,6 +166,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(AXLLIB libaxl.so)
+  set(ICONVLIB libiconv.so)
+  
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS ("-m64")
   set(CMAKE_CXX_FLAGS "-m64")
@@ -182,6 +186,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
   set(AXLLIB libaxl.0.dylib)
   set(ICONVLIB libiconv.dylib)
+  
   ADD_DEFINITIONS ("-std=c++11")
   ADD_DEFINITIONS ("-arch i386")
   set(PREPROCESSOR_DEF -DLINUX -DOS_X)
@@ -200,6 +205,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
   set(AXLLIB libaxl.0.dylib)
   set(ICONVLIB libiconv.dylib)
+  
   ADD_DEFINITIONS ("-std=c++11")
   ADD_DEFINITIONS ("-arch x86_64")
   set(PREPROCESSOR_DEF -DLINUX -DOS_X)
@@ -233,6 +239,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(AXLLIB libaxl.so)
+  set(ICONVLIB libiconv.so)
+
   ADD_DEFINITIONS ("-std=c++0x")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
   
@@ -286,6 +294,12 @@ TARGET_LINK_LIBRARIES(${SIDEXLIBNAME_LOCAL} ${AXLLIB} )
 
 #######################################################
 ## ICONV library 
+if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
+  TARGET_LINK_LIBRARIES(${SIDEXLIBNAME_LOCAL} ${ICONVLIB} )                         
+endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
+if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
+  TARGET_LINK_LIBRARIES(${SIDEXLIBNAME_LOCAL} ${ICONVLIB} )                         
+endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
   TARGET_LINK_LIBRARIES(${SIDEXLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
@@ -295,6 +309,9 @@ endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
   TARGET_LINK_LIBRARIES(${SIDEXLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
+if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
+  TARGET_LINK_LIBRARIES(${SIDEXLIBNAME_LOCAL} ${ICONVLIB} )                         
+endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
 #######################################################
 ## Install
