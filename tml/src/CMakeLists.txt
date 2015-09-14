@@ -187,6 +187,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(ICONVLIB libiconv.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS ("-m32")
@@ -206,6 +207,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(ICONVLIB libiconv.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS ("-m64")
@@ -224,7 +226,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 ## OSX 32 bit
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
-  set(ICONVLIB /usr/lib/libiconv.dylib)
+  set(ICONVLIB libiconv.dylib)
   set(AXLLIB libaxl.0.dylib)
   set(VORTEXLIB libvortex-1.1.dylib)
 
@@ -244,12 +246,12 @@ endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
 ## OSX / 64 bit
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
+  set(ICONVLIB libiconv.dylib)
   set(AXLLIB libaxl.0.dylib)
   set(VORTEXLIB libvortex-1.1.dylib)
 
   ADD_DEFINITIONS ("-std=c++11")
   ADD_DEFINITIONS ("-arch x86_64")
-  set(ICONVLIB /usr/lib/libiconv.dylib)
   set(PREPROCESSOR_DEF -DLINUX -DOS_X)
   set(CMAKE_CXX_FLAGS "-arch x86_64")
  
@@ -264,10 +266,10 @@ endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
 ## ANDROID ARM32
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
+  set(ICONVLIB libiconv.so)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
 
-  set(ICONVLIB libiconv.so)
   ADD_DEFINITIONS ("-std=c++11")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4 -DANDROID)
   
@@ -282,6 +284,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
 ## LINUX ARM32
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
+  set(ICONVLIB libiconv.so)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
 
@@ -347,6 +350,12 @@ TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${SIDEXLIBNAME} )
 
 #######################################################
 ## ICONV library in case of OSX
+if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
+if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
@@ -356,6 +365,9 @@ endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
+if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
 #######################################################
 ## Install

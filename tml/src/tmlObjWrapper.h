@@ -159,7 +159,7 @@ public:
      *
      * @param   pCBFunc Reference to reference to callback method.
      * @param   pCBData Reference to reference to callback method's data.
-     * @param   bUnicode Reference unicode identifier.
+     * @param   iUnicode Reference unicode identifier.
      *
      * @see tmlStdTypes.h
      */
