@@ -594,11 +594,19 @@ void tmlLogHandler::log(int iLogMask, const char* sClass, const char* sMethod, c
     enterCriticalSection (&m_mutexCriticalSection);
 
     getDate (&m_date, DATE_TIME_STRING_LENGTH, &m_time, DATE_TIME_STRING_LENGTH);
+#if defined(LINUX) || defined (MINGW_BUILD)
+    printf ("%s %s %s:%s:%s:%lld\n", m_date, m_time, sClass, sMethod, sFormatLog, (long long)iVal);
+#else // LINUX
     printf ("%s %s %s:%s:%s:%lld\n", m_date, m_time, sClass, sMethod, sFormatLog, iVal);
+#endif // LINUX
     if (SIDEX_TRUE == m_bLogIntoFile){
       FILE* hLogFile = getLogFile();
       if (NULL != hLogFile){
+#if defined(LINUX) || defined (MINGW_BUILD)
+        fprintf(hLogFile, "%s %s %s:%s:%s:%lld\n", m_date, m_time, sClass, sMethod, sFormatLog, (long long)iVal);
+#else // LINUX
         fprintf(hLogFile, "%s %s %s:%s:%s:%lld\n", m_date, m_time, sClass, sMethod, sFormatLog, iVal);
+#endif // LINUX
 #ifdef DO_FLUSH
         fflush (hLogFile);    // flushing or repositioning required
 #endif // DO_FLUSH
@@ -652,11 +660,19 @@ void tmlLogHandler::log(const char* sClass,const  char* sMethod, const char* sFo
   enterCriticalSection (&m_mutexCriticalSection);
 
   getDate (&m_date, DATE_TIME_STRING_LENGTH, &m_time, DATE_TIME_STRING_LENGTH);
+#if defined(LINUX) || defined (MINGW_BUILD)
+  printf ("%s %s %s:%s:%s:%lld\n", m_date, m_time, sClass, sMethod, sFormatLog, (long long)iVal);
+#else // LINUX
   printf ("%s %s %s:%s:%s:%lld\n", m_date, m_time, sClass, sMethod, sFormatLog, iVal);
+#endif // LINUX
   if (SIDEX_TRUE == m_bLogIntoFile){
     FILE* hLogFile = getLogFile();
     if (NULL != hLogFile){
+#if defined(LINUX) || defined (MINGW_BUILD)
+      fprintf(hLogFile, "%s %s %s:%s:%s:%lld\n", m_date, m_time, sClass, sMethod, sFormatLog, (long long)iVal);
+#else // LINUX
       fprintf(hLogFile, "%s %s %s:%s:%s:%lld\n", m_date, m_time, sClass, sMethod, sFormatLog, iVal);
+#endif // LINUX
 #ifdef DO_FLUSH
       fflush (hLogFile);    // flushing or repositioning required
 #endif // DO_FLUSH

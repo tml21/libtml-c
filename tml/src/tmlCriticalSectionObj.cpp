@@ -36,7 +36,11 @@
 #ifdef OS_X
 #include <sys/errno.h>
 #else // OS_X
+#ifdef FREE_BSD
+#include <sys/errno.h>
+#else // FREE_BSD
 #include <asm-generic/errno-base.h>
+#endif // FREE_BSD
 #endif // OS_X
 #include <unistd.h>
 #else // LINUX

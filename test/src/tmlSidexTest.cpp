@@ -59,9 +59,12 @@ bool run_test(int no)
              break;
     case 6:  bDone = senderTest01();
              break;
+    case 7:  reloadContent();
+             break;
     default: bDone = false;
              break;
   }
+
   return bDone;
 }
 
@@ -88,6 +91,7 @@ int main(int argc, char **argv)
       printf ("\"4\"     - perform TML send & listen (asynchron)\n");
       printf ("\"5\"     - perform TML listener\n");
       printf ("\"6\"     - perform TML sender\n");
+      printf ("\"7\"     - reload SIDEX\n");
       printf ("\"sidex\" - perform all SIDEX tests\n");
       printf ("\"tml\"   - perform all TML tests\n");
       printf ("\"all\"   - perform all SIDEX and TML tests\n");
@@ -138,6 +142,7 @@ int main(int argc, char **argv)
       printf ("TML send & listen (asynchron) - enter \"4<enter>\"\n");
       printf ("TML listener                  - enter \"5<enter>\"\n");
       printf ("TML sender                    - enter \"6<enter>\"\n");
+      printf ("Reload SIDEX                  - enter \"7<enter>\"\n");
       printf ("Exit demo                     - enter \"exit<enter>\"\n");
       int i = scanf("%s", sInput);
       if (1 <= i){
@@ -153,6 +158,8 @@ int main(int argc, char **argv)
           bDone = run_test(5);
         if (strcmp(sInput, (char*) "6") == 0)
           bDone = run_test(6);
+        if (strcmp(sInput, (char*) "7") == 0)
+          bDone = run_test(7);
         if (strcmp(sInput, (char*) "exit") == 0)
           bDone = true;
       }

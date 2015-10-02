@@ -1211,7 +1211,7 @@ void sidexCom::sidexcom_WriteInteger(SIDEX_NODE sidexHandle, SIDEX_INT64 value)
   sidexcom_SetNodeContent(sidexHandle, sString.data(), -1,SIDEX_TYPE_ATTR_INTEGER);
 #else // USESTREAMS
 #if defined(LINUX) || defined (MINGW_BUILD)
-  sprintf(m_strRepresentation, "%lld", value);
+  sprintf(m_strRepresentation, "%lld", (long long) value);
 #else // LINUX
   sprintf_s(m_strRepresentation, 512, "%lld", value);
 #endif // LINUX

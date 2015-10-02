@@ -179,6 +179,56 @@
 /**
  * A simple SIDEX I/O example 
  */
+bool reloadContent()
+{
+  SIDEX_INT32 iErr      = SIDEX_SUCCESS; // API return value
+
+  printf ("reloadContent\n");
+
+  /////////////////////////////////////////////////////////////////////////
+  // Create SIDEX_HANDLE
+  SIDEX_HANDLE sHandle  = SIDEX_HANDLE_TYPE_NULL;
+  iErr = sidex_Create(STR_DOCUMENT, &sHandle);
+
+  iErr = sidex_Load_Content(sHandle, STR_SIMPLE_CONTENT_SDX);
+  // read variants
+  if (SIDEX_SUCCESS == iErr){
+    SIDEX_INT64 iValue = 0;
+    iErr = sidex_Integer_Read (sHandle, STR_TEST_VALUES, STR_NUMNER, &iValue);
+#ifdef LINUX
+    printf ("iValue = %lld\n", (long long) iValue);
+#else
+    printf ("iValue = %ld\n", iValue);
+#endif // LINUX
+  }
+  if (SIDEX_SUCCESS == iErr){
+#ifdef SIDEX_UNICODE
+    wchar_t* strValue;
+    SIDEX_INT32 iLength;
+    iErr = sidex_String_Read (sHandle, STR_TEST_VALUES, STR_TEXT, &strValue, &iLength);
+    fwprintf (stderr, L"strVal = %ls\n", strValue);
+#else
+    char* strValue;
+    SIDEX_INT32 iLength;
+    iErr = sidex_String_Read (sHandle, STR_TEST_VALUES, STR_TEXT, &strValue, &iLength);
+    printf ("strVal = %s\n", strValue);
+#endif// SIDEX_UNICODE
+  }
+  /////////////////////////////////////////////////////////////////////////
+  // Errorhandling:
+  if (SIDEX_SUCCESS != iErr){
+    printf ("sidexDemo / error happened - Code = %d\n", iErr);
+  }
+  /////////////////////////////////////////////////////////////////////////
+  // Free SIDEX_HANDLE
+  if (SIDEX_HANDLE_TYPE_NULL != sHandle)
+    sidex_Free(&sHandle);
+  return true;
+}
+
+/**
+ * A simple SIDEX I/O example 
+ */
 bool sidexTest01()
 {
   SIDEX_INT32 iErr      = SIDEX_SUCCESS; // API return value
@@ -197,7 +247,7 @@ bool sidexTest01()
     fwprintf (stderr, L"Copyright: %ls\n", copyright);
 #else// SIDEX_UNICODE
     printf ("Version %d - %d - %s\n", apiVer, libVer, verStr);
-    printf, ("Copyright: %s\n", copyright);
+    printf ("Copyright: %s\n", copyright);
 #endif// SIDEX_UNICODE
 
   SIDEX_TCHAR* pContent  = NULL;

@@ -221,6 +221,45 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set (INST_INCLUDE_PATH /usr/local/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 
+#######################################################
+## FreeBSD / 32 bit
+#######################################################
+if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
+  set(AXLLIB libaxl.so)
+  set(VORTEXLIB libvortex-1.1.so)
+  set(ICONVLIB libiconv.so)
+
+  ADD_DEFINITIONS ("-std=c++0x")
+  ADD_DEFINITIONS ("-m32")
+  set(CMAKE_CXX_FLAGS "-m32")
+  set(PREPROCESSOR_DEF -DLINUX -DFREE_BSD -DGCC4)
+  
+  set(TARGET tmlcore)
+  set(IS64BIT false)
+  
+  set (INST_LIB_PATH /usr/local/lib)
+  set (INST_INCLUDE_PATH /usr/local/include/tml)
+endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
+
+#######################################################
+## FreeBSD / 64 bit
+#######################################################
+if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
+  set(AXLLIB libaxl.so)
+  set(VORTEXLIB libvortex-1.1.so)
+  set(ICONVLIB libiconv.so)
+
+  ADD_DEFINITIONS ("-std=c++0x")
+  ADD_DEFINITIONS ("-m64")
+  set(CMAKE_CXX_FLAGS "-m64")
+  set(PREPROCESSOR_DEF -DLINUX -DFREE_BSD -DGCC4)
+  
+  set(TARGET tmlcore)
+  set(IS64BIT true)
+  
+  set (INST_LIB_PATH /usr/local/lib)
+  set (INST_INCLUDE_PATH /usr/local/include/tml)
+endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
 
 #######################################################
 ## OSX 32 bit
@@ -319,7 +358,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
   set_target_properties(${TMLLIBNAME_LOCAL} PROPERTIES PREFIX "")
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
-  set_target_properties(${SIDEXLIBNAME_LOCAL} PROPERTIES PREFIX "")
+  set_target_properties(${TMLLIBNAME_LOCAL} PROPERTIES PREFIX "")
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 
 
@@ -356,6 +395,12 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
+if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
+if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)

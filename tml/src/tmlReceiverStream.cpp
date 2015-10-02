@@ -342,7 +342,7 @@ int tmlReceiverStream::open(TML_STREAM_ID_TYPE iStreamID, const char* sPort, con
           iSize = (int)strlen(profile) + (int)strlen(sHost) + (int)strlen (sPort) + 32 + 3 + 1;
           m_sKey = new char[iSize];
       #if defined (LINUX) || defined (MINGW_BUILD)
-          sprintf(m_sKey, "%s-%s-%s-%lld", profile, sHost, sPort, m_iStreamID);
+          sprintf(m_sKey, "%s-%s-%s-%lld", profile, sHost, sPort, (long long)m_iStreamID);
       #else // LINUX
           sprintf_s(m_sKey, iSize, "%s-%s-%s-%d", profile, sHost, sPort, m_iStreamID);
       #endif // LINUX

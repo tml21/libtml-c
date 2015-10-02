@@ -87,9 +87,33 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS("-m64")
-  ADD_DEFINITIONS("-DLINUX -DSIDEX_UNICODE -DTML_UNICODE" -DGCC4)
+  ADD_DEFINITIONS("-DLINUX -DSIDEX_UNICODE -DTML_UNICODE -DGCC4")
   set(CMAKE_CXX_FLAGS "-m64")
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
+
+#######################################################
+## FreeBSD / 32 bit
+#######################################################
+if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
+  set(IS64BIT false)
+
+  ADD_DEFINITIONS ("-std=c++0x")
+  ADD_DEFINITIONS("-m32")
+  ADD_DEFINITIONS("-DLINUX -DFREE_BSD -DGCC4")
+  set(CMAKE_CXX_FLAGS "-m32")
+endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
+
+#######################################################
+## FreeBSD / 64 bit
+#######################################################
+if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
+  set(IS64BIT true)
+
+  ADD_DEFINITIONS ("-std=c++0x")
+  ADD_DEFINITIONS("-m64")
+  ADD_DEFINITIONS("-DLINUX -DFREE_BSD -DGCC4")
+  set(CMAKE_CXX_FLAGS "-m64")
+endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
 
 #######################################################
 ## OSX 32 bit

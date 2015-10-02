@@ -197,6 +197,56 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 
 #######################################################
+## FreeBSD / 32 bit
+if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
+  set(PROJECT freeBSD_x86-32)
+  
+  set(IS64BIT false)
+  set(BUILD_TEST true)
+
+  set(AXLINCLUDE /usr/local/include/axl)
+  set(VORTEXINCLUDE /usr/local/include/vortex1.1)
+  
+  LINK_DIRECTORIES(/usr/local/lib)
+  LINK_DIRECTORIES(/usr/local/lib)
+  
+  set(CPACK_SET_DESTDIR ON)
+  set (CPACK_RESOURCE_FILE_LICENSE ../COPYING)
+  
+  include (CPack)
+
+  set (CMAKE_FIND_LIBRARY_PREFIXES lib)
+  set (CMAKE_FIND_LIBRARY_SUFFIXES .so)
+
+  set (PLATFORM_FOUND true)  
+endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
+
+#######################################################
+## FreeBSD / 64 bit
+if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
+  set(PROJECT freeBSD_x86-64)
+  
+  set(IS64BIT true)
+  set(BUILD_TEST true)
+
+  set(AXLINCLUDE /usr/local/include/axl)
+  set(VORTEXINCLUDE /usr/local/include/vortex1.1)
+  
+  LINK_DIRECTORIES(/usr/local/lib)
+  LINK_DIRECTORIES(/usr/local/lib)
+  
+  set(CPACK_SET_DESTDIR ON)
+  set (CPACK_RESOURCE_FILE_LICENSE ../COPYING)
+  
+  include (CPack)
+
+  set (CMAKE_FIND_LIBRARY_PREFIXES lib)
+  set (CMAKE_FIND_LIBRARY_SUFFIXES .so)
+
+  set (PLATFORM_FOUND true)  
+endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
+
+#######################################################
 ## OSX 32 bit
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
   set(PROJECT osx_x86-32)
