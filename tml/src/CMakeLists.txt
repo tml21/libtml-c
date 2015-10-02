@@ -319,7 +319,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
   set_target_properties(${TMLLIBNAME_LOCAL} PROPERTIES PREFIX "")
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
-  set_target_properties(${SIDEXLIBNAME_LOCAL} PROPERTIES PREFIX "")
+  set_target_properties(${TMLLIBNAME_LOCAL} PROPERTIES PREFIX "")
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 
 
