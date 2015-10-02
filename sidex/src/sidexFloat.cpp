@@ -30,10 +30,12 @@
  */
 
 #include "sidexFloat.h"
+#ifdef USESTREAMS
+#include <iomanip>
 #include <sstream>
-#include <stdio.h>
-
 using namespace std;
+#endif // USESTREAMS
+#include <stdio.h>
 
 /**
  * @brief    Constructor.
@@ -104,7 +106,7 @@ char* sidexFloat::toString()
 {
 #ifdef USESTREAMS
   stringstream  stream;
-  stream << value << ends;
+  stream << std::setprecision(17) << value << ends;
 
   sReturnString = stream.str();
   return (char*)sReturnString.data();

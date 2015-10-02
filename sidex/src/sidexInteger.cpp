@@ -30,10 +30,12 @@
  */
  
 #include "sidexInteger.h"
-#include <sstream>
 #include <stdio.h>
-
+#ifdef USESTREAMS
+#include <iomanip>
+#include <sstream>
 using namespace std;
+#endif // USESTREAMS
 
 /**
  * @brief    Constructor.
@@ -110,7 +112,7 @@ char* sidexInteger::toString()
   return (char*)sReturnString.data();
 #else // USESTREAMS
 #if defined(LINUX) || defined (MINGW_BUILD)
-  sprintf(m_strRepresentation, "%lld", value);
+  sprintf(m_strRepresentation, "%lld", (long long) value);
 #else // LINUX
   sprintf_s(m_strRepresentation, 64, "%lld", value);
 #endif // LINUX

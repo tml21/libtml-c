@@ -41,6 +41,11 @@
 #endif // _MSC_VER > 1000
 
 /**
+* @brief zse streams to convert int/bool/float to strings
+*/
+#define USESTREAMS 
+
+/**
 * @brief    API version number
 */
 #define API_VERSION_NUMBER 101
