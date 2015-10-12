@@ -3661,7 +3661,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_List_Read_A(SIDEX_HANDLE shandle,  cha
   SIDEX_INT32 iRet = SIDEX_SUCCESS;
   try{
     SIDEX_VARIANT variant;
-    SIDEX_INT32 iRet = ((sidexCom*)shandle)->sidexcom_ReadVariant(ngroup, nkey, &variant);
+    iRet = ((sidexCom*)shandle)->sidexcom_ReadVariant(ngroup, nkey, &variant);
     if (SIDEX_SUCCESS == iRet){
        int type = ((sidexBase*)(variant))->getType();
        if (type == SIDEX_DATA_TYPE_LIST){
@@ -3805,7 +3805,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Dict_Read_A(SIDEX_HANDLE shandle,  cha
   SIDEX_INT32 iRet = SIDEX_SUCCESS;
   try{
     SIDEX_VARIANT variant;
-    SIDEX_INT32 iRet = ((sidexCom*)shandle)->sidexcom_ReadVariant(ngroup, nkey, &variant);
+    iRet = ((sidexCom*)shandle)->sidexcom_ReadVariant(ngroup, nkey, &variant);
     if (SIDEX_SUCCESS == iRet){
        int type = ((sidexBase*)(variant))->getType();
        if (type == SIDEX_DATA_TYPE_DICT){
@@ -3949,7 +3949,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Table_Read_A(SIDEX_HANDLE shandle,  ch
   SIDEX_INT32 iRet = SIDEX_SUCCESS;
   try{
     SIDEX_VARIANT variant;
-    SIDEX_INT32 iRet = ((sidexCom*)shandle)->sidexcom_ReadVariant(ngroup, nkey, &variant);
+    iRet = ((sidexCom*)shandle)->sidexcom_ReadVariant(ngroup, nkey, &variant);
     if (SIDEX_SUCCESS == iRet){
        int type = ((sidexBase*)(variant))->getType();
        if (type == SIDEX_DATA_TYPE_TABLE){
