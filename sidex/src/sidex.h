@@ -1606,8 +1606,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_List_Get(SIDEX_VARIANT sList, 
  *          SIDEX_ERR_WRONG_TYPE sDict is not a dictionary<br>
  *          SIDEX_ERR_MISSING_KEY nkey is NULL<br>
  *          SIDEX_ERR_WRONG_KEY nkey is an invalid<br>
- *          SIDEX_ERR_UNICODE error in unicode conversion<br>
- *          SIDEX_ERR_DICT_FULL maximum number of entries
+ *          SIDEX_ERR_UNICODE error in unicode conversion
  *
  * @see sidex_Variant_Dict_Get()
  */
