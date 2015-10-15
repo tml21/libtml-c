@@ -82,12 +82,13 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 
 #######################################################
 ## LINUX 64 bit
+#######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(IS64BIT true)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS("-m64")
-  ADD_DEFINITIONS("-DLINUX -DSIDEX_UNICODE -DTML_UNICODE" -DGCC4)
+  ADD_DEFINITIONS("-DLINUX -DSIDEX_UNICODE -DTML_UNICODE -DGCC4")
   set(CMAKE_CXX_FLAGS "-m64")
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 
