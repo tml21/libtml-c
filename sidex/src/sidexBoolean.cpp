@@ -30,9 +30,10 @@
  */
 
 #include "sidexBoolean.h"
+#ifdef USESTREAMS
 #include <sstream>
-
 using namespace std;
+#endif // USESTREAMS
 
 /**
  * @brief    Constructor.

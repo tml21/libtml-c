@@ -30,10 +30,12 @@
  */
  
 #include "sidexInteger.h"
-#include <sstream>
 #include <stdio.h>
-
+#ifdef USESTREAMS
+#include <iomanip>
+#include <sstream>
 using namespace std;
+#endif // USESTREAMS
 
 /**
  * @brief    Constructor.

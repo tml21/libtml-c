@@ -99,12 +99,6 @@
 #define SIDEX_ERR_WRONG_DICT_SYNTAX             1008
 
 /**
-* @brief    maximun number of dictionary entries reached
-* @ingroup sidexReturncodes
-*/
-#define SIDEX_ERR_DICT_FULL                     1009
-
-/**
 * @brief    boolean value definition syntax error
 * @ingroup sidexReturncodes
 */

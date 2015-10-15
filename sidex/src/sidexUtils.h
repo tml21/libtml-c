@@ -754,8 +754,7 @@ int sidexutilList_Get(SIDEX_VARIANT sList, int index, SIDEX_VARIANT* variant);
  * @param   value the value to set.
  *
  * @returns SIDEX_SUCCESS in case of success.<br>
- *          SIDEX_ERR_WRONG_TYPE if the type of sDict is not SIDEX_DATA_TYPE_DICT.<br>
- *          SIDEX_ERR_DICT_FULL Maximum of entrys reached.
+ *          SIDEX_ERR_WRONG_TYPE if the type of sDict is not SIDEX_DATA_TYPE_DICT.
  *
  * @see sidexErrors.h, sidexDefines.h, sidexStdTypes.h
  */

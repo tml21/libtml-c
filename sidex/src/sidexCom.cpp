@@ -33,10 +33,13 @@
 #include "sidexUtils.h"
 #include "sidexCom.h"
 #include "unicode.h"
-#include <sstream>
 #include <errno.h>
-
+#ifdef USESTREAMS
+#include <iomanip>
+#include <sstream>
 using namespace std;
+#endif // USESTREAMS
+
 
 ///////////////////////////////////////////////////////////////////
 // in case of an optional group (may be NULL) the following
@@ -1229,7 +1232,7 @@ void sidexCom::sidexcom_WriteFloat(SIDEX_NODE node, double value)
   stringstream  sStream;
   string        sString;
 
-  sStream << value << ends;
+  sStream << std::setprecision(17) << value << ends;
   sString = sStream.str();
   sidexcom_SetNodeContent(node, sString.data(), -1,SIDEX_TYPE_ATTR_FLOAT);
 #else // USESTREAMS

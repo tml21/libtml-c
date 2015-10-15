@@ -97,8 +97,7 @@ public:
      * @param   key   Referring key for the dict entry.
      * @param   value the value to set.
      *
-     * @returns SIDEX_SUCCESS in case of success.<br>
-     *          SIDEX_ERR_DICT_FULL Maximum of entrys reached.
+     * @returns SIDEX_SUCCESS in case of success.
      *
      * @see sidexErrors.h, sidexDefines.h
      */

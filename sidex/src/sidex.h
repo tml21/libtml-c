@@ -415,13 +415,14 @@ SIDEX_API void DLL_CALL_CONV sidex_Free(SIDEX_HANDLE* shandle);
  * @ingroup sidexHandle
  * @brief Read a SIDEX document from a file.
  *
- * @note If the document already contains data it will be deleted.
+ * @note If the document handle already contains data it will be deleted.
  *
  * @param shandle SIDEX document handle (SIDEX_HANDLE)
  * @param path    path to SIDEX file
  *
  * @returns SIDEX_SUCCESS in case of success.<br>
  *          SIDEX_ERR_DUMPCONTENT I/O error<br>
+ *          SIDEX_ERR_WRONG_PARAMETER invalid parameter passed<br>
  *          SIDEX_ERR_UNICODE error in unicode conversion
  *
  * @see sidex_Set_Content(), sidex_Save_Content()
@@ -447,7 +448,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Load_Content_A(SIDEX_HANDLE shandle, c
  * @ingroup sidexHandle
  * @brief Read a SIDEX document from a string.
  *
- * @note If the document already contains data it will be deleted.
+ * @note If the document handle already contains data it will be deleted.
  *
  * @param shandle SIDEX document handle (SIDEX_HANDLE)
  * @param content SIDEX document data
@@ -1605,8 +1606,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_List_Get(SIDEX_VARIANT sList, 
  *          SIDEX_ERR_WRONG_TYPE sDict is not a dictionary<br>
  *          SIDEX_ERR_MISSING_KEY nkey is NULL<br>
  *          SIDEX_ERR_WRONG_KEY nkey is an invalid<br>
- *          SIDEX_ERR_UNICODE error in unicode conversion<br>
- *          SIDEX_ERR_DICT_FULL maximum number of entries
+ *          SIDEX_ERR_UNICODE error in unicode conversion
  *
  * @see sidex_Variant_Dict_Get()
  */
@@ -2217,7 +2217,6 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Float_Read_A(SIDEX_HANDLE shandle,  ch
 #endif // GROUP_IS_OPTIONAL
 ///          SIDEX_ERR_WRONG_KEY nkey contains characters like '\' '"' '&' '<' '>' ']]>' blanks or is empty<br>
 ///          SIDEX_ERR_WRONG_GROUP ngroup contains characters like '\' '"' '&' '<' '>' ']]>' blanks or is empty<br> 
-///          SIDEX_ERR_INVALID_FLOAT value out of range<br>
 ///          SIDEX_ERR_UNICODE error in unicode conversion
 ///
 ///
