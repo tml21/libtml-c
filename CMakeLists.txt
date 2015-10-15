@@ -66,12 +66,10 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
   set(IS64BIT false)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE "C:\\Program Files (x86)\\AxlW32\\include\\axl")
-  set(VORTEXINCLUDE "C:\\Program Files (x86)\\VortexLibrary-1.1-W32\\include\\vortex")
+  set(AXLINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\axl")
+  set(VORTEXINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\vortex")
 
-  LINK_DIRECTORIES("C:\\Program Files (x86)\\AxlW32\\lib")
-  LINK_DIRECTORIES("C:\\Program Files (x86)\\VortexLibrary-1.1-W32\\lib")
-  
+  LINK_DIRECTORIES("C:\\Program Files (x86)\\VortexW32\\lib")  
   include (CPack)
   
   set (CMAKE_FIND_LIBRARY_PREFIXES lib)
@@ -88,12 +86,11 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
   set(IS64BIT true)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE "C:\\Program Files\\AxlW64\\include\\axl")
-  set(VORTEXINCLUDE "C:\\Program Files\\VortexLibrary-1.1-W64\\include\\vortex")
+  set(AXLINCLUDE "C:\\Program Files\\VortexW64\\include\\axl")
+  set(VORTEXINCLUDE "C:\\Program Files\\VortexW64\\include\\vortex")
 
-  LINK_DIRECTORIES("C:\\Program Files\\AxlW64\\lib")
-  LINK_DIRECTORIES("C:\\Program Files\\VortexLibrary-1.1-W64\\lib")
-  
+  LINK_DIRECTORIES("C:\\Program Files\\VortexW64\\lib")
+
   include (CPack)
   
   set (CMAKE_FIND_LIBRARY_PREFIXES lib)
@@ -110,11 +107,10 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
   set(IS64BIT false)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE "C:\\Program Files (x86)\\AxlW32\\include\\axl")
-  set(VORTEXINCLUDE "C:\\Program Files (x86)\\VortexLibrary-1.1-W32\\include\\vortex")
+  set(AXLINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\axl")
+  set(VORTEXINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\vortex")
 
-  LINK_DIRECTORIES("C:\\Program Files (x86)\\AxlW32\\lib")
-  LINK_DIRECTORIES("C:\\Program Files (x86)\\VortexLibrary-1.1-W32\\lib")
+  LINK_DIRECTORIES("C:\\Program Files (x86)\\VortexW32\\lib")
   
   include (CPack)
   
@@ -132,11 +128,10 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
   set(IS64BIT true)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE /workdir/Komponenten/AXL/0.7.0BLD5340-5351/src)
-  set(VORTEXINCLUDE /workdir/Komponenten/Vortex/1.1.14BLD5256-5258/src)
+  set(AXLINCLUDE "C:\\Program Files\\VortexW64\\include\\axl")
+  set(VORTEXINCLUDE "C:\\Program Files\\VortexW64\\include\\vortex")
 
-  LINK_DIRECTORIES(/workdir/Komponenten/Vortex/1.1.14BLD5256-5258/x64/Release/)
-  LINK_DIRECTORIES(/workdir/Komponenten/Vortex/1.1.14BLD5256-5258/x64/Release/)
+  LINK_DIRECTORIES("C:\\Program Files\\VortexW64\\lib")
   
   include (CPack)
 
