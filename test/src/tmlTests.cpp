@@ -79,9 +79,9 @@ void waitUntilExitInput(char* name){
  */
 void wait(SIDEX_INT64 milliseconds){
     #ifdef LINUX
-       printf ("  Sleep %lld milliseconds\n", milliseconds);
+       printf ("  Sleep %lld milliseconds\n", (long long)milliseconds);
       usleep(milliseconds * 1000);
-      printf ("  Sleep %lld milliseconds done\n", milliseconds);
+      printf ("  Sleep %lld milliseconds done\n", (long long)milliseconds);
     #else
       printf ("  Sleep %ld milliseconds\n", milliseconds);
       Sleep ((DWORD)milliseconds);

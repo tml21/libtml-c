@@ -63,7 +63,11 @@
 #ifdef SIDEX_UNICODE
   typedef wchar_t              SIDEX_TCHAR;
 #else
-  typedef char                 SIDEX_TCHAR;
+  #ifdef SIDEX_UNICODE_16
+    typedef char16_t           SIDEX_TCHAR;
+  #else
+    typedef char               SIDEX_TCHAR;
+  #endif// SIDEX_UNICODE_16
 #endif // SIDEX_UNICODE
 
 /**

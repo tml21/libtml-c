@@ -47,15 +47,11 @@
  * Different type keywords for iconv_open
  */
 #define COMMON_UTF8 "UTF-8"
-#ifdef ANDROID
-#  define LINUX_WCHAR "UTF-32LE"
-#else // ANDROID
-#  define LINUX_WCHAR "WCHAR_T"
-#endif // ANDROID
-#define OSX_WCHAR_32_LE "UTF-32LE"
-#define OSX_WCHAR_32_BE "UTF-32BE"
-#define OSX_WCHAR_16_LE "UTF-16LE"
-#define OSX_WCHAR_16_BE "UTF-16BE"
+
+#define WCHAR_32_LE "UTF-32LE"
+#define WCHAR_32_BE "UTF-32BE"
+#define WCHAR_16_LE "UTF-16LE"
+#define WCHAR_16_BE "UTF-16BE"
 
 /**
  * The actual type keywords for iconv_open
@@ -72,19 +68,19 @@ const char* systemWCharType(){
     if(*(char *)&num == 1)
     {
       if (4 == wCharSize){
-        mySystemsWCharType = OSX_WCHAR_32_LE;
+        mySystemsWCharType = WCHAR_32_LE;
       }
       else{
-        mySystemsWCharType = OSX_WCHAR_16_LE;
+        mySystemsWCharType = WCHAR_16_LE;
       }
     }
     else
     {
       if (4 == wCharSize){
-        mySystemsWCharType = OSX_WCHAR_32_BE;
+        mySystemsWCharType = WCHAR_32_BE;
       }
       else{
-        mySystemsWCharType = OSX_WCHAR_16_BE;
+        mySystemsWCharType = WCHAR_16_BE;
       }
     }
   }
@@ -99,11 +95,7 @@ char* UTF32toUTF8(wchar_t* utf16, SIDEX_INT32* iLength)
   const char* fromcode;
   int size;
 #ifdef LINUX
-  #ifdef OS_X
-    fromcode = systemWCharType();
-  #else //OS_X
-     fromcode = LINUX_WCHAR;
-  #endif //OS_X
+  fromcode = systemWCharType();
   size = sizeof(wchar_t);
 #else // LINUX
   fromcode = "UTF-16LE";
@@ -257,11 +249,7 @@ wchar_t* UTF8toUTF32(char* utf8, SIDEX_INT32* iLength)
   const char* tocode;
   int size;
 #ifdef LINUX
-  #ifdef OS_X
-    tocode = systemWCharType();
-  #else //OS_X
-     tocode = LINUX_WCHAR;
-  #endif //OS_X
+  tocode = systemWCharType();
   size = sizeof(wchar_t);
 #else // LINUX
   tocode = "UTF-16LE";
@@ -386,11 +374,7 @@ SIDEX_INT32 UTF8toUTF32_length_request(char* utf8)
   const char* tocode;
   int size;
 #ifdef LINUX
-  #ifdef OS_X
-    tocode = systemWCharType();
-  #else //OS_X
-     tocode = LINUX_WCHAR;
-  #endif //OS_X
+  tocode = systemWCharType();
   size = sizeof(wchar_t);
 #else // LINUX
   tocode = "UTF-16LE";

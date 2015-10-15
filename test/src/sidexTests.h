@@ -36,5 +36,6 @@
 
 bool sidexTest01();
 bool sidexTest02();
+bool reloadContent();
 
 #endif // SIDEXTESTS_H

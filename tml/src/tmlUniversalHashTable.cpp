@@ -274,8 +274,8 @@ int TMLUniversalHashTable::getValue(TML_INT64 key, void** pValue)
   if (!m_bHashIsString){
     if (SIDEX_HANDLE_TYPE_NULL != m_hash){
       char sKey[128];
-#ifdef LINUX
-      sprintf (sKey, "%lld", key);
+#if defined (LINUX) || defined (MINGW_BUILD)
+      sprintf (sKey, "%lld", (long long)key);
 #else // LINUX
   #if _MSC_VER > 1500
       sprintf_s (sKey, 128, "%lld", key);
@@ -324,8 +324,8 @@ int TMLUniversalHashTable::setValue(TML_INT64 key, void* pValue)
       SIDEX_INT64 iVal = (SIDEX_INT64) pValue;
       SIDEX_VARIANT variant = sidex_Variant_New_Integer (iVal);
       char sKey[128];
-#ifdef LINUX
-      sprintf (sKey, "%lld", key);
+#if defined (LINUX) || defined (MINGW_BUILD)
+      sprintf (sKey, "%lld", (long long)key);
 #else // LINUX
   #if _MSC_VER > 1500
       sprintf_s (sKey, 128, "%lld", key);
@@ -356,8 +356,8 @@ int TMLUniversalHashTable::setValue(TML_INT64 key, void* pValue)
   if (!m_bHashIsString){
     if (SIDEX_HANDLE_TYPE_NULL != m_hash){
       char sKey[128];
-#ifdef LINUX
-      sprintf (sKey, "%lld", key);
+#if defined (LINUX) || defined (MINGW_BUILD)
+      sprintf (sKey, "%lld", (long long)key);
 #else // LINUX
   #if _MSC_VER > 1500
       sprintf_s (sKey, 128, "%lld", key);

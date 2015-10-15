@@ -45,7 +45,9 @@
 #define _SH_DENYRD      0x30    /* deny read mode */
 #define _SH_DENYNO      0x40    /* deny none mode */
 
+#ifndef MINGW_BUILD
 FILE *_fsopen(const char *filename,const char *mode,int shflag);
+#endif // MINGW_BUILD
 #endif // LINUX
 
 
