@@ -1322,6 +1322,8 @@ int sidexCom::sidexcom_ReadBoolean(SIDEX_NODE node, bool *value)
    if (0 == strlen(content))
       return SIDEX_ERR_NOCONTENT;
 
+  // reset errno - maybe it is still  pending
+  errno = 0;
   *value = (0 != atoi(content)); 
   if (ERANGE == errno || EINVAL == errno)
     return SIDEX_ERR_INVALID_BOOLEAN;
@@ -1341,6 +1343,8 @@ int sidexCom::sidexcom_ReadInteger(SIDEX_NODE node, SIDEX_INT64* value)
    if (0 == strlen(content))
       return SIDEX_ERR_NOCONTENT;
 
+  // reset errno - maybe it is still  pending
+  errno = 0;
 #if defined(LINUX) || defined (MINGW_BUILD)
    *value = atoll(content);
 #else
@@ -1364,6 +1368,8 @@ int sidexCom::sidexcom_ReadFloat(SIDEX_NODE node, double *value)
    if (0 == strlen(content))
       return SIDEX_ERR_NOCONTENT;
 
+  // reset errno - maybe it is still  pending
+  errno = 0;
    *value = atof(content);
    if (ERANGE == errno || EINVAL == errno)
       return SIDEX_ERR_INVALID_FLOAT;
@@ -2608,8 +2614,7 @@ SIDEX_INT32 sidexCom::sidexcom_Merge(SIDEX_HANDLE sMergeHandle, SIDEX_BOOL bOver
               if (0 == strcmp(sGroup, nGroup)){
                 // It is the group we are looking for / including the possible overwriting key:
                 if (SIDEX_HANDLE_TYPE_NULL == nKey){
-                  // Overwrite the whole Group:
-
+                  // No Key / Overwrite the whole Group:
                   // First delete the Group:
                   iRet = sidex_DeleteGroup ((SIDEX_HANDLE)this, sGroup);
                   if (SIDEX_SUCCESS == iRet){
@@ -2642,7 +2647,7 @@ SIDEX_INT32 sidexCom::sidexcom_Merge(SIDEX_HANDLE sMergeHandle, SIDEX_BOOL bOver
                 else{
                   // Check if the key exists in the "Merge":
                   if (sidex_HasKey (sMergeHandle, sGroup, nKey)){
-                    // Fetch the Variant anf overwrite it in the Base:
+                    // Fetch the Variant and overwrite it in the Base:
                     SIDEX_VARIANT variant;
                     iRet = sidex_Variant_Read (sMergeHandle, sGroup, nKey, &variant);
                     if (SIDEX_SUCCESS == iRet){
@@ -2658,36 +2663,47 @@ SIDEX_INT32 sidexCom::sidexcom_Merge(SIDEX_HANDLE sMergeHandle, SIDEX_BOOL bOver
             ///////////////////////////////////////////////////////////////
           }
           else{
-            ///////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////
-            // The Group don't exist in the "base" / so I have to copy it:
+            if (SIDEX_HANDLE_TYPE_NULL == nKey){
+              ///////////////////////////////////////////////////////////////
+              ///////////////////////////////////////////////////////////////
+              // The Group don't exist in the "base" / so I have to copy it:
 
-            SIDEX_VARIANT sMergeKeys = SIDEX_HANDLE_TYPE_NULL;
-            iRet = sidex_GetKeys(sMergeHandle, sGroup, &sMergeKeys);
-            if (SIDEX_SUCCESS == iRet && SIDEX_HANDLE_TYPE_NULL != sMergeKeys){
-              // Loop above keys:
-              SIDEX_INT32 iSizeKeys = 0;
-              iRet = sidex_Variant_List_Size (sMergeKeys, &iSizeKeys);
-              for (SIDEX_INT32 j = 0; j < iSizeKeys && SIDEX_SUCCESS == iRet; ++j){
-                SIDEX_VARIANT vKey = SIDEX_HANDLE_TYPE_NULL;
-                iRet = sidex_Variant_List_Get (sMergeKeys, j, &vKey);
-                if (SIDEX_SUCCESS == iRet){
-                  char* sKey;
-                  SIDEX_INT32 iKeyValLength;
-                  iRet = sidex_Variant_As_String_A (vKey, &sKey, &iKeyValLength);
-                  SIDEX_VARIANT variant;
-                  iRet = sidex_Variant_Read (sMergeHandle, sGroup, sKey, &variant);
+              SIDEX_VARIANT sMergeKeys = SIDEX_HANDLE_TYPE_NULL;
+              iRet = sidex_GetKeys(sMergeHandle, sGroup, &sMergeKeys);
+              if (SIDEX_SUCCESS == iRet && SIDEX_HANDLE_TYPE_NULL != sMergeKeys){
+                // Loop above keys:
+                SIDEX_INT32 iSizeKeys = 0;
+                iRet = sidex_Variant_List_Size (sMergeKeys, &iSizeKeys);
+                for (SIDEX_INT32 j = 0; j < iSizeKeys && SIDEX_SUCCESS == iRet; ++j){
+                  SIDEX_VARIANT vKey = SIDEX_HANDLE_TYPE_NULL;
+                  iRet = sidex_Variant_List_Get (sMergeKeys, j, &vKey);
                   if (SIDEX_SUCCESS == iRet){
-                    iRet = sidex_Variant_Write((SIDEX_HANDLE)this, sGroup, sKey, variant);
-                    sidex_Variant_DecRef(variant);
+                    char* sKey;
+                    SIDEX_INT32 iKeyValLength;
+                    iRet = sidex_Variant_As_String_A (vKey, &sKey, &iKeyValLength);
+                    SIDEX_VARIANT variant;
+                    iRet = sidex_Variant_Read (sMergeHandle, sGroup, sKey, &variant);
+                    if (SIDEX_SUCCESS == iRet){
+                      iRet = sidex_Variant_Write((SIDEX_HANDLE)this, sGroup, sKey, variant);
+                      sidex_Variant_DecRef(variant);
+                    }
                   }
                 }
+                sidex_Variant_DecRef(sMergeKeys);
               }
-              sidex_Variant_DecRef(sMergeKeys);
+              // The copy of the group is finished
+              ///////////////////////////////////////////////////////////////
+              ///////////////////////////////////////////////////////////////
             }
-            // The copy of the group is finished
-            ///////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////
+            else{
+              // Fetch the Variant and write it in the Base:
+              SIDEX_VARIANT variant;
+              iRet = sidex_Variant_Read (sMergeHandle, sGroup, nKey, &variant);
+              if (SIDEX_SUCCESS == iRet){
+                iRet = sidex_Variant_Write((SIDEX_HANDLE)this, sGroup, nKey, variant);
+                sidex_Variant_DecRef(variant);
+              }
+            }
           }
         }
       }

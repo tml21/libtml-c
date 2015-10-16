@@ -679,9 +679,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Get_Content_X(SIDEX_HANDLE shandle, wc
   try{
     char* utf8Content;
     SIDEX_INT32 iLengthUtf8;
-    iRet = sidex_Get_Content_A(shandle, &utf8Content, &iLengthUtf8);
+    iRet = sidex_Get_Content_A(shandle, &utf8Content, iContentLength);
     if (SIDEX_SUCCESS == iRet){
-      wchar_t* utf16Content = UTF8toUTF32(utf8Content, iContentLength);
+      wchar_t* utf16Content = UTF8toUTF32(utf8Content, &iLengthUtf8);
       if (NULL != utf16Content){
         *content = utf16Content;
       }
@@ -704,9 +704,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Get_Content_W(SIDEX_HANDLE shandle, ch
   try{
     char* utf8Content;
     SIDEX_INT32 iLengthUtf8;
-    iRet = sidex_Get_Content_A(shandle, &utf8Content, &iLengthUtf8);
+    iRet = sidex_Get_Content_A(shandle, &utf8Content, iContentLength);
     if (SIDEX_SUCCESS == iRet){
-      wchar_t* utf16Content = UTF8toUTF16(utf8Content, iContentLength);
+      wchar_t* utf16Content = UTF8toUTF16(utf8Content, &iLengthUtf8);
       if (NULL != utf16Content){
         *content = (char16_t*)utf16Content;
       }

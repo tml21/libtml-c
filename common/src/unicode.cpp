@@ -133,7 +133,7 @@ char* UTF32toUTF8(wchar_t* utf16, SIDEX_INT32* iLength, const char *fromcode, in
      long len = iconv(cd, (char**)&utf16, &inbytesleft, &utf8Out, &outbytesleftOut);
      if (-1 == len)
      { 
-       printf ("UTF16toUTF8 / Error = %d\n", errno);
+       printf ("UTF32toUTF8 / Error = %d\n", errno);
      }
      else{
        *iLength = outbytesleftIn - outbytesleftOut;
@@ -282,7 +282,7 @@ wchar_t* UTF8toUTF32(char* utf8, SIDEX_INT32* iLength, const char *tocode, int t
    long len = iconv(cd, (char**)&utf8, &inbytesleft, (char**)&utf16Out, &outbytesleftOut);
    if (-1 == len)
    {
-     printf ("UTF8toUTF16 / Error = %d\n", errno);
+     printf ("UTF8toUTF32 / Error = %d\n", errno);
    }
    else{
      *iLength = ((outbytesleftIn - outbytesleftOut) / toSize);
