@@ -237,7 +237,6 @@ int sidexCom::sidexcom_DumpToFile(const char* path){
       FILE* fp = _fsopen(path, "wb", _SH_DENYNO);
       if (NULL != fp){
         size_t bytesWritten = fwrite (content, 1, size, fp);
-        axl_free (content);
         if (bytesWritten != (unsigned int) size){
           iRet =  SIDEX_ERR_DUMPCONTENT;
         }
@@ -245,6 +244,9 @@ int sidexCom::sidexcom_DumpToFile(const char* path){
       }
       else{
         iRet =  SIDEX_ERR_DUMPCONTENT;
+      }
+      if (NULL != content){
+        axl_free (content);
       }
     }
   }
@@ -2589,6 +2591,12 @@ SIDEX_INT32 sidexCom::sidexcom_Merge(SIDEX_HANDLE sMergeHandle, SIDEX_BOOL bOver
  
   int iRet = SIDEX_SUCCESS;
 
+//  printf ("Overwrite = %d\n", bOverwrite);
+//  printf ("nGroup = %s\n", nGroup);
+//  printf ("nKey = %s\n", nKey);
+  sidex_Save_Content((SIDEX_HANDLE)this, "C:\\temp\\before.xml");
+  sidex_Save_Content(sMergeHandle, "C:\\temp\\merge.xml");
+
   SIDEX_VARIANT sMergeGroups = SIDEX_HANDLE_TYPE_NULL;
   // Fetch the "Merge" groups:
   iRet = sidex_GetGroups(sMergeHandle, &sMergeGroups);
@@ -2710,7 +2718,7 @@ SIDEX_INT32 sidexCom::sidexcom_Merge(SIDEX_HANDLE sMergeHandle, SIDEX_BOOL bOver
     }
     sidex_Variant_DecRef(sMergeGroups);
   }
-
+  sidex_Save_Content((SIDEX_HANDLE)this, "C:\\temp\\after.xml");
 
   return SIDEX_SUCCESS;
 }
