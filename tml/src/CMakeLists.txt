@@ -57,7 +57,6 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlCriticalSectionObj.h
                       tmlDestinationAddressHandlingHashValue.h
                       tmlDispatcher.h
-                      tmlDoxygenMain.h
                       tmlErrors.h
                       tmlEventCall.h
                       tmlEventCallHandler.h
@@ -188,6 +187,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
   set(ICONVLIB libiconv.so)
+  set(PTHREADLIB libpthread.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS ("-m32")
@@ -197,8 +197,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(TARGET tmlcore)
   set(IS64BIT false)
   
-  set (INST_LIB_PATH /usr/local/lib)
-  set (INST_INCLUDE_PATH /usr/local/include/tml)
+  set (INST_LIB_PATH /usr/lib)
+  set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 
 #######################################################
@@ -208,6 +208,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
   set(ICONVLIB libiconv.so)
+  set(PTHREADLIB libpthread.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS ("-m64")
@@ -217,8 +218,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(TARGET tmlcore)
   set(IS64BIT true)
   
-  set (INST_LIB_PATH /usr/local/lib)
-  set (INST_INCLUDE_PATH /usr/local/include/tml)
+  set (INST_LIB_PATH /usr/lib)
+  set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 
 #######################################################
@@ -326,6 +327,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(ICONVLIB libiconv.so)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(PTHREADLIB libpthread.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
@@ -333,8 +335,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(TARGET tmlcore)
   set(IS64BIT false)
   
-  set (INST_LIB_PATH /usr/local/lib)
-  set (INST_INCLUDE_PATH /usr/local/include/tml)
+  set (INST_LIB_PATH /usr/lib)
+  set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
                     
@@ -391,9 +393,11 @@ TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${SIDEXLIBNAME} )
 ## ICONV library in case of OSX
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${PTHREADLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${PTHREADLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
@@ -412,6 +416,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
 endif (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${PTHREADLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
 #######################################################

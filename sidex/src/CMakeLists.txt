@@ -157,8 +157,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(TARGET sidex)
   set(IS64BIT false)
   
-  set (INST_LIB_PATH /usr/local/lib)
-  set (INST_INCLUDE_PATH /usr/local/include/tml)
+  set (INST_LIB_PATH /usr/lib)
+  set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 
 #######################################################
@@ -176,8 +176,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(TARGET sidex)
   set(IS64BIT true)
   
-  set (INST_LIB_PATH /usr/local/lib)
-  set (INST_INCLUDE_PATH /usr/local/include/tml)
+  set (INST_LIB_PATH /usr/lib)
+  set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 
 #######################################################
@@ -285,8 +285,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(TARGET sidex)
   set(IS64BIT false)
   
-  set (INST_LIB_PATH /usr/local/lib)
-  set (INST_INCLUDE_PATH /usr/local/include/tml)
+  set (INST_LIB_PATH /usr/lib)
+  set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
                     
 if (${IS64BIT} STREQUAL false)
