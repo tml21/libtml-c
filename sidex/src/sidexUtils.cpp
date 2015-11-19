@@ -1367,13 +1367,12 @@ int sidexutilList_Add(SIDEX_VARIANT sList, SIDEX_VARIANT value, SIDEX_INT32* iPo
  */
 int sidexutilList_Insert(SIDEX_VARIANT sList, SIDEX_VARIANT value, int pos) 
 {
+  SIDEX_INT32 iRet = SIDEX_ERR_WRONG_TYPE;
   SIDEX_DATA_TYPE type = ((sidexBase*)(sList))->getType();
   if (SIDEX_DATA_TYPE_LIST == type){
-    ((sidexList*)sList)->addElement(value, pos);
-    return SIDEX_SUCCESS;
+    iRet = ((sidexList*)sList)->addElement(value, pos);
   }
-  else
-    return SIDEX_ERR_WRONG_TYPE;
+  return iRet;
 }
 
 
