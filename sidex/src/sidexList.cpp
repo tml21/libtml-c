@@ -318,7 +318,7 @@ int sidexList::getElement(SIDEX_VARIANT* val, int pos)
    int iRet;
    int i = 0;
 
-   if (NULL == first)
+   if (NULL == first || 0 > pos)
      return SIDEX_ERR_NOCONTENT;
 
    listElement e = *first;
