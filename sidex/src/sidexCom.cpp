@@ -2664,8 +2664,11 @@ SIDEX_INT32 sidexCom::sidexcom_Merge(SIDEX_HANDLE sMergeHandle, SIDEX_BOOL bOver
         }
       }
     }
+    return SIDEX_SUCCESS;
   }
-  return SIDEX_SUCCESS;
+  else{
+    return SIDEX_ERR_MISSING_GROUP;
+  }
 }
 
 

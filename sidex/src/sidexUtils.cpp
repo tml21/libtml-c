@@ -964,39 +964,44 @@ int sidexutilDict_Next_W(SIDEX_VARIANT variant, char16_t** sKey, SIDEX_VARIANT* 
 int sidexutilDict_HasKey(SIDEX_VARIANT variant, char* sKey, SIDEX_BOOL* bRet){
   int iRet = SIDEX_SUCCESS;
   if (NULL != sKey && strlen(sKey) > 0){
-    SIDEX_DATA_TYPE type = ((sidexBase*)(variant))->getType();
-    if (SIDEX_DATA_TYPE_DICT == type){
-      char**sNames;
-      iRet = ((sidexDict*)variant)->getKeys(&sNames);
-      switch (iRet){
-        case SIDEX_SUCCESS:
-          {
-            int iColumns = ((sidexDict*)variant)->getNumberOfDictEntrys();
-            bool bFound = false;
-            for (int i = 0; i < iColumns && !bFound;++i){
-              if (0 == strcmp(sNames[i], sKey)){
-                bFound = true;
+    if (SIDEX_HANDLE_TYPE_NULL != variant){
+      SIDEX_DATA_TYPE type = ((sidexBase*)(variant))->getType();
+      if (SIDEX_DATA_TYPE_DICT == type){
+        char**sNames;
+        iRet = ((sidexDict*)variant)->getKeys(&sNames);
+        switch (iRet){
+          case SIDEX_SUCCESS:
+            {
+              int iColumns = ((sidexDict*)variant)->getNumberOfDictEntrys();
+              bool bFound = false;
+              for (int i = 0; i < iColumns && !bFound;++i){
+                if (0 == strcmp(sNames[i], sKey)){
+                  bFound = true;
+                }
               }
+              if (bFound){
+                *bRet = SIDEX_TRUE;
+              }
+              else{
+                *bRet = SIDEX_FALSE;
+              }
+              delete[] sNames;
             }
-            if (bFound){
-              *bRet = SIDEX_TRUE;
-            }
-            else{
-              *bRet = SIDEX_FALSE;
-            }
-            delete[] sNames;
-          }
-          break;
-        case SIDEX_ERR_NOCONTENT:
-          *bRet = SIDEX_FALSE;
-          iRet = SIDEX_SUCCESS;
-          break;
-        default:
-          break;
+            break;
+          case SIDEX_ERR_NOCONTENT:
+            *bRet = SIDEX_FALSE;
+            iRet = SIDEX_SUCCESS;
+            break;
+          default:
+            break;
+        }
+      }
+      else{
+        iRet = SIDEX_ERR_WRONG_TYPE;
       }
     }
     else{
-      iRet = SIDEX_ERR_WRONG_TYPE;
+      iRet = SIDEX_ERR_NOCONTENT;
     }
   }
   else{
@@ -1084,29 +1089,34 @@ int sidexutilTable_ColumnNames(SIDEX_VARIANT variant, SIDEX_VARIANT* varNames){
 int sidexutil_TableHasColumn(SIDEX_VARIANT variant, char* sColumnName, SIDEX_BOOL* bRet){
   int iRet = SIDEX_SUCCESS;
   if (NULL != sColumnName && strlen(sColumnName) > 0){
-    SIDEX_DATA_TYPE type = ((sidexBase*)(variant))->getType();
-    if (SIDEX_DATA_TYPE_TABLE == type){
-      char**sNames;
-      iRet = ((sidexTable*)variant)->getColumnNames(&sNames);
-      if (SIDEX_SUCCESS == iRet){
-        int iColumns = ((sidexTable*)variant)->countColumns();
-        bool bFound = false;
-        for (int i = 0; i < iColumns && !bFound;++i){
-          if (0 == strcmp(sNames[i], sColumnName)){
-            bFound = true;
+    if (SIDEX_HANDLE_TYPE_NULL != variant){
+      SIDEX_DATA_TYPE type = ((sidexBase*)(variant))->getType();
+      if (SIDEX_DATA_TYPE_TABLE == type){
+        char**sNames;
+        iRet = ((sidexTable*)variant)->getColumnNames(&sNames);
+        if (SIDEX_SUCCESS == iRet){
+          int iColumns = ((sidexTable*)variant)->countColumns();
+          bool bFound = false;
+          for (int i = 0; i < iColumns && !bFound;++i){
+            if (0 == strcmp(sNames[i], sColumnName)){
+              bFound = true;
+            }
           }
+          if (bFound){
+            *bRet = SIDEX_TRUE;
+          }
+          else{
+            *bRet = SIDEX_FALSE;
+          }
+          delete[] sNames;
         }
-        if (bFound){
-          *bRet = SIDEX_TRUE;
-        }
-        else{
-          *bRet = SIDEX_FALSE;
-        }
-        delete[] sNames;
+      }
+      else{
+        iRet = SIDEX_ERR_WRONG_TYPE;
       }
     }
     else{
-      iRet = SIDEX_ERR_WRONG_TYPE;
+      iRet = SIDEX_ERR_NOCONTENT;
     }
   }
   else{
