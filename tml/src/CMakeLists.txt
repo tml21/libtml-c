@@ -42,13 +42,17 @@ set  (TML_COMMON_SOURCES_HEADER
                     ${COMMON_SRC_PATH}/systemBase.h 
                     ${COMMON_SRC_PATH}/unicode.h )
 
+set  (TML_INSTALL_SOURCES_HEADER tmlCore.h
+                      tmlErrors.h
+                      tmlGlobalDefines.h
+                      tmlStdTypes.h )
+                      
 set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlCmdDefines.h
                       tmlCollectCall.h
                       tmlCollectCallDestinationObj.h
                       tmlCollectCallDestinationObjHandler.h
                       tmlConnectionObj.h
-                      tmlCore.h
                       tmlCoreDefines.h
                       tmlCoreHash.h
                       tmlCoreListener.h
@@ -57,14 +61,12 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlCriticalSectionObj.h
                       tmlDestinationAddressHandlingHashValue.h
                       tmlDispatcher.h
-                      tmlErrors.h
                       tmlEventCall.h
                       tmlEventCallHandler.h
                       tmlEventData.h
                       tmlEventDataQueue.h
                       tmlEventHandler.h
                       tmlGlobalCallback.h
-                      tmlGlobalDefines.h
                       tmlLogHandler.h
                       tmlMultiAsyncMsg.h
                       tmlObjWrapper.h
@@ -72,7 +74,6 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlReceiverStream.h
                       tmlSenderStream.h
                       tmlSingleCall.h
-                      tmlStdTypes.h
                       tmlStreamHandler.h
                       tmlUniversalHashTable.h )
                       
@@ -108,6 +109,7 @@ set (TML_SOURCES      tmlCollectCall.cpp
                       tmlUniversalHashTable.cpp )
 
 source_group("CommonHeaderfiles" FILES ${TML_COMMON_SOURCES_HEADER})
+source_group("InstallHeaderfiles" FILES ${TML_INSTALL_SOURCES_HEADER})
 source_group("Headerfiles" FILES ${TML_SOURCES_HEADER})
 source_group("CommonSourcefiles" FILES ${TML_COMMON_SOURCES})
 source_group("Sourcefiles" FILES ${TML_SOURCES})
@@ -351,7 +353,7 @@ endif (${IS64BIT} STREQUAL true)
 
 #######################################################
 ## The target is a shared library 
-ADD_LIBRARY( ${TMLLIBNAME_LOCAL} SHARED ${TML_COMMON_SOURCES_HEADER} ${TML_SOURCES_HEADER} ${TML_COMMON_SOURCES} ${TML_SOURCES})
+ADD_LIBRARY( ${TMLLIBNAME_LOCAL} SHARED ${TML_COMMON_SOURCES_HEADER} ${TML_INSTALL_SOURCES_HEADER} ${TML_SOURCES_HEADER} ${TML_COMMON_SOURCES} ${TML_SOURCES})
 
 #######################################################
 ## On MinGW build target prefix don't have to be lib:
@@ -422,5 +424,4 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 #######################################################
 ## Install
 install (TARGETS ${TMLLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
-install (FILES ${TML_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
-install (FILES ${TML_COMMON_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+install (FILES ${TML_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})

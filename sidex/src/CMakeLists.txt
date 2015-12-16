@@ -35,25 +35,27 @@ set(COMMON_SRC_PATH ../../common/src)
 
 #######################################################
 ## Source & Header
-set  (SIDEX_COMMON_SOURCES_HEADER ${COMMON_SRC_PATH}/globalDefines.h 
-                    ${COMMON_SRC_PATH}/logValues.h 
-                    ${COMMON_SRC_PATH}/stdIntTypes.h 
+set  (COMMON_INSTALL_SOURCES_HEADER ${COMMON_SRC_PATH}/globalDefines.h 
+                    ${COMMON_SRC_PATH}/stdIntTypes.h )
+
+set  (SIDEX_COMMON_SOURCES_HEADER ${COMMON_SRC_PATH}/logValues.h 
                     ${COMMON_SRC_PATH}/unicode.h )
 
-set  (SIDEX_SOURCES_HEADER sidex.h
-                    sidexBoolean.h
+set  (SIDEX_INSTALL_SOURCES_HEADER sidex.h
+                    sidexErrors.h
+                    sidexStdTypes.h )
+
+set  (SIDEX_SOURCES_HEADER sidexBoolean.h
                     sidexCom.h
                     sidexDateTime.h
                     sidexDefines.h
                     sidexDict.h
-                    sidexErrors.h
                     sidexFloat.h
                     sidexHashTable.h
                     sidexInteger.h
                     sidexList.h
                     sidexLogHandler.h
                     sidexNone.h
-                    sidexStdTypes.h
                     sidexString.h
                     sidexTable.h
                     sidexTypeBase.h
@@ -79,7 +81,9 @@ set (SIDEX_SOURCES  sidex.cpp
                     sidexUtils.cpp )
                     
 
+source_group("CommonInstallHeaderfiles" FILES ${COMMON_INSTALL_SOURCES_HEADER})
 source_group("CommonHeaderfiles" FILES ${SIDEX_COMMON_SOURCES_HEADER})
+source_group("InstallHeaderfiles" FILES ${SIDEX_INSTALL_SOURCES_HEADER})
 source_group("Headerfiles" FILES ${SIDEX_SOURCES_HEADER})
 source_group("CommonSourcefiles" FILES ${SIDEX_COMMON_SOURCES})
 source_group("Sourcefiles" FILES ${SIDEX_SOURCES})
@@ -300,7 +304,7 @@ endif (${IS64BIT} STREQUAL true)
 
 #######################################################
 ## The target is a shared library 
-ADD_LIBRARY( ${SIDEXLIBNAME_LOCAL} SHARED ${SIDEX_COMMON_SOURCES_HEADER} ${SIDEX_SOURCES_HEADER} ${SIDEX_COMMON_SOURCES} ${SIDEX_SOURCES})
+ADD_LIBRARY( ${SIDEXLIBNAME_LOCAL} SHARED ${SIDEX_COMMON_SOURCES_HEADER} ${COMMON_INSTALL_SOURCES_HEADER} ${SIDEX_SOURCES_HEADER} ${SIDEX_INSTALL_SOURCES_HEADER} ${SIDEX_COMMON_SOURCES} ${SIDEX_SOURCES})
 
 #######################################################
 ## On MinGW build target prefix don't have to be lib:
@@ -360,5 +364,5 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 #######################################################
 ## Install
 install (TARGETS ${SIDEXLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
-install (FILES ${SIDEX_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
-install (FILES ${SIDEX_COMMON_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+install (FILES ${SIDEX_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+install (FILES ${COMMON_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
