@@ -1,13 +1,11 @@
-# Install libTML  binary package {#tml_bin_install}	
+# Install libTML-c  binary package {#tml_bin_install}	
 
-Currently the following binary packages are tested:
+Currently the following libTML-c binary packages are tested:
 
 - [Windows](#WinLink)
-- [debian libtml-c](#debianLinkC)
-- [debian libtml-java](#debianLinkJava)
-- [OS X](#OsxLink)
-- [freeBSD libtml-c](#freeBSDLinkC)
-- [freeBSD libtml-java](#freeBSDLinkJava)
+- [debian](#debianLink)
+- [OS-X](#OsxLink)
+- [freeBSD](#freeBSDLink)
 
 <a name="WinLink"></a>
 ## Windows installer (32/64 bit) ##
@@ -29,7 +27,7 @@ During this step the TML Messaging Suite will be installed to the chosen destina
 ### Installation step "Finalizing installation"###
 The TML Messaging Suite is ready to be used.
 
-**Note:** The Windows binary installer don't change the Windows path environment.
+**Note:** The Windows binary installer doesn't change the Windows path environment.
 
 
 ## Windows installation content ##
@@ -61,13 +59,14 @@ To use the TML Messaging Suite for Windows C- development
 - add the **include** path to your development project include path 
 - add the **lib\win32** respectively **lib\x64** path to your development project lib path 
 - take care of having the **bin\win32** respectively **bin\x64** path in your execution path
-- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API.
-- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API.
+- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API
 
 
-## Debian package installer ##
+<a name="debianLink"></a>
+## Debian package dependencies  ##
 
-The TML Messaging Suite debian packages depend on the libaxl1 and libvortex-1.1 debian packages from "Advanced Software Production Line"
+The libTML-c debian package depends on the libaxl1 and libvortex-1.1 debian packages from "Advanced Software Production Line"
 
     # public aspl debian repository (WHEEZY)
     deb http://www.aspl.es/debian/public/wheezy/
@@ -80,21 +79,20 @@ The TML Messaging Suite debian packages depend on the libaxl1 and libvortex-1.1 
 
 See: [http://www.aspl.es/vortex/download.html](http://www.aspl.es/vortex/download.html)
 
-<a name="debianLinkC"></a>
-## libTML debian C- package ##
-Download the TML Messaging Suite debian C- package onto your target system.
+## libTML-c debian package ##
+Download the libTML-c debian package onto your target system.
 
 Install the package using shell command
 
 
 	sudo dpkg -i /PATH/TO/PACKAGE/PACKAGENAME.deb 
 
-## Debian C- package installation content ##
-The debian  C- package installation contains
+## libTML-c debian package installation content ##
+The libTML-c debian package installation contains
 
 
-- shared libraries for the C- API written to **/usr/lib**
-- include files for C- development written to **/usr/include/tml**
+- shared libraries for the C- API installed to folder **/usr/lib**
+- include files for C- development installed to folder  **/usr/include/tml**
 
 ## Debian C- development environment requirements ##
 
@@ -102,33 +100,18 @@ To use the TML Messaging Suite for Windows C- development
 
 - add **/usr/include/tml** to your development project include path 
 - add the **/usr/lib** to your development project lib path 
-- Declare the compiler prepocessor **LINUX** .
-- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API.
-- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API.
+- Declare the compiler prepocessor **LINUX**
+- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API
 
-
-<a name="debianLinkJava"></a>
-## libTML debian Java- package ##
-Download the TML Messaging Suite debian Java- package onto your target system.
-
-Install the package using shell command
-
-
-	sudo dpkg -i /PATH/TO/PACKAGE/PACKAGENAME.deb 
-
-## Debian Java- package installation content ##
-The debian Java- package installation contains
-
-
-- shared libraries for the Java Native Interface written to **/usr/lib**
 
 <a name="OsxLink"></a>
 ## OS-X Disk Image ##
 
 ## Installation steps: ###
 
- - Download the TML Messaging Suite disk image file (.dmg) onto your OS-X target system.
- - Mount the disk image file.
+ - Download the TML Messaging Suite disk image file (.dmg) onto your OS-X target system
+ - Mount the disk image file
  - Copy shared libraries:
    - on a 32 bit environment
    		-  copy ***)** the directory content of **/Volumes/libtml/usr/lib32** to the folder **/usr/lib**
@@ -166,15 +149,16 @@ To use the TML Messaging Suite for Windows C- development
 
 - Copy **include** content to your development project / include path 
 - add the **/usr/lib** to your development project lib path 
-- Declare the compiler prepocessor **LINUX** and **OS_X** .
-- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API.
-- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API.
+- Declare the compiler prepocessor **LINUX** and **OS_X**
+- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API
 
 
 
-## freeBSD package installer ##
+<a name="freeBSDLink"></a>
+## freeBSD package dependencies  ##
 
-The TML Messaging Suite freeBSD packages depend on the libaxl1 and libvortex-1.1 freeBSD packages from "Advanced Software Production Line"
+The TML Messaging Suite libTML-c freeBSD package depends on the libaxl1 and libvortex-1.1 freeBSD packages from "Advanced Software Production Line"
 
     # public aspl freeBSD 9 repository
     http://www.aspl.es/freebsd/public/9/
@@ -183,18 +167,21 @@ The TML Messaging Suite freeBSD packages depend on the libaxl1 and libvortex-1.1
     http://www.aspl.es/freebsd/public/10/
 
 
-<a name="freeBSDLinkC"></a>
-## libTML freeBSD C- package ##
-Download the TML Messaging Suite freeBSD C- package onto your target system.
+## libTML-c freeBSD package ##
+Download the libTML-c freeBSD package onto your target system.
 
-Install the package.
-
-## freeBSD C- package installation content ##
-The freeBSD  C- package installation contains
+Install the package using shell command
 
 
-- shared libraries for the C- API written to **/usr/lib**
-- include files for C- development written to **/usr/include/tml**
+	pkg install /PATH/TO/PACKAGE/PACKAGENAME 
+
+
+## libTML-c freeBSD package installation content ##
+The libTML-c freeBSD package installation contains
+
+
+- shared libraries for the C- API installed to folder  **/usr/lib**
+- include files for C- development installed to folder  **/usr/include/tml**
 
 ## freeBSD C- development environment requirements ##
 
@@ -202,20 +189,8 @@ To use the TML Messaging Suite for Windows C- development
 
 - add **/usr/include/tml** to your development project include path 
 - add the **/usr/lib** to your development project lib path 
-- Declare the compiler prepocessor **LINUX** .
-- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API.
-- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API.
+- Declare the compiler prepocessor **LINUX** 
+- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API
 
-
-<a name="freeBSDLinkJava"></a>
-## freeBSD Java- package ##
-Download the TML Messaging Suite freeBSD Java- package onto your target system.
-
-Install the package.
-
-## freeBSD Java- package installation content ##
-The freeBSD Java- package installation contains
-
-
-- shared libraries for the Java Native Interface written to **/usr/lib**
 
