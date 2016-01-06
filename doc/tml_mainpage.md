@@ -8,7 +8,7 @@
 
   - [TML Library License](\ref tml_license)
   - [Install libTML-c binary package](\ref tml_bin_install)
-  - [Install libTML-c open source files](\ref tml_install)
+  - [Install libTML-c from source](\ref tml_install)
   - [Introduction to libTML-c](\ref tml_intro)
 
 
