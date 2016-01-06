@@ -173,15 +173,15 @@ Download the libTML-c freeBSD package onto your target system.
 Install the package using shell command
 
 
-	pkg install /PATH/TO/PACKAGE/PACKAGENAME 
+	pkg install /PATH/TO/PACKAGE/PACKAGENAME.txz
 
 
 ## libTML-c freeBSD package installation content ##
 The libTML-c freeBSD package installation contains
 
 
-- shared libraries for the C- API installed to folder  **/usr/lib**
-- include files for C- development installed to folder  **/usr/include/tml**
+- shared libraries for the C- API installed to folder  **/usr/local/lib**
+- include files for C- development installed to folder  **/usr/local/include/tml**
 
 ## freeBSD C- development environment requirements ##
 
