@@ -173,22 +173,22 @@ Download the libTML-c freeBSD package onto your target system.
 Install the package using shell command
 
 
-	pkg install /PATH/TO/PACKAGE/PACKAGENAME 
+	pkg install /PATH/TO/PACKAGE/PACKAGENAME.txz
 
 
 ## libTML-c freeBSD package installation content ##
 The libTML-c freeBSD package installation contains
 
 
-- shared libraries for the C- API installed to folder  **/usr/lib**
-- include files for C- development installed to folder  **/usr/include/tml**
+- shared libraries for the C- API installed to folder  **/usr/local/lib**
+- include files for C- development installed to folder  **/usr/local/include/tml**
 
 ## freeBSD C- development environment requirements ##
 
 To use the TML Messaging Suite for Windows C- development
 
-- add **/usr/include/tml** to your development project include path 
-- add the **/usr/lib** to your development project lib path 
+- add **/usr/local/include/tml** to your development project include path 
+- add the **/usr/local/lib** to your development project lib path 
 - Declare the compiler prepocessor **LINUX** 
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API
