@@ -33,34 +33,34 @@ The TML Messaging Suite is ready to be used.
 ## Windows installation content ##
 The installation destination folder contains
 
-- **bin** dynamic link library files (C- API & JNI) 
+- **bin** dynamic link library files (C API & JNI) 
 	- **win32**	dynamic link libraries for 32 bit systems
 	- **x64**	dynamic link libraries for 64 bit systems
-- **include** include files for C- development
-- **lib** lib files for C- development
-	- **win32**	lib files for 32 bit C- development
-	- **x64**	lib files for 64 bit C- development
+- **include** include files for C/C++ development
+- **lib** lib files for C/C++ development
+	- **win32**	lib files for 32 bit C/C++ development
+	- **x64**	lib files for 64 bit C/C++ development
 - **java** java source files
-	- **com\tmlsidex\jni**	JNI binding of the C- API functions
-	- **com\tmlsidex\sidex** classes to simplify the usage of SIDEX- API
-	- **com\tmlsidex\tml** classes to simplify the usage of TML- API
+	- **com\\tmlsidex\\jni**	JNI binding of the C API functions
+	- **com\\tmlsidex\\sidex** classes to simplify the usage of SIDEX API
+	- **com\\tmlsidex\\tml** classes to simplify the usage of TML API
 - **pascal** pascal source files
 	- **examples**	Lazarus example using the TML Messaging Suite libraries
 	- **graphics**	component icons
 	- **src**	component source files
-	- **packages\Lazarus**	Lazarus component source files
-	- **packages\C++ Builder**	C++ Builder component source files
-	- **packages\Delphi**	Delphi component source files
+	- **packages\\Lazarus**	Lazarus component source files
+	- **packages\\C++ Builder**	C++ Builder component source files
+	- **packages\\Delphi**	Delphi component source files
 
-## Windows C- development environment requirements ##
+## Windows C/C++ development environment requirements ##
 
-To use the TML Messaging Suite for Windows C- development
+To use the TML Messaging Suite for Windows C/C++ development
 
 - add the **include** path to your development project include path 
-- add the **lib\win32** respectively **lib\x64** path to your development project lib path 
-- take care of having the **bin\win32** respectively **bin\x64** path in your execution path
-- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API
-- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API
+- add the **lib\\win32** respectively **lib\\x64** path to your development project lib path 
+- take care of having the **bin\\win32** respectively **bin\\x64** path in your execution path
+- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
+- Declare the compiler prepocessor values **SIDEX_UNICODE_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
 
 
 <a name="debianLink"></a>
@@ -91,18 +91,18 @@ Install the package using shell command
 The libTML-c debian package installation contains
 
 
-- shared libraries for the C- API installed to folder **/usr/lib**
-- include files for C- development installed to folder  **/usr/include/tml**
+- shared libraries for the C API installed to folder `"/usr/lib"`
+- include files for C development installed to folder  `"/usr/include/tml"`
 
-## Debian C- development environment requirements ##
+## Debian C/C++ development environment requirements ##
 
-To use the TML Messaging Suite for Windows C- development
+To use the TML Messaging Suite for debian C/C++ development
 
-- add **/usr/include/tml** to your development project include path 
-- add the **/usr/lib** to your development project lib path 
+- add `"/usr/include/tml"` to your development project include path 
+- add the `"/usr/lib"` to your development project lib path 
 - Declare the compiler prepocessor **LINUX**
-- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API
-- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
 
 
 <a name="OsxLink"></a>
@@ -114,44 +114,46 @@ To use the TML Messaging Suite for Windows C- development
  - Mount the disk image file
  - Copy shared libraries:
    - on a 32 bit environment
-   		-  copy ***)** the directory content of **/Volumes/libtml/usr/lib32** to the folder **/usr/lib**
+   		-  copy **1)** the directory content of `"/Volumes/libtml/usr/lib32"` to the folder `"/usr/lib"`
    - on a 64 bit environment
-   		-  copy ***)** the directory content of **/Volumes/libtml/usr/lib64** to the folder **/usr/lib**
+   		-  copy **2)** the directory content of `"/Volumes/libtml/usr/lib64"` to the folder `"/usr/lib"`
 
-***)**
+
+**1)** on the command shell out of "superuser mode":
 
 	cp /Volumes/libtml/usr/lib32/* /usr/lib
-respectively
+
+
+**2)** on the command shell out of "superuser mode":
 
 	cp /Volumes/libtml/usr/lib64/* /usr/lib
-on the command shell out of "superuser mode". 
 
 ## OS-X installation content ##
 The mounted TML Messaging Suite disk image file contains
 
-- **use** shared library files (C- API & JNI) 
-	- **lib32**	shared library files for 32 bit environment
-	- **lib64**	shared library files for 64 bit environment
-- **include** include files for C- development
-- **java** java source files
-	- **com\tmlsidex\jni**	JNI binding of the C- API functions
-	- **com\tmlsidex\sidex** classes to simplify the usage of SIDEX- API
-	- **com\tmlsidex\tml** classes to simplify the usage of TML- API
-- **pascal** pascal source files
-	- **examples**	Lazarus example using the TML Messaging Suite libraries
-	- **graphics**	component icons
-	- **src**	component source files
-	- **packages\Lazarus**	Lazarus component source files
+- `"usr"` shared library files (C API & JNI)
+	- `"lib32"`	shared library files for 32 bit environment
+	- `"lib64"`	shared library files for 64 bit environment
+- `"include"` include files for C/C++ development
+- `"java"` java source files
+	- `"com/tmlsidex/jni"`	JNI binding of the C API functions
+	- `"com/tmlsidex/sidex"` classes to simplify the usage of SIDEX API
+	- `"com/tmlsidex/tml"` classes to simplify the usage of TML API
+- `"pascal"` pascal source files
+	- `"examples"`	Lazarus example using the TML Messaging Suite libraries
+	- `"graphics"`	component icons
+	- `"src"`	component source files
+	- `"packages/Lazarus"`	Lazarus component source files
 
-## OS-X C- development environment requirements ##
+## OS-X C/C++ development environment requirements ##
 
-To use the TML Messaging Suite for Windows C- development
+To use the TML Messaging Suite for OS-X C/C++ development
 
-- Copy **include** content to your development project / include path 
-- add the **/usr/lib** to your development project lib path 
+- Copy `"include"` content to your development project / include path 
+- add the `"/usr/lib"` to your development project lib path 
 - Declare the compiler prepocessor **LINUX** and **OS_X**
-- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API
-- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
 
 
 
@@ -180,17 +182,17 @@ Install the package using shell command
 The libTML-c freeBSD package installation contains
 
 
-- shared libraries for the C- API installed to folder  **/usr/local/lib**
-- include files for C- development installed to folder  **/usr/local/include/tml**
+- shared libraries for the C API installed to folder  `"/usr/local/lib"`
+- include files for C/C++ development installed to folder  `"/usr/local/include/tml"`
 
-## freeBSD C- development environment requirements ##
+## freeBSD C/C++ development environment requirements ##
 
-To use the TML Messaging Suite for Windows C- development
+To use the TML Messaging Suite for freeBSD C/C++ development
 
-- add **/usr/local/include/tml** to your development project include path 
-- add the **/usr/local/lib** to your development project lib path 
+- add `"/usr/local/include/tml"` to your development project include path 
+- add the `"/usr/local/lib"` to your development project lib path 
 - Declare the compiler prepocessor **LINUX** 
-- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t*** data type calling the libTML C- API
-- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t*** data type calling the libTML C- API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
+- Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
 
 

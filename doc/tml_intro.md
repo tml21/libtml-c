@@ -11,7 +11,7 @@
 <a name="howtouse"></a>
 ## How to use the library ##
 
-The libTML-c API is a set of functions operating on handles of objects. Two fundamental modules are available. TML (The Missing Link) provides the messaging and network functions and SIDEX (Simple Data Exchange) provides the API to access message data. After [installing the library](tml_install.md) you can import TML and SIDEX into your project.
+The libTML-c API is a set of functions operating on handles of objects. Two fundamental modules are available. TML (The Missing Link) provides the messaging and network functions and SIDEX (Simple Data Exchange) provides the API to access message data. After [installing the library](\ref tml_install) you can import TML and SIDEX into your project.
 
 ~~~~{.c}
 import "tmlCore.h"

@@ -162,6 +162,8 @@
   * The stream API enables TML to transfer files without using another port or protocol.
   */  
 
+#ifndef TMLCORE_H
+#define TMLCORE_H
 
 //-----------------------------------------
 // SUPRESS as API description via doxygen:
@@ -175,9 +177,6 @@
   */
 
  
-#ifndef TMLCORE_H
-#define TMLCORE_H
-
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
