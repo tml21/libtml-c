@@ -27,9 +27,7 @@ During this step the TML Messaging Suite will be installed to the chosen destina
 ### Installation step "Finalizing installation"###
 The TML Messaging Suite is ready to be used.
 
-**Note:** The Windows binary installer doesn't change the Windows path environment.
-
-
+	
 ## Windows installation content ##
 The installation destination folder contains
 
@@ -52,6 +50,14 @@ The installation destination folder contains
 	- **packages\\C++ Builder**	C++ Builder component source files
 	- **packages\\Delphi**	Delphi component source files
 
+Furthermore the libtml-c dynamic link library files are installed into the system folder
+
+- **Windows**
+	- **System32** (Windows 32 bit & Windows 64 bit target platform)
+	- **SysWOW64** (Windows 64 bit target platform)
+
+**Note:** The Windows binary installer doesn't change the Windows path environment.
+
 ## Windows C/C++ development environment requirements ##
 
 To use the TML Messaging Suite for Windows C/C++ development
@@ -61,7 +67,9 @@ To use the TML Messaging Suite for Windows C/C++ development
 - take care of having the **bin\\win32** respectively **bin\\x64** path in your execution path
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX_UNICODE_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
+<br><br>
 
+----------
 
 <a name="debianLink"></a>
 ## Debian package dependencies  ##
@@ -103,7 +111,9 @@ To use the TML Messaging Suite for debian C/C++ development
 - Declare the compiler prepocessor **LINUX**
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
+<br><br>
 
+----------
 
 <a name="OsxLink"></a>
 ## OS-X Disk Image ##
@@ -154,8 +164,9 @@ To use the TML Messaging Suite for OS-X C/C++ development
 - Declare the compiler prepocessor **LINUX** and **OS_X**
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
+<br><br>
 
-
+----------
 
 <a name="freeBSDLink"></a>
 ## freeBSD package dependencies  ##
