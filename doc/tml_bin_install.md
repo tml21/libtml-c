@@ -18,15 +18,18 @@ Using the wizard based installer you are able to
 - navigate to the previous setup wizard page using the “Back” button.
 - terminate the setup wizard session by using the “Cancel” button.
 
-### Installation step "Collecting information"###
-Introductory information about TML Messaging Suite.
-### Installation step "Preparing information"###
-Allows changing  of the installation destination folder.
-### Installation step "Installation"###
-During this step the TML Messaging Suite will be installed to the chosen destination folder.
-### Installation step "Finalizing installation"###
-The TML Messaging Suite is ready to be used.
-
+### Installation step "Welcome page"###
+Welcome & introduction of TML Messaging Suite installer.
+### Installation step "License agreement page"###
+License agreement of TML Messaging Suite.
+### Installation step "Destination folder page"###
+Select the installation destination folder.
+### Installation step "Ready to start installation page"###
+Click `"Next"` to start the installation.
+### Installation step "Installation progress page"###
+Installation progress information.
+### Installation step "Complete page"###
+Now the TML Messaging Suite is ready to be used.
 	
 ## Windows installation content ##
 The installation destination folder contains
