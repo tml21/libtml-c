@@ -105,6 +105,10 @@ Set library directories:
 
 For multiple library directories add this line with a different path.
 
+<br>
+
+----------
+
 <a name="WinLink"></a>
 ## Build libTML-c on Windows ##
 
@@ -115,6 +119,9 @@ To build libTML-c on Windows either Visual Studio or MinGW can be uses.
 	- [Build MinGW64](#MinGWLink64)
 	- [Build with Visual Studio](#WinVCLink)
 
+<br>
+
+----------
 
 <a name="MinGWLink"></a>
 ### Build with MinGW ###
@@ -139,6 +146,10 @@ Extract the package but do not overwrite the previous 32 bit MinGW installation.
 
  Use the `win_mingw64.cmake` tool chain to set the compiler path for win64 binary build.
  (see [Build libTML-c win64 with MinGW](#MinGWLink64))
+
+<br>
+
+----------
 
 <a name="MinGWLink32"></a>
 ### Build libTML-c win32 with MinGW ###
@@ -165,6 +176,10 @@ To build libTML-c win32 binaries on Windows with MinGW, the settings for the too
 		- `build\win_x86-32_mingw\tml\tmlcore11.dll`
 		- `build\win_x86-32_mingw\test\libTmlTest.exe`
 
+<br>
+
+----------
+
 <a name="MinGWLink64"></a>
 ### Build libTML-c win64 with MinGW ###
 
@@ -189,6 +204,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 		- `build\win_x86-64_mingw\sidex\sidex11_64.dll`
 		- `build\win_x86-64_mingw\tml\tmlcore11_64.dll`
 		- `build\win_x86-64_mingw\test\libTmlTest64.exe`
+
+<br>
+
+----------
 
 <a name="WinVCLink"></a>
 ## Build libTML-c on Windows with Visual Studio ##
@@ -222,6 +241,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 		- `build\win_x86-64\tml\Release\tmlcore11_64.lib`
 		- `build\win_x86-64\test\Release\libTmlTest64.exe`
 
+<br>
+
+----------
+
 <a name="LinuxLink"></a>
 ## Build libTML-c on LINUX x86 ##
 
@@ -252,6 +275,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
 
+<br>
+
+----------
+
 <a name="OsxLink"></a>
 ## Build libTML-c on OS X ##
 
@@ -281,6 +308,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
 
+<br>
+
+----------
+
 <a name="linuxArmLink"></a>
 ## Build libTML-c on LINUX ARM ##
 
@@ -301,6 +332,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
+
+<br>
+
+----------
 
 <a name="AndroidLink"></a>
 ## libTML-c cross build for Android ##
@@ -334,6 +369,10 @@ A cross compile for Android on Windows requires [MinGW](http://www.mingw.org/) w
 - the binaries are located in:
 	- `build\android_arm32\sidex\libsidex11.so`
 	- `build\android_arm32\tml\libtmlcore11.so`
+
+<br>
+
+----------
 
 <a name="freeBSDLink"></a>
 ## Build libTML-c on freeBSD x86 ##
