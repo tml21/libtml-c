@@ -7,12 +7,33 @@ Currently the following libTML-c binary packages are tested:
 - [OS-X](#OsxLink)
 - [freeBSD](#freeBSDLink)
 
+<br>
+
+----------
+
+## Library dependencies ##
+
+The libTML-c binary package depends on the **libiconv** library (not required on Windows).
+
+
+- **Homepage:** [`http://www.gnu.org/software/libiconv`](http://www.gnu.org/software/libiconv)
+- **Download:** [`http://www.gnu.org/software/libiconv/#downloading`](http://www.gnu.org/software/libiconv/#downloading)
+- **Documentation:** [`http://www.gnu.org/software/libiconv/#introduction`](http://www.gnu.org/software/libiconv/#introduction)
+- **Remarks:**  If not available, the library can be compiled from source
+
+    	./configure
+    	make
+    	make install
+    
+
+<br>
+
+----------
+
 <a name="WinLink"></a>
 ## Windows installer (32/64 bit) ##
 
 The TML Messaging Suite Windows binary installer supports both, 32 bit and 64 bit Windows systems. Download and and launch it on your Windows target system. Follow the instructions.
-
-
 
 	
 ## Windows installation content ##
@@ -62,18 +83,20 @@ To use the TML Messaging Suite for Windows C/C++ development
 <a name="debianLink"></a>
 ## Debian package dependencies  ##
 
-The libTML-c debian package depends on the libaxl1 and libvortex-1.1 debian packages from "Advanced Software Production Line"
+The libTML-c debian package depends on the **libaxl1** and **libvortex-1.1 debian packages** from 
+["Advanced Software Production Line (ASPL)"](http://www.aspl.es/vortex/download.html)
 
-    # public aspl debian repository (WHEEZY)
-    deb http://www.aspl.es/debian/public/wheezy/
-	
-    # public aspl debian repository (SQUEEZE)
-    deb http://www.aspl.es/debian/public/squeeze/
+You will find the ASPL debian packages here: 
 
-    # public aspl debian repository (LENNY)
-    deb http://www.aspl.es/debian/public/lenny/
+[http://www.aspl.es/debian/public/](http://www.aspl.es/debian/public/)
 
-See: [http://www.aspl.es/vortex/download.html](http://www.aspl.es/vortex/download.html)
+If you don't find the libaxl1 and libvortex-1.1 debian packages for the desired platform (at the editorial deadline "armhf" was missing) , you have to build the libraries "libaxl" and "libvortex-1.1" from source.<br>
+You find the source here:<br><br>
+[http://www.aspl.es/axl/downloads/](http://www.aspl.es/axl/downloads/)<br>
+[http://www.aspl.es/vortex/downloads/](http://www.aspl.es/vortex/downloads/)<br>
+[https://github.com/ASPLes/libaxl](https://github.com/ASPLes/libaxl)<br>
+[https://github.com/ASPLes/libvortex-1.1](https://github.com/ASPLes/libvortex-1.1)<br><br>
+
 
 ## libTML-c debian package ##
 Download the libTML-c debian package onto your target system.
@@ -176,13 +199,12 @@ To use the TML Messaging Suite for OS-X C/C++ development
 <a name="freeBSDLink"></a>
 ## freeBSD package dependencies  ##
 
-The TML Messaging Suite libTML-c freeBSD package depends on the libaxl1 and libvortex-1.1 freeBSD packages from "Advanced Software Production Line"
+The TML Messaging Suite libTML-c freeBSD package depends on the **libaxl1** and **libvortex-1.1 freeBSD packages** from ["Advanced Software Production Line (ASPL)"](http://www.aspl.es/vortex/download.html)
 
-    # public aspl freeBSD 9 repository
-    http://www.aspl.es/freebsd/public/9/
+You will find the ASPL freeBSD packages here: 
 
-    # public aspl freeBSD 10 repository
-    http://www.aspl.es/freebsd/public/10/
+[http://www.aspl.es/freebsd/public/](http://www.aspl.es/freebsd/public/)
+
 
 
 ## libTML-c freeBSD package ##

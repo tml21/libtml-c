@@ -1,4 +1,4 @@
-# Install libTML-c {#tml_install}
+# Install libTML-c from source {#tml_install}
 
 The libTML-c library is intended to be used on multiple platforms. CMake is used to simplify building, installing or creating project files for a preferred development environment and platform. All instructions in this section require to install [CMake](http://www.cmake.org/).
 You can download CMake here: [http://www.cmake.org/download/](http://www.cmake.org/download/)
@@ -17,6 +17,10 @@ Currently the following target systems are tested:
 		- [Build with MinGW32](#MinGWLink32)
 		- [Build with MinGW64](#MinGWLink64)
 	- [Build with Visual Studio](#WinVCLink)
+
+<br>
+
+----------
 
 <a name="RequiredLibs"></a>
 ## Library dependencies ##
@@ -47,7 +51,7 @@ Vortex is a BEEP core implementation.
 - **Download:** [`http://www.aspl.es/vortex/download.html`](http://www.aspl.es/vortex/download.html)
 - **Documentation:** [`http://www.aspl.es/vortex/doc.html`](http://www.aspl.es/vortex/doc.html)
 - **Required for:** libTML
-- **Remarks:** On Unix-like systems the Vortex library can be compiled from source. 
+- **Remarks:** On Unix-like systems the Vortex library can be compiled from source
 
 To build the TLS and SASL modules, the GNU SASL library (libgsasl7-dev) and the SSL development libraries (libssl-dev) are required. On Debian wheezy, for example, you can install the libraries with using apt-get. 
 
@@ -75,7 +79,7 @@ For Unicode and string encoding support, libTML is using the libiconv library.
 - **Download:** [`http://www.gnu.org/software/libiconv/#downloading`](http://www.gnu.org/software/libiconv/#downloading)
 - **Documentation:** [`http://www.gnu.org/software/libiconv/#introduction`](http://www.gnu.org/software/libiconv/#introduction)
 - **Required for:** libTML
-- **Remarks:** On Unix-like systems the library can be compiled from source. 
+- **Remarks:** If not available, the library can be compiled from source.  
 
     	./configure
     	make
@@ -83,7 +87,11 @@ For Unicode and string encoding support, libTML is using the libiconv library.
     
 On Windows the libiconv library is not required. 
 
-#### Compiler ####
+<br>
+
+----------
+
+## Compiler ##
 
 The libTML-c library API supports char16\_t data type. It is mandatory, to use a compiler, that supports char16\_t data type (gcc >= 4.4).
 
@@ -104,6 +112,10 @@ Set library directories:
 	LINK_DIRECTORIES("C:\\Program Files (x86)\\VortexLibrary-1.1-W32\\lib")
 
 For multiple library directories add this line with a different path.
+
+<br>
+
+----------
 
 <a name="WinLink"></a>
 ## Build libTML-c on Windows ##
@@ -140,8 +152,13 @@ Extract the package but do not overwrite the previous 32 bit MinGW installation.
  Use the `win_mingw64.cmake` tool chain to set the compiler path for win64 binary build.
  (see [Build libTML-c win64 with MinGW](#MinGWLink64))
 
+
+<br>
+
+----------
+
 <a name="MinGWLink32"></a>
-### Build libTML-c win32 with MinGW ###
+## Build libTML-c win32 with MinGW ##
 
 To build libTML-c win32 binaries on Windows with MinGW, the settings for the tool chain have to be adjusted. CMake needs the information where to find win32 compiler. Edit the tool chain file `win_mingw32.cmake`. The file is located in the sources root.
 
@@ -190,6 +207,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 		- `build\win_x86-64_mingw\tml\tmlcore11_64.dll`
 		- `build\win_x86-64_mingw\test\libTmlTest64.exe`
 
+<br>
+
+----------
+
 <a name="WinVCLink"></a>
 ## Build libTML-c on Windows with Visual Studio ##
 
@@ -222,6 +243,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 		- `build\win_x86-64\tml\Release\tmlcore11_64.lib`
 		- `build\win_x86-64\test\Release\libTmlTest64.exe`
 
+<br>
+
+----------
+
 <a name="LinuxLink"></a>
 ## Build libTML-c on LINUX x86 ##
 
@@ -252,6 +277,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
 
+<br>
+
+----------
+
 <a name="OsxLink"></a>
 ## Build libTML-c on OS X ##
 
@@ -281,6 +310,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
 
+<br>
+
+----------
+
 <a name="linuxArmLink"></a>
 ## Build libTML-c on LINUX ARM ##
 
@@ -301,6 +334,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
+
+<br>
+
+----------
 
 <a name="AndroidLink"></a>
 ## libTML-c cross build for Android ##
@@ -334,6 +371,10 @@ A cross compile for Android on Windows requires [MinGW](http://www.mingw.org/) w
 - the binaries are located in:
 	- `build\android_arm32\sidex\libsidex11.so`
 	- `build\android_arm32\tml\libtmlcore11.so`
+
+<br>
+
+----------
 
 <a name="freeBSDLink"></a>
 ## Build libTML-c on freeBSD x86 ##
