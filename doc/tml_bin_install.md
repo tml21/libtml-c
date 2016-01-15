@@ -10,26 +10,10 @@ Currently the following libTML-c binary packages are tested:
 <a name="WinLink"></a>
 ## Windows installer (32/64 bit) ##
 
-Download the TML Messaging Suite Windows binary installer and launch it on your Windows target system. It supports both, 32 bit and 64 bit Windows systems.
+The TML Messaging Suite Windows binary installer supports both, 32 bit and 64 bit Windows systems. Download and and launch it on your Windows target system. Follow the instructions.
 
-Using the wizard based installer you are able to
 
-- navigate to the next setup wizard page using the “Next” button.
-- navigate to the previous setup wizard page using the “Back” button.
-- terminate the setup wizard session by using the “Cancel” button.
 
-### Installation step "Welcome page"###
-Welcome & introduction of TML Messaging Suite installer.
-### Installation step "License agreement page"###
-License agreement of TML Messaging Suite.
-### Installation step "Destination folder page"###
-Select the installation destination folder.
-### Installation step "Ready to start installation page"###
-Click `"Next"` to start the installation.
-### Installation step "Installation progress page"###
-Installation progress information.
-### Installation step "Complete page"###
-Now the TML Messaging Suite is ready to be used.
 	
 ## Windows installation content ##
 The installation destination folder contains
@@ -70,7 +54,8 @@ To use the TML Messaging Suite for Windows C/C++ development
 - take care of having the **bin\\win32** respectively **bin\\x64** path in your execution path
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX_UNICODE_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
-<br><br>
+
+<br>
 
 ----------
 
@@ -114,32 +99,16 @@ To use the TML Messaging Suite for debian C/C++ development
 - Declare the compiler prepocessor **LINUX**
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
-<br><br>
+
+<br>
 
 ----------
 
 <a name="OsxLink"></a>
 ## OS-X Disk Image ##
 
-## Installation steps: ###
-
  - Download the TML Messaging Suite disk image file (.dmg) onto your OS-X target system
  - Mount the disk image file
- - Copy shared libraries:
-   - on a 32 bit environment
-   		-  copy **1)** the directory content of `"/Volumes/libtml/usr/lib32"` to the folder `"/usr/lib"`
-   - on a 64 bit environment
-   		-  copy **2)** the directory content of `"/Volumes/libtml/usr/lib64"` to the folder `"/usr/lib"`
-
-
-**1)** on the command shell out of "superuser mode":
-
-	cp /Volumes/libtml/usr/lib32/* /usr/lib
-
-
-**2)** on the command shell out of "superuser mode":
-
-	cp /Volumes/libtml/usr/lib64/* /usr/lib
 
 ## OS-X installation content ##
 The mounted TML Messaging Suite disk image file contains
@@ -158,6 +127,38 @@ The mounted TML Messaging Suite disk image file contains
 	- `"src"`	component source files
 	- `"packages/Lazarus"`	Lazarus component source files
 
+##System Integrity Protection - using OS X 10.11 (El Capitan)##
+
+If the System Integrity Protection is enabled (default on El Capitan), root is not permitted to copy to `"/usr/lib"`.
+    
+To disable System Integrity Protection, you must boot to Recovery OS and run the csrutil(1) command from the Terminal.<br>[See:Configuring System Integrity Protection](https://developer.apple.com/library/mac/documentation/Security/Conceptual/System_Integrity_Protection_Guide/ConfiguringSystemIntegrityProtection/ConfiguringSystemIntegrityProtection.html).
+
+- Boot to Recovery OS by restarting your machine and holding down the Command and R keys at startup.
+- Launch Terminal from the Utilities menu.
+- Enter the following command:
+
+		$ csrutil disable
+
+After disabling System Integrity Protection on a machine, a reboot is required.    
+
+##Copy shared library files##
+
+- on a 32 bit environment
+	- copy **1)** the directory content of `"/Volumes/libtml/usr/lib32"` to the folder `"/usr/lib"`
+
+- on a 64 bit environment
+	- copy **2)** the directory content of `"/Volumes/libtml/usr/lib64"` to the folder `"/usr/lib"`
+
+
+**1)** on the command shell out of "superuser mode":
+
+	cp /Volumes/libtml/usr/lib32/* /usr/lib
+
+
+**2)** on the command shell out of "superuser mode":
+
+	cp /Volumes/libtml/usr/lib64/* /usr/lib
+
 ## OS-X C/C++ development environment requirements ##
 
 To use the TML Messaging Suite for OS-X C/C++ development
@@ -167,7 +168,8 @@ To use the TML Messaging Suite for OS-X C/C++ development
 - Declare the compiler prepocessor **LINUX** and **OS_X**
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
-<br><br>
+
+<br>
 
 ----------
 
