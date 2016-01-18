@@ -79,7 +79,7 @@ For Unicode and string encoding support, libTML is using the libiconv library.
 - **Download:** [`http://www.gnu.org/software/libiconv/#downloading`](http://www.gnu.org/software/libiconv/#downloading)
 - **Documentation:** [`http://www.gnu.org/software/libiconv/#introduction`](http://www.gnu.org/software/libiconv/#introduction)
 - **Required for:** libTML
-- **Remarks:** If not available, the library can be compiled from source.  
+- **Remarks:** If not available on the target platform, the library can be compiled from source
 
     	./configure
     	make

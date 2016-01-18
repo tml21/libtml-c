@@ -13,13 +13,13 @@ Currently the following libTML-c binary packages are tested:
 
 ## Library dependencies ##
 
-The libTML-c binary package depends on the **libiconv** library (not required on Windows).
+The libTML-c binary package depends on the **libiconv** library (except on Windows).
 
 
 - **Homepage:** [`http://www.gnu.org/software/libiconv`](http://www.gnu.org/software/libiconv)
 - **Download:** [`http://www.gnu.org/software/libiconv/#downloading`](http://www.gnu.org/software/libiconv/#downloading)
 - **Documentation:** [`http://www.gnu.org/software/libiconv/#introduction`](http://www.gnu.org/software/libiconv/#introduction)
-- **Remarks:**  If not available, the library can be compiled from source
+- **Remarks:**  If not available on the target platform, the library can be compiled from source
 
     	./configure
     	make
