@@ -7,29 +7,34 @@ Currently the following libTML-c binary packages are tested:
 - [OS-X](#OsxLink)
 - [freeBSD](#freeBSDLink)
 
+<br>
+
+----------
+
+## Library dependencies ##
+
+The libTML-c binary package depends on the **libiconv** library (except on Windows).
+
+
+- **Homepage:** [`http://www.gnu.org/software/libiconv`](http://www.gnu.org/software/libiconv)
+- **Download:** [`http://www.gnu.org/software/libiconv/#downloading`](http://www.gnu.org/software/libiconv/#downloading)
+- **Documentation:** [`http://www.gnu.org/software/libiconv/#introduction`](http://www.gnu.org/software/libiconv/#introduction)
+- **Remarks:**  If not available on the target platform, the library can be compiled from source
+
+    	./configure
+    	make
+    	make install
+    
+
+<br>
+
+----------
+
 <a name="WinLink"></a>
 ## Windows installer (32/64 bit) ##
 
-Download the TML Messaging Suite Windows binary installer and launch it on your Windows target system. It supports both, 32 bit and 64 bit Windows systems.
+The TML Messaging Suite Windows binary installer supports both, 32 bit and 64 bit Windows systems. Download and and launch it on your Windows target system. Follow the instructions.
 
-Using the wizard based installer you are able to
-
-- navigate to the next setup wizard page using the “Next” button.
-- navigate to the previous setup wizard page using the “Back” button.
-- terminate the setup wizard session by using the “Cancel” button.
-
-### Installation step "Welcome page"###
-Welcome & introduction of TML Messaging Suite installer.
-### Installation step "License agreement page"###
-License agreement of TML Messaging Suite.
-### Installation step "Destination folder page"###
-Select the installation destination folder.
-### Installation step "Ready to start installation page"###
-Click `"Next"` to start the installation.
-### Installation step "Installation progress page"###
-Installation progress information.
-### Installation step "Complete page"###
-Now the TML Messaging Suite is ready to be used.
 	
 ## Windows installation content ##
 The installation destination folder contains
@@ -70,25 +75,28 @@ To use the TML Messaging Suite for Windows C/C++ development
 - take care of having the **bin\\win32** respectively **bin\\x64** path in your execution path
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX_UNICODE_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
-<br><br>
+
+<br>
 
 ----------
 
 <a name="debianLink"></a>
 ## Debian package dependencies  ##
 
-The libTML-c debian package depends on the libaxl1 and libvortex-1.1 debian packages from "Advanced Software Production Line"
+The libTML-c debian package depends on the **libaxl1** and **libvortex-1.1 debian packages** from 
+["Advanced Software Production Line (ASPL)"](http://www.aspl.es/vortex/download.html)
 
-    # public aspl debian repository (WHEEZY)
-    deb http://www.aspl.es/debian/public/wheezy/
-	
-    # public aspl debian repository (SQUEEZE)
-    deb http://www.aspl.es/debian/public/squeeze/
+You will find the ASPL debian packages here: 
 
-    # public aspl debian repository (LENNY)
-    deb http://www.aspl.es/debian/public/lenny/
+[http://www.aspl.es/debian/public/](http://www.aspl.es/debian/public/)
 
-See: [http://www.aspl.es/vortex/download.html](http://www.aspl.es/vortex/download.html)
+If you don't find the libaxl1 and libvortex-1.1 debian packages for the desired platform (at the editorial deadline "armhf" was missing) , you have to build the libraries "libaxl" and "libvortex-1.1" from source.<br>
+You find the source here:<br><br>
+[http://www.aspl.es/axl/downloads/](http://www.aspl.es/axl/downloads/)<br>
+[http://www.aspl.es/vortex/downloads/](http://www.aspl.es/vortex/downloads/)<br>
+[https://github.com/ASPLes/libaxl](https://github.com/ASPLes/libaxl)<br>
+[https://github.com/ASPLes/libvortex-1.1](https://github.com/ASPLes/libvortex-1.1)<br><br>
+
 
 ## libTML-c debian package ##
 Download the libTML-c debian package onto your target system.
@@ -114,32 +122,16 @@ To use the TML Messaging Suite for debian C/C++ development
 - Declare the compiler prepocessor **LINUX**
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
-<br><br>
+
+<br>
 
 ----------
 
 <a name="OsxLink"></a>
 ## OS-X Disk Image ##
 
-## Installation steps: ###
-
  - Download the TML Messaging Suite disk image file (.dmg) onto your OS-X target system
  - Mount the disk image file
- - Copy shared libraries:
-   - on a 32 bit environment
-   		-  copy **1)** the directory content of `"/Volumes/libtml/usr/lib32"` to the folder `"/usr/lib"`
-   - on a 64 bit environment
-   		-  copy **2)** the directory content of `"/Volumes/libtml/usr/lib64"` to the folder `"/usr/lib"`
-
-
-**1)** on the command shell out of "superuser mode":
-
-	cp /Volumes/libtml/usr/lib32/* /usr/lib
-
-
-**2)** on the command shell out of "superuser mode":
-
-	cp /Volumes/libtml/usr/lib64/* /usr/lib
 
 ## OS-X installation content ##
 The mounted TML Messaging Suite disk image file contains
@@ -158,6 +150,38 @@ The mounted TML Messaging Suite disk image file contains
 	- `"src"`	component source files
 	- `"packages/Lazarus"`	Lazarus component source files
 
+##System Integrity Protection - using OS X 10.11 (El Capitan)##
+
+If the System Integrity Protection is enabled (default on El Capitan), root is not permitted to copy to `"/usr/lib"`.
+    
+To disable System Integrity Protection, you must boot to Recovery OS and run the csrutil(1) command from the Terminal.<br>[See:Configuring System Integrity Protection](https://developer.apple.com/library/mac/documentation/Security/Conceptual/System_Integrity_Protection_Guide/ConfiguringSystemIntegrityProtection/ConfiguringSystemIntegrityProtection.html).
+
+- Boot to Recovery OS by restarting your machine and holding down the Command and R keys at startup.
+- Launch Terminal from the Utilities menu.
+- Enter the following command:
+
+		$ csrutil disable
+
+After disabling System Integrity Protection on a machine, a reboot is required.    
+
+##Copy shared library files##
+
+- on a 32 bit environment
+	- copy **1)** the directory content of `"/Volumes/libtml/usr/lib32"` to the folder `"/usr/lib"`
+
+- on a 64 bit environment
+	- copy **2)** the directory content of `"/Volumes/libtml/usr/lib64"` to the folder `"/usr/lib"`
+
+
+**1)** on the command shell out of "superuser mode":
+
+	cp /Volumes/libtml/usr/lib32/* /usr/lib
+
+
+**2)** on the command shell out of "superuser mode":
+
+	cp /Volumes/libtml/usr/lib64/* /usr/lib
+
 ## OS-X C/C++ development environment requirements ##
 
 To use the TML Messaging Suite for OS-X C/C++ development
@@ -167,20 +191,20 @@ To use the TML Messaging Suite for OS-X C/C++ development
 - Declare the compiler prepocessor **LINUX** and **OS_X**
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
-<br><br>
+
+<br>
 
 ----------
 
 <a name="freeBSDLink"></a>
 ## freeBSD package dependencies  ##
 
-The TML Messaging Suite libTML-c freeBSD package depends on the libaxl1 and libvortex-1.1 freeBSD packages from "Advanced Software Production Line"
+The TML Messaging Suite libTML-c freeBSD package depends on the **libaxl1** and **libvortex-1.1 freeBSD packages** from ["Advanced Software Production Line (ASPL)"](http://www.aspl.es/vortex/download.html)
 
-    # public aspl freeBSD 9 repository
-    http://www.aspl.es/freebsd/public/9/
+You will find the ASPL freeBSD packages here: 
 
-    # public aspl freeBSD 10 repository
-    http://www.aspl.es/freebsd/public/10/
+[http://www.aspl.es/freebsd/public/](http://www.aspl.es/freebsd/public/)
+
 
 
 ## libTML-c freeBSD package ##
