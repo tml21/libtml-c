@@ -182,8 +182,14 @@ To build libTML-c win32 binaries on Windows with MinGW, the settings for the too
 		- `build\win_x86-32_mingw\tml\tmlcore11.dll`
 		- `build\win_x86-32_mingw\test\libTmlTest.exe`
 
+
+<br>
+
+----------
+
+
 <a name="MinGWLink64"></a>
-### Build libTML-c win64 with MinGW ###
+## Build libTML-c win64 with MinGW ##
 
 To build libTML-c win64 binaries on Windows with MinGW, the settings for the tool chain have to be adjusted. CMake needs the information where to find win64 compiler. Edit the tool chain file `win_mingw64.cmake`. The file is located in the sources root.
 
