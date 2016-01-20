@@ -23,6 +23,14 @@
  *  fee but returning back any change, improvement or addition in the
  *  form of source code, project image, documentation patches, etc.
  *
+ *  Homepage:
+ *    http://www.libtml.org
+ *
+ *  For professional support contact us:
+ *
+ *    wobe-systems GmbH
+ *    support@libtml.org
+ *
  * Contributors:
  *    wobe-systems GmbH
  */
