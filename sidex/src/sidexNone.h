@@ -23,8 +23,6 @@
  *  fee but returning back any change, improvement or addition in the
  *  form of source code, project image, documentation patches, etc.
  *
- *  For commercial support on build UJO enabled solutions contact us:
- *  
  * Contributors:
  *    wobe-systems GmbH
  */
