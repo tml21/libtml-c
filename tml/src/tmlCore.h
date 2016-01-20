@@ -23,8 +23,14 @@
  *  fee but returning back any change, improvement or addition in the
  *  form of source code, project image, documentation patches, etc.
  *
- *  For commercial support on build UJO enabled solutions contact us:
- *  
+ *  Homepage:
+ *    http://www.libtml.org
+ *
+ *  For professional support contact us:
+ *
+ *    wobe-systems GmbH
+ *    support@libtml.org
+ *
  * Contributors:
  *    wobe-systems GmbH
  */
@@ -162,6 +168,8 @@
   * The stream API enables TML to transfer files without using another port or protocol.
   */  
 
+#ifndef TMLCORE_H
+#define TMLCORE_H
 
 //-----------------------------------------
 // SUPRESS as API description via doxygen:
@@ -175,9 +183,6 @@
   */
 
  
-#ifndef TMLCORE_H
-#define TMLCORE_H
-
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000

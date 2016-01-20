@@ -23,8 +23,14 @@
  *  fee but returning back any change, improvement or addition in the
  *  form of source code, project image, documentation patches, etc.
  *
- *  For commercial support on build UJO enabled solutions contact us:
- *  
+ *  Homepage:
+ *    http://www.libtml.org
+ *
+ *  For professional support contact us:
+ *
+ *    wobe-systems GmbH
+ *    support@libtml.org
+ *
  * Contributors:
  *    wobe-systems GmbH
  */
@@ -285,7 +291,7 @@ wchar_t* UTF8toUTF32(char* utf8, SIDEX_INT32* iLength, const char *tocode, int t
      printf ("UTF8toUTF32 / Error = %d\n", errno);
    }
    else{
-     *iLength = ((outbytesleftIn - outbytesleftOut) / toSize);
+     *iLength = ((outbytesleftIn - outbytesleftOut) / toSize) - 1;
    }
    iconv_close (cd);
 #else // LINUX
@@ -340,7 +346,7 @@ wchar_t* UTF8toUTF16(char* utf8, SIDEX_INT32* iLength)
      printf ("UTF8toUTF16 / Error = %d\n", errno);
    }
    else{
-     *iLength = ((outbytesleftIn - outbytesleftOut) / toSize);
+     *iLength = ((outbytesleftIn - outbytesleftOut) / toSize) - 1;
    }
    iconv_close (cd);
 #else // LINUX
@@ -422,7 +428,7 @@ SIDEX_INT32 UTF8toUTF_X_length_request(char* utf8, const char *tocode, int toSiz
      printf ("UTF8toUTF16_length_requestUNI / Error = %d\n", errno);
    }
    else{
-     iLength = ((outbytesleftIn - outbytesleftOut) / toSize);
+     iLength = ((outbytesleftIn - outbytesleftOut) / toSize) - 1;
    }
    iconv_close (cd);
    delete[] utf16;

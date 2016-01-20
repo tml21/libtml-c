@@ -22,8 +22,14 @@
 #  fee but returning back any change, improvement or addition in the
 #  form of source code, project image, documentation patches, etc.
 #
-#  For commercial support on build UJO enabled solutions contact us:
-#  
+#  Homepage:
+#    http://www.libtml.org
+#
+#  For professional support contact us:
+#
+#    wobe-systems GmbH
+#    support@libtml.org
+# 
 # Contributors:
 #    wobe-systems GmbH
 
@@ -42,13 +48,17 @@ set  (TML_COMMON_SOURCES_HEADER
                     ${COMMON_SRC_PATH}/systemBase.h 
                     ${COMMON_SRC_PATH}/unicode.h )
 
+set  (TML_INSTALL_SOURCES_HEADER tmlCore.h
+                      tmlErrors.h
+                      tmlGlobalDefines.h
+                      tmlStdTypes.h )
+                      
 set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlCmdDefines.h
                       tmlCollectCall.h
                       tmlCollectCallDestinationObj.h
                       tmlCollectCallDestinationObjHandler.h
                       tmlConnectionObj.h
-                      tmlCore.h
                       tmlCoreDefines.h
                       tmlCoreHash.h
                       tmlCoreListener.h
@@ -57,15 +67,12 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlCriticalSectionObj.h
                       tmlDestinationAddressHandlingHashValue.h
                       tmlDispatcher.h
-                      tmlDoxygenMain.h
-                      tmlErrors.h
                       tmlEventCall.h
                       tmlEventCallHandler.h
                       tmlEventData.h
                       tmlEventDataQueue.h
                       tmlEventHandler.h
                       tmlGlobalCallback.h
-                      tmlGlobalDefines.h
                       tmlLogHandler.h
                       tmlMultiAsyncMsg.h
                       tmlObjWrapper.h
@@ -73,7 +80,6 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlReceiverStream.h
                       tmlSenderStream.h
                       tmlSingleCall.h
-                      tmlStdTypes.h
                       tmlStreamHandler.h
                       tmlUniversalHashTable.h )
                       
@@ -109,6 +115,7 @@ set (TML_SOURCES      tmlCollectCall.cpp
                       tmlUniversalHashTable.cpp )
 
 source_group("CommonHeaderfiles" FILES ${TML_COMMON_SOURCES_HEADER})
+source_group("InstallHeaderfiles" FILES ${TML_INSTALL_SOURCES_HEADER})
 source_group("Headerfiles" FILES ${TML_SOURCES_HEADER})
 source_group("CommonSourcefiles" FILES ${TML_COMMON_SOURCES})
 source_group("Sourcefiles" FILES ${TML_SOURCES})
@@ -188,6 +195,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
   set(ICONVLIB libiconv.so)
+  set(PTHREADLIB libpthread.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS ("-m32")
@@ -197,8 +205,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(TARGET tmlcore)
   set(IS64BIT false)
   
-  set (INST_LIB_PATH /usr/local/lib)
-  set (INST_INCLUDE_PATH /usr/local/include/tml)
+  set (INST_LIB_PATH /usr/lib)
+  set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 
 #######################################################
@@ -208,6 +216,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
   set(ICONVLIB libiconv.so)
+  set(PTHREADLIB libpthread.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS ("-m64")
@@ -217,8 +226,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(TARGET tmlcore)
   set(IS64BIT true)
   
-  set (INST_LIB_PATH /usr/local/lib)
-  set (INST_INCLUDE_PATH /usr/local/include/tml)
+  set (INST_LIB_PATH /usr/lib)
+  set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 
 #######################################################
@@ -326,6 +335,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(ICONVLIB libiconv.so)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(PTHREADLIB libpthread.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
@@ -333,8 +343,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(TARGET tmlcore)
   set(IS64BIT false)
   
-  set (INST_LIB_PATH /usr/local/lib)
-  set (INST_INCLUDE_PATH /usr/local/include/tml)
+  set (INST_LIB_PATH /usr/lib)
+  set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
                     
@@ -349,7 +359,7 @@ endif (${IS64BIT} STREQUAL true)
 
 #######################################################
 ## The target is a shared library 
-ADD_LIBRARY( ${TMLLIBNAME_LOCAL} SHARED ${TML_COMMON_SOURCES_HEADER} ${TML_SOURCES_HEADER} ${TML_COMMON_SOURCES} ${TML_SOURCES})
+ADD_LIBRARY( ${TMLLIBNAME_LOCAL} SHARED ${TML_COMMON_SOURCES_HEADER} ${TML_INSTALL_SOURCES_HEADER} ${TML_SOURCES_HEADER} ${TML_COMMON_SOURCES} ${TML_SOURCES})
 
 #######################################################
 ## On MinGW build target prefix don't have to be lib:
@@ -391,9 +401,11 @@ TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${SIDEXLIBNAME} )
 ## ICONV library in case of OSX
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${PTHREADLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${PTHREADLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
@@ -412,10 +424,10 @@ if (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
 endif (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${PTHREADLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
 #######################################################
 ## Install
 install (TARGETS ${TMLLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
-install (FILES ${TML_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
-install (FILES ${TML_COMMON_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+install (FILES ${TML_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
