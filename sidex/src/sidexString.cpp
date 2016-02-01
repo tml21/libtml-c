@@ -151,21 +151,21 @@ void sidexString::cleanUp(){
     if (decRef() == 0){
       delete[] sValue;
       if (NULL != xValue){
-        delete xValue;
+        delete[] xValue;
         xValueLength = 0;
         xValue = NULL;
       }
       if (NULL != wValue){
-        delete wValue;
+        delete[] wValue;
         wValueLength = 0;
         wValue = NULL;
       }
       if (SIDEX_HANDLE_TYPE_NULL != m_stringFormatX){
-        delete m_stringFormatX;
+        delete[] m_stringFormatX;
         m_stringFormatX = SIDEX_HANDLE_TYPE_NULL;
       }
       if (SIDEX_HANDLE_TYPE_NULL != m_stringFormatW){
-        delete m_stringFormatW;
+        delete[] m_stringFormatW;
         m_stringFormatW = SIDEX_HANDLE_TYPE_NULL;
       }
     }
@@ -310,10 +310,10 @@ SIDEX_INT32 sidexString::setStringFormat(const char* format)
   }
   else{
     if (SIDEX_HANDLE_TYPE_NULL != m_stringFormatW)
-      delete (m_stringFormatW);
+      delete[] (m_stringFormatW);
     m_stringFormatW = SIDEX_HANDLE_TYPE_NULL;
     if (SIDEX_HANDLE_TYPE_NULL != m_stringFormatX)
-      delete (m_stringFormatX);
+      delete[] m_stringFormatX;
     m_stringFormatX = SIDEX_HANDLE_TYPE_NULL;
 
     m_stringFormat = iFormat;
@@ -337,10 +337,10 @@ SIDEX_INT32 sidexString::setStringFormat(SIDEX_STRING_ENCODING_TYPE format)
   }
   else{
     if (SIDEX_HANDLE_TYPE_NULL != m_stringFormatW)
-      delete (m_stringFormatW);
+      delete[] m_stringFormatW;
     m_stringFormatW = SIDEX_HANDLE_TYPE_NULL;
     if (SIDEX_HANDLE_TYPE_NULL != m_stringFormatX)
-      delete (m_stringFormatX);
+      delete[] m_stringFormatX;
     m_stringFormatX = SIDEX_HANDLE_TYPE_NULL;
 
     m_stringFormat = format;

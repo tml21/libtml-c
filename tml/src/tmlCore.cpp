@@ -462,7 +462,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_X(TML_CORE_HANDLE core
         else{
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " failed !");
         }
-        delete utf8ProfileName;
+        delete[] utf8ProfileName;
       }
     }
     catch (...){
@@ -492,7 +492,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_W(TML_CORE_HANDLE core
         else{
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " failed !");
         }
-        delete utf8ProfileName;
+        delete[] utf8ProfileName;
       }
     }
     catch (...){
@@ -553,7 +553,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Unregister_X(TML_CORE_HANDLE co
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Unregister_W of profile", utf8ProfileName, " failed !");
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -578,7 +578,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Unregister_W(TML_CORE_HANDLE co
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Unregister_W of profile", utf8ProfileName, " failed !");
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -687,7 +687,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_RegisterState_X(TML_CORE_HA
   if (NULL != utf8ProfileName){
     try{
       iRet = tml_Profile_Get_RegisterState_A(coreHandle, utf8ProfileName, bRegistered);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -706,7 +706,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_RegisterState_W(TML_CORE_HA
   if (NULL != utf8ProfileName){
     try{
       iRet = tml_Profile_Get_RegisterState_A(coreHandle, utf8ProfileName, bRegistered);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -754,7 +754,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_Cmd_X(TML_CORE_HANDLE 
   if (NULL != utf8ProfileName){
     try{
       iRet = tml_Profile_Register_Cmd_A(coreHandle, utf8ProfileName, cmd, pCBFunc, pCBData);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -773,7 +773,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_Cmd_W(TML_CORE_HANDLE 
   if (NULL != utf8ProfileName){
     try{
       iRet = tml_Profile_Register_Cmd_A(coreHandle, utf8ProfileName, cmd, pCBFunc, pCBData);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -825,7 +825,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnDeleteCmd_X(TML_CORE_HAND
       char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
       if (NULL != utf8ProfileName){
         iRet = tml_Profile_Set_OnDeleteCmd_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
-        delete utf8ProfileName;
+        delete[] utf8ProfileName;
       }
     }
     catch (...){
@@ -849,7 +849,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnDeleteCmd_W(TML_CORE_HAND
       char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
       if (NULL != utf8ProfileName){
         iRet = tml_Profile_Set_OnDeleteCmd_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
-        delete utf8ProfileName;
+        delete[] utf8ProfileName;
       }
     }
     catch (...){
@@ -898,7 +898,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnCustomDispatch_X(TML_CORE
   if (NULL != utf8ProfileName){
     try{
       iRet = tml_Profile_Set_OnCustomDispatch_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -917,7 +917,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnCustomDispatch_W(TML_CORE
   if (NULL != utf8ProfileName){
     try{
       iRet = tml_Profile_Set_OnCustomDispatch_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -1473,11 +1473,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_SyncMessage_X(TML_CORE_HANDLE core
         iDebug = 3;
         if (NULL != utf8PortName){
           iRet = tml_Send_SyncMessage_A(coreHandle, tmlhandle, utf8ProfileName, utf8HostName, utf8PortName, iTimeout);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -1505,11 +1505,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_SyncMessage_W(TML_CORE_HANDLE core
         iDebug = 3;
         if (NULL != utf8PortName){
           iRet = tml_Send_SyncMessage_A(coreHandle, tmlhandle, utf8ProfileName, utf8HostName, utf8PortName, iTimeout);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -1585,11 +1585,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncMessage_X(TML_CORE_HANDLE cor
         iDebug = 3;
         if (NULL != utf8PortName){
           iRet = tml_Send_AsyncMessage_A(coreHandle, tmlhandle, utf8ProfileName, utf8HostName, utf8PortName, iTimeout);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -1617,11 +1617,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncMessage_W(TML_CORE_HANDLE cor
         iDebug = 3;
         if (NULL != utf8PortName){
           iRet = tml_Send_AsyncMessage_A(coreHandle, tmlhandle, utf8ProfileName, utf8HostName, utf8PortName, iTimeout);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -1709,7 +1709,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncStatusReply_X(TML_COMMAND_HAN
     char* utf8StatusName = UTF32toUTF8(sStatus, &iLengthUtf8);
     if (NULL != utf8StatusName){
       iRet = tml_Send_AsyncStatusReply_A(tmlhandle, iType, utf8StatusName);
-      delete utf8StatusName;
+      delete[] utf8StatusName;
     }
   }
   catch (...){
@@ -1728,7 +1728,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncStatusReply_W(TML_COMMAND_HAN
     char* utf8StatusName = UTF16toUTF8((wchar_t*)sStatus, &iLengthUtf8);
     if (NULL != utf8StatusName){
       iRet = tml_Send_AsyncStatusReply_A(tmlhandle, iType, utf8StatusName);
-      delete utf8StatusName;
+      delete[] utf8StatusName;
     }
   }
   catch (...){
@@ -1781,11 +1781,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Subscribe_MessageDestination_X(TML_
       char* utf8PortName = UTF32toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_Evt_Subscribe_MessageDestination_A(coreHandle, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -1808,11 +1808,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Subscribe_MessageDestination_W(TML_
       char* utf8PortName = UTF16toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_Evt_Subscribe_MessageDestination_A(coreHandle, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -1871,7 +1871,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Get_Subscribed_MessageDestinations");
         iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventGetSubscribedMessageDestinations(utf8ProfileName, subscriptions);
         if (NULL != utf8ProfileName){
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
       }
     }
@@ -1902,7 +1902,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Get_Subscribed_MessageDestinations");
         iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventGetSubscribedMessageDestinations(utf8ProfileName, subscriptions);
         if (NULL != utf8ProfileName){
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
       }
     }
@@ -1958,11 +1958,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_MessageDestination_X(TM
       char* utf8PortName = UTF32toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_Evt_Unsubscribe_MessageDestination_A(coreHandle, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -1985,11 +1985,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_MessageDestination_W(TM
       char* utf8PortName = UTF16toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_Evt_Unsubscribe_MessageDestination_A(coreHandle, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2047,7 +2047,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_All_MessageDestinations
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Unsubscribe_All_MessageDestinations");
         iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventUnsubscribeAllMessageDestinations(utf8ProfileName);
         if (NULL != utf8ProfileName){
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
       }
     }
@@ -2077,7 +2077,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_All_MessageDestinations
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Unsubscribe_All_MessageDestinations");
         iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventUnsubscribeAllMessageDestinations(utf8ProfileName);
         if (NULL != utf8ProfileName){
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
       }
     }
@@ -2140,7 +2140,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnError_X(TML_CORE_HANDLE coreH
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnError");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterCallbackOnError(utf8ProfileName, pCBFunc, pCBData, idUNICODE_WCHAR_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -2174,7 +2174,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnError_W(TML_CORE_HANDLE coreH
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnError");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterCallbackOnError(utf8ProfileName, pCBFunc, pCBData, idUNICODE_CHAR16_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -2236,7 +2236,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnQueueOverflow_X(TML_CORE_HAND
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnQueueOverflow");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnQueueOverflow(utf8ProfileName, pCBFunc, pCBData, idUNICODE_WCHAR_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -2269,7 +2269,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnQueueOverflow_W(TML_CORE_HAND
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnQueueOverflow");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnQueueOverflow(utf8ProfileName, pCBFunc, pCBData, idUNICODE_CHAR16_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -2332,7 +2332,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPopulate_X(TML_CORE_HANDLE co
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnPopulate");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterPopulateCallback(utf8ProfileName, pCBFunc, pCBData, idUNICODE_WCHAR_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -2365,7 +2365,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPopulate_W(TML_CORE_HANDLE co
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnPopulate");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterPopulateCallback(utf8ProfileName, pCBFunc, pCBData, idUNICODE_CHAR16_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -2425,7 +2425,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_Message_X(TML_CORE_HANDLE core
     char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
     if (NULL != utf8ProfileName){
       iRet = tml_Evt_Send_Message_A(coreHandle, tmlhandle, utf8ProfileName);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2444,7 +2444,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_Message_W(TML_CORE_HANDLE core
     char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
     if (NULL != utf8ProfileName){
       iRet = tml_Evt_Send_Message_A(coreHandle, tmlhandle, utf8ProfileName);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2502,15 +2502,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_SubscriptionRequest_X(TML_CORE
             char* utf8DestPortName = UTF32toUTF8((wchar_t*)sDestPort, &iLengthUtf8);
             if (NULL != utf8DestPortName){
               iRet = tml_Evt_Send_SubscriptionRequest_A(coreHandle, utf8ProfileName, utf8SourceHostName, utf8SourcePortName, utf8DestHostName, utf8DestPortName, iTimeout);
-              delete utf8DestPortName;
+              delete[] utf8DestPortName;
             }
-            delete utf8DestHostName;
+            delete[] utf8DestHostName;
           }
-          delete utf8SourcePortName;
+          delete[] utf8SourcePortName;
         }
-        delete utf8SourceHostName;
+        delete[] utf8SourceHostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2537,15 +2537,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_SubscriptionRequest_W(TML_CORE
             char* utf8DestPortName = UTF16toUTF8((wchar_t*)sDestPort, &iLengthUtf8);
             if (NULL != utf8DestPortName){
               iRet = tml_Evt_Send_SubscriptionRequest_A(coreHandle, utf8ProfileName, utf8SourceHostName, utf8SourcePortName, utf8DestHostName, utf8DestPortName, iTimeout);
-              delete utf8DestPortName;
+              delete[] utf8DestPortName;
             }
-            delete utf8DestHostName;
+            delete[] utf8DestHostName;
           }
-          delete utf8SourcePortName;
+          delete[] utf8SourcePortName;
         }
-        delete utf8SourceHostName;
+        delete[] utf8SourceHostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2603,7 +2603,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPeerRegister_X(TML_CORE_HANDL
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnPeerRegister");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterOnPeerCallback(utf8ProfileName, pCBFunc, pCBData, idUNICODE_WCHAR_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -2636,7 +2636,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPeerRegister_W(TML_CORE_HANDL
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnPeerRegister");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterOnPeerCallback(utf8ProfileName, pCBFunc, pCBData, idUNICODE_CHAR16_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -2698,15 +2698,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_UnsubscriptionRequest_X(TML_CO
             char* utf8DestPortName = UTF32toUTF8((wchar_t*)sDestPort, &iLengthUtf8);
             if (NULL != utf8DestPortName){
               iRet = tml_Evt_Send_UnsubscriptionRequest_A(coreHandle, utf8ProfileName, utf8SourceHostName, utf8SourcePortName, utf8DestHostName, utf8DestPortName, iTimeout);
-              delete utf8DestPortName;
+              delete[] utf8DestPortName;
             }
-            delete utf8DestHostName;
+            delete[] utf8DestHostName;
           }
-          delete utf8SourcePortName;
+          delete[] utf8SourcePortName;
         }
-        delete utf8SourceHostName;
+        delete[] utf8SourceHostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2733,15 +2733,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_UnsubscriptionRequest_W(TML_CO
             char* utf8DestPortName = UTF16toUTF8((wchar_t*)sDestPort, &iLengthUtf8);
             if (NULL != utf8DestPortName){
               iRet = tml_Evt_Send_UnsubscriptionRequest_A(coreHandle, utf8ProfileName, utf8SourceHostName, utf8SourcePortName, utf8DestHostName, utf8DestPortName, iTimeout);
-              delete utf8DestPortName;
+              delete[] utf8DestPortName;
             }
-            delete utf8DestHostName;
+            delete[] utf8DestHostName;
           }
-          delete utf8SourcePortName;
+          delete[] utf8SourcePortName;
         }
-        delete utf8SourceHostName;
+        delete[] utf8SourceHostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2794,11 +2794,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Subscribe_MessageDestination_X(TML_
       char* utf8PortName = UTF32toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_Bal_Subscribe_MessageDestination_A(coreHandle, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2821,11 +2821,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Subscribe_MessageDestination_W(TML_
       char* utf8PortName = UTF16toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_Bal_Subscribe_MessageDestination_A(coreHandle, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2884,7 +2884,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Get_Subscribed_MessageDestinations");
         iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedGetSubscribedMessageDestinations(utf8ProfileName, subscriptions);
         if (NULL != utf8ProfileName){
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
       }
     }
@@ -2914,7 +2914,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Get_Subscribed_MessageDestinations");
         iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedGetSubscribedMessageDestinations(utf8ProfileName, subscriptions);
         if (NULL != utf8ProfileName){
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
       }
     }
@@ -2970,11 +2970,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_MessageDestination_X(TM
       char* utf8PortName = UTF32toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_Bal_Unsubscribe_MessageDestination_A(coreHandle, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -2997,11 +2997,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_MessageDestination_W(TM
       char* utf8PortName = UTF16toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_Bal_Unsubscribe_MessageDestination_A(coreHandle, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3060,7 +3060,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_All_MessageDestinations
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Unsubscribe_All_MessageDestinations");
         iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedUnsubscribeAllMessageDestinations(utf8ProfileName);
         if (NULL != utf8ProfileName){
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
       }
     }
@@ -3090,7 +3090,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_All_MessageDestinations
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Unsubscribe_All_MessageDestinations");
         iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedUnsubscribeAllMessageDestinations(utf8ProfileName);
         if (NULL != utf8ProfileName){
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
       }
     }
@@ -3151,7 +3151,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPopulate_X(TML_CORE_HANDLE co
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnPopulate");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterPopulateCallback(utf8ProfileName, pCBFunc, pCBData, idUNICODE_WCHAR_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -3184,7 +3184,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPopulate_W(TML_CORE_HANDLE co
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnPopulate");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterPopulateCallback(utf8ProfileName, pCBFunc, pCBData, idUNICODE_CHAR16_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -3238,7 +3238,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnBusyStatusRequest_X(TML_CORE_
     char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
     if (NULL != utf8ProfileName){
       iRet = tml_Bal_Set_OnBusyStatusRequest_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3257,7 +3257,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnBusyStatusRequest_W(TML_CORE_
     char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
     if (NULL != utf8ProfileName){
       iRet = tml_Bal_Set_OnBusyStatusRequest_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3314,7 +3314,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnCalculation_X(TML_CORE_HANDLE
     char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
     if (NULL != utf8ProfileName){
       iRet = tml_Bal_Set_OnCalculation_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3333,7 +3333,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnCalculation_W(TML_CORE_HANDLE
     char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
     if (NULL != utf8ProfileName){
       iRet = tml_Bal_Set_OnCalculation_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3397,7 +3397,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SyncMessage_X(TML_CORE_HANDLE 
     iDebug = 1;
     if (NULL != utf8ProfileName){
       iRet = tml_Bal_Send_SyncMessage_A(coreHandle, tmlhandle, utf8ProfileName, iTimeout);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3419,7 +3419,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SyncMessage_W(TML_CORE_HANDLE 
     iDebug = 1;
     if (NULL != utf8ProfileName){
       iRet = tml_Bal_Send_SyncMessage_A(coreHandle, tmlhandle, utf8ProfileName, iTimeout);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3484,7 +3484,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_AsyncMessage_X(TML_CORE_HANDLE
     iDebug = 1;
     if (NULL != utf8ProfileName){
       iRet = tml_Bal_Send_AsyncMessage_A(coreHandle, tmlhandle, utf8ProfileName, iTimeout);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3506,7 +3506,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_AsyncMessage_W(TML_CORE_HANDLE
     iDebug = 1;
     if (NULL != utf8ProfileName){
       iRet = tml_Bal_Send_AsyncMessage_A(coreHandle, tmlhandle, utf8ProfileName, iTimeout);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3564,15 +3564,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SubscriptionRequest_X(TML_CORE
             char* utf8DestPortName = UTF32toUTF8((wchar_t*)sDestPort, &iLengthUtf8);
             if (NULL != utf8DestPortName){
               iRet = tml_Bal_Send_SubscriptionRequest_A(coreHandle, utf8ProfileName, utf8SourceHostName, utf8SourcePortName, utf8DestHostName, utf8DestPortName, iTimeout);
-              delete utf8DestPortName;
+              delete[] utf8DestPortName;
             }
-            delete utf8DestHostName;
+            delete[] utf8DestHostName;
           }
-          delete utf8SourcePortName;
+          delete[] utf8SourcePortName;
         }
-        delete utf8SourceHostName;
+        delete[] utf8SourceHostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3599,15 +3599,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SubscriptionRequest_W(TML_CORE
             char* utf8DestPortName = UTF16toUTF8((wchar_t*)sDestPort, &iLengthUtf8);
             if (NULL != utf8DestPortName){
               iRet = tml_Bal_Send_SubscriptionRequest_A(coreHandle, utf8ProfileName, utf8SourceHostName, utf8SourcePortName, utf8DestHostName, utf8DestPortName, iTimeout);
-              delete utf8DestPortName;
+              delete[] utf8DestPortName;
             }
-            delete utf8DestHostName;
+            delete[] utf8DestHostName;
           }
-          delete utf8SourcePortName;
+          delete[] utf8SourcePortName;
         }
-        delete utf8SourceHostName;
+        delete[] utf8SourceHostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3664,7 +3664,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPeerRegister_X(TML_CORE_HANDL
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Bal_OnPeerRegister");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterOnPeerCallback(utf8ProfileName, pCBFunc, pCBData, idUNICODE_WCHAR_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -3697,7 +3697,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPeerRegister_W(TML_CORE_HANDL
         if (NULL != utf8ProfileName){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Bal_OnPeerRegister");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterOnPeerCallback(utf8ProfileName, pCBFunc, pCBData, idUNICODE_CHAR16_T);
-          delete utf8ProfileName;
+          delete[] utf8ProfileName;
         }
         else{
           iRet = TML_ERR_UNICODE;
@@ -3759,15 +3759,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_UnsubscriptionRequest_X(TML_CO
             char* utf8DestPortName = UTF32toUTF8((wchar_t*)sDestPort, &iLengthUtf8);
             if (NULL != utf8DestPortName){
               iRet = tml_Bal_Send_UnsubscriptionRequest_A(coreHandle, utf8ProfileName, utf8SourceHostName, utf8SourcePortName, utf8DestHostName, utf8DestPortName, iTimeout);
-              delete utf8DestPortName;
+              delete[] utf8DestPortName;
             }
-            delete utf8DestHostName;
+            delete[] utf8DestHostName;
           }
-          delete utf8SourcePortName;
+          delete[] utf8SourcePortName;
         }
-        delete utf8SourceHostName;
+        delete[] utf8SourceHostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -3794,15 +3794,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_UnsubscriptionRequest_W(TML_CO
             char* utf8DestPortName = UTF16toUTF8((wchar_t*)sDestPort, &iLengthUtf8);
             if (NULL != utf8DestPortName){
               iRet = tml_Bal_Send_UnsubscriptionRequest_A(coreHandle, utf8ProfileName, utf8SourceHostName, utf8SourcePortName, utf8DestHostName, utf8DestPortName, iTimeout);
-              delete utf8DestPortName;
+              delete[] utf8DestPortName;
             }
-            delete utf8DestHostName;
+            delete[] utf8DestHostName;
           }
-          delete utf8SourcePortName;
+          delete[] utf8SourcePortName;
         }
-        delete utf8SourceHostName;
+        delete[] utf8SourceHostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -4192,7 +4192,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Profile_X(TML_COMMAND_HAND
     char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
     if (NULL != utf8ProfileName){
       iRet = tml_Cmd_Attr_Set_Profile_A(tmlhandle, utf8ProfileName);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -4211,7 +4211,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Profile_W(TML_COMMAND_HAND
     char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
     if (NULL != utf8ProfileName){
       iRet = tml_Cmd_Attr_Set_Profile_A(tmlhandle, utf8ProfileName);
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -4483,7 +4483,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCreationTime_X(TML_COMMAN
     char* utf8Time = UTF32toUTF8((wchar_t*)time, &iLengthUtf8);
     if (NULL != utf8Time){
       iRet = tml_Cmd_Header_SetCreationTime_A(tmlhandle, utf8Time);
-      delete utf8Time;
+      delete[] utf8Time;
     }
   }
   catch (...){
@@ -4502,7 +4502,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCreationTime_W(TML_COMMAN
     char* utf8Time = UTF16toUTF8((wchar_t*)time, &iLengthUtf8);
     if (NULL != utf8Time){
       iRet = tml_Cmd_Header_SetCreationTime_A(tmlhandle, utf8Time);
-      delete utf8Time;
+      delete[] utf8Time;
     }
   }
   catch (...){
@@ -4674,7 +4674,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetErrorMessage_X(TML_COMMAN
     char* utf8Msg = UTF32toUTF8((wchar_t*)msg, &iLengthUtf8);
     if (NULL != utf8Msg){
       iRet = tml_Cmd_Header_SetErrorMessage_A(tmlhandle, utf8Msg, iLengthUtf8);
-      delete utf8Msg;
+      delete[] utf8Msg;
     }
   }
   catch (...){
@@ -4693,7 +4693,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetErrorMessage_W(TML_COMMAN
     char* utf8Msg = UTF16toUTF8((wchar_t*)msg, &iLengthUtf8);
     if (NULL != utf8Msg){
       iRet = tml_Cmd_Header_SetErrorMessage_A(tmlhandle, utf8Msg, iLengthUtf8);
-      delete utf8Msg;
+      delete[] utf8Msg;
     }
   }
   catch (...){
@@ -4928,7 +4928,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetReplyMessage_X(TML_COMMAN
     char* utf8Msg = UTF32toUTF8((wchar_t*)msg, &iLengthUtf8);
     if (NULL != utf8Msg){
       iRet = tml_Cmd_Header_SetReplyMessage_A(tmlhandle, utf8Msg, iMsgLength);
-      delete utf8Msg;
+      delete[] utf8Msg;
     }
   }
   catch (...){
@@ -4947,7 +4947,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetReplyMessage_W(TML_COMMAN
     char* utf8Msg = UTF16toUTF8((wchar_t*)msg, &iLengthUtf8);
     if (NULL != utf8Msg){
       iRet = tml_Cmd_Header_SetReplyMessage_A(tmlhandle, utf8Msg, iMsgLength);
-      delete utf8Msg;
+      delete[] utf8Msg;
     }
   }
   catch (...){
@@ -5045,11 +5045,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Open_X(TML_CORE_HANDLE coreHa
       char* utf8PortName = UTF32toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_RecStream_Open_A(coreHandle, iID, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -5072,11 +5072,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Open_W(TML_CORE_HANDLE coreHa
       char* utf8PortName = UTF16toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_RecStream_Open_A(coreHandle, iID, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -5346,11 +5346,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Open_X(TML_CORE_HANDLE coreHa
       char* utf8PortName = UTF32toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_SndStream_Open_A(coreHandle, iID, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -5373,11 +5373,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Open_W(TML_CORE_HANDLE coreHa
       char* utf8PortName = UTF16toUTF8((wchar_t*)sPort, &iLengthUtf8);
         if (NULL != utf8PortName){
           iRet = tml_SndStream_Open_A(coreHandle, iID, utf8ProfileName, utf8HostName, utf8PortName);
-          delete utf8PortName;
+          delete[] utf8PortName;
         }
-        delete utf8HostName;
+        delete[] utf8HostName;
       }
-      delete utf8ProfileName;
+      delete[] utf8ProfileName;
     }
   }
   catch (...){
@@ -5642,13 +5642,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_log_X(TML_INT32 iLogMask, const wchar_t
           char* utf8sLog = UTF32toUTF8((wchar_t*)sLog, &iLengthUtf8);
           if (NULL != utf8sLog){
             iRet = tml_log_A(iLogMask, utf8Class, utf8Method, utf8Format, utf8sLog);
-            delete utf8sLog;
+            delete[] utf8sLog;
           }
-          delete utf8Format;
+          delete[] utf8Format;
         }
-        delete utf8Method;
+        delete[] utf8Method;
       }
-      delete utf8Class;
+      delete[] utf8Class;
     }
   }
   catch (...){
@@ -5673,13 +5673,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_log_W(TML_INT32 iLogMask, const char16_
           char* utf8sLog = UTF16toUTF8((wchar_t*)sLog, &iLengthUtf8);
           if (NULL != utf8sLog){
             iRet = tml_log_A(iLogMask, utf8Class, utf8Method, utf8Format, utf8sLog);
-            delete utf8sLog;
+            delete[] utf8sLog;
           }
-          delete utf8Format;
+          delete[] utf8Format;
         }
-        delete utf8Method;
+        delete[] utf8Method;
       }
-      delete utf8Class;
+      delete[] utf8Class;
     }
   }
   catch (...){
@@ -5734,11 +5734,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_X(TML_INT32 iLogMask, const wchar_
         char* utf8Format = UTF32toUTF8((wchar_t*)sFormatLog, &iLengthUtf8);
         if (NULL != utf8Format){
           iRet = tml_logI_A(iLogMask, utf8Class, utf8Method, utf8Format, iVal);
-          delete utf8Format;
+          delete[] utf8Format;
         }
-        delete utf8Method;
+        delete[] utf8Method;
       }
-      delete utf8Class;
+      delete[] utf8Class;
     }
   }
   catch (...){
@@ -5761,11 +5761,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_W(TML_INT32 iLogMask, const char16
         char* utf8Format = UTF16toUTF8((wchar_t*)sFormatLog, &iLengthUtf8);
         if (NULL != utf8Format){
           iRet = tml_logI_A(iLogMask, utf8Class, utf8Method, utf8Format, iVal);
-          delete utf8Format;
+          delete[] utf8Format;
         }
-        delete utf8Method;
+        delete[] utf8Method;
       }
-      delete utf8Class;
+      delete[] utf8Class;
     }
   }
   catch (...){

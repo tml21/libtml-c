@@ -120,6 +120,7 @@ bool test_binary_02() {
     //compare the value of the entry with the original one
     testOkay = testOkay && errLog(minChar == *binValue, "test_binary_02", "value != entry", 1);
 
+    sidex_Free_Binary_ReadString(binValue);
     sidex_Free(&docBinHandle);
     return testOkay;
 }

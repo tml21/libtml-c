@@ -220,7 +220,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Create_X(const wchar_t* pname, SIDEX_H
       char* utf8Name = UTF32toUTF8((wchar_t*)pname, &iLengthUtf8);
       if (NULL != utf8Name){
         iRet = sidex_Create_A(utf8Name, shandle);
-        delete utf8Name;
+        delete[] utf8Name;
       }
       else{
         iRet = SIDEX_ERR_UNICODE;  
@@ -245,7 +245,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Create_W(const char16_t* pname, SIDEX_
       char* utf8Name = UTF16toUTF8((wchar_t*)pname, &iLengthUtf8);
       if (NULL != utf8Name){
         iRet = sidex_Create_A(utf8Name, shandle);
-        delete utf8Name;
+        delete[] utf8Name;
       }
       else{
         iRet = SIDEX_ERR_UNICODE;  
@@ -296,7 +296,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Set_DocumentName_X(SIDEX_HANDLE shandl
       char* utf8Name = UTF32toUTF8((wchar_t*)pname, &iLengthUtf8);
       if (NULL != utf8Name){
         iRet = sidex_Set_DocumentName_A(shandle, utf8Name);
-        delete utf8Name;
+        delete[] utf8Name;
       }
       else{
         iRet = SIDEX_ERR_UNICODE;
@@ -323,7 +323,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Set_DocumentName_W(SIDEX_HANDLE shandl
       char* utf8Name = UTF16toUTF8((wchar_t*)pname, &iLengthUtf8);
       if (NULL != utf8Name){
         iRet = sidex_Set_DocumentName_A(shandle, utf8Name);
-        delete utf8Name;
+        delete[] utf8Name;
       }
       else{
         iRet = SIDEX_ERR_UNICODE;
@@ -481,7 +481,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Load_Content_X(SIDEX_HANDLE shandle, c
       char* utf8Path = UTF32toUTF8((wchar_t*)path, &iLengthUtf8);
       if (NULL != utf8Path){
         iRet = ((sidexCom*)shandle)->sidexcom_Load_Content(utf8Path);
-        delete utf8Path;
+        delete[] utf8Path;
       }
     }
     catch (...){
@@ -505,7 +505,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Load_Content_W(SIDEX_HANDLE shandle, c
       char* utf8Path = UTF16toUTF8((wchar_t*)path, &iLengthUtf8);
       if (NULL != utf8Path){
         iRet = ((sidexCom*)shandle)->sidexcom_Load_Content(utf8Path);
-        delete utf8Path;
+        delete[] utf8Path;
       }
     }
     catch (...){
@@ -552,7 +552,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Set_Content_X(SIDEX_HANDLE shandle, wc
     char* utf8Content = UTF32toUTF8((wchar_t*)content, &iLengthUtf8);
     if (NULL != utf8Content){
       iRet = sidex_Set_Content_A(shandle, utf8Content);
-      delete utf8Content;
+      delete[] utf8Content;
     }
   }
   catch (...){
@@ -570,7 +570,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Set_Content_W(SIDEX_HANDLE shandle, ch
     char* utf8Content = UTF16toUTF8((wchar_t*)content, &iLengthUtf8);
     if (NULL != utf8Content){
       iRet = sidex_Set_Content_A(shandle, utf8Content);
-      delete utf8Content;
+      delete[] utf8Content;
     }
   }
   catch (...){
@@ -616,7 +616,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Save_Content_X(SIDEX_HANDLE shandle, c
       char* utf8Path = UTF32toUTF8((wchar_t*)path, &iLengthUtf8);
       if (NULL != utf8Path){
         iRet = sidex_Save_Content_A(shandle, utf8Path);
-        delete utf8Path;
+        delete[] utf8Path;
       }
     }
     catch (...){
@@ -640,7 +640,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Save_Content_W(SIDEX_HANDLE shandle, c
       char* utf8Path = UTF16toUTF8((wchar_t*)path, &iLengthUtf8);
       if (NULL != utf8Path){
         iRet = sidex_Save_Content_A(shandle, utf8Path);
-        delete utf8Path;
+        delete[] utf8Path;
       }
     }
     catch (...){
@@ -771,7 +771,7 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_Content_A(char *string){
 **/
 SIDEX_API void DLL_CALL_CONV sidex_Free_Content_X(wchar_t *string){
   try{
-    delete string;
+    delete[] string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_Content_X", "exception", "caught", 66);
@@ -783,7 +783,7 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_Content_X(wchar_t *string){
 **/
 SIDEX_API void DLL_CALL_CONV sidex_Free_Content_W(char16_t *string){
   try{
-    delete string;
+    delete[] string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_Content_W", "exception", "caught", 66);
@@ -854,9 +854,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Write_X(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Variant_Write_A(shandle, utf8Group, utf8Key, variant);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -877,9 +877,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Write_W(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Variant_Write_A(shandle, utf8Group, utf8Key, variant);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -920,9 +920,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Read_X(SIDEX_HANDLE shandle, w
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Variant_Read_A(shandle, utf8Group, utf8Key, variant);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -943,9 +943,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Read_W(SIDEX_HANDLE shandle, c
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Variant_Read_A(shandle, utf8Group, utf8Key, variant);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -1030,7 +1030,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_New_DateTime_X(wchar_t* sDateT
     char* utf8Str = UTF32toUTF8(sDateTime, &iLengthUtf8);
     if (NULL != utf8Str){
       iRet = sidex_Variant_New_DateTime_A(utf8Str, variant);
-      delete utf8Str;
+      delete[] utf8Str;
     }
   }
   catch (...){
@@ -1049,7 +1049,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_New_DateTime_W(char16_t* sDate
     char* utf8Str = UTF16toUTF8((wchar_t*)sDateTime, &iLengthUtf8);
     if (NULL != utf8Str){
       iRet = sidex_Variant_New_DateTime_A(utf8Str, variant);
-      delete utf8Str;
+      delete[] utf8Str;
     }
   }
   catch (...){
@@ -1097,7 +1097,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_String_SetFormat_X(SIDEX_VARIA
       utf8Str = UTF32toUTF8((wchar_t*) format, &iLengthUtf8);
       iRet = sidex_Variant_String_SetFormat_A(variant, utf8Str);
       if (NULL != utf8Str){
-        delete utf8Str;
+        delete[] utf8Str;
       }
     }
     else{
@@ -1121,7 +1121,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_String_SetFormat_W(SIDEX_VARIA
       utf8Str = UTF16toUTF8((wchar_t*) format, &iLengthUtf8);
       iRet = sidex_Variant_String_SetFormat_A(variant, utf8Str);
       if (NULL != utf8Str){
-        delete utf8Str;
+        delete[] utf8Str;
       }
     }
     else{
@@ -1216,7 +1216,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_New_String_X(wchar_t* value, S
     }
     iRet = sidex_Variant_New_String_A(utf8Str, variant);
     if (NULL != utf8Str){
-      delete utf8Str;
+      delete[] utf8Str;
     }
   }
   catch (...){
@@ -1238,7 +1238,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_New_String_W(char16_t* value, 
     }
     iRet = sidex_Variant_New_String_A(utf8Str, variant);
     if (NULL != utf8Str){
-      delete utf8Str;
+      delete[] utf8Str;
     }
   }
   catch (...){
@@ -1550,7 +1550,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Dict_HasKey_X(SIDEX_VARIANT va
     char* utf8Key = UTF32toUTF8(sKey, &iLengthUtf8);
     if (NULL != utf8Key){
       iRet = sidex_Variant_Dict_HasKey_A(variant, utf8Key, bRet);
-      delete utf8Key;
+      delete[] utf8Key;
     }
   }
   catch (...){
@@ -1569,7 +1569,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Dict_HasKey_W(SIDEX_VARIANT va
     char* utf8Key = UTF16toUTF8((wchar_t*)sKey, &iLengthUtf8);
     if (NULL != utf8Key){
       iRet = sidex_Variant_Dict_HasKey_A(variant, utf8Key, bRet);
-      delete utf8Key;
+      delete[] utf8Key;
     }
   }
   catch (...){
@@ -1652,7 +1652,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_HasColumn_X(SIDEX_VARIAN
     char* utf8ColName = UTF32toUTF8(sColumnName, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_HasColumn_A(sTable, utf8ColName, bRet);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -1671,7 +1671,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_HasColumn_W(SIDEX_VARIAN
     char* utf8ColName = UTF16toUTF8((wchar_t*)sColumnName, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_HasColumn_A(sTable, utf8ColName, bRet);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -2038,7 +2038,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Dict_Set_X(SIDEX_VARIANT sDict
     char* utf8Key = UTF32toUTF8(nKey, &iLengthUtf8);
     if (NULL != utf8Key){
       iRet = sidex_Variant_Dict_Set_A(sDict, utf8Key, value);
-      delete utf8Key;
+      delete[] utf8Key;
     }
   }
   catch (...){
@@ -2057,7 +2057,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Dict_Set_W(SIDEX_VARIANT sDict
     char* utf8Key = UTF16toUTF8((wchar_t*)nKey, &iLengthUtf8);
     if (NULL != utf8Key){
       iRet = sidex_Variant_Dict_Set_A(sDict, utf8Key, value);
-      delete utf8Key;
+      delete[] utf8Key;
     }
   }
   catch (...){
@@ -2095,7 +2095,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Dict_Delete_X(SIDEX_VARIANT sD
     char* utf8Key = UTF32toUTF8(sKey, &iLengthUtf8);
     if (NULL != utf8Key){
       iRet = sidex_Variant_Dict_Delete_A(sDict, utf8Key);
-      delete utf8Key;
+      delete[] utf8Key;
     }
   }
   catch (...){
@@ -2116,7 +2116,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Dict_Delete_W(SIDEX_VARIANT sD
     char* utf8Key = UTF16toUTF8((wchar_t*)sKey, &iLengthUtf8);
     if (NULL != utf8Key){
       iRet = sidex_Variant_Dict_Delete_A(sDict, utf8Key);
-      delete utf8Key;
+      delete[] utf8Key;
     }
   }
   catch (...){
@@ -2169,7 +2169,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Dict_Get_X(SIDEX_VARIANT sDict
     char* utf8Key = UTF32toUTF8(sKey, &iLengthUtf8);
     if (NULL != utf8Key){
       iRet = sidex_Variant_Dict_Get_A(sDict, utf8Key, variant);
-      delete utf8Key;
+      delete[] utf8Key;
     }
   }
   catch (...){
@@ -2188,7 +2188,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Dict_Get_W(SIDEX_VARIANT sDict
     char* utf8Key = UTF16toUTF8((wchar_t*)sKey, &iLengthUtf8);
     if (NULL != utf8Key){
       iRet = sidex_Variant_Dict_Get_A(sDict, utf8Key, variant);
-      delete utf8Key;
+      delete[] utf8Key;
     }
   }
   catch (...){
@@ -2229,7 +2229,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_AddColumn_X(SIDEX_VARIAN
     char* utf8ColName = UTF32toUTF8(sColumn, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_AddColumn_A(sTable, utf8ColName);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -2248,7 +2248,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_AddColumn_W(SIDEX_VARIAN
     char* utf8ColName = UTF16toUTF8((wchar_t*)sColumn, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_AddColumn_A(sTable, utf8ColName);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -2286,7 +2286,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_DeleteColumn_X(SIDEX_VAR
     char* utf8ColName = UTF32toUTF8(sColumn, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_DeleteColumn_A(sTable, utf8ColName);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -2305,7 +2305,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_DeleteColumn_W(SIDEX_VAR
     char* utf8ColName = UTF16toUTF8((wchar_t*)sColumn, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_DeleteColumn_A(sTable, utf8ColName);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -2449,7 +2449,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_GetField_X(SIDEX_VARIANT
     char* utf8ColName = UTF32toUTF8(sColumnName, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_GetField_A(sTable, rowIndex, utf8ColName, variant);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -2468,7 +2468,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_GetField_W(SIDEX_VARIANT
     char* utf8ColName = UTF16toUTF8((wchar_t*)sColumnName, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_GetField_A(sTable, rowIndex, utf8ColName, variant);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -2505,7 +2505,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_SetField_X(SIDEX_VARIANT
     char* utf8ColName = UTF32toUTF8(sColumnName, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_SetField_A(sTable, rowIndex, utf8ColName, variant);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -2524,7 +2524,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Variant_Table_SetField_W(SIDEX_VARIANT
     char* utf8ColName = UTF16toUTF8((wchar_t*)sColumnName, &iLengthUtf8);
     if (NULL != utf8ColName){
       iRet = sidex_Variant_Table_SetField_A(sTable, rowIndex, utf8ColName, variant);
-      delete utf8ColName;
+      delete[] utf8ColName;
     }
   }
   catch (...){
@@ -2563,9 +2563,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_None_Write_X(SIDEX_HANDLE shandle,  wc
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_None_Write_A(shandle, utf8Group, utf8Key);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2586,9 +2586,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_None_Write_W(SIDEX_HANDLE shandle,  ch
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_None_Write_A(shandle, utf8Group, utf8Key);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2644,9 +2644,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Boolean_Read_X(SIDEX_HANDLE shandle,  
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Boolean_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2667,9 +2667,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Boolean_Read_W(SIDEX_HANDLE shandle,  
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Boolean_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2708,9 +2708,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Boolean_Write_X(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Boolean_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2731,9 +2731,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Boolean_Write_W(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Boolean_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2784,9 +2784,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Integer_Read_X(SIDEX_HANDLE shandle,  
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Integer_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2807,9 +2807,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Integer_Read_W(SIDEX_HANDLE shandle,  
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Integer_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2848,9 +2848,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Integer_Write_X(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Integer_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2871,9 +2871,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Integer_Write_W(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Integer_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2924,9 +2924,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Float_Read_X(SIDEX_HANDLE shandle,  wc
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Float_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2947,9 +2947,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Float_Read_W(SIDEX_HANDLE shandle,  ch
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Float_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -2988,9 +2988,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Float_Write_X(SIDEX_HANDLE shandle, wc
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Float_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3011,9 +3011,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Float_Write_W(SIDEX_HANDLE shandle, ch
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Float_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3063,9 +3063,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_DateTime_Read_X(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_DateTime_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3086,9 +3086,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_DateTime_Read_W(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_DateTime_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3132,9 +3132,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_DateTime_Write_X(SIDEX_HANDLE shandle,
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_DateTime_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3155,9 +3155,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_DateTime_Write_W(SIDEX_HANDLE shandle,
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_DateTime_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3198,7 +3198,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_String_Read_X(SIDEX_HANDLE shandle,  w
           char* sStr;
           SIDEX_INT32 iCmdLength;
           iRet = sidex_String_Read_A(shandle, utf8Group, utf8Key, &sStr, &iCmdLength);
-          delete utf8Key;
+          delete[]utf8Key;
           if (SIDEX_SUCCESS == iRet){
             wchar_t* utf16Value = UTF8toUTF32(sStr, iStrLength);
             if (NULL != utf16Value){
@@ -3207,7 +3207,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_String_Read_X(SIDEX_HANDLE shandle,  w
             sidex_Free_ReadString(sStr);
           }
         }
-        delete utf8Group;
+        delete[] utf8Group;
     }
   }
   catch (...){
@@ -3230,7 +3230,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_String_Read_W(SIDEX_HANDLE shandle,  c
           char* sStr;
           SIDEX_INT32 iCmdLength;
           iRet = sidex_String_Read_A(shandle, utf8Group, utf8Key, &sStr, &iCmdLength);
-          delete utf8Key;
+          delete[] utf8Key;
           if (SIDEX_SUCCESS == iRet){
             wchar_t* utf16Value = UTF8toUTF16(sStr, iStrLength);
             if (NULL != utf16Value){
@@ -3239,7 +3239,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_String_Read_W(SIDEX_HANDLE shandle,  c
             sidex_Free_ReadString(sStr);
           }
         }
-        delete utf8Group;
+        delete[] utf8Group;
     }
   }
   catch (...){
@@ -3276,9 +3276,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_String_Length_X(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = ((sidexCom*)shandle)->sidexcom_ReadStringLength(utf8Group, utf8Key, iStrLength, SIDEX_DATA_TYPE_STRING, idUNICODE_WCHAR_T);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3299,9 +3299,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_String_Length_W(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = ((sidexCom*)shandle)->sidexcom_ReadStringLength(utf8Group, utf8Key, iStrLength, SIDEX_DATA_TYPE_STRING, idUNICODE_CHAR16_T);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3341,12 +3341,12 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Binary_Read_X(SIDEX_HANDLE shandle,  w
       if (NULL != utf8Key){
         unsigned char* sStr;
         iRet = sidex_Binary_Read_A(shandle, utf8Group, utf8Key, &sStr, iStrLength);
-        delete utf8Key;
+        delete[] utf8Key;
         if (SIDEX_SUCCESS == iRet){
           *value = sStr;
         }
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3368,12 +3368,12 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Binary_Read_W(SIDEX_HANDLE shandle,  c
       if (NULL != utf8Key){
         unsigned char* sStr;
         iRet = sidex_Binary_Read_A(shandle, utf8Group, utf8Key, &sStr, iStrLength);
-        delete utf8Key;
+        delete[] utf8Key;
         if (SIDEX_SUCCESS == iRet){
           *value = sStr;
         }
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3410,9 +3410,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Binary_Length_X(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = ((sidexCom*)shandle)->sidexcom_ReadStringLength(utf8Group, utf8Key, iStrLength, SIDEX_DATA_TYPE_BINARY, idUNICODE_WCHAR_T);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3433,9 +3433,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Binary_Length_W(SIDEX_HANDLE shandle, 
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = ((sidexCom*)shandle)->sidexcom_ReadStringLength(utf8Group, utf8Key, iStrLength, SIDEX_DATA_TYPE_BINARY, idUNICODE_CHAR16_T);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3455,7 +3455,7 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString(SIDEX_CTSTR* string);
 SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_A(char* string){
   try{
     if (NULL != string)
-      delete []string;
+      delete[]string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_ReadString_A", "exception", "caught", 66);
@@ -3467,7 +3467,7 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_A(char* string){
 SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_X(wchar_t* string){
   try{
     if (NULL != string)
-      delete string;
+      delete[]string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_ReadString_X", "exception", "caught", 66);
@@ -3479,7 +3479,7 @@ SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_X(wchar_t* string){
 SIDEX_API void DLL_CALL_CONV sidex_Free_ReadString_W(char16_t* string){
   try{
     if (NULL != string)
-      delete string;
+      delete[] string;
   }
   catch (...){
     sidex_log(0xFFFFFFFF, "sidex", "sidex_Free_ReadString_W", "exception", "caught", 66);
@@ -3541,16 +3541,16 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_String_Write_X(SIDEX_HANDLE shandle, w
           char* utf8Val = UTF32toUTF8((wchar_t*)value, &iLengthUtf8);
           iRet = sidex_String_Write_A(shandle, utf8Group, utf8Key, utf8Val);
           if (NULL != utf8Val){
-            delete utf8Val;
+            delete[] utf8Val;
           }
         }
         else{
           // NULL- String
           iRet = sidex_String_Write_A(shandle, utf8Group, utf8Key, NULL);
         }
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3574,16 +3574,16 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_String_Write_W(SIDEX_HANDLE shandle, c
           char* utf8Val = UTF16toUTF8((wchar_t*)value, &iLengthUtf8);
           iRet = sidex_String_Write_A(shandle, utf8Group, utf8Key, utf8Val);
           if (NULL != utf8Val){
-            delete utf8Val;
+            delete[] utf8Val;
           }
         }
         else{
           // NULL- String
           iRet = sidex_String_Write_A(shandle, utf8Group, utf8Key, NULL);
         }
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3622,9 +3622,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Binary_Write_X(SIDEX_HANDLE shandle, w
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Binary_Write_A(shandle, utf8Group, utf8Key, value, size);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3645,9 +3645,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Binary_Write_W(SIDEX_HANDLE shandle, c
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Binary_Write_A(shandle, utf8Group, utf8Key, value, size);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3697,9 +3697,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_List_Read_X(SIDEX_HANDLE shandle,  wch
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_List_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3720,9 +3720,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_List_Read_W(SIDEX_HANDLE shandle,  cha
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_List_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3766,9 +3766,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_List_Write_X(SIDEX_HANDLE shandle, wch
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_List_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3789,9 +3789,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_List_Write_W(SIDEX_HANDLE shandle, cha
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_List_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3841,9 +3841,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Dict_Read_X(SIDEX_HANDLE shandle,  wch
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Dict_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3864,9 +3864,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Dict_Read_W(SIDEX_HANDLE shandle,  cha
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Dict_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3910,9 +3910,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Dict_Write_X(SIDEX_HANDLE shandle, wch
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Dict_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3933,9 +3933,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Dict_Write_W(SIDEX_HANDLE shandle, cha
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Dict_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -3985,9 +3985,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Table_Read_X(SIDEX_HANDLE shandle,  wc
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Table_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4008,9 +4008,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Table_Read_W(SIDEX_HANDLE shandle,  ch
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Table_Read_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4054,9 +4054,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Table_Write_X(SIDEX_HANDLE shandle, wc
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Table_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4077,9 +4077,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Table_Write_W(SIDEX_HANDLE shandle, ch
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_Table_Write_A(shandle, utf8Group, utf8Key, value);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4131,7 +4131,7 @@ SIDEX_API SIDEX_BOOL DLL_CALL_CONV sidex_HasGroup_X(SIDEX_HANDLE shandle, wchar_
     char* utf8Group = UTF32toUTF8(ngroup, &iLengthUtf8);
     if (NULL != utf8Group){
       bRet = sidex_HasGroup_A(shandle, utf8Group);
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4151,7 +4151,7 @@ SIDEX_API SIDEX_BOOL DLL_CALL_CONV sidex_HasGroup_W(SIDEX_HANDLE shandle, char16
     char* utf8Group = UTF16toUTF8((wchar_t*)ngroup, &iLengthUtf8);
     if (NULL != utf8Group){
       bRet = sidex_HasGroup_A(shandle, utf8Group);
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4189,7 +4189,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_GetKeys_X(SIDEX_HANDLE shandle, wchar_
     char* utf8Group = UTF32toUTF8(ngroup, &iLengthUtf8);
     if (NULL != utf8Group){
       iRet = sidex_GetKeys_A(shandle, utf8Group, variant);
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4208,7 +4208,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_GetKeys_W(SIDEX_HANDLE shandle, char16
     char* utf8Group = UTF16toUTF8((wchar_t*)ngroup, &iLengthUtf8);
     if (NULL != utf8Group){
       iRet = sidex_GetKeys_A(shandle, utf8Group, variant);
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4246,9 +4246,9 @@ SIDEX_API SIDEX_BOOL DLL_CALL_CONV sidex_HasKey_X(SIDEX_HANDLE shandle, wchar_t*
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         bRet = sidex_HasKey_A(shandle, utf8Group, utf8Key);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4270,9 +4270,9 @@ SIDEX_API SIDEX_BOOL DLL_CALL_CONV sidex_HasKey_W(SIDEX_HANDLE shandle, char16_t
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         bRet = sidex_HasKey_A(shandle, utf8Group, utf8Key);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4311,7 +4311,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_DeleteGroup_X(SIDEX_HANDLE shandle, wc
     char* utf8Group = UTF32toUTF8(ngroup, &iLengthUtf8);
     if (NULL != utf8Group){
       iRet = sidex_DeleteGroup_A(shandle, utf8Group);
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4330,7 +4330,7 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_DeleteGroup_W(SIDEX_HANDLE shandle, ch
     char* utf8Group = UTF16toUTF8((wchar_t*)ngroup, &iLengthUtf8);
     if (NULL != utf8Group){
       iRet = sidex_DeleteGroup_A(shandle, utf8Group);
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4369,9 +4369,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_DeleteKey_X(SIDEX_HANDLE shandle, wcha
       char* utf8Key = UTF32toUTF8(nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_DeleteKey_A(shandle, utf8Group, utf8Key);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4392,9 +4392,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_DeleteKey_W(SIDEX_HANDLE shandle, char
       char* utf8Key = UTF16toUTF8((wchar_t*)nkey, &iLengthUtf8);
       if (NULL != utf8Key){
         iRet = sidex_DeleteKey_A(shandle, utf8Group, utf8Key);
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4439,13 +4439,13 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_log_X(SIDEX_INT32 iLogMask, const wcha
           char* utf8sLog = UTF32toUTF8((wchar_t*)sLog, &iLengthUtf8);
           if (NULL != utf8sLog){
             iRet = sidex_log_A(iLogMask, utf8Class, utf8Method, utf8Format, utf8sLog, iLogFileIndex);
-            delete utf8sLog;
+            delete[] utf8sLog;
           }
-          delete utf8Format;
+          delete[] utf8Format;
         }
-        delete utf8Method;
+        delete[] utf8Method;
       }
-      delete utf8Class;
+      delete[] utf8Class;
     }
   }
   catch (...){
@@ -4470,13 +4470,13 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_log_W(SIDEX_INT32 iLogMask, const char
           char* utf8sLog = UTF16toUTF8((wchar_t*)sLog, &iLengthUtf8);
           if (NULL != utf8sLog){
             iRet = sidex_log_A(iLogMask, utf8Class, utf8Method, utf8Format, utf8sLog, iLogFileIndex);
-            delete utf8sLog;
+            delete[] utf8sLog;
           }
-          delete utf8Format;
+          delete[] utf8Format;
         }
-        delete utf8Method;
+        delete[] utf8Method;
       }
-      delete utf8Class;
+      delete[] utf8Class;
     }
   }
   catch (...){
@@ -4515,9 +4515,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Merge_X(SIDEX_HANDLE sBaseHandle, SIDE
       char* utf8Key = UTF32toUTF8(nKey, &iLengthUtf8);
       iRet = sidex_Merge_A(sBaseHandle, sMergeHandle, bOverwrite, utf8Group, utf8Key);
       if (NULL != utf8Key){
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){
@@ -4538,9 +4538,9 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Merge_W(SIDEX_HANDLE sBaseHandle, SIDE
       char* utf8Key = UTF16toUTF8((wchar_t*)nKey, &iLengthUtf8);
       iRet = sidex_Merge_A(sBaseHandle, sMergeHandle, bOverwrite, utf8Group, utf8Key);
       if (NULL != utf8Key){
-        delete utf8Key;
+        delete[] utf8Key;
       }
-      delete utf8Group;
+      delete[] utf8Group;
     }
   }
   catch (...){

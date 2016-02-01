@@ -929,6 +929,7 @@ bool test_table_16() {
     tabErr = sidex_Table_Write(docTabHandle, GROUP, KEY2, intVariant);
     testOkay = testOkay && errLog(SIDEX_ERR_WRONG_TYPE == tabErr, "test_table_16", "WRONG_TYPE", 1);
 
+    sidex_Variant_DecRef(intVariant);
     sidex_Variant_DecRef(tabHandle);
     sidex_Free(&docTabHandle);
     return testOkay;
