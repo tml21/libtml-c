@@ -2251,14 +2251,18 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Float_Write_A(SIDEX_HANDLE shandle, ch
 #ifdef GROUP_IS_OPTIONAL
 /// @param   ngroup  name of the group / NULL if no group is required
 /// @param   nkey    name of the key
-/// @param   value   reference to a SIDEX_VARIANT handle
+/// @param   value   reference to a SIDEX_VARIANT handle<br>
+///                  This call increments the reference counter of the SIDEX_VARIANT.<br>
+///                  It must be decremented (sidex_Variant_DecRef()), if the value is no longer used.
 ///
 /// @returns SIDEX_SUCCESS in case of success.<br>
 ///          SIDEX_ERR_MISSING_KEY if nkey is NULL.<br>
 #else // GROUP_IS_OPTIONAL
 /// @param   ngroup  name of the group
 /// @param   nkey    name of the key
-/// @param   value   reference to a SIDEX_VARIANT handle
+/// @param   value   reference to a SIDEX_VARIANT handle<br>
+///                  This call increments the reference counter of the SIDEX_VARIANT.<br>
+///                  It must be decremented (sidex_Variant_DecRef()), if the value is no longer used.
 ///
 /// @returns SIDEX_SUCCESS in case of success<br>
 ///          SIDEX_ERR_MISSING_KEY nkey is NULL<br>
@@ -2424,6 +2428,8 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_String_Length_A(SIDEX_HANDLE shandle, 
 
 /// @ingroup sdxDocRWValues
 /// @brief   Get a binary value from a SIDEX document.
+///
+///          It must be deallocated using sidex_Free_Binary_ReadString().
 ///
 /// @param   shandle    SIDEX document handle (SIDEX_HANDLE)
 #ifdef GROUP_IS_OPTIONAL
@@ -2640,14 +2646,18 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Binary_Write_A(SIDEX_HANDLE shandle, c
 #ifdef GROUP_IS_OPTIONAL
 /// @param   ngroup  name of the group / NULL if no group is required
 /// @param   nkey    name of the key
-/// @param   value   reference to the SIDEX_VARIANT value
+/// @param   value   reference to the SIDEX_VARIANT value<br>
+///                  This call increments the reference counter of the SIDEX_VARIANT.<br>
+///                  It must be decremented (sidex_Variant_DecRef()), if the value is no longer used.
 ///
 /// @returns SIDEX_SUCCESS in case of success<br>
 ///          SIDEX_ERR_MISSING_KEY nkey is NULL<br>
 #else // GROUP_IS_OPTIONAL
 /// @param   ngroup  name of the group
 /// @param   nkey    name of the key
-/// @param   value   reference to the SIDEX_VARIANT value
+/// @param   value   reference to the SIDEX_VARIANT value<br>
+///                  This call increments the reference counter of the SIDEX_VARIANT.<br>
+///                  It must be decremented (sidex_Variant_DecRef()), if the value is no longer used.
 ///
 /// @returns SIDEX_SUCCESS in case of success<br>
 ///          SIDEX_ERR_MISSING_KEY nkey is NULL<br>
@@ -2728,14 +2738,18 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_List_Write_A(SIDEX_HANDLE shandle, cha
 #ifdef GROUP_IS_OPTIONAL
 /// @param   ngroup  name of the group / NULL if no group is required
 /// @param   nkey    name of the key
-/// @param   value   reference to the SIDEX_VARIANT value
+/// @param   value   reference to the SIDEX_VARIANT value<br>
+///                  This call increments the reference counter of the SIDEX_VARIANT.<br>
+///                  It must be decremented (sidex_Variant_DecRef()), if the value is no longer used.
 ///
 /// @returns SIDEX_SUCCESS in case of success<br>
 ///          SIDEX_ERR_MISSING_KEY nkey is NULL<br>
 #else // GROUP_IS_OPTIONAL
 /// @param   ngroup  name of the group
 /// @param   nkey    name of the key
-/// @param   value   reference to the SIDEX_VARIANT value
+/// @param   value   reference to the SIDEX_VARIANT value<br>
+///                  This call increments the reference counter of the SIDEX_VARIANT.<br>
+///                  It must be decremented (sidex_Variant_DecRef()), if the value is no longer used.
 ///
 /// @returns SIDEX_SUCCESS in case of success<br>
 ///          SIDEX_ERR_MISSING_KEY nkey is NULL<br>
@@ -2816,14 +2830,18 @@ SIDEX_API SIDEX_INT32 DLL_CALL_CONV sidex_Dict_Write_A(SIDEX_HANDLE shandle, cha
 #ifdef GROUP_IS_OPTIONAL
 /// @param   ngroup  name of the group / NULL if no group is required
 /// @param   nkey    name of the key
-/// @param   value   reference to the SIDEX_VARIANT value
+/// @param   value   reference to the SIDEX_VARIANT value<br>
+///                  This call increments the reference counter of the SIDEX_VARIANT.<br>
+///                  It must be decremented (sidex_Variant_DecRef()), if the value is no longer used.
 ///
 /// @returns SIDEX_SUCCESS in case of success.<br>
 ///          SIDEX_ERR_MISSING_KEY if nkey is NULL.<br>
 #else // GROUP_IS_OPTIONAL
 /// @param   ngroup  name of the group
 /// @param   nkey    name of the key
-/// @param   value   reference to the SIDEX_VARIANT value
+/// @param   value   reference to the SIDEX_VARIANT value<br>
+///                  This call increments the reference counter of the SIDEX_VARIANT.<br>
+///                  It must be decremented (sidex_Variant_DecRef()), if the value is no longer used.
 ///
 /// @returns SIDEX_SUCCESS in case of success<br>
 ///          SIDEX_ERR_MISSING_KEY nkey is NULL<br>

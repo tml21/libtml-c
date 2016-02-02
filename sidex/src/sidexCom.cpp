@@ -91,11 +91,11 @@ sidexCom::~sidexCom()
   //////////////////////////////////////
   // Maybe we are in the unicode world:
   if (NULL != m_utf16DocName){
-    delete m_utf16DocName;
+    delete[] m_utf16DocName;
     m_utf16DocName = NULL;
   }
   if (NULL != m_utf32DocName){
-    delete m_utf32DocName;
+    delete[] m_utf32DocName;
     m_utf32DocName = NULL;
   }
 
@@ -122,13 +122,13 @@ int sidexCom::sidexcom_Set_DocumentName(const char *pname){
     ////////////////////////////////////
     // Make a copy of the wchar_t string:
     if (m_utf32DocName != NULL){
-      delete m_utf32DocName;
+      delete[] m_utf32DocName;
     }
     m_utf32DocName = UTF8toUTF32((char*)pname, &iSize);
     ////////////////////////////////////
     // Make a copy of the wchar_t string:
     if (m_utf16DocName != NULL){
-      delete m_utf16DocName;
+      delete[] m_utf16DocName;
     }
     m_utf16DocName = (char16_t*)UTF8toUTF16((char*)pname, &iSize);
 
@@ -313,11 +313,11 @@ int sidexCom::sidexcom_Load_Content(const char *path){
   //////////////////////////////////////
   // Maybe we are in the unicode world:
   if (NULL != m_utf16DocName){
-    delete m_utf16DocName;
+    delete[] m_utf16DocName;
     m_utf16DocName = NULL;
   }
   if (NULL != m_utf32DocName){
-    delete m_utf32DocName;
+    delete[] m_utf32DocName;
     m_utf32DocName = NULL;
   }
 
@@ -411,11 +411,11 @@ int sidexCom::sidexcom_Set_Content(char *content){
   //////////////////////////////////////
   // Maybe we are in the unicode world:
   if (NULL != m_utf16DocName){
-    delete m_utf16DocName;
+    delete[] m_utf16DocName;
     m_utf16DocName = NULL;
   }
   if (NULL != m_utf32DocName){
-    delete m_utf32DocName;
+    delete[] m_utf32DocName;
     m_utf32DocName = NULL;
   }
 
@@ -1501,6 +1501,7 @@ int sidexCom::sidexcom_ReadString(char* ngroup, char* nkey, char** value, SIDEX_
   SIDEX_NODE nNode;
   int iRet = SIDEX_SUCCESS;
 
+  *value = NULL;
 #ifndef GROUP_IS_OPTIONAL
   if (NULL != ngroup){
 #else //GROUP_IS_OPTIONAL

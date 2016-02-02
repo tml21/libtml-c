@@ -112,6 +112,7 @@ bool test_list_01() {
     testOkay = testOkay && errLog(SIDEX_SUCCESS == listErr, "test_list_01", "sidex_Variant_As_Binary", 1);
     testOkay = testOkay && errLog(255 == *tempBin, "test_list_01", "tempBin != value", 2);
 
+    sidex_Variant_DecRef(tempList);
     sidex_Variant_DecRef(intHandle);
     sidex_Variant_DecRef(binHandle);
     sidex_Variant_DecRef(listHandle);
@@ -611,6 +612,8 @@ bool test_list_11() {
     //write the list to the sidex_document
     listErr = sidex_List_Write(docListHandle, GROUP, KEY, listHandle);
     testOkay = testOkay && errLog(SIDEX_SUCCESS == listErr, "test_list_11", "sidex_List_Write", 1);
+
+    sidex_Variant_DecRef(listHandle);
 
     //normal List_Read
     listErr = sidex_List_Read(docListHandle, GROUP, KEY, &listHandle);

@@ -348,6 +348,7 @@ bool test_string_07() {
     strErr = sidex_Variant_As_String(intHandle, &tempStr, &strLength);
     testOkay = testOkay && errLog(SIDEX_ERR_WRONG_TYPE == strErr, "test_string_07", "WRONG_TYPE", 1);
 
+    sidex_Variant_DecRef(intHandle);
     sidex_Variant_DecRef(strHandle);
     sidex_Variant_DecRef(bigHandle);
     return testOkay;
@@ -390,6 +391,7 @@ bool test_string_08() {
     strErr = sidex_Variant_As_String_Length(intHandle, &strLength);
     testOkay = testOkay && errLog(SIDEX_ERR_WRONG_TYPE == strErr, "test_string_08", "WRONG_TYPE", 1);
 
+    sidex_Variant_DecRef(intHandle);
     sidex_Variant_DecRef(strHandle);
     sidex_Variant_DecRef(bigHandle);
     return testOkay;

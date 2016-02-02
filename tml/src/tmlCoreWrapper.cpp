@@ -425,10 +425,10 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
                             wchar_t* utf16port = UTF8toUTF32(sPort, &iUTF16Length);
                             if (NULL != utf16port){
                               bSubscribe = ((TML_BOOL(FUNC_C_DECL *)(TML_BOOL, wchar_t*, wchar_t*, TML_POINTER))pCBFunc)(TML_TRUE, utf16host, utf16port, pCBData);
-                              delete (utf16port);
+                              delete[] utf16port;
                               iRet = TML_SUCCESS;
                             }
-                            delete (utf16host);
+                            delete[] utf16host;
                           }
                         }
                         break;
@@ -441,10 +441,10 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
                             char16_t* utf16port = (char16_t*)UTF8toUTF16(sPort, &iUTF16Length);
                             if (NULL != utf16port){
                               bSubscribe = ((TML_BOOL(FUNC_C_DECL *)(TML_BOOL, char16_t*, char16_t*, TML_POINTER))pCBFunc)(TML_TRUE, utf16host, utf16port, pCBData);
-                              delete (utf16port);
+                              delete[] utf16port;
                               iRet = TML_SUCCESS;
                             }
-                            delete (utf16host);
+                            delete[] utf16host;
                           }
                         }
                         break;
@@ -490,10 +490,10 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
                             wchar_t* utf16port = UTF8toUTF32(sPort, &iUTF16Length);
                             if (NULL != utf16port){
                               bSubscribe = ((TML_BOOL(FUNC_C_DECL *)(TML_BOOL, wchar_t*, wchar_t*, TML_POINTER))pCBFunc)(TML_FALSE, utf16host, utf16port, pCBData);
-                              delete (utf16port);
+                              delete[] utf16port;
                               iRet = TML_SUCCESS;
                             }
-                            delete (utf16host);
+                            delete[] utf16host;
                           }
                         }
                         break;
@@ -506,10 +506,10 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
                             char16_t* utf16port = (char16_t*)UTF8toUTF16(sPort, &iUTF16Length);
                             if (NULL != utf16port){
                               bSubscribe = ((TML_BOOL(FUNC_C_DECL *)(TML_BOOL, char16_t*, char16_t*, TML_POINTER))pCBFunc)(TML_FALSE, utf16host, utf16port, pCBData);
-                              delete (utf16port);
+                              delete[] utf16port;
                               iRet = TML_SUCCESS;
                             }
-                            delete (utf16host);
+                            delete[] utf16host;
                           }
                         }
                         break;
@@ -556,9 +556,9 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
                             if (NULL != utf16port){
                               bSubscribe = ((TML_BOOL(FUNC_C_DECL *)(TML_BOOL, wchar_t*, wchar_t*, TML_POINTER))pCBFunc)(TML_TRUE, utf16host, utf16port, pCBData);
                               iRet = TML_SUCCESS;
-                              delete (utf16port);
+                              delete[] utf16port;
                             }
-                            delete (utf16host);
+                            delete[] utf16host;
                           }
                         }
                         break;
@@ -572,9 +572,9 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
                             if (NULL != utf16port){
                               bSubscribe = ((TML_BOOL(FUNC_C_DECL *)(TML_BOOL, char16_t*, char16_t*, TML_POINTER))pCBFunc)(TML_TRUE, utf16host, utf16port, pCBData);
                               iRet = TML_SUCCESS;
-                              delete (utf16port);
+                              delete[] utf16port;
                             }
-                            delete (utf16host);
+                            delete[] utf16host;
                           }
                         }
                         break;
@@ -620,10 +620,10 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
                             wchar_t* utf16port = UTF8toUTF32(sPort, &iUTF16Length);
                             if (NULL != utf16port){
                               bSubscribe = ((TML_BOOL(FUNC_C_DECL *)(TML_BOOL, wchar_t*, wchar_t*, TML_POINTER))pCBFunc)(TML_FALSE, utf16host, utf16port, pCBData);
-                              delete (utf16port);
+                              delete[] utf16port;
                               iRet = TML_SUCCESS;
                             }
-                            delete (utf16host);
+                            delete[] utf16host;
                           }
                         }
                         break;
@@ -636,10 +636,10 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
                             char16_t* utf16port = (char16_t*)UTF8toUTF16(sPort, &iUTF16Length);
                             if (NULL != utf16port){
                               bSubscribe = ((TML_BOOL(FUNC_C_DECL *)(TML_BOOL, char16_t*, char16_t*, TML_POINTER))pCBFunc)(TML_FALSE, utf16host, utf16port, pCBData);
-                              delete (utf16port);
+                              delete[] utf16port;
                               iRet = TML_SUCCESS;
                             }
-                            delete (utf16host);
+                            delete[] utf16host;
                           }
                         }
                         break;
@@ -903,17 +903,17 @@ vortex_ctx_unref (&m_ctx);
   
   ////////////////////////////////
   // attributes:
-  delete m_sListenerIP;
+  delete[] m_sListenerIP;
   m_sListenerIP = NULL;
-  delete m_sListenerIP_w;
+  delete[] m_sListenerIP_w;
   m_sListenerIP_w = NULL;
-  delete m_sListenerIP_x;
+  delete[] m_sListenerIP_x;
   m_sListenerIP_x = NULL;
-  delete m_sListenerPort;
+  delete[] m_sListenerPort;
   m_sListenerPort = NULL;
-  delete m_sListenerPort_w;
+  delete[] m_sListenerPort_w;
   m_sListenerPort_w = NULL;
-  delete m_sListenerPort_x;
+  delete[] m_sListenerPort_x;
   m_sListenerPort_x = NULL;
 
   ////////////////////////////////
@@ -1216,9 +1216,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerPort_A(char* sPort){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete  m_sListenerPort;
-    delete  m_sListenerPort_w;
-    delete  m_sListenerPort_x;
+    delete[]  m_sListenerPort;
+    delete[]  m_sListenerPort_w;
+    delete[]  m_sListenerPort_x;
     m_sListenerPort_x = UTF8toUTF32(sPort, &iLength);
     m_sListenerPort = UTF32toUTF8(m_sListenerPort_x, &iLength);
     m_sListenerPort_w = (char16_t*)UTF8toUTF16(m_sListenerPort, &iLength);
@@ -1239,9 +1239,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerPort_X(wchar_t* sPort){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete  m_sListenerPort;
-    delete  m_sListenerPort_w;
-    delete  m_sListenerPort_x;
+    delete[]  m_sListenerPort;
+    delete[]  m_sListenerPort_w;
+    delete[]  m_sListenerPort_x;
     m_sListenerPort = UTF32toUTF8(sPort, &iLength);
     m_sListenerPort_w = (char16_t*)UTF8toUTF16(m_sListenerPort, &iLength);
     m_sListenerPort_x = UTF8toUTF32(m_sListenerPort, &iLength);
@@ -1262,9 +1262,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerPort_W(char16_t* sPort){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete  m_sListenerPort;
-    delete  m_sListenerPort_w;
-    delete  m_sListenerPort_x;
+    delete[]  m_sListenerPort;
+    delete[]  m_sListenerPort_w;
+    delete[]  m_sListenerPort_x;
     m_sListenerPort = UTF16toUTF8((wchar_t*)sPort, &iLength);
     m_sListenerPort_w = (char16_t*)UTF8toUTF16(m_sListenerPort, &iLength);
     m_sListenerPort_x = UTF8toUTF32(m_sListenerPort, &iLength);
@@ -1318,9 +1318,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerIP_A(char* sIP){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete m_sListenerIP;
-    delete m_sListenerIP_w;
-    delete m_sListenerIP_x;
+    delete[] m_sListenerIP;
+    delete[] m_sListenerIP_w;
+    delete[] m_sListenerIP_x;
     m_sListenerIP_x = UTF8toUTF32(sIP, &iLength);
     m_sListenerIP = UTF32toUTF8(m_sListenerIP_x, &iLength);
     m_sListenerIP_w = (char16_t*)UTF8toUTF16(m_sListenerIP, &iLength);
@@ -1342,9 +1342,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerIP_X(wchar_t* sIP){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete m_sListenerIP;
-    delete m_sListenerIP_w;
-    delete m_sListenerIP_x;
+    delete[] m_sListenerIP;
+    delete[] m_sListenerIP_w;
+    delete[] m_sListenerIP_x;
     m_sListenerIP = UTF32toUTF8(sIP, &iLength);
     m_sListenerIP_w = (char16_t*)UTF8toUTF16(m_sListenerIP, &iLength);
     m_sListenerIP_x = UTF8toUTF32(m_sListenerIP, &iLength);
@@ -1366,9 +1366,9 @@ int tmlCoreWrapper::tmlCoreWrapper_Set_ListenerIP_W(char16_t* sIP){
   if (!m_bListnerIsEnabled){
     TML_INT32 iLength;
 
-    delete m_sListenerIP;
-    delete m_sListenerIP_w;
-    delete m_sListenerIP_x;
+    delete[] m_sListenerIP;
+    delete[] m_sListenerIP_w;
+    delete[] m_sListenerIP_x;
     m_sListenerIP = UTF16toUTF8((wchar_t*)sIP, &iLength);
     m_sListenerIP_w = (char16_t*)UTF8toUTF16(m_sListenerIP, &iLength);
     m_sListenerIP_x = UTF8toUTF32(m_sListenerIP, &iLength);
@@ -2045,7 +2045,7 @@ void tmlCoreWrapper::log(int iLogMask, const char* sClass, const char* sMethod, 
   SIDEX_INT32 iLengthUtf8;
   char* utf8Name = UTF32toUTF8((wchar_t*)sLog, &iLengthUtf8);
   log (iLogMask, sClass, sMethod, sFormatLog, utf8Name);
-  delete utf8Name;
+  delete[] utf8Name;
 #endif
 }
 
@@ -2058,7 +2058,7 @@ void tmlCoreWrapper::log(int iLogMask, const char* sClass, const char* sMethod, 
   SIDEX_INT32 iLengthUtf8;
   char* utf8Name = UTF16toUTF8((wchar_t*)sLog, &iLengthUtf8);
   log (iLogMask, sClass, sMethod, sFormatLog, utf8Name);
-  delete utf8Name;
+  delete[] utf8Name;
 #endif
 }
 

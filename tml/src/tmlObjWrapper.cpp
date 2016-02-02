@@ -158,11 +158,11 @@ tmlObjWrapper::~tmlObjWrapper()
   }
   m_sProfile=NULL;
   if (NULL != m_sProfileUtf32){
-    delete (m_sProfileUtf32);
+    delete[] m_sProfileUtf32;
   }
   m_sProfileUtf32=NULL;
   if (NULL != m_sProfileUtf16){
-    delete (m_sProfileUtf16);
+    delete[] m_sProfileUtf16;
   }
   m_sProfileUtf16=NULL;
   m_UnicodeStatus = TML_SUCCESS;
@@ -363,10 +363,10 @@ void tmlObjWrapper::tmlObjWrapper_Attr_Set_Profile(const char* profile){
     delete[] m_sProfile;
   }
   if (NULL != m_sProfileUtf32){
-    delete (m_sProfileUtf32);
+    delete[] m_sProfileUtf32;
   }
   if (NULL != m_sProfileUtf16){
-    delete (m_sProfileUtf16);
+    delete[] m_sProfileUtf16;
   }
   if (NULL != profile){
     m_bProfileIsValid = true;

@@ -110,17 +110,17 @@ sidexHashTable::~sidexHashTable()
           m_data[i].key = NULL;
         }
         if (NULL != m_data[i].xkey){
-          delete m_data[i].xkey;
+          delete[] m_data[i].xkey;
           m_data[i].xkey = NULL;
         }
         if (NULL != m_data[i].wkey){
-          delete m_data[i].wkey;
+          delete[] m_data[i].wkey;
           m_data[i].wkey = NULL;
         }
       }
       if (!m_data[i].single){
         // deallocate the next hashTable:
-        delete (m_data[i].ht);
+        delete[] m_data[i].ht;
         m_data[i].ht = NULL;
 
         /////////////////////////////////////////////////////////////
@@ -130,11 +130,11 @@ sidexHashTable::~sidexHashTable()
           m_data[i].key = NULL;
         }
         if (NULL != m_data[i].xkey){
-          delete m_data[i].xkey;
+          delete[] m_data[i].xkey;
           m_data[i].xkey = NULL;
         }
         if (NULL != m_data[i].wkey){
-          delete m_data[i].wkey;
+          delete[] m_data[i].wkey;
           m_data[i].wkey = NULL;
         }
       }
@@ -364,11 +364,11 @@ int sidexHashTable::setValue(char *key, SIDEX_VARIANT value, SIDEX_INT32* numOfE
               m_data[nKey].key = NULL;
             }
             if (NULL != m_data[nKey].xkey){
-              delete m_data[nKey].xkey;
+              delete[] m_data[nKey].xkey;
               m_data[nKey].xkey = NULL;
             }
             if (NULL != m_data[nKey].wkey){
-              delete m_data[nKey].wkey;
+              delete[] m_data[nKey].wkey;
               m_data[nKey].wkey = NULL;
             }
             iRet = SIDEX_SUCCESS;
