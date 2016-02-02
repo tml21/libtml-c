@@ -42,15 +42,11 @@ using namespace std;
 * @param int no : Contains an integer value. Additional information for locating test failure.
 * @returns bool : Param test.
 */
-bool errLog(bool test, char* arg1, char* arg2, int no){
+bool errLog(bool test, const  char* arg1, const char* arg2, int no){
     if (!test){
         cout << arg1 << " " << arg2 << " (" << no << ") FAILED" << endl;
-
-        return false;
     }
-    else{
-        return true;
-    }
+    return test;
 }
 
 /** @ingroup Test_Utils
@@ -61,11 +57,11 @@ bool errLog(bool test, char* arg1, char* arg2, int no){
 * @param char* functionName : Name of the test performed. Used in the output message.
 * @returns bool : Param test.
 */
-bool errLog(bool test, char* functionName) {
-    char* status = " OK";
+bool errLog(bool test, const char* functionName) {
+    char* status = (char*)" OK";
 
     if(!test) {
-        status = " FAILED";
+        status = (char*)" FAILED";
     }
 
     cout << functionName << status << endl;

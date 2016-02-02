@@ -33,10 +33,16 @@
 #ifdef LINUX
   #include <wchar.h> 
   #include <limits>
+  #ifdef FREE_BSD
+    #include <stdlib.h>
+  #endif // FREE_BSD
 #else 
   #ifdef SIDEX_UNICODE
     #define _UNICODE
-  #endif
+  #endif // SIDEX_UNICODE
+  #ifdef MINGW_BUILD
+    #include <stdlib.h>
+  #endif // MINGW_BUILD
 #include <tchar.h>
 #endif // LINUX
 #include <sidex.h>

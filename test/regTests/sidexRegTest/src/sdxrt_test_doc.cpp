@@ -53,10 +53,12 @@ SIDEX_INT32 docErr      = SIDEX_SUCCESS; // API return value
 
 SIDEX_HANDLE docHandle = SIDEX_HANDLE_TYPE_NULL;
 
+SIDEX_HANDLE docHandleNull = SIDEX_HANDLE_TYPE_NULL;
+
 #ifdef SIDEX_UNICODE
-    wchar_t* docContent = L"<?xml version='1.0' encoding='UTF-8'?><exampleCode><from>Jani</from><body>Don't forget me this weekend!</body></exampleCode>";
+    wchar_t* docContent = (wchar_t*) L"<?xml version='1.0' encoding='UTF-8'?><exampleCode><from>Jani</from><body>Don't forget me this weekend!</body></exampleCode>";
 #else
-    char* docContent = "<?xml version='1.0' encoding='UTF-8'?><exampleCode><from>Jani</from><body>Don't forget me this weekend!</body></exampleCode>";
+    char* docContent = (char*) "<?xml version='1.0' encoding='UTF-8'?><exampleCode><from>Jani</from><body>Don't forget me this weekend!</body></exampleCode>";
 #endif
 
 /** 
@@ -108,8 +110,8 @@ bool test_doc_02() {
     docErr = sidex_Set_DocumentName(docHandle, wDOCUMENT);
     testOkay = testOkay && errLog(SIDEX_ERR_WRONG_DOC == docErr, "test_doc_02", "WRONG_DOC", 1);
 
-    // -3 check for wrong_parameter error
-    docErr = sidex_Set_DocumentName(NULL, DOCUMENT);
+    // -3 check for wrong_parameter error / handle in NULL
+    docErr = sidex_Set_DocumentName(docHandleNull, DOCUMENT);
     testOkay = testOkay && errLog(SIDEX_ERR_WRONG_PARAMETER == docErr, "test_doc_02", "WRONG_PARAMETER", 1);
 
     sidex_Free(&docHandle);
@@ -141,8 +143,8 @@ bool test_doc_03() {
     //compare to original
     testOkay = testOkay && errLog(sdxrt_cmp(temp,DOCUMENT) == 0, "test_doc_03", "docName != name", 1);
 
-    // -2 check for wrong_parameter error
-    docErr = sidex_Get_DocumentName(NULL, &temp);
+    // -2 check for wrong_parameter error / handle in NULL
+    docErr = sidex_Get_DocumentName(docHandleNull, &temp);
     testOkay = testOkay && errLog(SIDEX_ERR_WRONG_PARAMETER == docErr, "test_doc_03", "WRONG_PARAMETER", 1);
 
     sidex_Free(&docHandle);
@@ -205,7 +207,7 @@ bool test_doc_05() {
     testOkay = testOkay && errLog(SIDEX_SUCCESS == docErr, "test_doc_05", "sidex_Save_Content", 1);
 
     // load_content with handle as NULL -> DUMPCONTENT or UNICODE
-    docErr = sidex_Load_Content(NULL, DOCUMENT);
+    docErr = sidex_Load_Content(docHandleNull, DOCUMENT);
     testOkay = testOkay && errLog(SIDEX_ERR_UNICODE == docErr || SIDEX_ERR_DUMPCONTENT == docErr, 
                                   "test_doc_05", "DUMPCONTENT or UNICODE", 1);
 
@@ -232,8 +234,8 @@ bool test_doc_06() {
     docErr = sidex_Create(DOCUMENT, &docHandle);
     testOkay = testOkay && errLog(SIDEX_SUCCESS == docErr, "test_doc_06", "sidex_Create", 1);
 
-    //set_content with NULL
-    docErr = sidex_Set_Content(NULL, docContent);
+    //set_content with handle of NULL
+    docErr = sidex_Set_Content(docHandleNull, docContent);
     testOkay = testOkay && errLog(SIDEX_ERR_DUMPCONTENT == docErr, "test_doc_06", "DUMPCONTENT", 1);
 
     //normal set_content, SIDEX_SUCCESS
@@ -259,7 +261,7 @@ bool test_doc_07() {
     bool testOkay = true;
     SIDEX_INT32 contLength = sdxrt_len(docContent);
     SIDEX_TCHAR* contTemp = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 lengthTemp = NULL;
+    SIDEX_INT32 lengthTemp = -1;
 
     // normal sidex_Create
     docErr = sidex_Create(DOCUMENT, &docHandle);
@@ -276,7 +278,7 @@ bool test_doc_07() {
     sidex_Free_Content(contTemp);
 
     //testing DUMPCONTENT error with param sHandle = NULL
-    docErr = sidex_Get_Content(NULL, &contTemp, &lengthTemp);
+    docErr = sidex_Get_Content(docHandleNull, &contTemp, &lengthTemp);
     testOkay = testOkay && errLog(SIDEX_ERR_DUMPCONTENT == docErr, "test_doc_07", "DUMPCONTENT", 1);
 
     //normal Get_Content_Lenght
@@ -310,9 +312,9 @@ bool test_doc_08() {
     bool testOkay = true;
     SIDEX_INT32 contLength = sdxrt_len(docContent);
     SIDEX_TCHAR* contTemp = NULL;
-    SIDEX_INT32 lengthTemp = NULL;
+    SIDEX_INT32 lengthTemp = -1;
     SIDEX_TCHAR* tempFloat = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 tempLength = NULL;
+    SIDEX_INT32 tempLength = -1;
 
     // normal sidex_Create
     docErr = sidex_Create(DOCUMENT, &docHandle);
@@ -794,17 +796,17 @@ bool test_doc_09() {
 bool test_doc_10() {
     bool testOkay = true;
     SIDEX_VARIANT listVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 tempSize = NULL;
+    SIDEX_INT32 tempSize = -1;
     SIDEX_VARIANT groupVariant = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_TCHAR* tempStr = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 strLength = NULL;
+    SIDEX_INT32 strLength = -1;
 
     // normal sidex_Create
     docErr = sidex_Create(DOCUMENT, &docHandle);
     testOkay = testOkay && errLog(SIDEX_SUCCESS == docErr, "test_doc_10", "sidex_Create", 1);
 
     //adding some entries, integer-entry:
-    docErr = sidex_Integer_Write(docHandle, GROUP, KEY, -9223372036854775808);
+    docErr = sidex_Integer_Write(docHandle, GROUP, KEY, -9223372036854775807);
     testOkay = testOkay && errLog(SIDEX_SUCCESS == docErr, "test_doc_10", "sidex_Integer_Write", 1);
 
     //another integer-entry
@@ -900,17 +902,17 @@ bool test_doc_10() {
 bool test_doc_11() {
     bool testOkay = true;
     SIDEX_VARIANT listVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 tempSize = NULL;
+    SIDEX_INT32 tempSize = -1;
     SIDEX_VARIANT keyVariant= SIDEX_HANDLE_TYPE_NULL;
     SIDEX_TCHAR* tempStr = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 strLength = NULL;
+    SIDEX_INT32 strLength = -1;
 
     // normal sidex_Create
     docErr = sidex_Create(DOCUMENT, &docHandle);
     testOkay = testOkay && errLog(SIDEX_SUCCESS == docErr, "test_doc_11", "sidex_Create", 1);
 
     //adding some entries, integer-entry:
-    docErr = sidex_Integer_Write(docHandle, GROUP, KEY, -9223372036854775808);
+    docErr = sidex_Integer_Write(docHandle, GROUP, KEY, -9223372036854775807);
     testOkay = testOkay && errLog(SIDEX_SUCCESS == docErr, "test_doc_11", "sidex_Integer_Write", 1);
 
     //another integer-entry

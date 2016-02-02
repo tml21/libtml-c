@@ -33,7 +33,16 @@
 #ifdef LINUX
   #include <wchar.h> 
   #include <limits>
+  #ifdef FREE_BSD
+    #include <stdlib.h>
+  #endif // FREE_BSD
+#else
+  #ifdef MINGW_BUILD
+    #include <stdlib.h>
+    #include <limits>
+  #endif // MINGW_BUILD
 #endif // LINUX
+
 #include <sidex.h>
 #include <iostream>
 using namespace std;

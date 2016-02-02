@@ -69,7 +69,7 @@ SIDEX_HANDLE docDictHandle = SIDEX_HANDLE_TYPE_NULL;
 */
 bool test_dict_01() {
     bool testOkay = true;
-    SIDEX_INT32 tempSize = NULL;
+    SIDEX_INT32 tempSize = -1;
 
     //assign dict to sidex_variant
     dictHandle = sidex_Variant_New_Dict();
@@ -128,7 +128,7 @@ bool test_dict_01() {
 bool test_dict_02() {
     bool testOkay = true;
     SIDEX_VARIANT tempHandle = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 tempSize = NULL;
+    SIDEX_INT32 tempSize = -1;
 
     //assign dict to sidex_variant
     dictHandle = sidex_Variant_New_Dict();
@@ -218,7 +218,7 @@ bool test_dict_04() {
     bool testOkay = true;
     SIDEX_TCHAR* tempKey = NULL;
     SIDEX_VARIANT tempHandle = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 tempSize = NULL;
+    SIDEX_INT32 tempSize = -1;
 
     //testing for a NOCONTENT error with an empty dict(1)
     dictHandle = SIDEX_HANDLE_TYPE_NULL;

@@ -97,7 +97,7 @@ bool test_none_02() {
     noneErr = sidex_Variant_Read(docNoneHandle, GROUP, KEY, &temp);
     testOkay = testOkay && errLog(SIDEX_SUCCESS == noneErr, "test_none_02", "sidex_None_Read", 1);
     //check if entry is a none
-    testOkay = testOkay && errLog(sidex_Variant_None_Check(temp), "test_none_02", "sidex_Variant_None_Check", 1);
+    testOkay = testOkay && errLog(SIDEX_TRUE == sidex_Variant_None_Check(temp), "test_none_02", "sidex_Variant_None_Check", 1);
 
     sidex_Free(&docNoneHandle);
     sidex_Variant_DecRef(temp);

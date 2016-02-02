@@ -43,7 +43,7 @@ using namespace std;
 
 /** @brief max and min constants of Integer values
 */
-const SIDEX_INT64 min64 = -9223372036854775808;
+const SIDEX_INT64 min64 = -9223372036854775807;
 const SIDEX_INT64 max64 = 9223372036854775807;
 
 SIDEX_INT32 intErr = SIDEX_SUCCESS; // API return value

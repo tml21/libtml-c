@@ -71,7 +71,7 @@ SIDEX_HANDLE docStrHandle = SIDEX_HANDLE_TYPE_NULL;
 bool test_string_01() {
     bool testOkay = true;
     SIDEX_TCHAR* tempString = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 tempLength = NULL; 
+    SIDEX_INT32 tempLength = -1; 
 
     //normal sidex_Create
     strErr = sidex_Create(DOCUMENT, &docStrHandle);
@@ -102,7 +102,7 @@ bool test_string_02() {
     SIDEX_INT64 strSize = 0;
     SIDEX_VARIANT tempHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_TCHAR* tempString = NULL;
-    SIDEX_INT32 tempLength = NULL;
+    SIDEX_INT32 tempLength = -1;
 
     //normal sidex_Create
     strErr = sidex_Create(DOCUMENT, &docStrHandle);
@@ -327,7 +327,7 @@ bool test_string_07() {
     SIDEX_VARIANT bigHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_VARIANT intHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_TCHAR* tempStr = NULL;
-    SIDEX_INT32 strLength = NULL;
+    SIDEX_INT32 strLength = -1;
 
     //create string variants
     strErr = sidex_Variant_New_String(minStr, &strHandle);
@@ -367,7 +367,7 @@ bool test_string_08() {
     bool testOkay = true;
     SIDEX_VARIANT bigHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_VARIANT intHandle = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 strLength = NULL;
+    SIDEX_INT32 strLength = -1;
 
     //create string variants
     strErr = sidex_Variant_New_String(minStr, &strHandle);

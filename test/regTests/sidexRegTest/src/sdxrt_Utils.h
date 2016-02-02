@@ -93,7 +93,7 @@ using namespace std;
 
 
 //see .cpp-file for more details
-bool errLog(bool test, char* arg1, char* arg2, int no);
+bool errLog(bool test, const  char* arg1, const char* arg2, int no);
 
 //overloaded errLog function
-bool errLog(bool test, char* functionName);
+bool errLog(bool test, const char* functionName);

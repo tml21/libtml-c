@@ -128,7 +128,7 @@ bool test_bool_02() {
 */
 bool test_bool_03() {
     bool testOkay = true;
-    SIDEX_BOOL temp = NULL;
+    SIDEX_BOOL temp = SIDEX_FALSE;
 
     //normal sidex_create
     boolErr = sidex_Create(DOCUMENT, &docBoolHandle);
@@ -160,7 +160,7 @@ bool test_bool_03() {
 */
 bool test_bool_04() {
     bool testOkay = true;
-    SIDEX_BOOL temp = NULL;
+    SIDEX_BOOL temp = SIDEX_FALSE;
 
     boolErr = sidex_Create(DOCUMENT, &docBoolHandle);
     testOkay = testOkay && errLog(SIDEX_SUCCESS == boolErr, "test_bool_04", "sidex_Create", 1);
@@ -198,7 +198,7 @@ bool test_bool_04() {
 bool test_bool_05() {
     bool testOkay = true;
     SIDEX_VARIANT variant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_BOOL newBool = NULL;
+    SIDEX_BOOL newBool = SIDEX_FALSE;
 
     //test a WRONG_TYPE error
     variant = sidex_Variant_New_Float(1.23456);

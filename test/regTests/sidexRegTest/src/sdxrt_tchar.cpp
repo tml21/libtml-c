@@ -29,6 +29,10 @@
  *    wobe-systems GmbH
  */
 
+#ifdef MINGW_BUILD
+  // Do the following undef for swprintf
+  #undef __STRICT_ANSI__ 
+#endif // MINGW_BUILD
 #include <sidex.h>
 #include <string.h>
 #include <stdio.h>
@@ -75,7 +79,11 @@ SIDEX_TCHAR * sdxrt_cat( SIDEX_TCHAR * destination, const SIDEX_TCHAR * source) 
 int sdxrt_printf( SIDEX_TCHAR * buffer, const SIDEX_TCHAR * format, SIDEX_INT32 arg) {
 #ifdef SIDEX_UNICODE
     #ifndef LINUX
-        return _swprintf(buffer, format, arg);
+      #ifdef MINGW_BUILD
+          return swprintf(buffer, format, arg);
+      #else 
+          return _swprintf(buffer, format, arg);
+      #endif
     #else 
         return swprintf(buffer, 8, format,arg);
     #endif

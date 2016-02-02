@@ -58,7 +58,7 @@ SIDEX_VARIANT tabHandle = SIDEX_HANDLE_TYPE_NULL;
 bool test_table_01() {
     bool testOkay = true;
     SIDEX_TCHAR* columnName = NULL;
-    SIDEX_INT32 columnSize = NULL;
+    SIDEX_INT32 columnSize = -1;
 
     //normal creating of a new table
     tabHandle = sidex_Variant_New_Table();
@@ -223,7 +223,7 @@ bool test_table_05() {
     SIDEX_VARIANT listItem = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_INT32 index = 0;
     SIDEX_TCHAR* columnName = NULL;
-    SIDEX_INT32 strLength = NULL;
+    SIDEX_INT32 strLength = -1;
     SIDEX_VARIANT wrongTypeVariant = SIDEX_HANDLE_TYPE_NULL;
 
     tabHandle = SIDEX_HANDLE_TYPE_NULL;
@@ -287,7 +287,7 @@ bool test_table_05() {
 */
 bool test_table_06() {
     bool testOkay = true;
-    SIDEX_INT32 columnCount = NULL;
+    SIDEX_INT32 columnCount = -1;
     SIDEX_VARIANT wrongTypeVariant = SIDEX_HANDLE_TYPE_NULL;
 
     tabHandle = SIDEX_HANDLE_TYPE_NULL;
@@ -334,7 +334,7 @@ bool test_table_06() {
 */
 bool test_table_07() {
     bool testOkay = true;
-    SIDEX_INT32 columnCount = NULL;
+    SIDEX_INT32 columnCount = -1;
     SIDEX_VARIANT wrongTypeVariant = SIDEX_HANDLE_TYPE_NULL;
 
     //normal creating of a new table
@@ -390,8 +390,8 @@ bool test_table_07() {
 */
 bool test_table_08() {
     bool testOkay = true;
-    SIDEX_INT32 rowSize = NULL;
-    SIDEX_INT32 rowId = NULL;
+    SIDEX_INT32 rowSize = -1;
+    SIDEX_INT32 rowId = -1;
     SIDEX_VARIANT wrongTypeVariant = SIDEX_HANDLE_TYPE_NULL;
 
     //normal creating of a new table
@@ -450,8 +450,8 @@ bool test_table_08() {
 */
 bool test_table_09() {
     bool testOkay = true;
-    SIDEX_INT32 rowId = NULL;
-    SIDEX_INT32 rowSize = NULL;
+    SIDEX_INT32 rowId = -1;
+    SIDEX_INT32 rowSize = -1;
     SIDEX_VARIANT wrongTypeVariant = SIDEX_HANDLE_TYPE_NULL;
 
     //normal creating of a new table
@@ -547,9 +547,9 @@ bool test_table_10() {
 bool test_table_11() {
     bool testOkay = true;
     SIDEX_VARIANT intVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 rowId = NULL;
+    SIDEX_INT32 rowId = -1;
     SIDEX_VARIANT tempVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT64 intValue = NULL;
+    SIDEX_INT64 intValue = -1;
 
     //normal creating of a new table
     tabHandle = sidex_Variant_New_Table();
@@ -602,11 +602,11 @@ bool test_table_11() {
 bool test_table_12() {
     bool testOkay = true;
     SIDEX_VARIANT intVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 rowId = NULL;
+    SIDEX_INT32 rowId = -1;
     SIDEX_VARIANT rowDict = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 dictSize = NULL;
+    SIDEX_INT32 dictSize = -1;
     SIDEX_VARIANT tempVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT64 intValue = NULL;
+    SIDEX_INT64 intValue = -1;
 
     //normal creating of a new table
     tabHandle = sidex_Variant_New_Table();
@@ -667,7 +667,7 @@ bool test_table_12() {
 bool test_table_13() {
     bool testOkay = true;
     tabHandle = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_BOOL hasColumn = NULL;
+    SIDEX_BOOL hasColumn = SIDEX_FALSE;
     SIDEX_VARIANT intVariant = SIDEX_HANDLE_TYPE_NULL;
 
     // testing a NOCONTENT error
@@ -718,8 +718,8 @@ bool test_table_13() {
 */
 bool test_table_14() {
     bool testOkay = true;
-    SIDEX_INT32 rowCount = NULL;
-    SIDEX_INT32 rowId = NULL;
+    SIDEX_INT32 rowCount = -1;
+    SIDEX_INT32 rowId = -1;
     SIDEX_VARIANT wrongTypeVariant = SIDEX_HANDLE_TYPE_NULL;
 
     tabHandle = SIDEX_HANDLE_TYPE_NULL;
@@ -772,12 +772,12 @@ bool test_table_14() {
 */
 bool test_table_15() {
     bool testOkay = true;
-    SIDEX_INT32 rowId = NULL;
+    SIDEX_INT32 rowId = -1;
     SIDEX_VARIANT intVariant = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_VARIANT intMinusVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 rowCount = NULL;
+    SIDEX_INT32 rowCount = -1;
     SIDEX_VARIANT tempVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT64 intValue = NULL;
+    SIDEX_INT64 intValue = -1;
 
     //normal creating of a new table
     tabHandle = sidex_Variant_New_Table();
@@ -860,10 +860,10 @@ bool test_table_15() {
 */
 bool test_table_16() {
     bool testOkay = true;
-    SIDEX_INT32 rowId = NULL;
+    SIDEX_INT32 rowId = -1;
     SIDEX_VARIANT intVariant = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_VARIANT tempVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT64 intValue = NULL;
+    SIDEX_INT64 intValue = -1;
 
     //normal creating of a new table
     tabHandle = sidex_Variant_New_Table();
@@ -946,7 +946,7 @@ bool test_table_16() {
 */
 bool test_table_17() {
     bool testOkay = true;
-    SIDEX_INT32 columnCount = NULL;
+    SIDEX_INT32 columnCount = -1;
 
     //normal creating of a new table
     tabHandle = sidex_Variant_New_Table();

@@ -54,9 +54,9 @@ int sdxrt_len(const SIDEX_TCHAR* str);
 
 //makro for creating strings in the right format
 #ifdef SIDEX_UNICODE
-#define _sdxrtT(a) L ## a
+#define _sdxrtT(a) (wchar_t*) L ## a
 #else // SIDEX_UNICODE
-#define _sdxrtT(a) a
+#define _sdxrtT(a) (char*) a
 #endif // SIDEX_UNICODE
 
 

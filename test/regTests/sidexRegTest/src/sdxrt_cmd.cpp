@@ -29,10 +29,16 @@
  *    wobe-systems GmbH
  */
 
-#ifdef LINUX
+#if defined(LINUX) || defined (MINGW_BUILD)
   #include <wchar.h>
   #include <stdbool.h>
   #include <string.h>
+  #ifdef MINGW_BUILD
+    #include <cstdlib>
+  #endif // MINGW_BUILD
+  #ifdef FREE_BSD
+    #include <stdlib.h>
+  #endif // FREE_BSD
 #else
   #include <stdio.h>
   #include <tchar.h>
@@ -148,8 +154,6 @@ int option_all(bool stop) {
             returnVal = -1;
         }
     }
-
-    //return value
     return returnVal;
 }
 
@@ -386,8 +390,12 @@ bool memLeaks(int test, int index) {
 #ifdef LINUX
     int main(int argc, char* argv[])
 #else //LINUX
-    int _tmain(int argc, char* argv[])
-#endif
+  #ifdef MINGW_BUILD
+      int main(int argc, char** argv)
+  #else
+      int _tmain(int argc, char* argv[])
+  #endif //MINGW_BUILD
+#endif //LINUX
 { 
     //command line arguments
     if (argc == 4) {    //three parameters / options were given
@@ -398,7 +406,7 @@ bool memLeaks(int test, int index) {
             cout << "Option not recognized. Restart program with option help for insructions" << endl;
             return -1;
         }
-        int opt2 = atof(argv[2]);   //has to be number of subtest
+        int opt2 = (int) atof(argv[2]);   //has to be number of subtest
         char* opt3 = argv[3];       //has to be go or stop
         if(strcmp(opt3, "go") == 0) {
             return option_specific_test(false, test, opt2);
@@ -431,7 +439,7 @@ bool memLeaks(int test, int index) {
                 return option_specific_test(true,test,0);
             }
             //otherwise opt2 has to be a number
-            int subtest = atof(opt2);
+            int subtest = (int) atof(opt2);
             return option_specific_test(false,test,subtest);
         } else {
             //not recognized option

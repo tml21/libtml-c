@@ -38,6 +38,8 @@ set(TARGETNAME sidexRegTest)
 ## Windows 32 bit / MinGW build
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
   ADD_DEFINITIONS("-DSIDEX_UNICODE -DTML_UNICODE -DMINGW_BUILD")
+  ADD_DEFINITIONS("-std=c++0x")
+  ADD_DEFINITIONS("-fpermissive")
   set(IS64BIT false)
 
   ADD_DEFINITIONS ("-m32")
@@ -48,6 +50,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
 ## Windows 64 bit / MinGW build
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
   ADD_DEFINITIONS("-DSIDEX_UNICODE -DTML_UNICODE -DMINGW_BUILD")
+  ADD_DEFINITIONS("-std=c++0x")
+  ADD_DEFINITIONS("-fpermissive")
   set(IS64BIT true)
 
   ADD_DEFINITIONS ("-m64")

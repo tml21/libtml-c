@@ -61,11 +61,11 @@ bool test_list_01() {
     SIDEX_VARIANT binHandle = SIDEX_HANDLE_TYPE_NULL;
     unsigned char maxChar = 255;
     SIDEX_VARIANT intHandle = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 binIndex = NULL;
+    SIDEX_INT32 binIndex = -1;
     SIDEX_VARIANT tempList = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 intIndex = NULL;
+    SIDEX_INT32 intIndex = -1;
     SIDEX_VARIANT tempVariant = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT64 tempInt = NULL;
+    SIDEX_INT64 tempInt = -1;
     unsigned char* tempBin = NULL;
 
     //normal creating of a list
@@ -132,8 +132,8 @@ bool test_list_01() {
 bool test_list_02() {
     bool testOkay = true;
     listHandle = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 listSize = NULL;
-    SIDEX_INT32 intIndex = NULL;
+    SIDEX_INT32 listSize = -1;
+    SIDEX_INT32 intIndex = -1;
     SIDEX_VARIANT intHandle = SIDEX_HANDLE_TYPE_NULL;
 
     //testing a NOCONTENT error
@@ -180,7 +180,7 @@ bool test_list_03() {
     listHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_INT32 intIndex = 0;
     SIDEX_VARIANT tempHandle = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT64 intValue = NULL;
+    SIDEX_INT64 intValue = -1;
 
     //creating a sidex_integer (in a variant)
     intHandle = sidex_Variant_New_Integer(1234567);
@@ -239,7 +239,7 @@ bool test_list_04() {
     listHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_INT32 intIndex = 0;
     SIDEX_VARIANT tempEntry = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT64 intValue = NULL;
+    SIDEX_INT64 intValue = -1;
 
     //creating a sidex_integer, in a variant
     intHandle = sidex_Variant_New_Integer(1234567);
@@ -298,7 +298,7 @@ bool test_list_05() {
     SIDEX_VARIANT intHandle = SIDEX_HANDLE_TYPE_NULL;
     listHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_INT32 intIndex = 0;
-    SIDEX_INT64 intValue = NULL;
+    SIDEX_INT64 intValue = -1;
 
     //creating a sidex_integer, in a variant
     intHandle = sidex_Variant_New_Integer(1234567);
@@ -351,7 +351,7 @@ bool test_list_06() {
     SIDEX_VARIANT intHandle = SIDEX_HANDLE_TYPE_NULL;
     listHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_INT32 intIndex = 0;
-    SIDEX_INT32 listSize = NULL;
+    SIDEX_INT32 listSize = -1;
 
     //creating a sidex_integer (in a variant)
     intHandle = sidex_Variant_New_Integer(1234567);
@@ -403,7 +403,7 @@ bool test_list_07() {
     SIDEX_VARIANT intHandle = SIDEX_HANDLE_TYPE_NULL;
     listHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_INT32 intIndex = 0;
-    SIDEX_INT32 listSize = NULL;
+    SIDEX_INT32 listSize = -1;
 
     //creating a sidex_integer, in a variant
     intHandle = sidex_Variant_New_Integer(1234567);
@@ -479,8 +479,8 @@ bool test_list_09() {
     listHandle = SIDEX_HANDLE_TYPE_NULL;
     SIDEX_INT32 intIndex = 0;
     SIDEX_VARIANT tempEntry = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 tempIndex = NULL;
-    SIDEX_INT64 intValue = NULL;
+    SIDEX_INT32 tempIndex = -1;
+    SIDEX_INT64 intValue = -1;
 
     //creating a sidex_integer (in a variant)
     intHandle = sidex_Variant_New_Integer(1234567);
@@ -530,7 +530,7 @@ bool test_list_09() {
 bool test_list_10() {
     bool testOkay = true;
     SIDEX_VARIANT intHandle = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 intIndex = NULL;
+    SIDEX_INT32 intIndex = -1;
 
     //normal sidex_Create
     listErr = sidex_Create(DOCUMENT, &docListHandle);
@@ -591,8 +591,8 @@ bool test_list_10() {
 bool test_list_11() {
     bool testOkay = true;
     SIDEX_VARIANT intHandle = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 intIndex = NULL;
-    SIDEX_INT64 intValue = NULL;
+    SIDEX_INT32 intIndex = -1;
+    SIDEX_INT64 intValue = -1;
 
     //normal sidex_Create
     listErr = sidex_Create(DOCUMENT, &docListHandle);
