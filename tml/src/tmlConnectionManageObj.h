@@ -43,6 +43,7 @@
 #endif // _MSC_VER > 1000
 
 #include "tmlStdTypes.h"
+#include "tmlCoreWrapper.h"
 
 class tmlConnectionManageObj //connection management object class
 {
@@ -55,10 +56,14 @@ private:
     char* m_sHost;
     char* m_sPort;
     char* m_sNetAddress;
+    char16_t* m_sNetAddress_w;
+    wchar_t* m_sNetAddress_x;
 
 protected: 
 	  /* data */
     int m_iRefCounter;
+
+    TML_CORE_HANDLE m_coreHandle;
 
 public:
 	  /* methods */
@@ -85,11 +90,33 @@ public:
 
 
     /**
+     * @brief Get the TML core handle.
+     */
+    TML_CORE_HANDLE tmlConnectionManageObj::getCoreHandle();
+
+
+    /**
      * @brief Get the network address for connection binding.
      *
      * @returns the network address.
      */
-    void tmlConnectionManageObj::getAddress(char** sAddress);
+    void tmlConnectionManageObj::getAddress_A(char** sAddress);
+
+
+    /**
+     * @brief Get the network address for connection binding.
+     *
+     * @returns the network address.
+     */
+    void tmlConnectionManageObj::getAddress_X(wchar_t** sAddress);
+
+
+    /**
+     * @brief Get the network address for connection binding.
+     *
+     * @returns the network address.
+     */
+    void tmlConnectionManageObj::getAddress_W(char16_t** sAddress);
 
 
     /**

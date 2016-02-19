@@ -97,6 +97,13 @@ typedef TML_HANDLE_TYPE       TML_COMMAND_HANDLE;
 
 
 /**
+* @brief    TML connection handle
+* @ingroup tmlTypes
+*/
+typedef TML_HANDLE_TYPE       TML_CONNECTION_HANDLE;
+
+
+/**
 * @brief    TML null handle
 */
 #define TML_HANDLE_TYPE_NULL    SIDEX_HANDLE_TYPE_NULL

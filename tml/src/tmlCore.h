@@ -88,6 +88,13 @@
   * A TMLCore listener must be started and initialized to enable incoming traffic.
   */  
 
+/** @ingroup coreHandle
+  * @defgroup connectionManagement Connection management
+  * @brief TMLCore connection management
+  *
+  * A TMLCore connection must be initialized to send data.
+  */  
+
 /** @ingroup coreGeneral
   * @defgroup tmlCBFunctions Callback function reference
   * @brief Definitions of TML callback functions.
@@ -3341,6 +3348,107 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
 /**
 // @endcond
 **/
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Create a new connection.
+ *
+ * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
+ * @param   sAddress         network address
+ * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
+ *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          --TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_W(TML_CORE_HANDLE coreHandle, const char16_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHandle, const char* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Core_Connect  tml_Core_Connect_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Core_Connect  tml_Core_Connect_W
+    #else
+      #define tml_Core_Connect  tml_Core_Connect_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Close a connection and release resources.
+ *
+ * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
+ *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          --TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle);
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Returns the network address of remote peer.
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   sAddress         borrowed reference to network address
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
+ *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          --TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address(TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR** sAddress);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_X(TML_CONNECTION_HANDLE connectionHandle, wchar_t** sAddress);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_W(TML_CONNECTION_HANDLE connectionHandle, char16_t** sAddress);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION_HANDLE connectionHandle, char** sAddress);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_Get_Address  tml_Connection_Get_Address_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_Get_Address  tml_Connection_Get_Address_W
+    #else
+      #define tml_Connection_Get_Address  tml_Connection_Get_Address_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Returns the remote peer supported profiles.
+ *
+ * A SIDEX list containing SIDEX strings with profile names is returned.
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   lProfiles   reference to profile list.<br>
+ *                      The list has to be released with sidex_Variant_DecRef().
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_HASH invalid hashtable<br>
+ *          TML_ERR_NOPROFILES no profiles are registered<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNECTION_HANDLE connectionHandle, SIDEX_VARIANT* lProfiles);
+
 
 #ifdef __cplusplus
 }// extern "C"

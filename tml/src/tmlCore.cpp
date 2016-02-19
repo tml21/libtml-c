@@ -46,6 +46,7 @@
 #include "tmlCore.h"
 #include "tmlObjWrapper.h"
 #include "tmlCoreWrapper.h"
+#include "tmlConnectionManageObj.h"
 #include "tmlErrors.h"
 #include "tmlCoreDefines.h"
 #include "unicode.h"
@@ -5773,6 +5774,186 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_W(TML_INT32 iLogMask, const char16
   }
   return iRet;
 }
+/**
+ * @brief    Create a new connection.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Address = UTF32toUTF8((wchar_t*)sAddress, &iLengthUtf8);
+  if (NULL != utf8Address){
+    try{
+      iRet = tml_Core_Connect_A(coreHandle, utf8Address, connectionHandle);
+      delete[] utf8Address;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_W(TML_CORE_HANDLE coreHandle, const char16_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Address = UTF16toUTF8((wchar_t*)sAddress, &iLengthUtf8);
+  if (NULL != utf8Address){
+    try{
+      iRet = tml_Core_Connect_A(coreHandle, utf8Address, connectionHandle);
+      delete[] utf8Address;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHandle, const char* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      ////////////////////////////////////////////////////////////////////////////
+      // Core is in shutdown process:
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Connect");
+
+        // TODO: Wrapper
+        //iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Register_Profile(profile);
+
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " succeeded");
+        }
+        else{
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " failed !");
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Close a connection and release resources.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: Wrapper
+  return iRet;
+}
+
+
+/**
+ * @brief    Returns the network address of remote peer.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address(TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR** sAddress);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_X(TML_CONNECTION_HANDLE connectionHandle, wchar_t** sAddress){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_Address");
+        ((tmlConnectionManageObj*)connectionHandle)->getAddress_X(sAddress);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_W(TML_CONNECTION_HANDLE connectionHandle, char16_t** sAddress){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_Address");
+        ((tmlConnectionManageObj*)connectionHandle)->getAddress_W(sAddress);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION_HANDLE connectionHandle, char** sAddress){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_Address");
+        ((tmlConnectionManageObj*)connectionHandle)->getAddress_A(sAddress);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Returns the remote peer supported profiles.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNECTION_HANDLE connectionHandle, SIDEX_VARIANT* lProfiles){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: Wrapper
+  return iRet;
+}
+
+
 #ifdef LINUX
 void __attribute__ ((constructor)) my_load(void);
 void __attribute__ ((destructor)) my_unload(void);

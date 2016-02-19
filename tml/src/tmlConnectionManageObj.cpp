@@ -44,6 +44,7 @@
 #endif // LINUX
 #include "tmlConnectionManageObj.h"
 #include "tmlCore.h"
+#include "unicode.h"
 
 /**
  * @brief    Constructor.
@@ -52,6 +53,7 @@
 tmlConnectionManageObj::tmlConnectionManageObj(const char* sNetAddress)
 {
   int iSize;
+  TML_INT32 iLength;
 
   iSize = (int)strlen(sNetAddress)+1;
   m_sNetAddress = new char[iSize];
@@ -60,6 +62,11 @@ tmlConnectionManageObj::tmlConnectionManageObj(const char* sNetAddress)
 #else
   strcpy_s (m_sNetAddress, iSize, sNetAddress);
 #endif
+  m_sNetAddress_w = (char16_t*)UTF8toUTF16(m_sNetAddress, &iLength);
+  m_sNetAddress_x = UTF8toUTF32(m_sNetAddress, &iLength);
+
+  m_coreHandle = TML_HANDLE_TYPE_NULL;
+
    m_iRefCounter = 1;
 }
 
@@ -80,6 +87,8 @@ void tmlConnectionManageObj::cleanUp(){
     if (decRef() == 0){
       if (TML_HANDLE_TYPE_NULL != m_sNetAddress){
         delete[] m_sNetAddress;
+        delete[] m_sNetAddress_w;
+        delete[] m_sNetAddress_x;
         m_sNetAddress = TML_HANDLE_TYPE_NULL;
       }
     }
@@ -87,12 +96,39 @@ void tmlConnectionManageObj::cleanUp(){
 
 
 /**
+ * @brief Get the TML core handle.
+ */
+TML_CORE_HANDLE tmlConnectionManageObj::getCoreHandle(){
+  return m_coreHandle;
+}
+
+
+/**
  * @brief Get the network address for connection binding.
  */
-void tmlConnectionManageObj::getAddress(char** sAddress){
+void tmlConnectionManageObj::getAddress_A(char** sAddress){
   *sAddress = m_sNetAddress;
 }
 
+
+/**
+  * @brief Get the network address for connection binding.
+  *
+  * @returns the network address.
+  */
+void tmlConnectionManageObj::getAddress_X(wchar_t** sAddress){
+  *sAddress = m_sNetAddress_x;
+}
+
+
+/**
+  * @brief Get the network address for connection binding.
+  *
+  * @returns the network address.
+  */
+void tmlConnectionManageObj::getAddress_W(char16_t** sAddress){
+  *sAddress = m_sNetAddress_w;
+}
 
 /**
  * @brief   Decrement the reference counter value of this data object for the memory management.
