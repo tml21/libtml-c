@@ -35,13 +35,8 @@
  *    wobe-systems GmbH
  */
 
-#ifdef LINUX
-  #include <stdio.h>
-  #include <string.h>
-#else // LINUX
-  #include <windows.h>
-  #include <stdio.h>
-#endif // LINUX
+#include <stdio.h>
+#include <string.h>
 #include "tmlConnectionManageObj.h"
 #include "tmlCore.h"
 #include "unicode.h"
@@ -50,7 +45,7 @@
  * @brief    Constructor.
  *
  */
-tmlConnectionManageObj::tmlConnectionManageObj(const char* sNetAddress)
+tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
 {
   int iSize;
   TML_INT32 iLength;
@@ -65,7 +60,10 @@ tmlConnectionManageObj::tmlConnectionManageObj(const char* sNetAddress)
   m_sNetAddress_w = (char16_t*)UTF8toUTF16(m_sNetAddress, &iLength);
   m_sNetAddress_x = UTF8toUTF32(m_sNetAddress, &iLength);
 
-  m_coreHandle = TML_HANDLE_TYPE_NULL;
+  m_coreHandle = coreHandle;
+
+  // TODO:
+  // vortex_conection_new();
 
    m_iRefCounter = 1;
 }
@@ -85,6 +83,9 @@ tmlConnectionManageObj::~tmlConnectionManageObj()
 void tmlConnectionManageObj::cleanUp(){
   if (getRef())
     if (decRef() == 0){
+        // TODO:
+        // vortex_conection_close();
+
       if (TML_HANDLE_TYPE_NULL != m_sNetAddress){
         delete[] m_sNetAddress;
         delete[] m_sNetAddress_w;
@@ -106,8 +107,10 @@ TML_CORE_HANDLE tmlConnectionManageObj::getCoreHandle(){
 /**
  * @brief Get the network address for connection binding.
  */
-void tmlConnectionManageObj::getAddress_A(char** sAddress){
+TML_INT32 tmlConnectionManageObj::getAddress_A(char** sAddress){
   *sAddress = m_sNetAddress;
+
+  return TML_SUCCESS;
 }
 
 
@@ -116,8 +119,10 @@ void tmlConnectionManageObj::getAddress_A(char** sAddress){
   *
   * @returns the network address.
   */
-void tmlConnectionManageObj::getAddress_X(wchar_t** sAddress){
+TML_INT32 tmlConnectionManageObj::getAddress_X(wchar_t** sAddress){
   *sAddress = m_sNetAddress_x;
+
+  return TML_SUCCESS;
 }
 
 
@@ -126,8 +131,37 @@ void tmlConnectionManageObj::getAddress_X(wchar_t** sAddress){
   *
   * @returns the network address.
   */
-void tmlConnectionManageObj::getAddress_W(char16_t** sAddress){
+TML_INT32 tmlConnectionManageObj::getAddress_W(char16_t** sAddress){
   *sAddress = m_sNetAddress_w;
+
+  return TML_SUCCESS;
+}
+
+/**
+  * @brief Returns the remote peer supported profiles.
+  *
+  * @param   lProfiles   reference to profile list.<br>
+  *                      The list has to be released with sidex_Variant_DecRef().
+  *
+  * @returns TML_SUCCESS
+  */
+TML_INT32 tmlConnectionManageObj::getRemoteProfiles(SIDEX_VARIANT* lProfiles){
+
+  // TODO:
+  // vortex_conection_get_remote_progiles();
+  return TML_SUCCESS;
+}
+
+
+/**
+  * @brief    Validate a connection.
+  */
+TML_INT32 tmlConnectionManageObj::validate(TML_BOOL bReconnect, TML_BOOL* bConnected){
+  // TODO:
+  // vortex_conection_is_ok();
+  // TODO:
+  // vortex_conection_new();
+  return TML_SUCCESS;
 }
 
 /**

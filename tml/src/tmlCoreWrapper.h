@@ -1763,5 +1763,114 @@ public:
      * @brief    returns the index of the contiguous log file
      */
     int getLogFileIndex();
+
+
+    /**
+     * @brief   Create a new connection.
+     *
+     * @param   sAddress         network address
+     * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connect(const char* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+
+
+    /**
+     * @brief   Close a connection and release resources.
+     *
+     * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle);
+
+
+    /**
+     * @brief   Returns the number of connections.
+     *
+     * @param   iCount     reference to the number of connections
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Get_ConnectionCount(TML_UINT32* iCount);
+
+
+    /**
+     * @brief   Get connection handle from a TML core.
+     *
+     * @param   index index of connection
+     * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle);
+
+
+    /**
+     * @brief   Send async command on existing connection.
+     *
+     * The call returns after sending the message without waiting for a reply. If a result has to be received or 
+     * possible error needs to be handled a callback function has to be registered with tml_Cmd_Register_CommandReady()
+     * before the call. 
+     *
+     * @param  connectionHandle TML connection handle (TML_CORE_HANDLE)
+     * @param  sProfile         profile identification string
+     * @param  tmlhandle        TML command handle
+     * @param  iTimeout         timeout in milliseconds
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+
+
+    /**
+     * @brief   Send sync command on existing connection.
+     *
+     * Sending a message synchronously means that the call returns after the result of the message call
+     * was received or an error occurred.
+     *
+     * @param  connectionHandle TML connection handle (TML_CORE_HANDLE)
+     * @param  sProfile         profile identification string
+     * @param  tmlhandle        TML command handle
+     * @param  iTimeout         timeout in milliseconds
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connection_SendSyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+
+
+    /**
+     * @brief   Send sync command on existing connection.
+     *
+     * Read TML_ON_CONNECT_CB_FUNC() for further reference.
+     *
+     * @param   pCBFunc    callback function or NULL to remove previously registered function
+     * @param   pCBData    user data or NULL
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Set_OnConnect(TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
+
+
+    /**
+     * @brief    Callback function to signal a closed connection.
+     *
+     * Read TML_ON_DISCONNECT_CB_FUNC() for further reference.
+     *
+     * @param   pCBFunc    callback function or NULL to remove previously registered function
+     * @param   pCBData    user data or NULL
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Set_OnDisconnect(TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
 };
 #endif  // TMLCOREWRAPPER_H

@@ -70,11 +70,12 @@ public:
     /**
      * @brief    Constructor.
      *
+     * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
      * @param   sNetAddress network address for connection binding.
      *
      * @returns an instance of tmlConnectionManageObj.
      */
-    explicit tmlConnectionManageObj(const char* sNetAddress);
+    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
 
 
     /**
@@ -92,31 +93,60 @@ public:
     /**
      * @brief Get the TML core handle.
      */
-    TML_CORE_HANDLE tmlConnectionManageObj::getCoreHandle();
+    TML_CORE_HANDLE getCoreHandle();
 
 
     /**
      * @brief Get the network address for connection binding.
      *
-     * @returns the network address.
+     * @param   sAddress       borrowed reference to network address for connection binding.
+
+     * @returns TML_SUCCESS
      */
-    void tmlConnectionManageObj::getAddress_A(char** sAddress);
+    TML_INT32 getAddress_A(char** sAddress);
 
 
     /**
      * @brief Get the network address for connection binding.
      *
-     * @returns the network address.
+     * @param   sAddress       borrowed reference to network address for connection binding.
+
+     * @returns TML_SUCCESS
      */
-    void tmlConnectionManageObj::getAddress_X(wchar_t** sAddress);
+    TML_INT32 getAddress_X(wchar_t** sAddress);
 
 
     /**
      * @brief Get the network address for connection binding.
      *
-     * @returns the network address.
+     * @param   sAddress       borrowed reference to network address for connection binding.
+
+     * @returns TML_SUCCESS
      */
-    void tmlConnectionManageObj::getAddress_W(char16_t** sAddress);
+    TML_INT32 getAddress_W(char16_t** sAddress);
+
+
+    /**
+     * @brief Returns the remote peer supported profiles.
+     *
+     * @param   lProfiles   reference to profile list.<br>
+     *                      The list has to be released with sidex_Variant_DecRef().
+     *
+     * @returns TML_SUCCESS
+     */
+    TML_INT32 getRemoteProfiles(SIDEX_VARIANT* lProfiles);
+
+
+    /**
+     * @brief    Validate a connection.
+     *
+     * @param   bReconnect       TML_TRUE = try to reconnect if disconnected / TML_FALSE = don't try to reconnect
+     * @param   bConnected       reference to the connection status, TML_TRUE if the connection is valid
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_MISSING_OBJ invalid core handle
+     */
+    TML_INT32 validate(TML_BOOL bReconnect, TML_BOOL* bConnected);
 
 
     /**

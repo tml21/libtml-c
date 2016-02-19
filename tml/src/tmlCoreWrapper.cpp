@@ -44,6 +44,7 @@
 #include "tmlCore.h"
 #include "unicode.h"
 #include "logValues.h"
+#include "tmlConnectionManageObj.h"
 
 
 /**
@@ -2234,4 +2235,106 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
  */
 int tmlCoreWrapper::getLogFileIndex(){
   return m_iLogFileIndex;
+}
+
+
+/**
+  * @brief   Create a new connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  tmlConnectionManageObj* wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress);
+  *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
+
+  // TODO: - Add connection to list
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Close a connection and release resources.
+  */
+TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
+  delete (tmlConnectionManageObj*)*connectionHandle;
+  *connectionHandle = TML_HANDLE_TYPE_NULL;
+
+  // TODO: - remove connection from list
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Returns the number of connections.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount(TML_UINT32* iCount){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: - connection count
+
+  return iRet;
+}
+
+/**
+  * @brief   Get connection handle from a TML core.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: TML_CONNECTION_HANDLE
+  *connectionHandle = TML_HANDLE_TYPE_NULL;
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Send async command on existing connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: Send async message
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Send sync command on existing connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendSyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: Send sync message
+
+  return iRet;
+}
+
+/**
+  * @brief   Send sync command on existing connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Set_OnConnect(TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: Set_OnConnect
+
+  return iRet;
+}
+
+
+/**
+  * @brief    Callback function to signal a closed connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Set_OnDisconnect(TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: Set_OnDisconnect
+
+  return iRet;
 }

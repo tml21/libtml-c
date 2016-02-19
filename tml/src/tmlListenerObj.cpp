@@ -35,13 +35,8 @@
  *    wobe-systems GmbH
  */
 
-#ifdef LINUX
-  #include <stdio.h>
-  #include <string.h>
-#else // LINUX
-  #include <windows.h>
-  #include <stdio.h>
-#endif // LINUX
+#include <stdio.h>
+#include <string.h>
 #include "tmlListenerObj.h"
 #include "tmlCore.h"
 

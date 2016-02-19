@@ -686,6 +686,17 @@ public:
      */
     int tmlObjWrapper_Debug();
 
+
+    /**
+     * @brief   Get the connection on which the command was previously sent/received.
+     *
+     * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     *
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlObjWrapper_Get_Connection(TML_CONNECTION_HANDLE* connectionHandle);
 };
 
 #endif  // TMLOBJWRAPPER_H

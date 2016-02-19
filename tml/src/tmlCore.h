@@ -3356,7 +3356,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
  *
  * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
  * @param   sAddress         network address
- * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   connectionHandle reference to a new TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
  *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
@@ -3408,11 +3408,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE*
  * @param   sAddress         borrowed reference to network address
  *
  * @returns TML_SUCCESS in case of success<br>
- *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
- *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
- *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
- *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
- *          --TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address(TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR** sAddress);
@@ -3443,12 +3439,170 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION
  *                      The list has to be released with sidex_Variant_DecRef().
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_HASH invalid hashtable<br>
- *          TML_ERR_NOPROFILES no profiles are registered<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNECTION_HANDLE connectionHandle, SIDEX_VARIANT* lProfiles);
 
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Validate a connection.
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   bReconnect       TML_TRUE = try to reconnect if disconnected / TML_FALSE = don't try to reconnect
+ * @param   bConnected       reference to the connection status, TML_TRUE if the connection is valid
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bReconnect, TML_BOOL* bConnected);
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Returns the number of connections.
+ *
+ * @param   coreHandle TML core handle
+ * @param   iCount     reference to the number of connections
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount);
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Get connection handle from a TML core.
+ *
+ * @param   coreHandle TML core handle
+ * @param   index index of connection
+ * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle);
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Send async command on existing connection.
+ *
+ * The call returns after sending the message without waiting for a reply. If a result has to be received or 
+ * possible error needs to be handled a callback function has to be registered with tml_Cmd_Register_CommandReady()
+ * before the call. 
+ *
+ * @param  connectionHandle TML connection handle (TML_CORE_HANDLE)
+ * @param  sProfile         profile identification string
+ * @param  tmlhandle        TML command handle
+ * @param  iTimeout         timeout in milliseconds
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ *
+ * @see tml_Connection_SendSync()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_SendAsync  tml_Connection_SendAsync_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_SendAsync  tml_Connection_SendAsync_W
+    #else
+      #define tml_Connection_SendAsync  tml_Connection_SendAsync_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Send sync command on existing connection.
+ *
+ * Sending a message synchronously means that the call returns after the result of the message call
+ * was received or an error occurred.
+ *
+ * @param  connectionHandle TML connection handle (TML_CORE_HANDLE)
+ * @param  sProfile         profile identification string
+ * @param  tmlhandle        TML command handle
+ * @param  iTimeout         timeout in milliseconds
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ *
+ * @see tml_Connection_SendAsync()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_SendSync  tml_Connection_SendSync_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_SendSync  tml_Connection_SendSync_W
+    #else
+      #define tml_Connection_SendSync  tml_Connection_SendSync_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Get the connection on which the command was previously sent/received.
+ *
+ * @param   cmdHandle TML command handle (TML_COMMAND_HANDLE)
+ * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Get_Connection(TML_COMMAND_HANDLE cmdHandle, TML_CONNECTION_HANDLE* connectionHandle);
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Set callback function to signal a new connection.
+ *
+ * Read TML_ON_CONNECT_CB_FUNC() for further reference.
+ *
+ * @param   coreHandle TML core handle (TML_CORE_HANDLE)
+ * @param   pCBFunc    callback function or NULL to remove previously registered function
+ * @param   pCBData    user data or NULL
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle<
+ *
+ * @see TML_ON_CONNECT_CB_FUNC()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnConnect(TML_CORE_HANDLE coreHandle, TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Callback function to signal a closed connection.
+ *
+ * Read TML_ON_DISCONNECT_CB_FUNC() for further reference.
+ *
+ * @param   coreHandle TML core handle (TML_CORE_HANDLE)
+ * @param   pCBFunc    callback function or NULL to remove previously registered function
+ * @param   pCBData    user data or NULL
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle<
+ *
+ * @see TML_ON_DISCONNECT_CB_FUNC()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnDisconnect(TML_CORE_HANDLE coreHandle, TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
 
 #ifdef __cplusplus
 }// extern "C"

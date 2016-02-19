@@ -94,7 +94,7 @@ public:
      *
      * @returns the network address.
      */
-    void tmlListenerObj::getAddress(char** sAddress);
+    void getAddress(char** sAddress);
 
 
     /**

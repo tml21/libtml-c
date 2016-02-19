@@ -957,3 +957,14 @@ int tmlObjWrapper::tmlObjWrapper_Debug()
 }
 
 
+/**
+  * @brief   Get the connection on which the command was previously sent/received.
+  */
+TML_INT32 tmlObjWrapper::tmlObjWrapper_Get_Connection(TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;  
+
+  // TODO: TML_CONNECTION_HANDLE
+
+  return (int)iRet;
+}
+

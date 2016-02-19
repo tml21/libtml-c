@@ -5831,10 +5831,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Connect");
-
-        // TODO: Wrapper
-        //iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Register_Profile(profile);
-
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connect(sAddress, connectionHandle);
         if (TML_SUCCESS == iRet){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " succeeded");
         }
@@ -5856,8 +5853,22 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle){
   TML_INT32 iRet = TML_SUCCESS;
-
-  // TODO: Wrapper
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+    if (TML_HANDLE_TYPE_NULL == coreHandle){
+      iRet = TML_ERR_MISSING_OBJ;
+    }
+    else{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Close");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_Close(connectionHandle);
+      }
+    }
+  }
   return iRet;
 }
 
@@ -5882,7 +5893,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_X(TML_CONNECTION
       }
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_Address");
-        ((tmlConnectionManageObj*)connectionHandle)->getAddress_X(sAddress);
+        iRet = ((tmlConnectionManageObj*)connectionHandle)->getAddress_X(sAddress);
       }
     }
     catch (...){
@@ -5907,7 +5918,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_W(TML_CONNECTION
       }
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_Address");
-        ((tmlConnectionManageObj*)connectionHandle)->getAddress_W(sAddress);
+        iRet = ((tmlConnectionManageObj*)connectionHandle)->getAddress_W(sAddress);
       }
     }
     catch (...){
@@ -5932,7 +5943,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION
       }
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_Address");
-        ((tmlConnectionManageObj*)connectionHandle)->getAddress_A(sAddress);
+        iRet = ((tmlConnectionManageObj*)connectionHandle)->getAddress_A(sAddress);
       }
     }
     catch (...){
@@ -5948,8 +5959,328 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNECTION_HANDLE connectionHandle, SIDEX_VARIANT* lProfiles){
   TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_RemoteProfiles");
+        iRet = ((tmlConnectionManageObj*)connectionHandle)->getRemoteProfiles(lProfiles);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
 
-  // TODO: Wrapper
+
+/**
+ * @brief    Validate a connection.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bReconnect, TML_BOOL* bConnected){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Validate");
+        iRet = ((tmlConnectionManageObj*)connectionHandle)->validate(bReconnect, bConnected);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Retruns the number of connections.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_ConnectionCount");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_ConnectionCount(iCount);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Get connection handle from a TML core.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_Connection");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_Connection(index, connectionHandle);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Send async command on existing connection.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_SendAsync_A(connectionHandle, utf8Profile, tmlhandle, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_SendAsync_A(connectionHandle, utf8Profile, tmlhandle, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_SendAsync");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_SendAsyncMessage(connectionHandle, sProfile, tmlhandle, iTimeout);
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendAsync", sProfile, " succeeded");
+          }
+          else{
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendAsync", sProfile, " failed !");
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Send sync command on existing connection.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_SendSync_A(connectionHandle, utf8Profile, tmlhandle, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_SendSync_A(connectionHandle, utf8Profile, tmlhandle, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_SendSync");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_SendSyncMessage(connectionHandle, sProfile, tmlhandle, iTimeout);
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendSync", sProfile, " succeeded");
+          }
+          else{
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendSync", sProfile, " failed !");
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Get the connection on which the command was previously sent/received.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Get_Connection(TML_COMMAND_HANDLE cmdHandle, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == cmdHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = TML_HANDLE_TYPE_NULL;
+      ((tmlObjWrapper*)cmdHandle)->tmlObjWrapper_Attr_Get_Core_Reference(&coreHandle);
+      if (TML_HANDLE_TYPE_NULL != coreHandle){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Cmd_Get_Connection");
+      }
+      iRet = ((tmlObjWrapper*)cmdHandle)->tmlObjWrapper_Get_Connection(connectionHandle);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Set callback function to signal a new connection.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnConnect(TML_CORE_HANDLE coreHandle, TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Set_OnConnect");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnConnect(pCBFunc, pCBData);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Callback function to signal a closed connection.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnDisconnect(TML_CORE_HANDLE coreHandle, TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Set_OnDisconnect");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnDisconnect(pCBFunc, pCBData);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
   return iRet;
 }
 
