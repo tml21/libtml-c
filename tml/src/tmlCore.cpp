@@ -46,6 +46,7 @@
 #include "tmlCore.h"
 #include "tmlObjWrapper.h"
 #include "tmlCoreWrapper.h"
+#include "tmlListenerObj.h"
 #include "tmlConnectionManageObj.h"
 #include "tmlErrors.h"
 #include "tmlCoreDefines.h"
@@ -5774,6 +5775,236 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_W(TML_INT32 iLogMask, const char16
   }
   return iRet;
 }
+
+
+/**
+ * @brief    Create a new listener.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Address = UTF32toUTF8((wchar_t*)sAddress, &iLengthUtf8);
+  if (NULL != utf8Address){
+    try{
+      iRet = tml_Core_Listener_Create_A(coreHandle, utf8Address, listenerHandle);
+      delete[] utf8Address;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_W(TML_CORE_HANDLE coreHandle, const char16_t* sAddress, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Address = UTF16toUTF8((wchar_t*)sAddress, &iLengthUtf8);
+  if (NULL != utf8Address){
+    try{
+      iRet = tml_Core_Listener_Create_A(coreHandle, utf8Address, listenerHandle);
+      delete[] utf8Address;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE coreHandle, const char* sAddress, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      ////////////////////////////////////////////////////////////////////////////
+      // Core is in shutdown process:
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Listener_Create");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Create(sAddress, listenerHandle);
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Listener_Create", sAddress, " succeeded");
+        }
+        else{
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Listener_Create", sAddress, " failed !");
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Close a listener and release resources.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == listenerHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)listenerHandle)->getCoreHandle();
+    if (TML_HANDLE_TYPE_NULL == coreHandle){
+      iRet = TML_ERR_MISSING_OBJ;
+    }
+    else{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Close");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Close(listenerHandle);
+      }
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Returns the listener's network binding address.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address(TML_LISTENER_HANDLE listenerHandle, TML_CTSTR** sAddress);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_X(TML_LISTENER_HANDLE listenerHandle, wchar_t** sAddress){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == listenerHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlListenerObj*)listenerHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Get_Address");
+        iRet = ((tmlListenerObj*)listenerHandle)->getAddress_X(sAddress);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_W(TML_LISTENER_HANDLE listenerHandle, char16_t** sAddress){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == listenerHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlListenerObj*)listenerHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Get_Address");
+        iRet = ((tmlListenerObj*)listenerHandle)->getAddress_W(sAddress);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_A(TML_LISTENER_HANDLE listenerHandle, char** sAddress){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == listenerHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlListenerObj*)listenerHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Get_Address");
+        iRet = ((tmlListenerObj*)listenerHandle)->getAddress_A(sAddress);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Get the number of listeners.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_ListenerCount");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_ListenerCount(iCount);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Get listener's handle from a TML core.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_Listener");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_Listener(index, listenerHandle);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
 /**
  * @brief    Create a new connection.
  */

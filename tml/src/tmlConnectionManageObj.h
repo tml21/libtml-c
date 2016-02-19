@@ -53,11 +53,11 @@ private:
     /**
      * @brief    connection binding address
      */
-    char* m_sHost;
-    char* m_sPort;
-    char* m_sNetAddress;
+    char*     m_sHost;
+    char*     m_sPort;
+    char*     m_sNetAddress;
     char16_t* m_sNetAddress_w;
-    wchar_t* m_sNetAddress_x;
+    wchar_t*  m_sNetAddress_x;
 
 protected: 
 	  /* data */

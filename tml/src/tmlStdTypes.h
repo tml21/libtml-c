@@ -97,6 +97,13 @@ typedef TML_HANDLE_TYPE       TML_COMMAND_HANDLE;
 
 
 /**
+* @brief    TML listener handle
+* @ingroup tmlTypes
+*/
+typedef TML_HANDLE_TYPE       TML_LISTENER_HANDLE;
+
+
+/**
 * @brief    TML connection handle
 * @ingroup tmlTypes
 */

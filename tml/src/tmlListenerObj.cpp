@@ -39,14 +39,16 @@
 #include <string.h>
 #include "tmlListenerObj.h"
 #include "tmlCore.h"
+#include "unicode.h"
 
 /**
  * @brief    Constructor.
  *
  */
-tmlListenerObj::tmlListenerObj(const char* sNetAddress)
+tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
 {
   int iSize;
+  TML_INT32 iLength;
 
   m_bListnerIsEnabled = TML_FALSE;
   iSize = (int)strlen(sNetAddress)+1;
@@ -56,6 +58,14 @@ tmlListenerObj::tmlListenerObj(const char* sNetAddress)
 #else
   strcpy_s (m_sNetAddress, iSize, sNetAddress);
 #endif
+  m_sNetAddress_w = (char16_t*)UTF8toUTF16(m_sNetAddress, &iLength);
+  m_sNetAddress_x = UTF8toUTF32(m_sNetAddress, &iLength);
+
+  m_coreHandle = coreHandle;
+
+  // TODO: new listener
+
+
    m_iRefCounter = 1;
 }
 
@@ -76,17 +86,51 @@ void tmlListenerObj::cleanUp(){
     if (decRef() == 0){
       if (TML_HANDLE_TYPE_NULL != m_sNetAddress){
         delete[] m_sNetAddress;
-        m_sNetAddress = TML_HANDLE_TYPE_NULL;
+        delete[] m_sNetAddress_w;
+        delete[] m_sNetAddress_x;
+        m_sNetAddress   = TML_HANDLE_TYPE_NULL;
+        m_sNetAddress_w = TML_HANDLE_TYPE_NULL;
+        m_sNetAddress_x = TML_HANDLE_TYPE_NULL;
       }
     }
 }
 
 
 /**
+ * @brief Get the TML core handle.
+ */
+TML_CORE_HANDLE tmlListenerObj::getCoreHandle(){
+  return m_coreHandle;
+}
+
+
+/**
  * @brief Get the network address for listener binding.
  */
-void tmlListenerObj::getAddress(char** sAddress){
+TML_INT32 tmlListenerObj::getAddress_A(char** sAddress){
   *sAddress = m_sNetAddress;
+
+  return TML_SUCCESS;
+}
+
+
+/**
+ * @brief Get the network address for listener binding.
+  */
+TML_INT32 tmlListenerObj::getAddress_X(wchar_t** sAddress){
+  *sAddress = m_sNetAddress_x;
+
+  return TML_SUCCESS;
+}
+
+
+/**
+ * @brief Get the network address for listener binding.
+  */
+TML_INT32 tmlListenerObj::getAddress_W(char16_t** sAddress){
+  *sAddress = m_sNetAddress_w;
+
+  return TML_SUCCESS;
 }
 
 

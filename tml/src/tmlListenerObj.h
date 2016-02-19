@@ -57,24 +57,29 @@ private:
     /**
      * @brief    listener binding address
      */
-    char* m_sHost;
-    char* m_sPort;
-    char* m_sNetAddress;
+    char*     m_sHost;
+    char*     m_sPort;
+    char*     m_sNetAddress;
+    char16_t* m_sNetAddress_w;
+    wchar_t*  m_sNetAddress_x;
 
 protected: 
 	  /* data */
     int m_iRefCounter;
+
+    TML_CORE_HANDLE m_coreHandle;
 
 public:
 	  /* methods */
     /**
      * @brief    Constructor.
      *
+     * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
      * @param   sNetAddress network address for listener binding.
      *
      * @returns an instance of tmlListenerObj.
      */
-    explicit tmlListenerObj(const char* sNetAddress);
+    explicit tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
 
 
     /**
@@ -90,13 +95,39 @@ public:
 
 
     /**
+     * @brief Get the TML core handle.
+     */
+    TML_CORE_HANDLE getCoreHandle();
+
+
+    /**
      * @brief Get the network address for listener binding.
      *
      * @returns the network address.
      */
-    void getAddress(char** sAddress);
+    TML_INT32 getAddress_A(char** sAddress);
 
 
+
+
+    /**
+     * @brief Get the network address for listener binding.
+     *
+     * @param   sAddress       borrowed reference to network address.
+
+     * @returns TML_SUCCESS
+     */
+    TML_INT32 getAddress_X(wchar_t** sAddress);
+
+
+    /**
+     * @brief Get the network address for listener binding.
+     *
+     * @param   sAddress       borrowed reference to network address.
+
+     * @returns TML_SUCCESS
+     */
+    TML_INT32 getAddress_W(char16_t** sAddress);
     /**
      * @brief   Enable or disable the listener.
      *

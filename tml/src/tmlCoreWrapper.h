@@ -1766,6 +1766,52 @@ public:
 
 
     /**
+     * @brief   Create a new listener.
+     *
+     * @param   sAddress         network address for listener binding
+     * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Create(const char* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief   Close a listener and release resources.
+     *
+     * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief   Get the number of listeners.
+     *
+     * @param   iCount     reference to the number of listeners
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Get_ListenerCount(TML_UINT32* iCount);
+
+
+    /**
+     * @brief   Get listener's handle from a TML core.
+     *
+     * @param   index index of listener
+     * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
      * @brief   Create a new connection.
      *
      * @param   sAddress         network address

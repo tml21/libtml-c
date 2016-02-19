@@ -45,6 +45,7 @@
 #include "unicode.h"
 #include "logValues.h"
 #include "tmlConnectionManageObj.h"
+#include "tmlListenerObj.h"
 
 
 /**
@@ -2235,6 +2236,61 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
  */
 int tmlCoreWrapper::getLogFileIndex(){
   return m_iLogFileIndex;
+}
+
+
+/**
+  * @brief   Create a new listener.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  tmlListenerObj* wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, sAddress);
+  *listenerHandle = (TML_LISTENER_HANDLE) wrapper;
+
+  // TODO: - Add listener to list
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Close a listener and release resources.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // Do make the cast to (tmlListenerObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
+  delete (tmlListenerObj*)*listenerHandle;
+  *listenerHandle = TML_HANDLE_TYPE_NULL;
+
+  // TODO: - remove listener from list
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Get the number of listeners.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ListenerCount(TML_UINT32* iCount){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: - listener count
+
+  return iRet;
+}
+
+/**
+  * @brief   Get listener's handle from a TML core.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: TML_LISTENER_HANDLE
+  *listenerHandle = TML_HANDLE_TYPE_NULL;
+
+  return iRet;
 }
 
 

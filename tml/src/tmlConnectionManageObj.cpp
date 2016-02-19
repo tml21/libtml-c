@@ -90,7 +90,9 @@ void tmlConnectionManageObj::cleanUp(){
         delete[] m_sNetAddress;
         delete[] m_sNetAddress_w;
         delete[] m_sNetAddress_x;
-        m_sNetAddress = TML_HANDLE_TYPE_NULL;
+        m_sNetAddress   = TML_HANDLE_TYPE_NULL;
+        m_sNetAddress_w = TML_HANDLE_TYPE_NULL;
+        m_sNetAddress_x = TML_HANDLE_TYPE_NULL;
       }
     }
 }
@@ -116,8 +118,6 @@ TML_INT32 tmlConnectionManageObj::getAddress_A(char** sAddress){
 
 /**
   * @brief Get the network address for connection binding.
-  *
-  * @returns the network address.
   */
 TML_INT32 tmlConnectionManageObj::getAddress_X(wchar_t** sAddress){
   *sAddress = m_sNetAddress_x;
@@ -128,8 +128,6 @@ TML_INT32 tmlConnectionManageObj::getAddress_X(wchar_t** sAddress){
 
 /**
   * @brief Get the network address for connection binding.
-  *
-  * @returns the network address.
   */
 TML_INT32 tmlConnectionManageObj::getAddress_W(char16_t** sAddress){
   *sAddress = m_sNetAddress_w;
@@ -137,13 +135,9 @@ TML_INT32 tmlConnectionManageObj::getAddress_W(char16_t** sAddress){
   return TML_SUCCESS;
 }
 
+
 /**
   * @brief Returns the remote peer supported profiles.
-  *
-  * @param   lProfiles   reference to profile list.<br>
-  *                      The list has to be released with sidex_Variant_DecRef().
-  *
-  * @returns TML_SUCCESS
   */
 TML_INT32 tmlConnectionManageObj::getRemoteProfiles(SIDEX_VARIANT* lProfiles){
 

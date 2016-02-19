@@ -89,6 +89,13 @@
   */  
 
 /** @ingroup coreHandle
+  * @defgroup extendedListenerBindings Extended listener bindings
+  * @brief TMLCore extended listener bindings
+  *
+  * A TMLCore connection must be initialized to send data.
+  */  
+
+/** @ingroup coreHandle
   * @defgroup connectionManagement Connection management
   * @brief TMLCore connection management
   *
@@ -3348,6 +3355,111 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
 /**
 // @endcond
 **/
+
+
+/**
+ * @ingroup  extendedListenerBindings
+ * @brief    Create a new listener.
+ *
+ * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
+ * @param   sAddress         network address for listener binding
+ * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
+ *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          --TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_W(TML_CORE_HANDLE coreHandle, const char16_t* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE coreHandle, const char* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Core_Listener_Create  tml_Core_Listener_Create_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Core_Listener_Create  tml_Core_Listener_Create_W
+    #else
+      #define tml_Core_Listener_Create  tml_Core_Listener_Create_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  extendedListenerBindings
+ * @brief    Close a listener and release resources.
+ *
+ * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
+ *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          --TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* listenerHandle);
+
+
+/**
+ * @ingroup  extendedListenerBindings
+ * @brief    Returns the listener's network binding address.
+ *
+ * @param   listenerHandle   TML listener handle (TML_LISTENER_HANDLE)
+ * @param   sAddress         borrowed reference to network binding address
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address(TML_LISTENER_HANDLE listenerHandle, TML_CTSTR** sAddress);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_X(TML_LISTENER_HANDLE listenerHandle, wchar_t** sAddress);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_W(TML_LISTENER_HANDLE listenerHandle, char16_t** sAddress);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_A(TML_LISTENER_HANDLE listenerHandle, char** sAddress);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Listener_Get_Address  tml_Listener_Get_Address_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Listener_Get_Address  tml_Listener_Get_Address_W
+    #else
+      #define tml_Listener_Get_Address  tml_Listener_Get_Address_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  extendedListenerBindings
+ * @brief    Get the number of listeners.
+ *
+ * @param   coreHandle TML core handle
+ * @param   iCount     reference to the number of listeners
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount);
+
+
+/**
+ * @ingroup  extendedListenerBindings
+ * @brief    Get listener's handle from a TML core.
+ *
+ * @param   coreHandle TML core handle
+ * @param   index index of listener
+ * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle);
 
 
 /**
