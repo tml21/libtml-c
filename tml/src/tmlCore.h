@@ -3362,11 +3362,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
  * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
- *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
- *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
- *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
- *          --TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
@@ -3393,11 +3389,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE 
  * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
- *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
- *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
- *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
- *          --TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* listenerHandle);
@@ -3499,11 +3490,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDL
  * @param   connectionHandle reference to a new TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
- *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
- *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
- *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
- *          --TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
@@ -3530,11 +3517,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
  * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          --TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
- *          --TML_ERR_SYSTEMRESOURCES system resource error<br>
- *          --TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
- *          --TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
- *          --TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle);
