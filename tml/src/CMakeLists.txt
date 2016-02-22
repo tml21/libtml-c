@@ -77,6 +77,7 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlListenerObj.h
                       tmlLogHandler.h
                       tmlMultiAsyncMsg.h
+                      tmlNetBinding.h
                       tmlObjWrapper.h
                       tmlProfileHandler.h
                       tmlReceiverStream.h
@@ -110,6 +111,7 @@ set (TML_SOURCES      tmlCollectCall.cpp
                       tmlListenerObj.cpp
                       tmlLogHandler.cpp
                       tmlMultiAsyncMsg.cpp
+                      tmlNetBinding.cpp
                       tmlObjWrapper.cpp
                       tmlProfileHandler.cpp
                       tmlReceiverStream.cpp
