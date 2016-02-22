@@ -6006,6 +6006,66 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreH
 
 
 /**
+ * @brief    Enable/disable a listener.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == listenerHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlListenerObj*)listenerHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Set_Enabled");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Set_Enabled(listenerHandle, bEnable);
+      }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Get enable status of a listener.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL* bEnable){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == listenerHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlListenerObj*)listenerHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Get_Enabled");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Get_Enabled(listenerHandle, bEnable);
+      }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
  * @brief    Create a new connection.
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);

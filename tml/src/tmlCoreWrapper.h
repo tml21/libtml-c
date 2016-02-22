@@ -1812,6 +1812,34 @@ public:
 
 
     /**
+     * @brief    Enable/disable a listener. 
+     *
+     * To enable / disable all listeners, use tmlCoreWrapper_Enable_Listener()
+     *
+     * @param   listenerHandle TML listener handle, NULL to enable/disable all listeners
+     * @param   bEnable        TML_TRUE to enable, TML_FALSE to disable the listener
+     *
+     * @returns TML_SUCCESS in case of success.
+     *
+     * @see tmlCoreWrapper_Enable_Listener(), tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable);
+
+
+    /**
+     * @brief    Get enable status of a listener.
+     *
+     * @param   listenerHandle TML listener handle
+     * @param   bEnable        reference to listener enable status
+     *
+     * @returns TML_SUCCESS in case of success.
+     *
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL* bEnable);
+
+
+    /**
      * @brief   Create a new connection.
      *
      * @param   sAddress         network address

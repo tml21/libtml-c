@@ -2295,6 +2295,30 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LIST
 
 
 /**
+  * @brief    Enable/disable a listener. 
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: enable / disable the listener
+
+  return iRet;
+}
+
+
+/**
+  * @brief    Get enable status of a listener.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL* bEnable){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: Get enable status of a listener
+
+  return iRet;
+}
+
+
+/**
   * @brief   Create a new connection.
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, TML_CONNECTION_HANDLE* connectionHandle){

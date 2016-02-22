@@ -89,13 +89,6 @@
   */  
 
 /** @ingroup coreHandle
-  * @defgroup extendedListenerBindings Extended listener bindings
-  * @brief TMLCore extended listener bindings
-  *
-  * A TMLCore connection must be initialized to send data.
-  */  
-
-/** @ingroup coreHandle
   * @defgroup connectionManagement Connection management
   * @brief TMLCore connection management
   *
@@ -814,7 +807,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerIP_A(TML_CORE_HANDLE c
  * @ingroup  coreManagement
  * @brief   Enable or disable the TML listener.
  *
- * @note The interface IP and port have to be configured before enabling the listener.
+ * @note The interface IP and port have to be configured or a listener has been created before enabling the listener
+ *
+ * Enabling of multiple listeners in a "tml_Core_Set_ListenerEnabled" call will fail with an error should any one of them fail to start.<br>
+ * On this type of error all listeners will be disabled.
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  * @param   bEnable      TML_TRUE to enable, TML_FALSE to disable the listener
@@ -826,7 +822,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerIP_A(TML_CORE_HANDLE c
  *          TML_ERR_LISTENER_NOT_INITIALIZED listener not initialized<br>
  *          TML_ERR_LISTENER_ALREADY_STARTED listener already enabled
  *
- * @see tml_Core_Get_ListenerEnabled()
+ * @see tml_Core_Get_ListenerEnabled(), tml_Core_Listener_Create()
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerEnabled(TML_CORE_HANDLE coreHandle, TML_BOOL bEnable);
 
@@ -3358,7 +3354,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
 
 
 /**
- * @ingroup  extendedListenerBindings
+ * @ingroup  coreManagement
  * @brief    Create a new listener.
  *
  * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
@@ -3391,7 +3387,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE 
 
 
 /**
- * @ingroup  extendedListenerBindings
+ * @ingroup  coreManagement
  * @brief    Close a listener and release resources.
  *
  * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
@@ -3408,7 +3404,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* lis
 
 
 /**
- * @ingroup  extendedListenerBindings
+ * @ingroup  coreManagement
  * @brief    Returns the listener's network binding address.
  *
  * @param   listenerHandle   TML listener handle (TML_LISTENER_HANDLE)
@@ -3436,7 +3432,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_A(TML_LISTENER_HAN
 
 
 /**
- * @ingroup  extendedListenerBindings
+ * @ingroup  coreManagement
  * @brief    Get the number of listeners.
  *
  * @param   coreHandle TML core handle
@@ -3449,7 +3445,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerCount(TML_CORE_HANDLE 
 
 
 /**
- * @ingroup  extendedListenerBindings
+ * @ingroup  coreManagement
  * @brief    Get listener's handle from a TML core.
  *
  * @param   coreHandle TML core handle
@@ -3460,6 +3456,38 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerCount(TML_CORE_HANDLE 
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle);
+
+
+/**
+ * @ingroup  coreManagement
+ * @brief    Enable/disable a listener.
+ *
+ * To enable / disable all listeners, use tml_Core_Set_ListenerEnabled().
+ *
+ * @param   listenerHandle TML listener handle
+ * @param   bEnable        TML_TRUE to enable, TML_FALSE to disable the listener
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ *
+ * @see tml_Core_Set_ListenerEnabled()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable);
+
+
+/**
+ * @ingroup  coreManagement
+ * @brief    Get enable status of a listener.
+ *
+ * @param   listenerHandle TML listener handle
+ * @param   bEnable        reference to listener enable status
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
+ *
+ * @see tml_Listener_Set_Enabled()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL* bEnable);
 
 
 /**
@@ -3548,7 +3576,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   lProfiles   reference to profile list.<br>
- *                      The list has to be released with sidex_Variant_DecRef().
+ *                      The list has to be released with sidex_Variant_DecRef()
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
@@ -3710,7 +3738,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnConnect(TML_CORE_HANDLE core
  * @param   pCBData    user data or NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<
+ *          TML_ERR_MISSING_OBJ invalid core handle
  *
  * @see TML_ON_DISCONNECT_CB_FUNC()
  */
