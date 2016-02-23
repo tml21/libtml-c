@@ -47,22 +47,10 @@
  */
 tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
 {
-  int iSize;
-  TML_INT32 iLength;
-
-  iSize = (int)strlen(sNetAddress)+1;
-  m_sNetAddress = new char[iSize];
-#if defined (LINUX) || defined (MINGW_BUILD)
-  strcpy (m_sProfile, profile);
-#else
-  strcpy_s (m_sNetAddress, iSize, sNetAddress);
-#endif
-  m_sNetAddress_w = (char16_t*)UTF8toUTF16(m_sNetAddress, &iLength);
-  m_sNetAddress_x = UTF8toUTF32(m_sNetAddress, &iLength);
-
   m_coreHandle = coreHandle;
 
   // TODO:
+  m_binding = new tmlNetBinding(sNetAddress);
   // vortex_conection_new();
 
    m_iRefCounter = 1;
@@ -83,17 +71,10 @@ tmlConnectionManageObj::~tmlConnectionManageObj()
 void tmlConnectionManageObj::cleanUp(){
   if (getRef())
     if (decRef() == 0){
-        // TODO:
-        // vortex_conection_close();
+      // TODO:
+      // vortex_conection_close();
 
-      if (TML_HANDLE_TYPE_NULL != m_sNetAddress){
-        delete[] m_sNetAddress;
-        delete[] m_sNetAddress_w;
-        delete[] m_sNetAddress_x;
-        m_sNetAddress   = TML_HANDLE_TYPE_NULL;
-        m_sNetAddress_w = TML_HANDLE_TYPE_NULL;
-        m_sNetAddress_x = TML_HANDLE_TYPE_NULL;
-      }
+      delete m_binding;
     }
 }
 
@@ -109,30 +90,27 @@ TML_CORE_HANDLE tmlConnectionManageObj::getCoreHandle(){
 /**
  * @brief Get the network address for connection binding.
  */
-TML_INT32 tmlConnectionManageObj::getAddress_A(char** sAddress){
-  *sAddress = m_sNetAddress;
-
-  return TML_SUCCESS;
+TML_INT32 tmlConnectionManageObj::getAddress(char** sAddress){
+  TML_INT32 iRet = m_binding->getAddress(sAddress);
+  return iRet;
 }
 
 
 /**
   * @brief Get the network address for connection binding.
   */
-TML_INT32 tmlConnectionManageObj::getAddress_X(wchar_t** sAddress){
-  *sAddress = m_sNetAddress_x;
-
-  return TML_SUCCESS;
+TML_INT32 tmlConnectionManageObj::getAddress(wchar_t** sAddress){
+  TML_INT32 iRet = m_binding->getAddress(sAddress);
+  return iRet;
 }
 
 
 /**
   * @brief Get the network address for connection binding.
   */
-TML_INT32 tmlConnectionManageObj::getAddress_W(char16_t** sAddress){
-  *sAddress = m_sNetAddress_w;
-
-  return TML_SUCCESS;
+TML_INT32 tmlConnectionManageObj::getAddress(char16_t** sAddress){
+  TML_INT32 iRet = m_binding->getAddress(sAddress);
+  return iRet;
 }
 
 

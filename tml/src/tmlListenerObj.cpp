@@ -39,7 +39,6 @@
 #include <string.h>
 #include "tmlListenerObj.h"
 #include "tmlCore.h"
-#include "unicode.h"
 
 /**
  * @brief    Constructor.
@@ -47,24 +46,12 @@
  */
 tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
 {
-  int iSize;
-  TML_INT32 iLength;
-
   m_bListnerIsEnabled = TML_FALSE;
-  iSize = (int)strlen(sNetAddress)+1;
-  m_sNetAddress = new char[iSize];
-#if defined (LINUX) || defined (MINGW_BUILD)
-  strcpy (m_sProfile, profile);
-#else
-  strcpy_s (m_sNetAddress, iSize, sNetAddress);
-#endif
-  m_sNetAddress_w = (char16_t*)UTF8toUTF16(m_sNetAddress, &iLength);
-  m_sNetAddress_x = UTF8toUTF32(m_sNetAddress, &iLength);
 
   m_coreHandle = coreHandle;
 
   // TODO: new listener
-
+  m_binding = new tmlNetBinding(sNetAddress);
 
    m_iRefCounter = 1;
 }
@@ -82,17 +69,11 @@ tmlListenerObj::~tmlListenerObj()
  * @brief    Cleans up refCounter dependent allocations.
  */
 void tmlListenerObj::cleanUp(){
-  if (getRef())
+  if (getRef()){
     if (decRef() == 0){
-      if (TML_HANDLE_TYPE_NULL != m_sNetAddress){
-        delete[] m_sNetAddress;
-        delete[] m_sNetAddress_w;
-        delete[] m_sNetAddress_x;
-        m_sNetAddress   = TML_HANDLE_TYPE_NULL;
-        m_sNetAddress_w = TML_HANDLE_TYPE_NULL;
-        m_sNetAddress_x = TML_HANDLE_TYPE_NULL;
-      }
+      delete m_binding;
     }
+  }
 }
 
 
@@ -107,30 +88,27 @@ TML_CORE_HANDLE tmlListenerObj::getCoreHandle(){
 /**
  * @brief Get the network address for listener binding.
  */
-TML_INT32 tmlListenerObj::getAddress_A(char** sAddress){
-  *sAddress = m_sNetAddress;
-
-  return TML_SUCCESS;
+TML_INT32 tmlListenerObj::getAddress(char** sAddress){
+  TML_INT32 iRet = m_binding->getAddress(sAddress);
+  return iRet;
 }
 
 
 /**
  * @brief Get the network address for listener binding.
   */
-TML_INT32 tmlListenerObj::getAddress_X(wchar_t** sAddress){
-  *sAddress = m_sNetAddress_x;
-
-  return TML_SUCCESS;
+TML_INT32 tmlListenerObj::getAddress(wchar_t** sAddress){
+  TML_INT32 iRet = m_binding->getAddress(sAddress);
+  return iRet;
 }
 
 
 /**
  * @brief Get the network address for listener binding.
   */
-TML_INT32 tmlListenerObj::getAddress_W(char16_t** sAddress){
-  *sAddress = m_sNetAddress_w;
-
-  return TML_SUCCESS;
+TML_INT32 tmlListenerObj::getAddress(char16_t** sAddress){
+  TML_INT32 iRet = m_binding->getAddress(sAddress);
+  return iRet;
 }
 
 

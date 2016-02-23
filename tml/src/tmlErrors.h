@@ -54,7 +54,7 @@
 
 //------------------------------------------------------------
 // Noch frei Fehlernummern:
-// 3;4;5;6;7;8;9;10;24;26;29;34;36;46
+// 4;5;6;7;8;9;10;24;26;29;34;36;46
 
 /**
 * @brief    operation successful
@@ -83,6 +83,12 @@
 * @ingroup coreErrors
 */
 #define TML_ERR_EVENT_HANDLER_IN_DESTRUCTION   2
+
+/**
+* @brief    tml network binding syntax error
+* @ingroup coreErrors
+*/
+#define TML_ERR_NET_BINDING                    3
 
 /**
 * @brief    stream does not exist

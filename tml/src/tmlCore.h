@@ -3403,6 +3403,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* lis
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_NET_BINDING network binding syntax error
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address(TML_LISTENER_HANDLE listenerHandle, TML_CTSTR** sAddress);
@@ -3531,6 +3532,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE*
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_NET_BINDING network binding syntax error
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address(TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR** sAddress);

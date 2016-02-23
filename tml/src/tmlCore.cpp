@@ -5896,7 +5896,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_X(TML_LISTENER_HAN
       }
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Get_Address");
-        iRet = ((tmlListenerObj*)listenerHandle)->getAddress_X(sAddress);
+        iRet = ((tmlListenerObj*)listenerHandle)->getAddress(sAddress);
       }
     }
     catch (...){
@@ -5921,7 +5921,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_W(TML_LISTENER_HAN
       }
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Get_Address");
-        iRet = ((tmlListenerObj*)listenerHandle)->getAddress_W(sAddress);
+        iRet = ((tmlListenerObj*)listenerHandle)->getAddress(sAddress);
       }
     }
     catch (...){
@@ -5946,7 +5946,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_A(TML_LISTENER_HAN
       }
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Get_Address");
-        iRet = ((tmlListenerObj*)listenerHandle)->getAddress_A(sAddress);
+        iRet = ((tmlListenerObj*)listenerHandle)->getAddress(sAddress);
       }
     }
     catch (...){
@@ -6184,7 +6184,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_X(TML_CONNECTION
       }
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_Address");
-        iRet = ((tmlConnectionManageObj*)connectionHandle)->getAddress_X(sAddress);
+        iRet = ((tmlConnectionManageObj*)connectionHandle)->getAddress(sAddress);
       }
     }
     catch (...){
@@ -6209,7 +6209,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_W(TML_CONNECTION
       }
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_Address");
-        iRet = ((tmlConnectionManageObj*)connectionHandle)->getAddress_W(sAddress);
+        iRet = ((tmlConnectionManageObj*)connectionHandle)->getAddress(sAddress);
       }
     }
     catch (...){
@@ -6234,7 +6234,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION
       }
       else{
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Get_Address");
-        iRet = ((tmlConnectionManageObj*)connectionHandle)->getAddress_A(sAddress);
+        iRet = ((tmlConnectionManageObj*)connectionHandle)->getAddress(sAddress);
       }
     }
     catch (...){

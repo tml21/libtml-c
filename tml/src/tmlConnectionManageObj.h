@@ -43,6 +43,7 @@
 #endif // _MSC_VER > 1000
 
 #include "tmlStdTypes.h"
+#include "tmlNetBinding.h"
 #include "tmlCoreWrapper.h"
 
 class tmlConnectionManageObj //connection management object class
@@ -53,17 +54,19 @@ private:
     /**
      * @brief    connection binding address
      */
-    char*     m_sHost;
-    char*     m_sPort;
-    char*     m_sNetAddress;
-    char16_t* m_sNetAddress_w;
-    wchar_t*  m_sNetAddress_x;
+    char*     m_sHostX;
+    char*     m_sPortX;
+    char*     m_sNetAddressX;
+    char16_t* m_sNetAddress_wX;
+    wchar_t*  m_sNetAddress_xX;
 
 protected: 
 	  /* data */
     int m_iRefCounter;
 
     TML_CORE_HANDLE m_coreHandle;
+
+    tmlNetBinding *m_binding;
 
 public:
 	  /* methods */
@@ -99,31 +102,34 @@ public:
     /**
      * @brief Get the network address for connection binding.
      *
-     * @param   sAddress       borrowed reference to network address for connection binding.
-
-     * @returns TML_SUCCESS
+     * @param   sAddress         borrowed reference to network binding address
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
      */
-    TML_INT32 getAddress_A(char** sAddress);
+    TML_INT32 getAddress(char** sAddress);
 
 
     /**
      * @brief Get the network address for connection binding.
      *
-     * @param   sAddress       borrowed reference to network address for connection binding.
-
-     * @returns TML_SUCCESS
+     * @param   sAddress         borrowed reference to network binding address
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
      */
-    TML_INT32 getAddress_X(wchar_t** sAddress);
+    TML_INT32 getAddress(wchar_t** sAddress);
 
 
     /**
      * @brief Get the network address for connection binding.
      *
-     * @param   sAddress       borrowed reference to network address for connection binding.
-
-     * @returns TML_SUCCESS
+     * @param   sAddress         borrowed reference to network binding address
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
      */
-    TML_INT32 getAddress_W(char16_t** sAddress);
+    TML_INT32 getAddress(char16_t** sAddress);
 
 
     /**

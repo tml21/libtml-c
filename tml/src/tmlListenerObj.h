@@ -43,6 +43,7 @@
 #endif // _MSC_VER > 1000
 
 #include "tmlStdTypes.h"
+#include "tmlNetBinding.h"
 
 class tmlListenerObj //listener object class
 {
@@ -54,20 +55,13 @@ private:
      */
     TML_BOOL m_bListnerIsEnabled;
 
-    /**
-     * @brief    listener binding address
-     */
-    char*     m_sHost;
-    char*     m_sPort;
-    char*     m_sNetAddress;
-    char16_t* m_sNetAddress_w;
-    wchar_t*  m_sNetAddress_x;
-
 protected: 
 	  /* data */
     int m_iRefCounter;
 
     TML_CORE_HANDLE m_coreHandle;
+
+    tmlNetBinding *m_binding;
 
 public:
 	  /* methods */
@@ -103,31 +97,36 @@ public:
     /**
      * @brief Get the network address for listener binding.
      *
-     * @returns the network address.
+     * @param   sAddress         borrowed reference to network binding address
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
      */
-    TML_INT32 getAddress_A(char** sAddress);
-
-
+    TML_INT32 getAddress(char** sAddress);
 
 
     /**
      * @brief Get the network address for listener binding.
      *
-     * @param   sAddress       borrowed reference to network address.
-
-     * @returns TML_SUCCESS
+     * @param   sAddress         borrowed reference to network binding address
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
      */
-    TML_INT32 getAddress_X(wchar_t** sAddress);
+    TML_INT32 getAddress(wchar_t** sAddress);
 
 
     /**
      * @brief Get the network address for listener binding.
      *
-     * @param   sAddress       borrowed reference to network address.
-
-     * @returns TML_SUCCESS
+     * @param   sAddress         borrowed reference to network binding address
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
      */
-    TML_INT32 getAddress_W(char16_t** sAddress);
+    TML_INT32 getAddress(char16_t** sAddress);
+
+
     /**
      * @brief   Enable or disable the listener.
      *
