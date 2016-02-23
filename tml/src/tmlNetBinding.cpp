@@ -125,6 +125,10 @@ tmlNetBinding::tmlNetBinding(const char* sNetAddress)
           }
         }
       }
+      if (':' != sNetAddress[ipEnd]){
+        // Must be a ':'
+        iErr = 4;
+      }
       if (0 == iErr){
         //////////
         // Port:
