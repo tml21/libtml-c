@@ -273,7 +273,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Open(TML_CORE_HANDLE* coreHandle, 
   TML_INT32 iRet;
   try{
     //tmlCoreWrapper* obj = new tmlCoreWrapper(m_ctx, iLogValue, m_bLicensed);
-    tmlCoreWrapper* obj = new tmlCoreWrapper(NULL, (int)iLogValue,
+    tmlCoreWrapper* obj = new tmlCoreWrapper((int)iLogValue,
                                               m_iInitialThreadPoolSize, m_iThreadPoolMaxSize, 
                                               m_iThreadAddSteps, m_iThreadPoolAddPeriod, 
                                               m_iThreadRemoveSteps, m_iThreadPoolRemovePeriod, 

@@ -111,6 +111,23 @@ int tmlCoreWrapper::tmlCoreWrapper_SendReply (TML_COMMAND_HANDLE tmlhandle, int 
 
 
 /**
+ * @brief    Get the Vortex execution context
+ */
+VortexCtx* tmlCoreWrapper::getVortexCtx(){
+  return m_ctx;
+}
+
+
+
+/**
+  * @brief    Get the loghandler
+  */
+  tmlLogHandler* tmlCoreWrapper::getLogHandler(){
+    return m_log;
+  }
+
+     
+/**
  * @brief    The initialization called by the constructor
  */
 void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize, TML_INT32 iThreadPoolMaxSize, 
@@ -790,7 +807,7 @@ int tmlCoreWrapper::rawCmdDispatch(TML_COMMAND_HANDLE tmlhandle, SIDEX_HANDLE sH
 /**
  * @brief    Constructor.
  */
-tmlCoreWrapper::tmlCoreWrapper(VortexCtx* ctx, int iLogValue,
+tmlCoreWrapper::tmlCoreWrapper(int iLogValue,
                                 TML_INT32 iInitialThreadPoolSize, TML_INT32 iThreadPoolMaxSize, 
                                                                   TML_INT32 iThreadAddSteps, TML_INT32 iThreadPoolAddPeriod,
                                                                   TML_INT32 iThreadRemoveSteps, TML_INT32 iThreadPoolRemovePeriod, 

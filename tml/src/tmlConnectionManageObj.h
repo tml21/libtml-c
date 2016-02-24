@@ -42,34 +42,31 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <vortex.h>
 #include "tmlStdTypes.h"
 #include "tmlNetBinding.h"
-#include "tmlCoreWrapper.h"
 
 class tmlConnectionManageObj //connection management object class
 {
 private:
     /* data */
 
-    /**
-     * @brief    connection binding address
-     */
-    char*     m_sHostX;
-    char*     m_sPortX;
-    char*     m_sNetAddressX;
-    char16_t* m_sNetAddress_wX;
-    wchar_t*  m_sNetAddress_xX;
-
 protected: 
 	  /* data */
-    int m_iRefCounter;
+    int               m_iRefCounter;
 
-    TML_CORE_HANDLE m_coreHandle;
+    TML_CORE_HANDLE   m_coreHandle;
 
-    tmlNetBinding *m_binding;
+    VortexConnection* m_vortexConnection;
+
+    tmlNetBinding*    m_binding;
+
+    TML_INT32         m_iErr;
+
 
 public:
 	  /* methods */
+
     /**
      * @brief    Constructor.
      *
@@ -79,6 +76,19 @@ public:
      * @returns an instance of tmlConnectionManageObj.
      */
     tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
+
+
+
+    /**
+     * @brief    Constructor.
+     *
+     * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
+     * @param   sHost            network host / ip.
+     * @param   sPort            port.
+     *
+     * @returns an instance of tmlConnectionManageObj.
+     */
+    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort);
 
 
     /**
@@ -153,6 +163,30 @@ public:
      *          TML_ERR_MISSING_OBJ invalid core handle
      */
     TML_INT32 validate(TML_BOOL bReconnect, TML_BOOL* bConnected);
+
+
+
+
+    /**
+     * @brief   Get Vortex connection 
+     *
+     * @returns the Vortex connection / NULL if invalid
+     */
+    VortexConnection* getVortexConnection();
+
+
+    /**
+     * @brief   Establish the Vortex connection 
+     *
+     * @returns TML_SUCCESS in case of success
+     */
+    TML_INT32 establishVortexConnection();
+
+
+    /**
+      * @brief   returns the last error code
+      */
+    TML_INT32 getLastErr();
 
 
     /**

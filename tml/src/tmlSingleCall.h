@@ -48,6 +48,7 @@
 #include <vortex.h>
 #include "tmlProfileHandler.h"
 #include "tmlCollectCallDestinationObjHandler.h"
+#include "tmlConnectionManageObj.h"
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -327,7 +328,7 @@ private:
      *
      * @see tmlErrors.h
      */
-    int GetConnection(const char* profile, const char* sHost, const char* sPort, VortexConnection** connection);
+    int GetConnection(const char* profile, const char* sHost, const char* sPort, tmlConnectionManageObj** connectionMgr);
 
 
     /**

@@ -38,8 +38,36 @@
 #include <stdio.h>
 #include <string.h>
 #include "tmlConnectionManageObj.h"
+#include "tmlCoreWrapper.h"
 #include "tmlCore.h"
 #include "unicode.h"
+#include "logValues.h"
+
+/**
+ * @brief    Constructor.
+ *
+ */
+tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort)
+{
+  int iLength = strlen(sHost) + strlen(sPort) + 2;
+
+  char* sNetAddress = new char[iLength];
+  #if defined(LINUX) || defined (MINGW_BUILD)
+    sprintf(sNetAddress, "%s:%s", sHost, sPort);
+  #else // LINUX
+    sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
+  #endif // LINUX
+
+  m_iErr = TML_SUCCESS;
+  m_coreHandle = coreHandle;
+
+  m_binding = new tmlNetBinding(sNetAddress);
+  m_iErr = establishVortexConnection();
+
+  m_iRefCounter = 1;
+
+  delete[]sNetAddress;
+}
 
 /**
  * @brief    Constructor.
@@ -47,13 +75,66 @@
  */
 tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
 {
+  m_iErr = TML_SUCCESS;
   m_coreHandle = coreHandle;
 
-  // TODO:
   m_binding = new tmlNetBinding(sNetAddress);
-  // vortex_conection_new();
+  m_iErr = establishVortexConnection();
 
-   m_iRefCounter = 1;
+  m_iRefCounter = 1;
+}
+
+/**
+  * @brief   Establish the Vortex connection 
+  */
+TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
+
+  VortexCtx* ctx = ((tmlCoreWrapper*)m_coreHandle)->getVortexCtx();
+  tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
+
+  int iRet = TML_SUCCESS;
+  VortexConnection* connection = NULL;
+
+  // Is there a valid vortex execution context
+  if (NULL == ctx){
+    iRet = TML_ERR_SENDER_NOT_INITIALIZED;
+  }
+  else{
+    ///////////////////////////////////////////////////
+    // Set the connection timeout to 5 seconds:
+    log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_connect_timeout");
+    vortex_connection_connect_timeout (ctx, 5000000);
+  // CMD sticking during stream download
+    log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
+
+    char* sHost;
+    char* sPort;
+    iRet = m_binding->getHost(&sHost);
+    if (TML_SUCCESS == iRet){
+      iRet = m_binding->getPort(&sPort);
+    }
+    if (TML_SUCCESS == iRet){
+      connection = vortex_connection_new (ctx, sHost, sPort, NULL, NULL);
+      log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_is_ok");
+      if (!vortex_connection_is_ok (connection, axl_false))
+      {
+        const char* msg = vortex_connection_get_message(connection);
+        log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
+        connection = NULL;
+      }
+    }
+  }
+  m_vortexConnection = connection;
+
+  return iRet;
+}
+
+
+/**
+  * @brief   returns the last error code
+  */
+TML_INT32 tmlConnectionManageObj::getLastErr(){
+  return m_iErr;
 }
 
 
@@ -71,8 +152,19 @@ tmlConnectionManageObj::~tmlConnectionManageObj()
 void tmlConnectionManageObj::cleanUp(){
   if (getRef())
     if (decRef() == 0){
-      // TODO:
-      // vortex_conection_close();
+      if (NULL != m_vortexConnection){
+       tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
+
+        ////////////////////////////////////////////////////////////////////////
+        // shutdown connection:
+        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_shutdown");
+        vortex_connection_shutdown(m_vortexConnection);
+        ////////////////////////////////////////////////////////////////////////
+        // close connection to get rid of references:
+        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_close");
+        vortex_connection_close(m_vortexConnection);
+        m_vortexConnection = NULL;
+      }
 
       delete m_binding;
     }
@@ -134,6 +226,13 @@ TML_INT32 tmlConnectionManageObj::validate(TML_BOOL bReconnect, TML_BOOL* bConne
   // TODO:
   // vortex_conection_new();
   return TML_SUCCESS;
+}
+
+/**
+  * @brief   Get Vortex connection 
+  */
+VortexConnection* tmlConnectionManageObj::getVortexConnection(){
+  return m_vortexConnection;
 }
 
 /**

@@ -296,7 +296,6 @@ public:
     /**
      * @brief    Constructor.
      *
-     * @param    ctx                      The VORTEX execution context.
      * @param    iLogValue                The debug logging value.
      * @param    iInitialThreadPoolSize   Initial thread pool size.
      * @param    iThreadPoolMaxSize       Maximal thread pool size.
@@ -313,7 +312,7 @@ public:
      *
      * @returns an instance of tmlCoreWrapper
      */
-    tmlCoreWrapper(VortexCtx* ctx, int iLogValue,
+    tmlCoreWrapper(int iLogValue,
                          TML_INT32 iInitialThreadPoolSize, TML_INT32 iThreadPoolMaxSize, 
                         TML_INT32 iThreadAddSteps, TML_INT32 iThreadPoolAddPeriod,
                         TML_INT32 iThreadRemoveSteps, TML_INT32 iThreadPoolRemovePeriod, 
@@ -326,6 +325,22 @@ public:
      * @brief    Destructor.
      */
     ~tmlCoreWrapper();
+
+
+    /**
+     * @brief    Get the Vortex execution context
+     *
+     * @returns the Vortex execution context
+     */
+    VortexCtx* getVortexCtx();
+
+
+    /**
+     * @brief    Get the loghandler
+     *
+     * @returns the loghandler
+     */
+     tmlLogHandler* getLogHandler();
 
 
     /**
