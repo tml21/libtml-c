@@ -1862,6 +1862,19 @@ public:
     /**
      * @brief   Create a new connection.
      *
+     * @param   sHost            network host / ip.
+     * @param   sPort            port.
+     * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connect(const char* sHost, const char* sPort, TML_CONNECTION_HANDLE* connectionHandle);
+
+
+    /**
+     * @brief   Create a new connection.
+     *
      * @param   sAddress         network address
      * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
      *

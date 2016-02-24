@@ -805,10 +805,13 @@ int tmlSingleCall::WaitUntilLastSenderIsIdle()
  */
 int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const char* sPort, tmlConnectionManageObj** conectionMgr)
 {
-  tmlConnectionManageObj* conectionMgrObj = new tmlConnectionManageObj((TML_CORE_HANDLE)m_tmlCoreHandle, sHost, sPort);
+  tmlConnectionManageObj* conectionMgrObj = TML_HANDLE_TYPE_NULL;
+  TML_CONNECTION_HANDLE connectionHandle;
+  TML_INT32 iRet = m_tmlCoreHandle->tmlCoreWrapper_Connect(sHost, sPort, &connectionHandle);
 
-  TML_INT32 iRet = conectionMgrObj->getLastErr();
   if (TML_SUCCESS == iRet){
+    conectionMgrObj = (tmlConnectionManageObj*) connectionHandle;
+
     VortexConnection* connection;
 
     connection = conectionMgrObj->getVortexConnection();

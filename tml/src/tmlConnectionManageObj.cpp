@@ -85,12 +85,6 @@ void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle,
   m_iErr = establishVortexConnection();
 
   m_iRefCounter = 1;
-
-  //////////////////////////////////////////////////
-  // Add handle to core list
-  if (TML_HANDLE_TYPE_NULL != m_coreHandle){
-    ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) this);
-  }
 }
 
 

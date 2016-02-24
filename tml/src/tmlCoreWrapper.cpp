@@ -2347,15 +2347,37 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDL
 /**
   * @brief   Create a new connection.
   */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  int iLength = strlen(sHost) + strlen(sPort) + 2;
+
+  char* sNetAddress = new char[iLength];
+  #if defined(LINUX) || defined (MINGW_BUILD)
+    sprintf(sNetAddress, "%s:%s", sHost, sPort);
+  #else // LINUX
+    sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
+  #endif // LINUX
+
+  iRet = tmlCoreWrapper_Connect (sNetAddress, connectionHandle);
+
+  delete[]sNetAddress;
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Create a new connection.
+  */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
   TML_INT32 iRet = TML_SUCCESS;
 
   tmlConnectionManageObj* wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress);
   *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
 
-  // TODO: - Add connection to list
+  tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
 
-  return iRet;
+  return iRet = wrapper->getLastErr();
 }
 
 
