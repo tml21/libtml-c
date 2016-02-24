@@ -3590,6 +3590,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HAND
  * @param   iCount     reference to the number of connections
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_INFORMATION_UNDEFINED  information is missing<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount);
@@ -3604,6 +3605,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDL
  * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_INFORMATION_UNDEFINED  information is missing<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle);

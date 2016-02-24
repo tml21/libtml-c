@@ -58,22 +58,25 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
     sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
   #endif // LINUX
 
-  m_iErr = TML_SUCCESS;
-  m_coreHandle = coreHandle;
-
-  m_binding = new tmlNetBinding(sNetAddress);
-  m_iErr = establishVortexConnection();
-
-  m_iRefCounter = 1;
+  initConnectionManageObj(coreHandle, sNetAddress);
 
   delete[]sNetAddress;
 }
 
+
 /**
  * @brief    Constructor.
- *
  */
 tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
+{
+  initConnectionManageObj(coreHandle, sNetAddress);
+}
+
+
+/**
+ * @brief    init the object
+ */
+void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
 {
   m_iErr = TML_SUCCESS;
   m_coreHandle = coreHandle;
@@ -82,17 +85,25 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
   m_iErr = establishVortexConnection();
 
   m_iRefCounter = 1;
+
+  //////////////////////////////////////////////////
+  // Add handle to core list
+  if (TML_HANDLE_TYPE_NULL != m_coreHandle){
+    ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) this);
+  }
 }
+
 
 /**
   * @brief   Establish the Vortex connection 
   */
 TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
 
+  int iRet = TML_SUCCESS;
+
   VortexCtx* ctx = ((tmlCoreWrapper*)m_coreHandle)->getVortexCtx();
   tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
 
-  int iRet = TML_SUCCESS;
   VortexConnection* connection = NULL;
 
   // Is there a valid vortex execution context
@@ -104,17 +115,26 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
     // Set the connection timeout to 5 seconds:
     log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_connect_timeout");
     vortex_connection_connect_timeout (ctx, 5000000);
-  // CMD sticking during stream download
-    log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
 
     char* sHost;
     char* sPort;
+    TML_BOOL bIsIPV6 = TML_FALSE;
     iRet = m_binding->getHost(&sHost);
     if (TML_SUCCESS == iRet){
       iRet = m_binding->getPort(&sPort);
     }
     if (TML_SUCCESS == iRet){
-      connection = vortex_connection_new (ctx, sHost, sPort, NULL, NULL);
+      bIsIPV6 = m_binding->isIPV6();
+    }
+    if (TML_SUCCESS == iRet){
+      if (bIsIPV6){
+        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
+        connection = vortex_connection_new6 (ctx, sHost, sPort, NULL, NULL);
+      }
+      else{
+        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
+        connection = vortex_connection_new (ctx, sHost, sPort, NULL, NULL);
+      }
       log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_is_ok");
       if (!vortex_connection_is_ok (connection, axl_false))
       {
@@ -125,7 +145,6 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
     }
   }
   m_vortexConnection = connection;
-
   return iRet;
 }
 
@@ -153,8 +172,7 @@ void tmlConnectionManageObj::cleanUp(){
   if (getRef())
     if (decRef() == 0){
       if (NULL != m_vortexConnection){
-       tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
-
+        tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
         ////////////////////////////////////////////////////////////////////////
         // shutdown connection:
         log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_shutdown");
@@ -165,7 +183,6 @@ void tmlConnectionManageObj::cleanUp(){
         vortex_connection_close(m_vortexConnection);
         m_vortexConnection = NULL;
       }
-
       delete m_binding;
     }
 }

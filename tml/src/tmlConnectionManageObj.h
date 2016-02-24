@@ -92,6 +92,15 @@ public:
 
 
     /**
+     * @brief    init the object
+     *
+     * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
+     * @param   sNetAddress network address for connection binding.
+     */
+    void initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
+
+
+    /**
      * @brief    Destructor.
      */
     virtual ~tmlConnectionManageObj();

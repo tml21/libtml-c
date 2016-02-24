@@ -57,6 +57,11 @@ private:
     /* data */
 
     /**
+     * @brief    Reference to list containing connection manager objects
+     */
+    SIDEX_VARIANT          m_connectionMgrObjs;
+
+    /**
      * @brief    Reference to tmlProfileHandler object
      */
     tmlProfileHandler*     m_pHandler;
@@ -1875,6 +1880,31 @@ public:
      * @see tmlErrors.h,tmlStdTypes.h
      */
     TML_INT32 tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle);
+
+
+    /**
+     * @brief     Close al connections and release resources.
+     */
+    void tmlCoreWrapper_Connection_CloseAll();
+
+
+    /**
+     * @brief    Delete a TML connection handle from the connection list
+     *
+     * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+     */
+    void tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE handle);
+
+
+    /**
+     * @brief    Add a TML connection handle to the connection list
+     *
+     * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE handle);
 
 
     /**

@@ -122,9 +122,9 @@ VortexCtx* tmlCoreWrapper::getVortexCtx(){
 /**
   * @brief    Get the loghandler
   */
-  tmlLogHandler* tmlCoreWrapper::getLogHandler(){
-    return m_log;
-  }
+tmlLogHandler* tmlCoreWrapper::getLogHandler(){
+  return m_log;
+}
 
      
 /**
@@ -135,6 +135,9 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
                                           TML_INT32 iThreadRemoveSteps, TML_INT32 iThreadPoolRemovePeriod, 
                                           TML_BOOL bThreadAutoRemove, TML_BOOL bThreadPreemptive)
 {
+  ////////////////////////////////
+  // list containing the connection manager objects
+  m_connectionMgrObjs = sidex_Variant_New_List();
   ////////////////////////////////
   // The debug log handler
   m_log = new tmlLogHandler();
@@ -888,6 +891,12 @@ tmlCoreWrapper::~tmlCoreWrapper()
   // free listener / to get rid of ctx references before vortex_exit_ctx
   delete (m_CoreListener);
   m_CoreListener = NULL;
+
+  ////////////////////////////////
+  // destruct the connection manager objects
+  tmlCoreWrapper_Connection_CloseAll();
+  sidex_Variant_DecRef(m_connectionMgrObjs);
+
 
 #ifdef LINUX
   #ifdef OS_X
@@ -2356,24 +2365,79 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, TML_CONNE
 TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle){
   TML_INT32 iRet = TML_SUCCESS;
 
+  // Delete a TML connection handle from the connection list:
+  tmlCoreWrapper_Delete_ConnectionItem(*connectionHandle);
+
   // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
   delete (tmlConnectionManageObj*)*connectionHandle;
   *connectionHandle = TML_HANDLE_TYPE_NULL;
-
-  // TODO: - remove connection from list
 
   return iRet;
 }
 
 
 /**
+  * @brief     Close al connections and release resources.
+  */
+void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  for (TML_UINT32 i = 0; i < iCount; ++i){
+    TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Connection (i, &connection);
+    if (connection){
+      tmlCoreWrapper_Connection_Close(&connection);
+    }
+  }
+}
+
+     
+/**
+  * @brief    Delete a TML connection handle from the connection list
+  */
+void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE handle){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  bool bFound = false;
+  for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+    TML_CONNECTION_HANDLE tmpConnection = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Connection (i, &tmpConnection);
+    if (handle == tmpConnection){
+      bFound = true;
+      sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
+    }
+  }
+}
+
+     
+/**
+  * @brief    Add a TML connection handle to the connection list
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE handle){
+  SIDEX_INT32 iRet;
+  SIDEX_INT32 iPos;
+  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(handle);
+  iRet = sidex_Variant_List_Append(m_connectionMgrObjs, vObj, &iPos);
+  sidex_Variant_DecRef(vObj);
+  return iRet;
+}
+
+     
+/**
   * @brief   Returns the number of connections.
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount(TML_UINT32* iCount){
   TML_INT32 iRet = TML_SUCCESS;
 
-  // TODO: - connection count
+  TML_INT32 iSize = 0;
+  iRet = sidex_Variant_List_Size (m_connectionMgrObjs, &iSize);
+  *iCount = (TML_UINT32)iSize;
 
+  if (SIDEX_SUCCESS != iRet){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
   return iRet;
 }
 
@@ -2383,9 +2447,18 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount(TML_UINT32* iCount)
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle){
   TML_INT32 iRet = TML_SUCCESS;
 
-  // TODO: TML_CONNECTION_HANDLE
-  *connectionHandle = TML_HANDLE_TYPE_NULL;
-
+  SIDEX_VARIANT vObj;
+  iRet = sidex_Variant_List_Get(m_connectionMgrObjs, index, &vObj);
+  if (SIDEX_SUCCESS == iRet){
+    SIDEX_INT64 iHandle = 0;
+    iRet = sidex_Variant_As_Integer (vObj, &iHandle);
+    if (SIDEX_SUCCESS == iRet){
+      *connectionHandle = (TML_CONNECTION_HANDLE) iHandle;
+    }
+  }
+  if (SIDEX_SUCCESS != iRet){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
   return iRet;
 }
 
