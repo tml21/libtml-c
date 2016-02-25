@@ -191,7 +191,61 @@ TML_CORE_HANDLE tmlConnectionManageObj::getCoreHandle(){
 
 
 /**
- * @brief Get the network address for connection binding.
+ * @brief Get the network hostname / IP of the connection binding.
+ */
+TML_INT32 tmlConnectionManageObj::getHost(char** sHost){
+  TML_INT32 iRet = m_binding->getHost(sHost);
+  return iRet;
+}
+
+
+/**
+  * @brief Get the network hostname / IP of the connection binding.
+  */
+TML_INT32 tmlConnectionManageObj::getHost(wchar_t** sHost){
+  TML_INT32 iRet = m_binding->getHost(sHost);
+  return iRet;
+}
+
+
+/**
+  * @brief Get the network hostname / IP of the connection binding.
+  */
+TML_INT32 tmlConnectionManageObj::getHost(char16_t** sHost){
+  TML_INT32 iRet = m_binding->getHost(sHost);
+  return iRet;
+}
+
+
+/**
+ * @brief Get the network port of the connection binding.
+ */
+TML_INT32 tmlConnectionManageObj::getPort(char** sPort){
+  TML_INT32 iRet = m_binding->getPort(sPort);
+  return iRet;
+}
+
+
+/**
+  * @brief Get the network port of the connection binding.
+  */
+TML_INT32 tmlConnectionManageObj::getPort(wchar_t** sPort){
+  TML_INT32 iRet = m_binding->getPort(sPort);
+  return iRet;
+}
+
+
+/**
+  * @brief Get the network port of the connection binding.
+  */
+TML_INT32 tmlConnectionManageObj::getPort(char16_t** sPort){
+  TML_INT32 iRet = m_binding->getPort(sPort);
+  return iRet;
+}
+
+
+/**
+ * @brief Get the network address of the connection binding.
  */
 TML_INT32 tmlConnectionManageObj::getAddress(char** sAddress){
   TML_INT32 iRet = m_binding->getAddress(sAddress);
@@ -200,7 +254,7 @@ TML_INT32 tmlConnectionManageObj::getAddress(char** sAddress){
 
 
 /**
-  * @brief Get the network address for connection binding.
+  * @brief Get the network address of the connection binding.
   */
 TML_INT32 tmlConnectionManageObj::getAddress(wchar_t** sAddress){
   TML_INT32 iRet = m_binding->getAddress(sAddress);
@@ -209,7 +263,7 @@ TML_INT32 tmlConnectionManageObj::getAddress(wchar_t** sAddress){
 
 
 /**
-  * @brief Get the network address for connection binding.
+  * @brief Get the network address of the connection binding.
   */
 TML_INT32 tmlConnectionManageObj::getAddress(char16_t** sAddress){
   TML_INT32 iRet = m_binding->getAddress(sAddress);
@@ -218,6 +272,21 @@ TML_INT32 tmlConnectionManageObj::getAddress(char16_t** sAddress){
 
 
 /**
+ * @brief Check for equality of this connection with the requested parameter.
+ */
+bool tmlConnectionManageObj::isEqual(const char* sAddress){
+  bool bEqual = false;
+  char* sRefAddress;
+  TML_INT32 iRet = getAddress(&sRefAddress);
+  if (TML_SUCCESS == iRet){
+    if (0 == strcmp(sRefAddress, sAddress)){
+      bEqual = true;
+    }
+  }
+  return bEqual;
+}
+
+ /**
   * @brief Returns the remote peer supported profiles.
   */
 TML_INT32 tmlConnectionManageObj::getRemoteProfiles(SIDEX_VARIANT* lProfiles){

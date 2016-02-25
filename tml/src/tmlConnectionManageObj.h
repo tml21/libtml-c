@@ -119,7 +119,73 @@ public:
 
 
     /**
-     * @brief Get the network address for connection binding.
+     * @brief Get the network hostname / IP of the connection binding.
+     *
+     * @param   sHost         borrowed reference to hostname / IP
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getHost(char** sHost);
+
+
+    /**
+     * @brief Get the network hostname / IP of the connection binding.
+     *
+     * @param   sHost         borrowed reference to hostname / IP
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getHost(wchar_t** sHost);
+
+
+    /**
+     * @brief Get the network hostname / IP of the connection binding.
+     *
+     * @param   sHost         borrowed reference to hostname / IP
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getHost(char16_t** sHost);
+
+
+    /**
+     * @brief Get the network port of the connection binding.
+     *
+     * @param   sPort         borrowed reference to port
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getPort(char** sPort);
+
+
+    /**
+     * @brief Get the network port of the connection binding.
+     *
+     * @param   sPort         borrowed reference to port
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getPort(wchar_t** sPort);
+
+
+    /**
+     * @brief Get the network port of the connection binding.
+     *
+     * @param   sPort         borrowed reference to port
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getPort(char16_t** sPort);
+
+
+    /**
+     * @brief Get the network address of the connection binding.
      *
      * @param   sAddress         borrowed reference to network binding address
      *
@@ -130,7 +196,7 @@ public:
 
 
     /**
-     * @brief Get the network address for connection binding.
+     * @brief Get the network address of the connection binding.
      *
      * @param   sAddress         borrowed reference to network binding address
      *
@@ -141,7 +207,7 @@ public:
 
 
     /**
-     * @brief Get the network address for connection binding.
+     * @brief Get the network address of the connection binding.
      *
      * @param   sAddress         borrowed reference to network binding address
      *
@@ -149,6 +215,16 @@ public:
      *          TML_ERR_NET_BINDING network binding syntax error
      */
     TML_INT32 getAddress(char16_t** sAddress);
+
+
+    /**
+     * @brief Check for equality of this connection with the requested parameter.
+     *
+     * @param   sAddress         network binding address
+     *
+     * @returns true if equal
+     */
+    bool isEqual(const char* sAddress);
 
 
     /**

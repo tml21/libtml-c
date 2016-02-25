@@ -2347,7 +2347,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDL
 /**
   * @brief   Create a new connection.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, TML_CONNECTION_HANDLE* connectionHandle){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle){
   TML_INT32 iRet = TML_SUCCESS;
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
@@ -2358,7 +2358,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* 
     sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
   #endif // LINUX
 
-  iRet = tmlCoreWrapper_Connect (sNetAddress, connectionHandle);
+  iRet = tmlCoreWrapper_Connect (sNetAddress, bUseExisting, connectionHandle);
 
   delete[]sNetAddress;
 
@@ -2369,13 +2369,29 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* 
 /**
   * @brief   Create a new connection.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle){
   TML_INT32 iRet = TML_SUCCESS;
+  tmlConnectionManageObj* wrapper = TML_HANDLE_TYPE_NULL;
 
-  tmlConnectionManageObj* wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress);
+  TML_UINT32 iCount = 0;
+  bool bFound = false;
+  tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+    TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Connection (i, &connection);
+    if (connection){
+      wrapper = (tmlConnectionManageObj*)connection;
+      if (wrapper->isEqual(sAddress)){
+        bFound = true;
+      }
+    }
+  }
+  if (!bFound){
+    wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress);
+    tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
+  }
+
   *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
-
-  tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
 
   return iRet = wrapper->getLastErr();
 }
@@ -2501,10 +2517,8 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECT
   * @brief   Send sync command on existing connection.
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendSyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
-  TML_INT32 iRet = TML_SUCCESS;
-
-  // TODO: Send sync message
-
+  int  iRet = TML_SUCCESS;
+  iRet = m_sender->sender_SendSyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true);
   return iRet;
 }
 

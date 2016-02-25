@@ -1549,17 +1549,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncMessage_A(TML_CORE_HANDLE cor
       }
     }
     catch (...){
-      try{
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_AsyncMessage");
-        m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "profile", profile);
-        tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "profile", profile);
-        m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "Host", sHost);
-        tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "Host", sHost);
-        m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "Port", sPort);
-        tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_AsyncMessage", "Port", sPort);
-      }
-      catch (...){
-      }
       iRet = TML_ERR_COMMON;
     }
   }
@@ -6122,7 +6111,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Connect");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connect(sAddress, connectionHandle);
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connect(sAddress, false, connectionHandle);
         if (TML_SUCCESS == iRet){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " succeeded");
         }
