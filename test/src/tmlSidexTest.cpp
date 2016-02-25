@@ -53,19 +53,25 @@ bool run_test(int no)
 {
   bool bDone = true;
   switch (no){
-    case 1:  bDone = sidexTest01();
+    case 1:  bDone = sidexTest01(); // SIDEX1
              break;
-    case 2:  bDone = sidexTest02();
+    case 2:  bDone = sidexTest02(); // SIDEX2
              break;
-    case 3:  bDone = sendAndListenTest01();
+    case 3:  reloadContent();// Reload
              break;
-    case 4:  bDone = sendAndListenTest02();
+    case 4:  bDone = listenerTest01();// Listener
              break;
-    case 5:  bDone = listenerTest01();
+    case 5:  bDone = senderTest01();// sender
              break;
-    case 6:  bDone = senderTest01();
+    case 6:  bDone = senderTest02();// sender(ConMgr)
              break;
-    case 7:  reloadContent();
+    case 7:  bDone = sendAndListenTest01();// Sync SEND & LISTEN
+             break;
+    case 8:  bDone = sendAndListenTest02();// Async SEND & LISTEN
+             break;
+    case 9:  bDone = sendAndListenTest03();// Sync SEND & LISTEN (ConMgr)
+             break;
+    case 10: bDone = sendAndListenTest04();// Async SEND & LISTEN (ConMgr)
              break;
     default: bDone = false;
              break;
@@ -93,11 +99,14 @@ int main(int argc, char **argv)
       printf ("Possible command line options\n");
       printf ("\"1\"     - perform SIDEX test01\n");
       printf ("\"2\"     - perform SIDEX test02\n");
-      printf ("\"3\"     - perform TML send & listen (synchron)\n");
-      printf ("\"4\"     - perform TML send & listen (asynchron)\n");
-      printf ("\"5\"     - perform TML listener\n");
-      printf ("\"6\"     - perform TML sender\n");
-      printf ("\"7\"     - reload SIDEX\n");
+      printf ("\"3\"     - reload SIDEX\n");
+      printf ("\"4\"     - perform TML listener\n");
+      printf ("\"5\"     - perform TML sender\n");
+      printf ("\"6\"     - TML sender (with connection mgr)\n");
+      printf ("\"7\"     - perform TML send & listen (synchron)\n");
+      printf ("\"8\"     - perform TML send & listen (asynchron)\n");
+      printf ("\"9\"     - perform TML send & listen (synchron with connection mgr)\n");
+      printf ("\"10\"    - perform TML send & listen (asynchron with connection mgr)\n");
       printf ("\"sidex\" - perform all SIDEX tests\n");
       printf ("\"tml\"   - perform all TML tests\n");
       printf ("\"all\"   - perform all SIDEX and TML tests\n");
@@ -142,14 +151,17 @@ int main(int argc, char **argv)
       printf ("TML/SIDEX Test:\n");
       printf ("==============:\n");
 
-      printf ("SIDEX test01                  - enter \"1<enter>\"\n");
-      printf ("SIDEX test02                  - enter \"2<enter>\"\n");
-      printf ("TML send & listen (synchron)  - enter \"3<enter>\"\n");
-      printf ("TML send & listen (asynchron) - enter \"4<enter>\"\n");
-      printf ("TML listener                  - enter \"5<enter>\"\n");
-      printf ("TML sender                    - enter \"6<enter>\"\n");
-      printf ("Reload SIDEX                  - enter \"7<enter>\"\n");
-      printf ("Exit demo                     - enter \"exit<enter>\"\n");
+      printf ("SIDEX test01                                     - enter \"1<enter>\"\n");
+      printf ("SIDEX test02                                     - enter \"2<enter>\"\n");
+      printf ("Reload SIDEX                                     - enter \"3<enter>\"\n");
+      printf ("TML listener                                     - enter \"4<enter>\"\n");
+      printf ("TML sender                                       - enter \"5<enter>\"\n");
+      printf ("TML sender (with connection mgr)                 - enter \"6<enter>\"\n");
+      printf ("TML send & listen (synchron)                     - enter \"7<enter>\"\n");
+      printf ("TML send & listen (asynchron)                    - enter \"8<enter>\"\n");
+      printf ("TML send & listen (synchron with connection mgr) - enter \"9<enter>\"\n");
+      printf ("TML send & listen (asynchron with connection mgr)- enter \"10<enter>\"\n");
+      printf ("Exit demo                        - enter \"exit<enter>\"\n");
       int i = scanf("%s", sInput);
       if (1 <= i){
         if (strcmp(sInput, (char*) "1") == 0)
@@ -166,6 +178,12 @@ int main(int argc, char **argv)
           bDone = run_test(6);
         if (strcmp(sInput, (char*) "7") == 0)
           bDone = run_test(7);
+        if (strcmp(sInput, (char*) "8") == 0)
+          bDone = run_test(8);
+        if (strcmp(sInput, (char*) "9") == 0)
+          bDone = run_test(9);
+        if (strcmp(sInput, (char*) "10") == 0)
+          bDone = run_test(10);
         if (strcmp(sInput, (char*) "exit") == 0)
           bDone = true;
       }

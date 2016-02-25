@@ -1889,11 +1889,12 @@ public:
      * @brief   Close a connection and release resources.
      *
      * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+     * @param   bDeregisterSenderRegistration if true the sender object has to deregister the connection
      *
      * @returns TML_SUCCESS in case of success.
      * @see tmlErrors.h,tmlStdTypes.h
      */
-    TML_INT32 tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle);
+    TML_INT32 tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle, bool bDeregisterSenderRegistration);
 
 
     /**

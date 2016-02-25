@@ -6133,11 +6133,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+  if (TML_HANDLE_TYPE_NULL == *connectionHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+    TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)*connectionHandle)->getCoreHandle();
     if (TML_HANDLE_TYPE_NULL == coreHandle){
       iRet = TML_ERR_MISSING_OBJ;
     }
@@ -6145,7 +6145,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE*
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Close");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_Close(connectionHandle);
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_Close(connectionHandle, true);
       }
     }
   }

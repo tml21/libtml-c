@@ -387,8 +387,20 @@ public:
      */
     void DeregisterConnectionLost();
 
+    /**
+     * @brief   Deregister connection lost callback messages
+     */
+    void DeregisterConnectionLost(tmlConnectionManageObj* connectionMgr);
 
     /**
+     * @brief    Deregister connection lost callback messages free resources of connection from sender
+     *
+     * @param   connectionMgrObj  reference to an ionstance of tmlConnectionManageObj
+     */
+     void DeregisterConnectionLostAndFree(tmlConnectionManageObj* connectionMgrObj);
+
+     
+     /**
      * @brief    Constructor.
      *
      * @param   ctx          Reference Vortex execution context.
@@ -467,7 +479,7 @@ public:
     /**
      * @brief    Perform the sending of a synchron Message.
      *
-     * @param   connectionHandle TML connection handle (TML_CORE_HANDLE)
+     * @param   connectionObj  reference to an ionstance of tmlConnectionObj
      * @param   iWindowSize    The window size.
      * @param   tmlhandle      Reference to an instance of TML_COMMAND_HANDLE containing the data to send.
      * @param   iTimeout       Timeout for the command execution (in ms).
@@ -510,6 +522,51 @@ public:
      */
      int sender_SendAsyncMessage(const char* profile, const char* sHost, const char* sPort, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, bool bLockCritical, bool bRawViaVortexPayloadFeeder);
 
+    /**
+     * @brief    Send an asynchron Message.
+     *
+     * @param   profile          URI of the profile for the requested operation.
+     * @param   connectionHandle TML connection handle (TML_CORE_HANDLE)
+     * @param   iWindowSize      The window size.
+     * @param   tmlhandle        Reference to an instance of TML_COMMAND_HANDLE containing the data to send.
+     * @param   iTimeout         Timeout for the command execution (in ms).
+     * @param   bLockCritical    Flag shows if mutex for critical section shall be fetched.
+     * @param   bRawViaVortexPayloadFeeder True in case of using the Vortex Payload Feeder API.
+     *
+     * @returns TML_SUCCESS in case of success.<br>
+     *          TML_ERR_INITIALIZATION in case of a common initialization problem.<br>
+     *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>
+     *          TML_ERR_SENDER_PROFILE_REGISTRATION if the connection can't register the profile.<br>
+     *          TML_ERR_SENDER_PROFILE_NOT_SUPPORTED if the profile is not supported by the server.<br>
+     *          TML_ERR_SENDER_INVALID_PARAMS if the host and/or port to connect is invalid.<br>
+     *          TML_ERR_COMMAND_MODE_UNDEFINED the mode is unknown.
+     *
+     * @see tmlErrors.h
+     */
+     int sender_SendAsyncMessage(const char* profile, TML_CONNECTION_HANDLE connectionHandle, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, bool bLockCritical, bool bRawViaVortexPayloadFeeder);
+
+    /**
+     * @brief    Perform the sending of an asynchron Message.
+     *
+     * @param   connectionObj  reference to an ionstance of tmlConnectionObj
+     * @param   iWindowSize    The window size.
+     * @param   tmlhandle      Reference to an instance of TML_COMMAND_HANDLE containing the data to send.
+     * @param   iTimeout       Timeout for the command execution (in ms).
+     * @param   mutexCriticalSection  If not NULL the mutex will be unlocked just before sending the message
+     * @param   iMode       The command mode (TMLCOM_MODE_ASYNC or TMLCOM_MODE_EVT).
+     *
+     * @returns TML_SUCCESS in case of success.<br>
+     *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>
+     *          TML_ERR_CHANNEL_NOT_INITIALIZED if the channel initialization failled.<br>
+     *          ERR_DUMPCONTENT if there is a problem converting the tmlhandle into a string.<br>
+     *          TML_ERR_TIMEOUT_ON_WAIT_FOR_ASYNC timeout during wait for end of async cmd execution.<br>
+     *          TML_ERR_SENDER_COMMUNICATION in case of a communication error.
+     *
+     * @see tmlErrors.h
+     */
+     int perform_SendAsyncMessage(tmlConnectionObj* connectionObj, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, bool bLockCritical, bool bRawViaVortexPayloadFeeder);
+
+     
     /**
      * @brief   Set the log- file index for explicit logs with closing the file
      * @param   iFileLogIndex       The index.

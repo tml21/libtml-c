@@ -2400,8 +2400,12 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUse
 /**
   * @brief   Close a connection and release resources.
   */
-TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle){
+TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle, bool bDeregisterSenderRegistration){
   TML_INT32 iRet = TML_SUCCESS;
+
+  if (bDeregisterSenderRegistration){
+    m_sender->DeregisterConnectionLostAndFree((tmlConnectionManageObj*)*connectionHandle);
+  }
 
   // Delete a TML connection handle from the connection list:
   tmlCoreWrapper_Delete_ConnectionItem(*connectionHandle);
@@ -2425,7 +2429,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
     TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
     tmlCoreWrapper_Get_Connection (i, &connection);
     if (connection){
-      tmlCoreWrapper_Connection_Close(&connection);
+      tmlCoreWrapper_Connection_Close(&connection, false);
     }
   }
 }
@@ -2505,10 +2509,8 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CO
   * @brief   Send async command on existing connection.
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
-  TML_INT32 iRet = TML_SUCCESS;
-
-  // TODO: Send async message
-
+  int  iRet = TML_SUCCESS;
+  iRet = m_sender->sender_SendAsyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true);
   return iRet;
 }
 

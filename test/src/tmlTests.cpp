@@ -52,17 +52,21 @@
 
 #ifdef TML_UNICODE
   #define IO_PROFILE                    (wchar_t*) L"http://wobe-team.com/profiles/plain_profile"
+  #define IO_PROFILE2                    (wchar_t*) L"http://wobe-team.com/profiles/plain_profile2"
   #define LISTENER_NETWORK_INTERFACE_IP (wchar_t*) L"0.0.0.0"
   #define IO_PORT                       (wchar_t*) L"44100"
   #define DESTINATION_HOST_IP           (wchar_t*) L"127.0.0.1"
+  #define DESTINATION_NETWORK_BINDING   (wchar_t*) L"127.0.0.1:44100"
 
   #define PARAMS                        (wchar_t*) L"PARAMS"
   #define SLEEP_MS                      (wchar_t*) L"SLEEP_MS"
 #else // TML_UNICODE
   #define IO_PROFILE                    (char*) "http://wobe-team.com/profiles/plain_profile"
+  #define IO_PROFILE2                    (char*) "http://wobe-team.com/profiles/plain_profile2"
   #define LISTENER_NETWORK_INTERFACE_IP (char*) "0.0.0.0"
   #define IO_PORT                       (char*) "44100"
   #define DESTINATION_HOST_IP           (char*) "127.0.0.1"
+  #define DESTINATION_NETWORK_BINDING   (char*) "127.0.0.1:44100"
 
   #define PARAMS                        (char*) "PARAMS"
   #define SLEEP_MS                      (char*) "SLEEP_MS"
@@ -118,6 +122,28 @@ void FUNC_C_DECL callbackMethodCmd4711(TML_COMMAND_HANDLE cmdMsg, TML_POINTER da
 
 
 /**
+ * Callback method invoked in case of incomming CMD- Code 4711
+ */
+void FUNC_C_DECL callbackMethodCmd4711P2(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data){
+  printf ("  envoke allbackMethodCmd4711 (PROFILE2)\n");
+
+  TML_INT32 iErr = TML_SUCCESS;
+  TML_INT64 iSleep = 0;
+  /////////////////////////////////////////////////////////////////////////
+  // Set sleep parameter
+  SIDEX_HANDLE sHandle = SIDEX_HANDLE_TYPE_NULL;
+  iErr = tml_Cmd_Acquire_Sidex_Handle(cmdMsg, &sHandle);
+  if (TML_SUCCESS == iErr)
+    iErr = sidex_Integer_Read(sHandle, PARAMS, SLEEP_MS, &iSleep);
+  if (TML_SUCCESS == iErr)
+    iErr = sidex_Integer_Write(sHandle, PARAMS, SLEEP_MS, iSleep / 2);
+  if (TML_SUCCESS == iErr)
+    iErr = tml_Cmd_Release_Sidex_Handle(cmdMsg);
+  wait (iSleep);
+}
+
+
+/**
  * Callback method invoked in case of command ready
  */
 void FUNC_C_DECL callbackMethodCommandReady(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data){
@@ -153,9 +179,17 @@ TML_INT32 initListener(TML_CORE_HANDLE* listenerCore)
   if (TML_SUCCESS == iErr)
     iErr = tml_Profile_Register (coreHandle, IO_PROFILE);
   /////////////////////////////////////////////////////////////////////////
+  // Register profile (unique profile name) for command dispatch action
+  if (TML_SUCCESS == iErr)
+    iErr = tml_Profile_Register (coreHandle, IO_PROFILE2);
+  /////////////////////////////////////////////////////////////////////////
   // Register a callbackmethod for command dispatching of command 4711
   if (TML_SUCCESS == iErr)
     iErr = tml_Profile_Register_Cmd (coreHandle, IO_PROFILE, (TML_COMMAND_ID_TYPE) 4711, callbackMethodCmd4711, TML_HANDLE_TYPE_NULL);
+  /////////////////////////////////////////////////////////////////////////
+  // Register a callbackmethod for command dispatching of command 4711
+  if (TML_SUCCESS == iErr)
+    iErr = tml_Profile_Register_Cmd (coreHandle, IO_PROFILE2, (TML_COMMAND_ID_TYPE) 4711, callbackMethodCmd4711P2, TML_HANDLE_TYPE_NULL);
   /////////////////////////////////////////////////////////////////////////
   // Enable listener
   if (TML_SUCCESS == iErr)
@@ -267,6 +301,57 @@ bool senderTest01()
 }
 
 /**
+ * A simple sender example 
+ */
+bool senderTest02()
+{
+  TML_INT32 iErr = TML_SUCCESS; // API return value
+  TML_COMMAND_HANDLE cmdMsg  = TML_HANDLE_TYPE_NULL;
+  TML_CORE_HANDLE coreHandle = TML_HANDLE_TYPE_NULL;
+
+  /////////////////////////////////////////////////////////////////////////
+  // Command creation:
+  iErr = createCmd4711(&cmdMsg, false);
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to send commands / messages 
+  if (TML_SUCCESS == iErr)
+    iErr = tml_Core_Open(&coreHandle, 0);
+
+  /////////////////////////////////////////////////////////////////////////
+  // send command / message 
+  if (TML_SUCCESS == iErr){
+#ifdef TML_UNICODE
+    fwprintf (stderr, L"Sending command 4711 to %ls -->\n", DESTINATION_HOST_IP);
+#else// TML_UNICODE
+    printf ("Sending command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
+
+    TML_CONNECTION_HANDLE connectionHandle = TML_HANDLE_TYPE_NULL;
+    iErr = tml_Core_Connect(coreHandle, DESTINATION_NETWORK_BINDING, &connectionHandle);
+    if (TML_SUCCESS == iErr){
+      iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE, cmdMsg, 10000);
+	  if (TML_SUCCESS == iErr){
+	    iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE2, cmdMsg, 10000);
+	  }
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////////
+  // Free the instance of Command / message HANDLE:
+  if (TML_HANDLE_TYPE_NULL != cmdMsg)
+    tml_Cmd_Free(&cmdMsg);
+  ///////////////////////////////////////////////////////////////////////
+  // Free the instance of TMLCore:
+  if (TML_HANDLE_TYPE_NULL != coreHandle)
+    tml_Core_Close(&coreHandle);
+  ///////////////////////////////////////////////////////////////////////
+  // Errorhandling:
+  if (TML_SUCCESS != iErr)
+    printf ("senderTest01 / error happened - Code = %d\n", iErr);
+  return true;
+}
+
+/**
  * A simple sync send / listen example 
  */
 bool sendAndListenTest01()
@@ -302,6 +387,14 @@ bool sendAndListenTest01()
     printf ("Sending sync command 4711 to %s -->\n", DESTINATION_HOST_IP);
 #endif// TML_UNICODE
     iErr = tml_Send_SyncMessage(coreSenderHandle, cmdMsg, IO_PROFILE, DESTINATION_HOST_IP, IO_PORT, 10000);
+    if (TML_SUCCESS == iErr){
+#ifdef TML_UNICODE
+      fwprintf (stderr, L"Sending async command 4711 (PROFILE2) to %ls -->\n", DESTINATION_HOST_IP);
+#else// TML_UNICODE
+      printf ("Sending async command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
+    iErr = tml_Send_SyncMessage(coreSenderHandle, cmdMsg, IO_PROFILE2, DESTINATION_HOST_IP, IO_PORT, 10000);
+      }
   }
   ///////////////////////////////////////////////////////////////////////
   // Free the instance of Command / message HANDLE:
@@ -358,6 +451,17 @@ bool sendAndListenTest02()
       printf ("Sending async command 4711 to %s -->\n", DESTINATION_HOST_IP);
 #endif// TML_UNICODE
       iErr = tml_Send_AsyncMessage(coreSenderHandle, cmdMsg, IO_PROFILE, DESTINATION_HOST_IP, IO_PORT, 500);
+
+      if (TML_SUCCESS == iErr)
+        iErr = createCmd4711(&cmdMsg, true);
+      if (TML_SUCCESS == iErr){
+  #ifdef TML_UNICODE
+        fwprintf (stderr, L"Sending async command 4711 (PROFILE2) to %ls -->\n", DESTINATION_HOST_IP);
+  #else// TML_UNICODE
+        printf ("Sending async command 4711 to %s -->\n", DESTINATION_HOST_IP);
+  #endif// TML_UNICODE
+        iErr = tml_Send_AsyncMessage(coreSenderHandle, cmdMsg, IO_PROFILE2, DESTINATION_HOST_IP, IO_PORT, 500);
+      }
     }
   }
   ///////////////////////////////////////////////////////////////////////
@@ -377,3 +481,145 @@ bool sendAndListenTest02()
     printf ("senderTest01 / error happened - Code = %d\n", iErr);
   return true;
 }
+
+/**
+ * A simple sync send / listen example with connection manange object
+ */
+bool sendAndListenTest03()
+{
+  TML_INT32 iErr = TML_SUCCESS; // API return value
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to receive commands / messages 
+  TML_CORE_HANDLE coreListenerHandle = TML_HANDLE_TYPE_NULL;
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to send commands / messages 
+  TML_CORE_HANDLE coreSenderHandle = TML_HANDLE_TYPE_NULL;
+  /////////////////////////////////////////////////////////////////////////
+  // TML_COMMAND_HANDLE Command / message HANDLE (internal represented by SIDEX data)
+  TML_COMMAND_HANDLE cmdMsg  = TML_HANDLE_TYPE_NULL;
+  /////////////////////////////////////////////////////////////////////////
+  // Listener initialisation:
+  iErr = initListener(&coreListenerHandle);
+  /////////////////////////////////////////////////////////////////////////
+  // Command / message creation:
+  if (TML_SUCCESS == iErr)
+    iErr = createCmd4711(&cmdMsg, false);
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to send commands / messages 
+  if (TML_SUCCESS == iErr)
+    iErr = tml_Core_Open(&coreSenderHandle, 0);
+
+  TML_CONNECTION_HANDLE connectionHandle = TML_HANDLE_TYPE_NULL;
+  iErr = tml_Core_Connect(coreSenderHandle, DESTINATION_NETWORK_BINDING, &connectionHandle);
+
+  /////////////////////////////////////////////////////////////////////////
+  // send a loop of command / messages
+  for (int i = 0; i < 10 && TML_SUCCESS == iErr; ++i){
+#ifdef TML_UNICODE
+    fwprintf (stderr, L"Sending sync command 4711 to %ls -->\n", DESTINATION_HOST_IP);
+#else// TML_UNICODE
+    printf ("Sending sync command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
+    iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE, cmdMsg, 10000);
+    if (TML_SUCCESS == iErr){
+#ifdef TML_UNICODE
+      fwprintf (stderr, L"Sending async command 4711 (PROFILE2) to %ls -->\n", DESTINATION_HOST_IP);
+#else// TML_UNICODE
+      printf ("Sending async command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
+    iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE2, cmdMsg, 10000);
+      }
+  }
+  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+    tml_Connection_Close(&connectionHandle);
+  }
+  ///////////////////////////////////////////////////////////////////////
+  // Free the instance of Command / message HANDLE:
+  if (TML_HANDLE_TYPE_NULL != cmdMsg)
+    tml_Cmd_Free(&cmdMsg);
+  ///////////////////////////////////////////////////////////////////////
+  // Free the instances of TMLCore:
+  if (TML_HANDLE_TYPE_NULL != coreSenderHandle)
+    tml_Core_Close(&coreSenderHandle);
+  if (TML_HANDLE_TYPE_NULL != coreListenerHandle)
+    tml_Core_Close(&coreListenerHandle);
+
+  ///////////////////////////////////////////////////////////////////////
+  // Errorhandling:
+  if (TML_SUCCESS != iErr)
+    printf ("senderTest01 / error happened - Code = %d\n", iErr);
+  return true;
+}
+
+/**
+ * A simple async send / listen example with connection manange object
+ */
+bool sendAndListenTest04()
+{
+  TML_INT32 iErr = TML_SUCCESS; // API return value
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to receive commands / messages 
+  TML_CORE_HANDLE coreListenerHandle = TML_HANDLE_TYPE_NULL;
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to send commands / messages 
+  TML_CORE_HANDLE coreSenderHandle = TML_HANDLE_TYPE_NULL;
+  /////////////////////////////////////////////////////////////////////////
+  // TML_COMMAND_HANDLE Command / message HANDLE (internal represented by SIDEX data)
+  TML_COMMAND_HANDLE cmdMsg  = TML_HANDLE_TYPE_NULL;
+  /////////////////////////////////////////////////////////////////////////
+  // Listener initialisation:
+  iErr = initListener(&coreListenerHandle);
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to send commands / messages 
+  if (TML_SUCCESS == iErr)
+    iErr = tml_Core_Open(&coreSenderHandle, 0);
+
+  TML_CONNECTION_HANDLE connectionHandle = TML_HANDLE_TYPE_NULL;
+  iErr = tml_Core_Connect(coreSenderHandle, DESTINATION_NETWORK_BINDING, &connectionHandle);
+
+  /////////////////////////////////////////////////////////////////////////
+  // send a loop of command / messages
+  for (int i = 10; i > 0 && TML_SUCCESS == iErr; --i){
+    /////////////////////////////////////////////////////////////////////////
+    // Command / message creation:
+    if (TML_SUCCESS == iErr)
+      iErr = createCmd4711(&cmdMsg, true);
+    if (TML_SUCCESS == iErr){
+#ifdef TML_UNICODE
+      fwprintf (stderr, L"Sending async command 4711 to %ls -->\n", DESTINATION_HOST_IP);
+#else// TML_UNICODE
+      printf ("Sending async command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
+      iErr = tml_Connection_SendAsync(connectionHandle, IO_PROFILE, cmdMsg, 500);
+
+      if (TML_SUCCESS == iErr)
+        iErr = createCmd4711(&cmdMsg, true);
+      if (TML_SUCCESS == iErr){
+  #ifdef TML_UNICODE
+        fwprintf (stderr, L"Sending async command 4711 (PROFILE2) to %ls -->\n", DESTINATION_HOST_IP);
+  #else// TML_UNICODE
+        printf ("Sending async command 4711 to %s -->\n", DESTINATION_HOST_IP);
+  #endif// TML_UNICODE
+        iErr = tml_Connection_SendAsync(connectionHandle, IO_PROFILE2, cmdMsg, 500);
+      }
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////
+  // Wait for a while to be shure to be synchron with the asynchron callback
+  // FOR THIS TEST to avoid a broken communication by closing the core handles
+  wait (10000);
+  ///////////////////////////////////////////////////////////////////////
+  // Free the instances of TMLCore:
+  if (TML_HANDLE_TYPE_NULL != coreSenderHandle)
+    tml_Core_Close(&coreSenderHandle);
+  if (TML_HANDLE_TYPE_NULL != coreListenerHandle)
+    tml_Core_Close(&coreListenerHandle);
+
+  ///////////////////////////////////////////////////////////////////////
+  // Errorhandling:
+  if (TML_SUCCESS != iErr)
+    printf ("senderTest01 / error happened - Code = %d\n", iErr);
+  return true;
+}
+
+

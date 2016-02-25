@@ -205,7 +205,7 @@ int tmlNetBinding::addIPAttrItem(int iBindings, SIDEX_BOOL bIsIPV6){
   SIDEX_INT32 iPos = 0;
   SIDEX_INT32   sRet;
 
-  printf ("isIPB6[%d] = %d\n", iBindings, bIsIPV6);
+  //printf ("isIPB6[%d] = %d\n", iBindings, bIsIPV6);
   vIPV6 = sidex_Variant_New_Boolean(bIsIPV6);
   sRet = sidex_Variant_List_Append(m_isIPV6, vIPV6, &iPos);
   if (SIDEX_SUCCESS != sRet){
@@ -239,7 +239,7 @@ int tmlNetBinding::addHostItem(int iBindings, const char* sHostStartAddr, int iL
   sHost_w = (char16_t*)UTF8toUTF16(sHost, &utfLen);
   sHost_x = UTF8toUTF32(sHost, &utfLen);
 
-printf ("Host[%d] = %s\n", iBindings, sHost);
+  //printf ("Host[%d] = %s\n", iBindings, sHost);
 
   SIDEX_VARIANT vHost;
   SIDEX_INT32   sRet;
@@ -313,7 +313,7 @@ int tmlNetBinding::addPortItem(int iBindings, const char* sPortStartAddr, int iL
   SIDEX_INT32 utfLen;
   sPort_w = (char16_t*)UTF8toUTF16(sPort, &utfLen);
   sPort_x = UTF8toUTF32(sPort, &utfLen);
-  printf ("Port[%d] = %s\n", iBindings, sPort);
+  //printf ("Port[%d] = %s\n", iBindings, sPort);
 
   SIDEX_VARIANT vPort;
   SIDEX_INT32   sRet;
@@ -388,7 +388,7 @@ int tmlNetBinding::addAddressItem(int iBindings, const char* sAddrStartAddr, int
   SIDEX_INT32 utfLen;
   sAddress_w = (char16_t*)UTF8toUTF16(sAddress, &utfLen);
   sAddress_x = UTF8toUTF32(sAddress, &utfLen);
-  printf ("Address[%d] = %s\n", iBindings, sAddress);
+  //printf ("Address[%d] = %s\n", iBindings, sAddress);
 
   SIDEX_VARIANT vAddress;
   SIDEX_INT32   sRet;

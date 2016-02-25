@@ -42,7 +42,10 @@
 
 bool listenerTest01();
 bool senderTest01();
+bool senderTest02();
 bool sendAndListenTest01();
 bool sendAndListenTest02();
+bool sendAndListenTest03();
+bool sendAndListenTest04();
 
 #endif // TMLTESTS_H

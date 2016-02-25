@@ -84,6 +84,28 @@ void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
   leaveCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlSingleCall", "DropAllOpenConnections", "Vortex CMD", "vortex_mutex_unlock");
 }
 
+/**
+ * @brief   Deregister connection lost callback messages
+ */
+void tmlSingleCall::DeregisterConnectionLost(tmlConnectionManageObj* connectionMgr)
+{
+  VortexConnection* connection = NULL;
+  if (NULL != connectionMgr){
+    connection = connectionMgr->getVortexConnection();
+  }
+  if (NULL != connection){
+    m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "DeregisterConnectionLost", "Vortex CMD", "vortex_connection_get_status");
+    VortexStatus cStatus = vortex_connection_get_status(connection);
+    if (VortexOk == cStatus){
+      //////////////////////////////////////////////////////////////////////////////////////////////
+      // This should only happen in case of the first time I found the connection in the link list:
+      ////////////////////////////////////////////////////////////////////////
+      // Deregister callback for connection close:
+      m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "DeregisterConnectionLost", "Vortex CMD", "vortex_connection_remove_on_close_full");
+      vortex_connection_remove_on_close_full (connection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
+    }
+  }
+}
 
 /**
  * @brief   Deregister connection lost callback messages
@@ -111,22 +133,7 @@ void tmlSingleCall::DeregisterConnectionLost()
         if (TML_SUCCESS == iRet){
           tmlConnectionManageObj* connectionMgr;
           connectionObj->getConnectionManageObj(&connectionMgr);
-          VortexConnection* connection = NULL;
-          if (NULL != connectionMgr){
-            connection = connectionMgr->getVortexConnection();
-          }
-          if (NULL != connection){
-            m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "DeregisterConnectionLost", "Vortex CMD", "vortex_connection_get_status");
-            VortexStatus cStatus = vortex_connection_get_status(connection);
-            if (VortexOk == cStatus){
-              //////////////////////////////////////////////////////////////////////////////////////////////
-              // This should only happen in case of the first time I found the connection in the link list:
-              ////////////////////////////////////////////////////////////////////////
-              // Deregister callback for connection close:
-              m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "DeregisterConnectionLost", "Vortex CMD", "vortex_connection_remove_on_close_full");
-              vortex_connection_remove_on_close_full (connection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
-            }
-          }
+          DeregisterConnectionLost(connectionMgr);
         }
       }
       delete (iKeys);
@@ -1122,25 +1129,12 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
 {
   TML_INT32  iRet = TML_SUCCESS;
   try{
-
-    /////////////////////////////////////////////////
-    // First I reset the error code and error message:
-    iRet = tml_Cmd_Header_SetError(tmlhandle, TML_SUCCESS);
-    if (TML_SUCCESS == iRet){
-      tml_Cmd_Header_SetErrorMessage(tmlhandle, (char*)"", 0);
-    }
-
     tmlConnectionObj* connectionObj = NULL;
-    /////////////////////////////////////////////////////////////////
-    // The tmlConnectionObj containing the TMLCoreSender:
+    iRet = GetConnectionElement(profile, sHost, sPort, &connectionObj, false, bRemoveMarkedObjs, NULL);
 
     if (TML_SUCCESS == iRet){
-      iRet = GetConnectionElement(profile, sHost, sPort, &connectionObj, false, bRemoveMarkedObjs, NULL);
+      iRet = perform_SendSyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, mutexCriticalSection, iMode);
     }
-
-    /////////////////////////////////////////////////////////////////
-    // Perform sending
-    iRet = perform_SendSyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, mutexCriticalSection, iMode);
   }
 
   catch (...){
@@ -1159,33 +1153,21 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
 {
   TML_INT32  iRet = TML_SUCCESS;
   try{
-
-    /////////////////////////////////////////////////
-    // First I reset the error code and error message:
-    iRet = tml_Cmd_Header_SetError(tmlhandle, TML_SUCCESS);
-    if (TML_SUCCESS == iRet){
-      tml_Cmd_Header_SetErrorMessage(tmlhandle, (char*)"", 0);
-    }
-
     tmlConnectionObj* connectionObj = NULL;
-    /////////////////////////////////////////////////////////////////
-    // The tmlConnectionObj containing the TMLCoreSender:
 
+    char*sHost = NULL;
+    char*sPort = NULL;
+    iRet = ((tmlConnectionManageObj*)connectionHandle)->getHost(&sHost);
     if (TML_SUCCESS == iRet){
-      char*sHost = NULL;
-      char*sPort = NULL;
-      iRet = ((tmlConnectionManageObj*)connectionHandle)->getHost(&sHost);
+      iRet = ((tmlConnectionManageObj*)connectionHandle)->getPort(&sPort);
       if (TML_SUCCESS == iRet){
-        iRet = ((tmlConnectionManageObj*)connectionHandle)->getPort(&sPort);
-        if (TML_SUCCESS == iRet){
-          iRet = GetConnectionElement(profile, sHost, sPort, &connectionObj, false, bRemoveMarkedObjs, (tmlConnectionManageObj*)connectionHandle);
-        }
+        iRet = GetConnectionElement(profile, sHost, sPort, &connectionObj, false, bRemoveMarkedObjs, (tmlConnectionManageObj*)connectionHandle);
       }
     }
 
-    /////////////////////////////////////////////////////////////////
-    // Perform sending
-    iRet = perform_SendSyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, mutexCriticalSection, iMode);
+    if (TML_SUCCESS == iRet){
+      iRet = perform_SendSyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, mutexCriticalSection, iMode);
+    }
   }
 
   catch (...){
@@ -1195,7 +1177,7 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
 }
 
 /**
- * @brief    Send a synchron Message.
+ * @brief    Perform the sending of a synchron Message.
  */
 int tmlSingleCall::perform_SendSyncMessage(tmlConnectionObj* connectionObj, int iWindowSize,
     TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout,
@@ -1204,56 +1186,59 @@ int tmlSingleCall::perform_SendSyncMessage(tmlConnectionObj* connectionObj, int 
   TML_INT32  iRet = TML_SUCCESS;
   int  iMsgNo;
   try{
-  ///////////////////////////////////////////////////////////////////////////////////////////////////
-  // Now it's time to leave a critical section if set / look at tmlcollectCall.loadBalancedSendSyncMessage():
-  if (NULL != mutexCriticalSection){
-    m_log->log (TML_LOG_VORTEX_MUTEX, "tmlSingleCall", "sender_SendSyncMessage",  "Vortex CMD", "vortex_mutex_unlock");
-    intern_mutex_unlock (mutexCriticalSection, m_log, "sender_SendSyncMessage");
-  }
-
-
-  TML_COMMAND_ID_TYPE iCmd;
-
-  if (TML_SUCCESS == iRet){
-    ////////////////////////////////////////////////////////////
-    // Check CMD for valid range (if CMD is no an Internal CMD):
-    iRet = tml_Cmd_Header_GetCommand(tmlhandle, &iCmd);
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Now it's time to leave a critical section if set / look at tmlcollectCall.loadBalancedSendSyncMessage():
+    if (NULL != mutexCriticalSection){
+      m_log->log (TML_LOG_VORTEX_MUTEX, "tmlSingleCall", "perform_SendSyncMessage",  "Vortex CMD", "vortex_mutex_unlock");
+      intern_mutex_unlock (mutexCriticalSection, m_log, "sender_SendSyncMessage");
+    }
+    /////////////////////////////////////////////////
+    // First I reset the error code and error message:
+    iRet = tml_Cmd_Header_SetError(tmlhandle, TML_SUCCESS);
+    if (TML_SUCCESS == iRet){
+      iRet = tml_Cmd_Header_SetErrorMessage(tmlhandle, (char*)"", 0);
+    }
+    TML_COMMAND_ID_TYPE iCmd;
     if (TML_SUCCESS == iRet){
       ////////////////////////////////////////////////////////////
-      // Set the command state:
-      iRet = tml_Cmd_Header_SetState(tmlhandle, TMLCOM_CSTATE_CREATED);
+      // Check CMD for valid range (if CMD is no an Internal CMD):
+      iRet = tml_Cmd_Header_GetCommand(tmlhandle, &iCmd);
       if (TML_SUCCESS == iRet){
         ////////////////////////////////////////////////////////////
-        // Set the command mode:
-        iRet = tml_Cmd_Header_SetMode(tmlhandle, iMode);
+        // Set the command state:
+        iRet = tml_Cmd_Header_SetState(tmlhandle, TMLCOM_CSTATE_CREATED);
         if (TML_SUCCESS == iRet){
           ////////////////////////////////////////////////////////////
-          // Possible new window size:
-          iRet = setChannelWindowSize(connectionObj, iWindowSize);
+          // Set the command mode:
+          iRet = tml_Cmd_Header_SetMode(tmlhandle, iMode);
           if (TML_SUCCESS == iRet){
+            ////////////////////////////////////////////////////////////
+            // Possible new window size:
+            iRet = setChannelWindowSize(connectionObj, iWindowSize);
             if (TML_SUCCESS == iRet){
-              ////////////////////////////////
-              // send the message:
-              TMLCoreSender* coreSender;
-              connectionObj->getSender(&coreSender);
-              iRet = coreSender->TMLCoreSender_SendMessage(connectionObj, tmlhandle, iTimeout, &iMsgNo);
+              if (TML_SUCCESS == iRet){
+                ////////////////////////////////
+                // send the message:
+                TMLCoreSender* coreSender;
+                connectionObj->getSender(&coreSender);
+                iRet = coreSender->TMLCoreSender_SendMessage(connectionObj, tmlhandle, iTimeout, &iMsgNo);
+              }
             }
           }
         }
       }
     }
-  }
-  if (TML_SUCCESS != iRet){
-    if (NULL != connectionObj){
-      connectionObj->unlock();
+    if (TML_SUCCESS != iRet){
+      if (NULL != connectionObj){
+        connectionObj->unlock();
+      }
     }
-  }
-  //////////////////////////////////////////////////////////////
-  // Set XML error ID & Message
-  ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_setLogicalError((int)iRet,DEFAULT_ERROR_MSG);
+    //////////////////////////////////////////////////////////////
+    // Set XML error ID & Message
+    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_setLogicalError((int)iRet,DEFAULT_ERROR_MSG);
   }
   catch (...){
-    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "sender_SendSyncMessage", "EXCEPTION / DebugVal", 0);
+    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "perform_SendSyncMessage", "EXCEPTION / DebugVal", 0);
   }
   return (int)iRet;
 }
@@ -1266,67 +1251,108 @@ int tmlSingleCall::sender_SendAsyncMessage(const char* profile, const char* sHos
 {
   TML_INT32  iRet = TML_SUCCESS;
   try{
-
-  /////////////////////////////////////////////////
-  // First I reset the error code and error message:
-  iRet = tml_Cmd_Header_SetError(tmlhandle, TML_SUCCESS);
-  if (TML_SUCCESS == iRet){
-    tml_Cmd_Header_SetErrorMessage(tmlhandle, (char*)"", 0);
-  }
-
-  tmlConnectionObj* connectionObj = NULL;
-  /////////////////////////////////////////////////////////////////
-  // The tmlConnectionObj containing the TMLCoreSender:
-  
-  //bLockCritical not used anymore:
-
-  if (TML_SUCCESS == iRet){
+    tmlConnectionObj* connectionObj = NULL;
     iRet = GetConnectionElement(profile, sHost, sPort, &connectionObj, bRawViaVortexPayloadFeeder, true, NULL);
-  }
 
-  TML_COMMAND_ID_TYPE iCmd;
-  if (TML_SUCCESS == iRet){
-    ////////////////////////////////////////////////////////////
-    // Check CMD for valid range (if CMD is no an Internal CMD):
-    iRet = tml_Cmd_Header_GetCommand(tmlhandle, &iCmd);
+    if (TML_SUCCESS == iRet){
+      iRet = perform_SendAsyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, bLockCritical, bRawViaVortexPayloadFeeder);
+    }
+  }
+  catch (...){
+    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "sender_SendAsyncMessage", "EXCEPTION / DebugVal", 0);
+  }
+  return (int)iRet;
+}
+
+
+/**
+ * @brief    Send an asynchron Message.
+ */
+int tmlSingleCall::sender_SendAsyncMessage(const char* profile, TML_CONNECTION_HANDLE connectionHandle, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, bool bLockCritical, bool bRawViaVortexPayloadFeeder)
+{
+  TML_INT32  iRet = TML_SUCCESS;
+  try{
+    tmlConnectionObj* connectionObj = NULL;
+
+    char*sHost = NULL;
+    char*sPort = NULL;
+    iRet = ((tmlConnectionManageObj*)connectionHandle)->getHost(&sHost);
+    if (TML_SUCCESS == iRet){
+      iRet = ((tmlConnectionManageObj*)connectionHandle)->getPort(&sPort);
+      if (TML_SUCCESS == iRet){
+        iRet = GetConnectionElement(profile, sHost, sPort, &connectionObj, bRawViaVortexPayloadFeeder, true, (tmlConnectionManageObj*)connectionHandle);
+      }
+    }
+
+    if (TML_SUCCESS == iRet){
+      iRet = perform_SendAsyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, bLockCritical, bRawViaVortexPayloadFeeder);
+    }
+  }
+  catch (...){
+    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "sender_SendAsyncMessage", "EXCEPTION / DebugVal", 0);
+  }
+  return (int)iRet;
+}
+
+
+/**
+ * @brief    Perform the sending of an asynchron Message.
+ */
+int tmlSingleCall::perform_SendAsyncMessage(tmlConnectionObj* connectionObj, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, bool bLockCritical, bool bRawViaVortexPayloadFeeder)
+{
+  TML_INT32  iRet = TML_SUCCESS;
+  try{
+    // bLockCritical not used anymore:
+
+    /////////////////////////////////////////////////
+    // First I reset the error code and error message:
+    iRet = tml_Cmd_Header_SetError(tmlhandle, TML_SUCCESS);
+    if (TML_SUCCESS == iRet){
+      iRet = tml_Cmd_Header_SetErrorMessage(tmlhandle, (char*)"", 0);
+    }
+    TML_COMMAND_ID_TYPE iCmd;
     if (TML_SUCCESS == iRet){
       ////////////////////////////////////////////////////////////
-      // Set the command state:
-      iRet = tml_Cmd_Header_SetState(tmlhandle, TMLCOM_CSTATE_CREATED);
+      // Check CMD for valid range (if CMD is no an Internal CMD):
+      iRet = tml_Cmd_Header_GetCommand(tmlhandle, &iCmd);
       if (TML_SUCCESS == iRet){
         ////////////////////////////////////////////////////////////
-        // Set the command mode:
-        iRet = tml_Cmd_Header_SetMode(tmlhandle, TMLCOM_MODE_ASYNC);
+        // Set the command state:
+        iRet = tml_Cmd_Header_SetState(tmlhandle, TMLCOM_CSTATE_CREATED);
         if (TML_SUCCESS == iRet){
           ////////////////////////////////////////////////////////////
-          // Possible new window size:
-          iRet = setChannelWindowSize(connectionObj, iWindowSize);
+          // Set the command mode:
+          iRet = tml_Cmd_Header_SetMode(tmlhandle, TMLCOM_MODE_ASYNC);
           if (TML_SUCCESS == iRet){
+            ////////////////////////////////////////////////////////////
+            // Possible new window size:
+            iRet = setChannelWindowSize(connectionObj, iWindowSize);
             if (TML_SUCCESS == iRet){
-              ////////////////////////////////
-              // send the message:
-              TMLCoreSender* coreSender;
-              connectionObj->getSender(&coreSender);
-              iRet = coreSender->TMLCoreSender_SendAsyncMessage(connectionObj, tmlhandle, iTimeout);
+              if (TML_SUCCESS == iRet){
+                ////////////////////////////////
+                // send the message:
+                TMLCoreSender* coreSender;
+                connectionObj->getSender(&coreSender);
+                iRet = coreSender->TMLCoreSender_SendAsyncMessage(connectionObj, tmlhandle, iTimeout);
+              }
             }
           }
         }
       }
     }
-  }
-  if (TML_SUCCESS != iRet){
-    if (NULL != connectionObj){
-      connectionObj->unlock();
+    if (TML_SUCCESS != iRet){
+      if (NULL != connectionObj){
+        connectionObj->unlock();
+      }
     }
-  }
 
-  ////////////////////////////////////////////////////////////////////////////////////////
-  // Set XML error ID & Message will be done in tmlCoreSender / AsyncHandlingThreadMethod
-  // and is not allowed here because a  Registered CommandReady entry may have freed the memory:
-  //((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_setLogicalError(iRet,DEFAULT_ERROR_MSG);
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Set XML error ID & Message will be done in tmlCoreSender / AsyncHandlingThreadMethod
+    // and is not allowed here because a  Registered CommandReady entry may have freed the memory:
+    //((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_setLogicalError(iRet,DEFAULT_ERROR_MSG);
   }
   catch (...){
-    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "sender_SendAsyncMessage", "EXCEPTION / DebugVal", 0);
+    tml_logI_A(TML_LOG_EVENT, "tmlSingleCall", "perform_SendAsyncMessage", "EXCEPTION / DebugVal", 0);
   }
   return (int)iRet;
 }
@@ -1381,4 +1407,48 @@ void tmlSingleCall::leaveCriticalSection(int iLogMask, VortexMutex* mutex, int* 
  */
 void tmlSingleCall::setLogFileIndex(int iLogFileIndex){
   m_iLogFileIndex = iLogFileIndex;
+}
+
+
+void tmlSingleCall::DeregisterConnectionLostAndFree(tmlConnectionManageObj* connectionMgrObj){
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlSingleCall", "sender_FlagConnectionClose", "Vortex CMD", "vortex_mutex_lock");
+
+
+  bool bFound = false;
+  do{
+    bFound = false;
+    int iSize;
+    TML_INT32 iRet = m_ConnectionElementHT->hashSize(&iSize);
+    if (TML_SUCCESS == iRet && 0 < iSize){
+      TML_INT64* iKeys;
+      iRet = m_ConnectionElementHT->getKeys(&iKeys);
+      if (TML_SUCCESS == iRet){
+        TML_INT64 iFoundKey = 0;
+        for (int i = 0; i < iSize && TML_SUCCESS == iRet && !bFound;++i){
+          tmlConnectionManageObj* refConnectionMgrObj = TML_HANDLE_TYPE_NULL;
+          tmlConnectionObj* connectionObj;
+          iRet = m_ConnectionElementHT->getValue(iKeys[i], (void**) &connectionObj);
+          if (TML_SUCCESS == iRet){
+            connectionObj->getConnectionManageObj(&refConnectionMgrObj);
+            if (refConnectionMgrObj == connectionMgrObj){
+              bFound = true;
+              iFoundKey = iKeys[i];
+            }
+          }
+        }
+        if (bFound){
+          DeregisterConnectionLost(connectionMgrObj);
+          //////////////////////////////////////
+          // Now I can delete the list element:
+          m_ConnectionElementHT->removeEntry(iFoundKey);
+        }
+        delete (iKeys);
+      }
+    }
+  }while (bFound);
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  leaveCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlSingleCall", "sender_FlagConnectionClose", "Vortex CMD", "vortex_mutex_unlock");
 }
