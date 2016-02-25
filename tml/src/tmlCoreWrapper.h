@@ -794,7 +794,6 @@ public:
      * @param   sHost       The host name / IP number.
      * @param   sPort       The Port.
      * @param   iTimeout    Timeout for the command execution (in ms).
-     * @param   iMode       The command mode (TMLCOM_MODE_ASYNC or TMLCOM_MODE_EVT).
      *
      * @returns TML_SUCCESS in case of success.<br>
      *          TML_ERR_INITIALIZATION in case of a common initialization problem.<br>
@@ -806,7 +805,7 @@ public:
      *
      * @see tmlErrors.h
      */
-    int tmlCoreWrapper_SendAsyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout, int iMode);
+    int tmlCoreWrapper_SendAsyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout);
 
 
     /**

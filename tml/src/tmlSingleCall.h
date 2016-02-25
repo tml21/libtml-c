@@ -426,6 +426,7 @@ public:
      * @param   iTimeout       Timeout for the command execution (in ms).
      * @param   mutexCriticalSection  If not NULL the mutex will be unlocked just before sending the messaghe
      * @param   bRemoveMarkedObjs Flag if true, pending unsubscription lists will be emptied, if possible
+     * @param   iMode          The command mode (TMLCOM_MODE_SYNC or TMLCOM_MODE_EVT).
      *
      * @returns TML_SUCCESS in case of success.<br>
      *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>
@@ -436,7 +437,7 @@ public:
      *
      * @see tmlErrors.h
      */
-     int sender_SendSyncMessage(const char* profile, const char* sHost, const char* sPort, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, VortexMutex* mutexCriticalSection, bool bRemoveMarkedObjs);
+     int sender_SendSyncMessage(const char* profile, const char* sHost, const char* sPort, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, VortexMutex* mutexCriticalSection, bool bRemoveMarkedObjs, int iMode);
 
 
     /**
@@ -449,6 +450,7 @@ public:
      * @param   iTimeout         Timeout for the command execution (in ms).
      * @param   mutexCriticalSection  If not NULL the mutex will be unlocked just before sending the messaghe
      * @param   bRemoveMarkedObjs Flag if true, pending unsubscription lists will be emptied, if possible
+     * @param   iMode          The command mode (TMLCOM_MODE_SYNC or TMLCOM_MODE_EVT).
      *
      * @returns TML_SUCCESS in case of success.<br>
      *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>
@@ -459,7 +461,7 @@ public:
      *
      * @see tmlErrors.h
      */
-     int sender_SendSyncMessage(const char* profile, TML_CONNECTION_HANDLE connectionHandle, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, VortexMutex* mutexCriticalSection, bool bRemoveMarkedObjs);
+     int sender_SendSyncMessage(const char* profile, TML_CONNECTION_HANDLE connectionHandle, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, VortexMutex* mutexCriticalSection, bool bRemoveMarkedObjs, int iMode);
 
 
     /**
@@ -469,7 +471,8 @@ public:
      * @param   iWindowSize    The window size.
      * @param   tmlhandle      Reference to an instance of TML_COMMAND_HANDLE containing the data to send.
      * @param   iTimeout       Timeout for the command execution (in ms).
-     * @param   mutexCriticalSection  If not NULL the mutex will be unlocked just before sending the messaghe
+     * @param   mutexCriticalSection  If not NULL the mutex will be unlocked just before sending the message
+     * @param   iMode       The command mode (TMLCOM_MODE_ASYNC or TMLCOM_MODE_EVT).
      *
      * @returns TML_SUCCESS in case of success.<br>
      *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>
@@ -480,7 +483,7 @@ public:
      *
      * @see tmlErrors.h
      */
-    int perform_SendSyncMessage(tmlConnectionObj* connectionObj, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, VortexMutex* mutexCriticalSection);
+    int perform_SendSyncMessage(tmlConnectionObj* connectionObj, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, VortexMutex* mutexCriticalSection, int iMode);
 
 
     /**
@@ -492,7 +495,6 @@ public:
      * @param   iWindowSize    The window size.
      * @param   tmlhandle      Reference to an instance of TML_COMMAND_HANDLE containing the data to send.
      * @param   iTimeout       Timeout for the command execution (in ms).
-     * @param   iMode          The command mode (TMLCOM_MODE_ASYNC or TMLCOM_MODE_EVT).
      * @param   bLockCritical  Flag shows if mutex for critical section shall be fetched.
      * @param   bRawViaVortexPayloadFeeder True in case of using the Vortex Payload Feeder API.
      *
@@ -506,7 +508,7 @@ public:
      *
      * @see tmlErrors.h
      */
-     int sender_SendAsyncMessage(const char* profile, const char* sHost, const char* sPort, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, int iMode, bool bLockCritical, bool bRawViaVortexPayloadFeeder);
+     int sender_SendAsyncMessage(const char* profile, const char* sHost, const char* sPort, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, bool bLockCritical, bool bRawViaVortexPayloadFeeder);
 
     /**
      * @brief   Set the log- file index for explicit logs with closing the file

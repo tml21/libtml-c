@@ -1118,7 +1118,7 @@ int tmlSingleCall::setChannelWindowSize(tmlConnectionObj* connectionObj, int iWi
 int tmlSingleCall::sender_SendSyncMessage(const char* profile,
     const char* sHost, const char* sPort, int iWindowSize,
     TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout,
-    VortexMutex* mutexCriticalSection, bool bRemoveMarkedObjs)
+    VortexMutex* mutexCriticalSection, bool bRemoveMarkedObjs, int iMode)
 {
   TML_INT32  iRet = TML_SUCCESS;
   try{
@@ -1140,7 +1140,7 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
 
     /////////////////////////////////////////////////////////////////
     // Perform sending
-    iRet = perform_SendSyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, mutexCriticalSection);
+    iRet = perform_SendSyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, mutexCriticalSection, iMode);
   }
 
   catch (...){
@@ -1155,7 +1155,7 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
 int tmlSingleCall::sender_SendSyncMessage(const char* profile,
     TML_CONNECTION_HANDLE connectionHandle, int iWindowSize,
     TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout,
-    VortexMutex* mutexCriticalSection, bool bRemoveMarkedObjs)
+    VortexMutex* mutexCriticalSection, bool bRemoveMarkedObjs, int iMode)
 {
   TML_INT32  iRet = TML_SUCCESS;
   try{
@@ -1185,7 +1185,7 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
 
     /////////////////////////////////////////////////////////////////
     // Perform sending
-    iRet = perform_SendSyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, mutexCriticalSection);
+    iRet = perform_SendSyncMessage(connectionObj, iWindowSize, tmlhandle, iTimeout, mutexCriticalSection, iMode);
   }
 
   catch (...){
@@ -1199,7 +1199,7 @@ int tmlSingleCall::sender_SendSyncMessage(const char* profile,
  */
 int tmlSingleCall::perform_SendSyncMessage(tmlConnectionObj* connectionObj, int iWindowSize,
     TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout,
-    VortexMutex* mutexCriticalSection)
+    VortexMutex* mutexCriticalSection, int iMode)
 {
   TML_INT32  iRet = TML_SUCCESS;
   int  iMsgNo;
@@ -1225,7 +1225,7 @@ int tmlSingleCall::perform_SendSyncMessage(tmlConnectionObj* connectionObj, int 
       if (TML_SUCCESS == iRet){
         ////////////////////////////////////////////////////////////
         // Set the command mode:
-        iRet = tml_Cmd_Header_SetMode(tmlhandle, TMLCOM_MODE_SYNC);
+        iRet = tml_Cmd_Header_SetMode(tmlhandle, iMode);
         if (TML_SUCCESS == iRet){
           ////////////////////////////////////////////////////////////
           // Possible new window size:
@@ -1262,7 +1262,7 @@ int tmlSingleCall::perform_SendSyncMessage(tmlConnectionObj* connectionObj, int 
 /**
  * @brief    Send an asynchron Message.
  */
-int tmlSingleCall::sender_SendAsyncMessage(const char* profile, const char* sHost, const char* sPort, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, int iMode, bool bLockCritical, bool bRawViaVortexPayloadFeeder)
+int tmlSingleCall::sender_SendAsyncMessage(const char* profile, const char* sHost, const char* sPort, int iWindowSize, TML_COMMAND_HANDLE tmlhandle, unsigned int iTimeout, bool bLockCritical, bool bRawViaVortexPayloadFeeder)
 {
   TML_INT32  iRet = TML_SUCCESS;
   try{
@@ -1296,7 +1296,7 @@ int tmlSingleCall::sender_SendAsyncMessage(const char* profile, const char* sHos
       if (TML_SUCCESS == iRet){
         ////////////////////////////////////////////////////////////
         // Set the command mode:
-        iRet = tml_Cmd_Header_SetMode(tmlhandle, iMode);
+        iRet = tml_Cmd_Header_SetMode(tmlhandle, TMLCOM_MODE_ASYNC);
         if (TML_SUCCESS == iRet){
           ////////////////////////////////////////////////////////////
           // Possible new window size:

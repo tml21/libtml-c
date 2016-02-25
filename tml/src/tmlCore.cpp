@@ -1545,7 +1545,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncMessage_A(TML_CORE_HANDLE cor
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_AsyncMessage");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendAsyncMessage(tmlhandle, profile, sHost, sPort, (unsigned int) iTimeout, TMLCOM_MODE_ASYNC);
+        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendAsyncMessage(tmlhandle, profile, sHost, sPort, (unsigned int) iTimeout);
       }
     }
     catch (...){

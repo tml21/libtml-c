@@ -1570,7 +1570,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Get_Logging_Value(TML_INT32* iLogValue){
 int tmlCoreWrapper::tmlCoreWrapper_SendSyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout)
 {
   int  iRet = TML_SUCCESS;
-  iRet = m_sender->sender_SendSyncMessage(profile, sHost, sPort, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true);
+  iRet = m_sender->sender_SendSyncMessage(profile, sHost, sPort, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true, TMLCOM_MODE_SYNC);
   return iRet;
 }
 
@@ -1579,10 +1579,10 @@ int tmlCoreWrapper::tmlCoreWrapper_SendSyncMessage(TML_COMMAND_HANDLE tmlhandle,
  * @brief    Send an asynchron Message.
  */
 
-int tmlCoreWrapper::tmlCoreWrapper_SendAsyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout, int iMode)
+int tmlCoreWrapper::tmlCoreWrapper_SendAsyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout)
 {
   int  iRet = TML_SUCCESS;
-  iRet = m_sender->sender_SendAsyncMessage(profile, sHost, sPort, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), iMode, true, false);
+  iRet = m_sender->sender_SendAsyncMessage(profile, sHost, sPort, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), true, false);
   return iRet;
 }
 
@@ -1756,7 +1756,7 @@ int tmlCoreWrapper::tmlCoreWrapper_EventSendSubscriptionRequest(const char* prof
   if (TML_SUCCESS == iRet)
     iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_EVENT_SUBSCRIPTION_REQUEST);
   if (TML_SUCCESS == iRet)
-    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true);
+    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -1802,7 +1802,7 @@ int tmlCoreWrapper::tmlCoreWrapper_EventSendUnsubscriptionRequest(const char* pr
     iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_EVENT_UNSUBSCRIPTION_REQUEST);
 
   if (TML_SUCCESS == iRet)
-    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true);
+    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -1939,7 +1939,7 @@ int tmlCoreWrapper::tmlCoreWrapper_LoadBalancedSendSubscriptionRequest(const cha
     iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_LOAD_BALANCED_SUBSCRIPTION_REQUEST);
 
   if (TML_SUCCESS == iRet)
-    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true);
+    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -1986,7 +1986,7 @@ int tmlCoreWrapper::tmlCoreWrapper_LoadBalancedSendUnsubscriptionRequest(const c
     iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST);
 
   if (TML_SUCCESS == iRet)
-    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true);
+    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -2518,7 +2518,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECT
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendSyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
   int  iRet = TML_SUCCESS;
-  iRet = m_sender->sender_SendSyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true);
+  iRet = m_sender->sender_SendSyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true, TMLCOM_MODE_SYNC);
   return iRet;
 }
 

@@ -77,7 +77,7 @@ int getLastErrorInternCB(comParamStruct* cp)
     // Maybe someone has called the exit /close:
     iRet = ((tmlCoreWrapper*)cp->coreHandle)->tmlCoreWrapper_IsAccessible();
     if (TML_SUCCESS == iRet){
-      iRet = cp->sender->sender_SendSyncMessage(cp->sProfile, cp->sHost, cp->sPort, cp->iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true);
+      iRet = cp->sender->sender_SendSyncMessage(cp->sProfile, cp->sHost, cp->sPort, cp->iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true, TMLCOM_MODE_SYNC);
       if (TML_SUCCESS == iRet){
         command->tmlObjWrapper_Acquire_Sidex_Handle(&sHandle);
         TML_INT64 errVal;
@@ -124,7 +124,7 @@ int cancelDownload(comParamStruct* cp){
 
   if (TML_SUCCESS == iRet){
     cp->log->log (TML_LOG_STREAM_HANDLING, "tmlReceiverStream", "cancelDownload", "SendSync CMD to source CMD_INTERNAL_STREAM_CANCEL_DOWNLOAD", cp->iStreamID);
-    iRet = cp->sender->sender_SendSyncMessage(cp->sProfile, cp->sHost, cp->sPort, cp->iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true);
+    iRet = cp->sender->sender_SendSyncMessage(cp->sProfile, cp->sHost, cp->sPort, cp->iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true, TMLCOM_MODE_SYNC);
   }
 
   delete (command);
@@ -442,7 +442,7 @@ void tmlReceiverStream::reset(bool bSendCancel){
 
     if (TML_SUCCESS == iRet){
       m_log->log (TML_LOG_STREAM_HANDLING, "tmlReceiverStream", "reset", "SendSync CMD to source", "CMD_INTERNAL_STREAM_CLOSE");
-      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true);
+      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true, TMLCOM_MODE_SYNC);
       m_log->log (TML_LOG_STREAM_HANDLING, "tmlReceiverStream", "reset", "CMD_INTERNAL_STREAM_CLOSE to source", "finished");
     }
     delete (command);
@@ -491,7 +491,7 @@ int tmlReceiverStream::getSize (TML_INT64* rsize){
     command->tmlObjWrapper_Release_Sidex_Handle();
 
     if (TML_SUCCESS == iRet){
-      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true);
+      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true, TMLCOM_MODE_SYNC);
       getLastErrorIntern(&m_iLastErr);
     }
 
@@ -532,7 +532,7 @@ int tmlReceiverStream::seek (TML_INT64 seekPos, tmlSeekOrigin origin){
     command->tmlObjWrapper_Release_Sidex_Handle();
 
     if (TML_SUCCESS == iRet){
-      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true);
+      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true, TMLCOM_MODE_SYNC);
       getLastErrorIntern(&m_iLastErr);
     }
 
@@ -566,7 +566,7 @@ int tmlReceiverStream::getPosition (TML_INT64* rposition){
     command->tmlObjWrapper_Release_Sidex_Handle();
 
     if (TML_SUCCESS == iRet){
-      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true);
+      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true, TMLCOM_MODE_SYNC);
       getLastErrorIntern(&m_iLastErr);
     }
     if (TML_SUCCESS == iRet)
@@ -602,7 +602,7 @@ int tmlReceiverStream::getLastErrorIntern(TML_INT32* iErr){
     command->tmlObjWrapper_Release_Sidex_Handle();
 
     if (TML_SUCCESS == iRet){
-      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true);
+      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true, TMLCOM_MODE_SYNC);
       if (TML_SUCCESS == iRet){
         command->tmlObjWrapper_Acquire_Sidex_Handle(&sHandle);
         TML_INT64 errVal;
@@ -656,7 +656,7 @@ int tmlReceiverStream::writeOneBuffer(void* buffer, TML_INT32 count){
     if (TML_SUCCESS == iRet){
 
       m_log->log (TML_LOG_STREAM_HANDLING, "tmlReceiverStream", "write", "SendSync CMD", "CMD_INTERNAL_STREAM_READ");
-      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true);
+      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true, TMLCOM_MODE_SYNC);
       m_log->log (TML_LOG_STREAM_HANDLING, "tmlReceiverStream", "write", "CMD_INTERNAL_STREAM_READ", "finished");
     }
     delete (command);
@@ -724,7 +724,7 @@ int tmlReceiverStream::read (void* buffer, TML_INT32 count, TML_INT32* bytesRead
     if (TML_SUCCESS == iRet){
 
       m_log->log (TML_LOG_STREAM_HANDLING, "tmlReceiverStream", "read", "SendSync CMD", "CMD_INTERNAL_STREAM_READ");
-      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true);
+      iRet = m_sender->sender_SendSyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, NULL, true, TMLCOM_MODE_SYNC);
       getLastErrorIntern(&m_iLastErr);
 
       m_log->log (TML_LOG_STREAM_HANDLING, "tmlReceiverStream", "read", "CMD_INTERNAL_STREAM_READ", "finished");
@@ -846,7 +846,7 @@ int tmlReceiverStream::downloadData (tmlCriticalSectionObj* criticalSectionRecei
     if (TML_SUCCESS == iRet){
 
       m_log->log (TML_LOG_STREAM_HANDLING, "tmlReceiverStream", "downloadData", "SendAsync CMD", "CMD_INTERNAL_STREAM_DOWNLOAD");
-      iRet = m_sender->sender_SendAsyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, TMLCOM_MODE_ASYNC, true, true);
+      iRet = m_sender->sender_SendAsyncMessage(m_sProfile, m_sHost, m_sPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, 6000, true, true);
     }
     if (TML_SUCCESS != iRet){
       ///////////////////////////////////////////////

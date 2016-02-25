@@ -719,7 +719,7 @@ bool tmlCollectCall::eventSendMessage2ndStep(void* callbackData)
         bool bLogPrinted = data->destinationObj->eventMessageStartInfo();
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Send the message but flag, it has it's source in an event handling / there must not be an emptying of pending unsubscription objects:
-        int iErrorOutOfSendAsyncMessage = sender_SendSyncMessage(profile, sHost, sPort, iWindowSize, cmdHandle, iTimeout, NULL, false);
+        int iErrorOutOfSendAsyncMessage = sender_SendSyncMessage(profile, sHost, sPort, iWindowSize, cmdHandle, iTimeout, NULL, false, TMLCOM_MODE_EVT);
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Event Done - Logging:
         data->destinationObj->eventMessageDoneInfo(bLogPrinted);
@@ -1109,7 +1109,7 @@ int tmlCollectCall::loadBalancedSendSyncMessage(int iWindowSize, TML_COMMAND_HAN
         // I pass the mutex to the sender because it knows better the 
         // time to unlock - if the data / addresses may be save to be
         // overwritten by a nother thred instance:
-        iRet = sender_SendSyncMessage(profile, sHost, sPort, iWindowSize, tmlhandle, iTimeout, &m_mutexCollectCallCriticalSection, true);
+        iRet = sender_SendSyncMessage(profile, sHost, sPort, iWindowSize, tmlhandle, iTimeout, &m_mutexCollectCallCriticalSection, true, TMLCOM_MODE_SYNC);
         ++iDebug;
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // 	 of course I have to fetch the critical Section again afterward:
@@ -1220,7 +1220,7 @@ int tmlCollectCall::loadBalancedSendAsyncMessage(int iWindowSize, TML_COMMAND_HA
         destinationObj->getMessageDestinationPort(&sPort);
         //////////////////////////////////////////////////////////////////
         // Send AsyncMessage
-        iRet = sender_SendAsyncMessage(profile, sHost, sPort, iWindowSize, tmlhandle, iTimeout, TMLCOM_MODE_ASYNC, false, false);
+        iRet = sender_SendAsyncMessage(profile, sHost, sPort, iWindowSize, tmlhandle, iTimeout, false, false);
         ++iDebug;
         switch (iRet){
           case TML_ERR_SENDER_INVALID_PARAMS:
@@ -1491,7 +1491,7 @@ int tmlCollectCall::activityStateRequest(tmlCollectCallDestinationObjHandler* de
     if (TML_SUCCESS == iRet){
       ////////////////////////////////////////////////
       // Send Command for the request
-      iRet = sender_SendSyncMessage(profile, sHost, sPort, iWindowSize, cmdHandle, DEFAULT_CONNECTION_TIMEOUT, NULL, true);
+      iRet = sender_SendSyncMessage(profile, sHost, sPort, iWindowSize, cmdHandle, DEFAULT_CONNECTION_TIMEOUT, NULL, true, TMLCOM_MODE_SYNC);
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // Note: If iRet == TML_ERR_INFORMATION_UNDEFINED, the callback function on the other side isn't implemented.
     }
