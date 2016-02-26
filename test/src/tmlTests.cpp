@@ -330,9 +330,9 @@ bool senderTest02()
     iErr = tml_Core_Connect(coreHandle, DESTINATION_NETWORK_BINDING, &connectionHandle);
     if (TML_SUCCESS == iErr){
       iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE, cmdMsg, 10000);
-	  if (TML_SUCCESS == iErr){
-	    iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE2, cmdMsg, 10000);
-	  }
+	    if (TML_SUCCESS == iErr){
+	      iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE2, cmdMsg, 10000);
+	    }
     }
   }
 

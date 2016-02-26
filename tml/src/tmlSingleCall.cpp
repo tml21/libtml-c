@@ -163,23 +163,6 @@ void tmlSingleCall::ShutdownAllOpenConnections()
         if (TML_SUCCESS == iRet){
           TMLCoreSender* sender;
           connectionObj->getSender(&sender);
-
-          tmlConnectionManageObj* connectionMgr;
-          connectionObj->getConnectionManageObj(&connectionMgr);
-          VortexConnection* connection = NULL;
-          if (NULL != connectionMgr){
-            connection = connectionMgr->getVortexConnection();
-          }
-          if (NULL != connection){
-            m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "ShutdownAllOpenConnections", "Vortex CMD", "vortex_connection_get_status");
-            VortexStatus cStatus = vortex_connection_get_status(connection);
-            if (VortexOk == cStatus){
-              //////////////////////////////////////////////////////////////////////////////////////////////////////////
-              // shutdown the connection but don't close it - this will be done later after TMLCoreSender- destruction :
-              m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "ShutdownAllOpenConnections", "Vortex CMD", "ToDo vortex_connection_shutdown");
-              //vortex_connection_shutdown(connection);
-            }
-          }
           //////////////////////////////////////////////////////////////////////////////////////////////////////////
           // I can do TMLCoreSender- destruction now:
           delete (sender);
@@ -229,30 +212,6 @@ void tmlSingleCall::CloseAllOpenConnections()
       for (int i = 0; i < iSize && TML_SUCCESS == iRet;++i){
         iRet = m_ConnectionElementHT->getValue(iKeys[i], (void**) &connectionObj);
         if (TML_SUCCESS == iRet){
-          VortexChannel* channel;
-          connectionObj->getChannel(&channel);
-          TMLCoreSender* sender;
-          connectionObj->getSender(&sender);
-
-          tmlConnectionManageObj* connectionMgr;
-          connectionObj->getConnectionManageObj(&connectionMgr);
-          VortexConnection* connection = NULL;
-          if (NULL != connectionMgr){
-            connection = connectionMgr->getVortexConnection();
-          }
-          if (NULL != connection){
-            m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "CloseAllOpenConnections", "Vortex CMD", "vortex_connection_get_status");
-            VortexStatus cStatus = vortex_connection_get_status(connection);
-            if (VortexConnectionForcedClose == cStatus){
-              //////////////////////////////////////////////////////////////////////////////////////////////
-              // This should only happen in case of the first time I found the connection in the link list:
-              //////////////////////////////////////////////////////////////////////////////////////////////////////////
-              // Now close the connection to get rid if m_ctx references:
-              m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "CloseAllOpenConnections", "Vortex CMD", "ToDo vortex_connection_close");
-              //vortex_connection_close(connection);
-              connection = NULL; 
-            }
-          }
           //////////////////////////////////////
           // Now I can delete the list element:
           m_ConnectionElementHT->removeEntry(iKeys[i]);
@@ -714,16 +673,6 @@ void tmlSingleCall::RemoveMarkedSenderOutOfConnectionList(bool bLockCritical)
               ////////////////////////////////////////
               // Wait until pending cmd is finished:
               sender->TMLCoreSender_WaitForPendingAsyncCmd();
-              tmlConnectionManageObj* connectionMgr;
-              connectionObj->getConnectionManageObj(&connectionMgr);
-              VortexConnection* connection = NULL;
-              if (NULL != connectionMgr){
-                connection = connectionMgr->getVortexConnection();
-              }
-              if (NULL != connection){
-                m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "RemoveMarkedSenderOutOfConnectionList", "Vortex CMD", "ToDo vortex_connection_shutdown");
-                //vortex_connection_shutdown(connection);
-              }
               // free memory:
               delete (sender);
               //////////////////////////////////////
@@ -853,15 +802,6 @@ int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const c
                   NULL, NULL,
                   NULL, NULL))
           {
-            ////////////////////////////////////////////////////////////////////////
-            // shutdown connection:
-            m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "ToDo vortex_connection_shutdown");
-            //vortex_connection_shutdown(connection);
-            ////////////////////////////////////////////////////////////////////////
-            // close connection to get rid of references:
-            m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "ToDo vortex_connection_close");
-            //vortex_connection_close(connection);
-            connection = NULL;
             // Problem with the register;
             iRet = TML_ERR_SENDER_PROFILE_REGISTRATION;
           }
@@ -869,15 +809,6 @@ int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const c
       }
       else{
         m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection profile ", profile, " is not supported !");
-        ////////////////////////////////////////////////////////////////////////
-        // shutdown connection:
-        m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "ToDo vortex_connection_shutdown");
-        //vortex_connection_shutdown(connection);
-        ////////////////////////////////////////////////////////////////////////
-        // close connection to get rid of references:
-        m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "ToDo vortex_connection_close");
-        // vortex_connection_close(connection);
-        connection = NULL;
         // Profile is not supported:
         iRet = TML_ERR_SENDER_PROFILE_NOT_SUPPORTED;
       }
@@ -885,15 +816,6 @@ int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const c
     else{
       const char* msg = vortex_connection_get_message(connection);
       m_log->log ("tmlSingleCall", "GetConnection", "vortex_connection_get_message", msg);
-      ////////////////////////////////////////////////////////////////////////
-      // shutdown connection:
-      m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "ToDo vortex_connection_shutdown");
-      //vortex_connection_shutdown(connection);
-      ////////////////////////////////////////////////////////////////////////
-      // close connection to get rid of references:
-      m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "ToDo vortex_connection_close");
-      //vortex_connection_close(connection);
-      connection = NULL;
       // Connection isn't ok
       iRet = TML_ERR_SENDER_INVALID_PARAMS;
     }

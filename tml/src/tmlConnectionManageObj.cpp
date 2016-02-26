@@ -135,6 +135,7 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
         const char* msg = vortex_connection_get_message(connection);
         log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
         connection = NULL;
+        iRet = TML_ERR_SENDER_INVALID_PARAMS;
       }
     }
   }
@@ -303,7 +304,6 @@ TML_INT32 tmlConnectionManageObj::getRemoteProfiles(SIDEX_VARIANT* lProfiles){
 TML_INT32 tmlConnectionManageObj::validate(TML_BOOL bReconnect, TML_BOOL* bConnected){
   // TODO:
   // vortex_conection_is_ok();
-  // TODO:
   // vortex_conection_new();
   return TML_SUCCESS;
 }
