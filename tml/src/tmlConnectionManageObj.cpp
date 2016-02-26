@@ -42,6 +42,7 @@
 #include "tmlCore.h"
 #include "unicode.h"
 #include "logValues.h"
+#include "sidex.h"
 
 /**
  * @brief    Constructor.
@@ -305,10 +306,47 @@ bool tmlConnectionManageObj::isEqual(const char* sAddress){
  * @brief Returns the remote peer supported profiles.
  */
 TML_INT32 tmlConnectionManageObj::getRemoteProfiles(SIDEX_VARIANT* lProfiles){
+  TML_INT32 iRet = TML_SUCCESS;
 
-  // TODO:
-  // vortex_conection_get_remote_progiles();
-  return TML_SUCCESS;
+  SIDEX_VARIANT list = SIDEX_HANDLE_TYPE_NULL;
+
+  if (NULL != m_vortexConnection){
+
+    axlList* profiles = NULL;
+    profiles = vortex_connection_get_remote_profiles(m_vortexConnection);
+    int iAxlListLength = axl_list_length (profiles);
+    if (-1 == iAxlListLength){
+      //////////////////
+      // No Connection:
+      iRet = TML_ERR_SENDER_INVALID_PARAMS;
+    }
+    else
+    {
+      list = sidex_Variant_New_List();
+      /////////////////////
+      // for each item do:
+      int iterator = 0;
+      while (iterator < axl_list_length (profiles)) {
+        SIDEX_INT32 iPos;
+        SIDEX_VARIANT item;
+        iRet = sidex_Variant_New_String((char *) axl_list_get_nth (profiles, iterator), &item);
+        if (SIDEX_SUCCESS == iRet){
+          sidex_Variant_List_Append(list, item, &iPos);
+          sidex_Variant_DecRef(item);
+        }
+        iterator++;
+      }
+      ///////////////////////////////////////
+      // free the list when no longer needed
+      axl_list_free (profiles);
+    }
+  }
+  else{
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+
+  *lProfiles = list;
+  return iRet;
 }
 
 

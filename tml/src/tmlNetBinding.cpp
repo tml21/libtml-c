@@ -476,6 +476,9 @@ SIDEX_INT32 tmlNetBinding::getHost(TML_INT32 index, char** sHost){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_hosts, index, &vHost);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_String(vHost, sHost, &iLength);
+      if (SIDEX_SUCCESS != iRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
     }
   }
   else{
@@ -496,6 +499,9 @@ SIDEX_INT32 tmlNetBinding::getHost(TML_INT32 index, char16_t** sHost){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_hosts_w, index, &vHost);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_String_W(vHost, sHost, &iLength);
+      if (SIDEX_SUCCESS != iRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
     }
   }
   else{
@@ -516,6 +522,9 @@ SIDEX_INT32 tmlNetBinding::getHost(TML_INT32 index, wchar_t** sHost){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_hosts_x, index, &vHost);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_String_X(vHost, sHost, &iLength);
+      if (SIDEX_SUCCESS != iRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
     }
   }
   else{
@@ -560,6 +569,9 @@ SIDEX_INT32 tmlNetBinding::getPort(TML_INT32 index, char** sPort){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_ports, index, &vPort);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_String(vPort, sPort, &iLength);
+      if (SIDEX_SUCCESS != iRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
     }
   }
   else{
@@ -580,6 +592,9 @@ SIDEX_INT32 tmlNetBinding::getPort(TML_INT32 index, char16_t** sPort){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_ports_w, index, &vPort);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_String_W(vPort, sPort, &iLength);
+      if (SIDEX_SUCCESS != iRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
     }
   }
   else{
@@ -600,6 +615,9 @@ SIDEX_INT32 tmlNetBinding::getPort(TML_INT32 index, wchar_t** sPort){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_ports_x, index, &vPort);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_String_X(vPort, sPort, &iLength);
+      if (SIDEX_SUCCESS != iRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
     }
   }
   else{
@@ -644,6 +662,9 @@ SIDEX_INT32 tmlNetBinding::getAddress(TML_INT32 index, char** sAddress){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_addresses, index, &vAddress);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_String(vAddress, sAddress, &iLength);
+      if (SIDEX_SUCCESS != iRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
     }
   }
   else{
@@ -664,6 +685,9 @@ SIDEX_INT32 tmlNetBinding::getAddress(TML_INT32 index, char16_t** sAddress){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_addresses_w, index, &vAddress);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_String_W(vAddress, sAddress, &iLength);
+      if (SIDEX_SUCCESS != iRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
     }
   }
   else{
@@ -684,6 +708,9 @@ SIDEX_INT32 tmlNetBinding::getAddress(TML_INT32 index, wchar_t** sAddress){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_addresses_x, index, &vAddress);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_String_X(vAddress, sAddress, &iLength);
+      if (SIDEX_SUCCESS != iRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
     }
   }
   else{
@@ -711,6 +738,9 @@ TML_BOOL tmlNetBinding::isIPV6(TML_INT32 index){
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_isIPV6, index, &vType);
     if (SIDEX_SUCCESS == iRet){
       iRet = sidex_Variant_As_Boolean(vType, &bIsIPV6);
+    }
+    if (SIDEX_SUCCESS != iRet){
+      iRet = TML_ERR_INFORMATION_UNDEFINED;
     }
   }
   return bIsIPV6;

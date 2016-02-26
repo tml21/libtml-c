@@ -3492,7 +3492,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDL
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_SENDER_NOT_INITIALIZED  error initializing sender<br> 
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_NET_BINDING network binding syntax error<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
@@ -3518,7 +3521,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
  * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle);
 
@@ -3533,7 +3536,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE*
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_NET_BINDING network binding syntax error<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
+ *          TML_ERR_INFORMATION_UNDEFINED  information is missing
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address(TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR** sAddress);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_X(TML_CONNECTION_HANDLE connectionHandle, wchar_t** sAddress);
@@ -3563,7 +3567,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION
  *                      The list has to be released with sidex_Variant_DecRef()
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNECTION_HANDLE connectionHandle, SIDEX_VARIANT* lProfiles);
 
@@ -3577,7 +3582,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNE
  * @param   bConnected       reference to the connection status, TML_TRUE if the connection is valid
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_SENDER_NOT_INITIALIZED  error initializing sender<br> 
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_NET_BINDING network binding syntax error<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bReconnect, TML_BOOL* bConnected);
 
@@ -3591,7 +3600,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HAND
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INFORMATION_UNDEFINED  information is missing<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount);
 
@@ -3606,7 +3615,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDL
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INFORMATION_UNDEFINED  information is missing<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle);
 
@@ -3626,7 +3635,12 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE cor
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_SENDER_PROFILE_NOT_SUPPORTED profile not supported by receiver<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Connection_SendSync()
  */
@@ -3661,7 +3675,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_A(TML_CONNECTION_H
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          ERR_DUMPCONTENT internal data format error<br>
+ *          TML_ERR_SENDER_COMMUNICATION communication error<br>
+ *          TML_ERR_TIMEOUT timeout before receiving reply<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Connection_SendAsync()
  */
@@ -3690,7 +3712,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_A(TML_CONNECTION_HA
  * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Get_Connection(TML_COMMAND_HANDLE cmdHandle, TML_CONNECTION_HANDLE* connectionHandle);
 
@@ -3706,7 +3728,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Get_Connection(TML_COMMAND_HANDLE c
  * @param   pCBData    user data or NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<
+ *          TML_ERR_MISSING_OBJ invalid handle<
  *
  * @see TML_ON_CONNECT_CB_FUNC()
  */
@@ -3724,7 +3746,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnConnect(TML_CORE_HANDLE core
  * @param   pCBData    user data or NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see TML_ON_DISCONNECT_CB_FUNC()
  */
