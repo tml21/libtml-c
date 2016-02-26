@@ -74,6 +74,14 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
 
 
 /**
+ * @brief    Destructor.
+ */
+tmlConnectionManageObj::~tmlConnectionManageObj()
+{
+  cleanUp();
+}
+
+/**
  * @brief    init the object
  */
 void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
@@ -82,6 +90,8 @@ void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle,
   m_coreHandle = coreHandle;
 
   m_binding = new tmlNetBinding(sNetAddress);
+  m_vortexConnection = NULL;
+
   m_iErr = establishVortexConnection();
 
   m_iRefCounter = 1;
@@ -98,48 +108,60 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
   VortexCtx* ctx = ((tmlCoreWrapper*)m_coreHandle)->getVortexCtx();
   tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
 
-  VortexConnection* connection = NULL;
-
   // Is there a valid vortex execution context
   if (NULL == ctx){
     iRet = TML_ERR_SENDER_NOT_INITIALIZED;
   }
   else{
-    ///////////////////////////////////////////////////
-    // Set the connection timeout to 5 seconds:
-    log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_connect_timeout");
-    vortex_connection_connect_timeout (ctx, 5000000);
-
-    char* sHost;
-    char* sPort;
-    TML_BOOL bIsIPV6 = TML_FALSE;
-    iRet = m_binding->getHost(&sHost);
-    if (TML_SUCCESS == iRet){
-      iRet = m_binding->getPort(&sPort);
-    }
-    if (TML_SUCCESS == iRet){
-      bIsIPV6 = m_binding->isIPV6();
-    }
-    if (TML_SUCCESS == iRet){
-      if (bIsIPV6){
-        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
-        connection = vortex_connection_new6 (ctx, sHost, sPort, NULL, NULL);
-      }
-      else{
-        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
-        connection = vortex_connection_new (ctx, sHost, sPort, NULL, NULL);
-      }
-      log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_is_ok");
-      if (!vortex_connection_is_ok (connection, axl_false))
-      {
+    VortexConnection* connection = m_vortexConnection;
+    //////////////////////////////////////////////////////////
+    // maybe we have a vortex connection and try to reconnect:
+    if (NULL != connection){
+      log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_reconnect");
+      axl_bool bConnected;
+      bConnected = vortex_connection_reconnect (connection, NULL, NULL);
+      if (axl_false == bConnected){
         const char* msg = vortex_connection_get_message(connection);
         log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
-        connection = NULL;
         iRet = TML_ERR_SENDER_INVALID_PARAMS;
       }
     }
+    else{
+      ///////////////////////////////////////////////////
+      // Set the connection timeout to 5 seconds:
+      log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_connect_timeout");
+      vortex_connection_connect_timeout (ctx, 5000000);
+
+      char* sHost;
+      char* sPort;
+      TML_BOOL bIsIPV6 = TML_FALSE;
+      iRet = m_binding->getHost(&sHost);
+      if (TML_SUCCESS == iRet){
+        iRet = m_binding->getPort(&sPort);
+      }
+      if (TML_SUCCESS == iRet){
+        bIsIPV6 = m_binding->isIPV6();
+      }
+      if (TML_SUCCESS == iRet){
+        if (bIsIPV6){
+          log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
+          connection = vortex_connection_new6 (ctx, sHost, sPort, NULL, NULL);
+        }
+        else{
+          log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
+          connection = vortex_connection_new (ctx, sHost, sPort, NULL, NULL);
+        }
+        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_is_ok");
+        if (!vortex_connection_is_ok (connection, axl_false))
+        {
+          const char* msg = vortex_connection_get_message(connection);
+          log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
+          iRet = TML_ERR_SENDER_INVALID_PARAMS;
+        }
+      }
+    }
+    m_vortexConnection = connection;
   }
-  m_vortexConnection = connection;
   return iRet;
 }
 
@@ -151,14 +173,6 @@ TML_INT32 tmlConnectionManageObj::getLastErr(){
   return m_iErr;
 }
 
-
-/**
- * @brief    Destructor.
- */
-tmlConnectionManageObj::~tmlConnectionManageObj()
-{
-  cleanUp();
-}
 
 /**
  * @brief    Cleans up refCounter dependent allocations.
@@ -287,9 +301,9 @@ bool tmlConnectionManageObj::isEqual(const char* sAddress){
   return bEqual;
 }
 
- /**
-  * @brief Returns the remote peer supported profiles.
-  */
+/**
+ * @brief Returns the remote peer supported profiles.
+ */
 TML_INT32 tmlConnectionManageObj::getRemoteProfiles(SIDEX_VARIANT* lProfiles){
 
   // TODO:
@@ -299,13 +313,45 @@ TML_INT32 tmlConnectionManageObj::getRemoteProfiles(SIDEX_VARIANT* lProfiles){
 
 
 /**
+ * @brief Check the connection
+ */
+void tmlConnectionManageObj::checkConnection(TML_BOOL* bConnected){
+  TML_INT32 iStatus = TML_FALSE;
+
+  VortexCtx* ctx = ((tmlCoreWrapper*)m_coreHandle)->getVortexCtx();
+  tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
+
+  if (NULL != m_vortexConnection){
+    log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "checkConnection", "Vortex CMD", "vortex_connection_is_ok");
+    if (vortex_connection_is_ok (m_vortexConnection, axl_false))
+    {
+      iStatus = TML_TRUE;
+    }
+  }
+  *bConnected = iStatus;
+}
+
+
+/**
   * @brief    Validate a connection.
   */
 TML_INT32 tmlConnectionManageObj::validate(TML_BOOL bReconnect, TML_BOOL* bConnected){
-  // TODO:
-  // vortex_conection_is_ok();
-  // vortex_conection_new();
-  return TML_SUCCESS;
+  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iStatus = TML_FALSE;
+
+  //////////////////////////////////
+  // Check the connection:
+  checkConnection(&iStatus);
+  if (TML_FALSE == iStatus && bReconnect){
+    //////////////////////////////////
+    // Try to reconnect:
+    establishVortexConnection();
+    //////////////////////////////////
+    // Check the connection once more:
+    checkConnection(&iStatus);
+  }
+  *bConnected = iStatus;
+  return iRet;
 }
 
 /**

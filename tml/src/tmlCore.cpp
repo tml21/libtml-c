@@ -6266,6 +6266,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNE
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bReconnect, TML_BOOL* bConnected){
   TML_INT32 iRet = TML_SUCCESS;
+
+  *bConnected = TML_FALSE;
   if (TML_HANDLE_TYPE_NULL == connectionHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }

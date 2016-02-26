@@ -783,34 +783,43 @@ int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const c
     connection = conectionMgrObj->getVortexConnection();
     if (NULL != connection)
     {
-      // Check if the requested profile is supported:
-      m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "vortex_connection_is_profile_supported");
-      if (vortex_connection_is_profile_supported (connection, profile)){
-        m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection profile", profile, " is supported");
+      if (vortex_connection_is_ok (connection, axl_false))
+      {
+        // Check if the requested profile is supported:
+        m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "vortex_connection_is_profile_supported");
+        if (vortex_connection_is_profile_supported (connection, profile)){
+          m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection profile", profile, " is supported");
 
 
-        bool bRegisterProfile = false;
-        bool bRegisterCB = false;
-        m_pHandler->tmlProfileRegister(profile, false, NULL, NULL, &bRegisterProfile, &bRegisterCB);
+          bool bRegisterProfile = false;
+          bool bRegisterCB = false;
+          m_pHandler->tmlProfileRegister(profile, false, NULL, NULL, &bRegisterProfile, &bRegisterCB);
 
-        // Register the profile:
-        m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "vortex_profiles_register");
-        if (bRegisterProfile)
-        {
-          if (!vortex_profiles_register (m_ctx, profile, 
-                  NULL, NULL, 
-                  NULL, NULL,
-                  NULL, NULL))
+          // Register the profile:
+          m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection", "Vortex CMD", "vortex_profiles_register");
+          if (bRegisterProfile)
           {
-            // Problem with the register;
-            iRet = TML_ERR_SENDER_PROFILE_REGISTRATION;
+            if (!vortex_profiles_register (m_ctx, profile, 
+                    NULL, NULL, 
+                    NULL, NULL,
+                    NULL, NULL))
+            {
+              // Problem with the register;
+              iRet = TML_ERR_SENDER_PROFILE_REGISTRATION;
+            }
           }
+        }
+        else{
+          m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection profile ", profile, " is not supported !");
+          // Profile is not supported:
+          iRet = TML_ERR_SENDER_PROFILE_NOT_SUPPORTED;
         }
       }
       else{
-        m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnection profile ", profile, " is not supported !");
-        // Profile is not supported:
-        iRet = TML_ERR_SENDER_PROFILE_NOT_SUPPORTED;
+        const char* msg = vortex_connection_get_message(connection);
+        m_log->log ("tmlConnectionManageObj", "GetConnection", "vortex_connection_get_message", msg);
+        // Connection isn't ok
+        iRet = TML_ERR_SENDER_INVALID_PARAMS;
       }
     }
     else{

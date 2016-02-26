@@ -239,6 +239,15 @@ public:
 
 
     /**
+     * @brief Check the connection
+     *
+     * @param   bReconnect       TML_TRUE = try to reconnect if disconnected / TML_FALSE = don't try to reconnect
+     * @param   bConnected       reference to the connection status, TML_TRUE if the connection is valid
+     */
+    void checkConnection(TML_BOOL* bConnected);
+
+
+    /**
      * @brief    Validate a connection.
      *
      * @param   bReconnect       TML_TRUE = try to reconnect if disconnected / TML_FALSE = don't try to reconnect
@@ -248,8 +257,6 @@ public:
      *          TML_ERR_MISSING_OBJ invalid core handle
      */
     TML_INT32 validate(TML_BOOL bReconnect, TML_BOOL* bConnected);
-
-
 
 
     /**
