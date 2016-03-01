@@ -45,6 +45,22 @@
 #include <vortex.h>
 #include "tmlStdTypes.h"
 #include "tmlNetBinding.h"
+#include "tmlCCallback.h"
+
+//////////////////////////////////////////////////////////////////////////////
+// C - declarations:
+extern "C" {
+
+ /**
+ * @brief  callback in case of a close of the connection (initiated by the listener)
+ *
+ * @param   connection Reference to VortexConnection that has been closed
+ * @param   user_data  Reference to user data registered on Vortex API vortex_connection_set_on_close_full()
+ */
+  void connectionCloseHandler(VortexConnection *connection, axlPointer user_data);
+
+
+}// extern "C"
 
 class tmlConnectionManageObj //connection management object class
 {
@@ -88,6 +104,16 @@ protected:
      */
     void* m_onDisconnectCallback;
 
+    /**
+     * @brief    reference to a programmable callback method that will be called in case of a disconnection
+     */
+    void* m_onProgrammableDisconnectCallback;
+
+    /**
+     * @brief    Reference to the class callback handling method for connection close
+     */
+    TCallback<tmlConnectionManageObj> m_internalConnectionCloseHandlerMethod;
+
 public:
 	  /* methods */
 
@@ -111,10 +137,12 @@ public:
      * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
      * @param   sHost            network host / ip.
      * @param   sPort            port.
+     * @param   pOnConnectCallback    reference to callback method to be invoked on connection.
+     * @param   pOnDisconnectCallback reference to callback method to be invoked on disconnection.
      *
      * @returns an instance of tmlConnectionManageObj.
      */
-    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort);
+    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort, void*  pOnConnectCallback, void*  pOnDisconnectCallback);
 
 
     /**
@@ -122,8 +150,10 @@ public:
      *
      * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
      * @param   sNetAddress network address for connection binding.
+     * @param   pOnConnectCallback    reference to callback method to be invoked on connection.
+     * @param   pOnDisconnectCallback reference to callback method to be invoked on disconnection.
      */
-    void initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
+    void initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback);
 
 
     /**
@@ -332,6 +362,24 @@ public:
      * @returns The reference counter value.
      */
     int getRef();
+
+
+    /**
+     * @brief   Class callback method that will be called in case of a close of the connection
+     *
+     * @param   connection reference VortexConnection object
+     *
+     * @returns true on success.
+     */
+    bool SignalConnectionClose(void* connection);
+
+
+    /**
+     * @brief   Set callback method for disconnection
+     *
+     * @param   setOnDisconnectFullCB reference to callback method
+     */
+    void setOnDisconnectFull(void* setOnDisconnectFullCB);
 };
 
 #endif // TMLCONNECTIONMANAGEOBJ_H

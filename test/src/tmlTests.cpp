@@ -72,6 +72,8 @@
   #define SLEEP_MS                      (char*) "SLEEP_MS"
 #endif // TML_UNICODE
 
+TML_CORE_HANDLE m_coreHandle = TML_HANDLE_TYPE_NULL;
+TML_CONNECTION_HANDLE m_connectionHandle = TML_HANDLE_TYPE_NULL;
 
 /**
  * Helper method, loop until the console input of "exit"
@@ -255,6 +257,37 @@ TML_INT32 createCmd4711(TML_COMMAND_HANDLE* cmd, bool bRegisterReady)
   return iErr;
 }
 
+
+
+/**
+ * @brief   Class callback method that will be called by establishment of a connection
+ */
+void connectionEstablishHandler(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData)
+{
+  TML_INT32 iRet;
+  TML_BOOL bConnected;
+  iRet = tml_Connection_Validate(connectionHandle, TML_FALSE, &bConnected);
+  printf ("==========================================\n");
+  printf ("connectionEstablishHandler / %d / %s\n", bConnected, (char*)pCBData);
+  printf ("==========================================\n\n");
+}
+
+
+/**
+ * @brief   Class callback method that will be called by establishment of a connection
+ */
+void connectionCloseHandler(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData)
+{
+
+  TML_INT32 iRet;
+  TML_BOOL bConnected;
+  iRet = tml_Connection_Validate(connectionHandle, TML_FALSE, &bConnected);
+  printf ("==========================================\n");
+  printf ("connectionCloseHandler / %d / %s\n", bConnected, (char*)pCBData);
+  printf ("==========================================\n\n");
+}
+
+
 /**
  * A simple sender example 
  */
@@ -307,31 +340,39 @@ bool senderTest02()
 {
   TML_INT32 iErr = TML_SUCCESS; // API return value
   TML_COMMAND_HANDLE cmdMsg  = TML_HANDLE_TYPE_NULL;
-  TML_CORE_HANDLE coreHandle = TML_HANDLE_TYPE_NULL;
 
   /////////////////////////////////////////////////////////////////////////
   // Command creation:
   iErr = createCmd4711(&cmdMsg, false);
   /////////////////////////////////////////////////////////////////////////
   // TML_CORE_HANDLE to send commands / messages 
-  if (TML_SUCCESS == iErr)
-    iErr = tml_Core_Open(&coreHandle, 0);
+  if (TML_SUCCESS == iErr){
+    if (TML_HANDLE_TYPE_NULL == m_coreHandle){
+      iErr = tml_Core_Open(&m_coreHandle, 0);
+    }
+  }
+
+  static char* data = "BlaBlaBlub";
+  tml_Core_Set_OnConnect(m_coreHandle, &connectionEstablishHandler, data);
+  static char* data2 = "pipapo";
+  tml_Core_Set_OnDisconnect(m_coreHandle, &connectionCloseHandler, data2);
 
   /////////////////////////////////////////////////////////////////////////
   // send command / message 
   if (TML_SUCCESS == iErr){
 #ifdef TML_UNICODE
-    fwprintf (stderr, L"Sending command 4711 to %ls -->\n", DESTINATION_HOST_IP);
+    fwprintf (stderr, L"Sending 4711 commands to %ls (different profiles)-->\n", DESTINATION_HOST_IP);
 #else// TML_UNICODE
-    printf ("Sending command 4711 to %s -->\n", DESTINATION_HOST_IP);
+    printf ("Sending 4711 commands to %s  (different profiles)-->\n", DESTINATION_HOST_IP);
 #endif// TML_UNICODE
 
-    TML_CONNECTION_HANDLE connectionHandle = TML_HANDLE_TYPE_NULL;
-    iErr = tml_Core_Connect(coreHandle, DESTINATION_NETWORK_BINDING, &connectionHandle);
+    if (TML_HANDLE_TYPE_NULL == m_connectionHandle){
+      iErr = tml_Core_Connect(m_coreHandle, DESTINATION_NETWORK_BINDING, &m_connectionHandle);
+    }
     if (TML_SUCCESS == iErr){
-      iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE, cmdMsg, 10000);
+      iErr = tml_Connection_SendSync(m_connectionHandle, IO_PROFILE, cmdMsg, 10000);
 	    if (TML_SUCCESS == iErr){
-	      iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE2, cmdMsg, 10000);
+	      iErr = tml_Connection_SendSync(m_connectionHandle, IO_PROFILE2, cmdMsg, 10000);
 	    }
     }
   }
@@ -341,14 +382,16 @@ bool senderTest02()
   if (TML_HANDLE_TYPE_NULL != cmdMsg)
     tml_Cmd_Free(&cmdMsg);
   ///////////////////////////////////////////////////////////////////////
-  // Free the instance of TMLCore:
-  if (TML_HANDLE_TYPE_NULL != coreHandle)
-    tml_Core_Close(&coreHandle);
-  ///////////////////////////////////////////////////////////////////////
   // Errorhandling:
   if (TML_SUCCESS != iErr)
     printf ("senderTest01 / error happened - Code = %d\n", iErr);
-  return true;
+  return false;
+}
+
+void closePossibleExistingCoreHandle(){
+  if (TML_HANDLE_TYPE_NULL != m_coreHandle){
+    tml_Core_Close(&m_coreHandle);
+  }
 }
 
 /**
@@ -622,4 +665,45 @@ bool sendAndListenTest04()
   return true;
 }
 
+bool validateConnection(){
+  TML_INT32 iRet;
+  TML_BOOL bConnected;
+  SIDEX_VARIANT profiles = SIDEX_HANDLE_TYPE_NULL;
+  iRet = tml_Connection_Get_RemoteProfiles(m_connectionHandle, &profiles);
+  if (TML_SUCCESS != iRet){
+    printf ("validateConnection / error iRet = %d on tml_Connection_Get_RemoteProfiles\n", iRet);
+  }
+
+  SIDEX_INT32 iSize;
+  iRet = sidex_Variant_List_Size (profiles, &iSize);
+  if (TML_SUCCESS == iRet){
+    printf ("senderTest01 / number of profiles = %d\n", iSize);
+    for (TML_INT32 i = 0; i < iSize && TML_SUCCESS == iRet; ++i){
+      SIDEX_VARIANT item;
+      iRet = sidex_Variant_List_Get (profiles, i, &item);
+      if (TML_SUCCESS == iRet){
+        SIDEX_INT32 iItemLength;
+#ifdef SIDEX_UNICODE
+        wchar_t* profileName;
+        iRet = sidex_Variant_As_String (item, &profileName, &iItemLength);
+        if (TML_SUCCESS == iRet){
+          fwprintf (stderr, L"profile(%d): %ls\n", i, profileName);
+        }
+#else // SIDEX_UNICODE
+        char* profileName;
+        iRet = sidex_Variant_As_String (item, &profileName, &iItemLength);
+        if (TML_SUCCESS == iRet){
+          printf (""profile(%d): %s\n", i, profileName);
+        }
+#endif // SIDEX_UNICODE
+      }
+    }
+    sidex_Variant_DecRef(profiles);
+  }
+  printf ("validateConnection - tml_Connection_Get_RemoteProfiles / iRet = %d\n", iRet);
+
+  iRet = tml_Connection_Validate(m_connectionHandle, TML_TRUE, &bConnected);
+  printf ("validateConnection / iRet = %d - bConnected = %d\n", iRet, bConnected);
+  return false;
+}
 

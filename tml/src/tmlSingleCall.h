@@ -51,21 +51,6 @@
 #include "tmlConnectionManageObj.h"
 
 
-//////////////////////////////////////////////////////////////////////////////
-// C - declarations:
-extern "C" {
-
- /**
- * @brief  callback in case of a close of the connection (initiated by the listener)
- *
- * @param   connection Reference to VortexConnection that has been closed
- * @param   user_data  Reference to user data registered on Vortex API vortex_connection_set_on_close_full()
- */
-  void connectionCloseHandler(VortexConnection *connection, axlPointer user_data);
-
-
-}// extern "C"
-
 class tmlCoreWrapper;
 
 class  tmlSingleCall
@@ -134,7 +119,6 @@ protected:
      * @brief    Reference to the class callback handling method for connection close
      */
     TCallback<tmlSingleCall> m_internalConnectionCloseHandlerMethod;
-
 
     /**
      * @brief    A mutex to protect critial sections

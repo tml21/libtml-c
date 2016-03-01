@@ -45,11 +45,26 @@
 #include "sidex.h"
 #include "tmlGlobalCallback.h"
 
+/*********************************************************************************************************************************
+*                                             "C" / Global methods / Callbacks & Threads
+*********************************************************************************************************************************/
+
+/**
+ * @brief  callback in case of a close of the connection (initiated by the listener)
+ */
+void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
+{
+  // Call the class callback handling method with all it's member- attributes 
+  // to handle the lost connection:
+  globalCallback(user_data, connection);
+}
+
+
 /**
  * @brief    Constructor.
  *
  */
-tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort)
+tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort, void*  pOnConnectCallback, void*  pOnDisconnectCallback)
 {
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
@@ -60,7 +75,7 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
     sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
   #endif // LINUX
 
-  initConnectionManageObj(coreHandle, sNetAddress);
+  initConnectionManageObj(coreHandle, sNetAddress, pOnConnectCallback, pOnDisconnectCallback);
 
   delete[]sNetAddress;
 }
@@ -71,9 +86,7 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
  */
 tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback)
 {
-  m_onConnectCallback = pOnConnectCallback;       // The callback method to call in case of connection
-  m_onDisconnectCallback = pOnDisconnectCallback; // The callback method to call in case of disconnection
-  initConnectionManageObj(coreHandle, sNetAddress);
+  initConnectionManageObj(coreHandle, sNetAddress, pOnConnectCallback, pOnDisconnectCallback);
 }
 
 
@@ -88,13 +101,21 @@ tmlConnectionManageObj::~tmlConnectionManageObj()
 /**
  * @brief    init the object
  */
-void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
+void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback)
 {
   m_iErr = TML_SUCCESS;
   m_coreHandle = coreHandle;
+  m_onConnectCallback    = pOnConnectCallback;       // The callback method to call in case of connection
+  m_onDisconnectCallback = pOnDisconnectCallback;    // The callback method to call in case of disconnection
+  m_onProgrammableDisconnectCallback      = TML_HANDLE_TYPE_NULL;
 
   m_binding = new tmlNetBinding(sNetAddress);
   m_vortexConnection = NULL;
+
+  /////////////////////////////////////////////////////////////////////////////
+  //  init the internal class callback method to handle a lost of connection
+  m_internalConnectionCloseHandlerMethod.SetCallback(this, &tmlConnectionManageObj::SignalConnectionClose);
+
 
   m_iErr = establishVortexConnection();
 
@@ -167,12 +188,18 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
           iRet = TML_ERR_SENDER_INVALID_PARAMS;
         }
         else{
+          m_vortexConnection = connection;
           // call the callback method for the created connection:
           globalCallback(m_onConnectCallback, (void*) this);
+
+          ////////////////////////////////////////////////////////////
+          // Register callback for the case of a lost of connection:
+          log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_set_on_close_full");
+          vortex_connection_set_on_close_full (connection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
+
         }
       }
     }
-    m_vortexConnection = connection;
   }
 
   return iRet;
@@ -199,6 +226,10 @@ void tmlConnectionManageObj::cleanUp(){
         // shutdown connection:
         log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_shutdown");
         vortex_connection_shutdown(m_vortexConnection);
+
+        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_remove_on_close_full");
+        vortex_connection_remove_on_close_full (m_vortexConnection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
+
         ////////////////////////////////////////////////////////////////////////
         // close connection to get rid of references:
         log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_close");
@@ -430,8 +461,33 @@ int tmlConnectionManageObj::incRef(){
 
 
 /**
-     * @brief   Get the reference counter value of this data object for the memory management.
+ * @brief   Get the reference counter value of this data object for the memory management.
  */
 int tmlConnectionManageObj::getRef(){
   return m_iRefCounter;
+}
+
+
+/**
+ * @brief   Class callback method that will be called in case of a close of the connection
+ */
+bool tmlConnectionManageObj::SignalConnectionClose(void* connection)
+{
+  // call fix callback method to inform about disconnection:
+  globalCallback(m_onDisconnectCallback, (void*) this);
+
+  if (TML_HANDLE_TYPE_NULL != m_onProgrammableDisconnectCallback){
+  // call Programmable callback method to inform about disconnection:
+    globalCallback(m_onProgrammableDisconnectCallback, (void*) this);
+  }
+
+  return true;
+}
+
+
+/**
+ * @brief   Set callback method for disconnection
+ */
+void tmlConnectionManageObj::setOnDisconnectFull(void* setOnDisconnectFullCB){
+  m_onProgrammableDisconnectCallback = setOnDisconnectFullCB;
 }

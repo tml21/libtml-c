@@ -45,21 +45,6 @@
 #include "systemBase.h"
 #include "logValues.h"
 
-/*********************************************************************************************************************************
-*                                             "C" / Global methods / Callbacks & Threads
-*********************************************************************************************************************************/
-
-/**
- * @brief  callback in case of a close of the connection (initiated by the listener)
- */
-void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
-{
-  // Call the class callback handling method with all it's member- attributes 
-  // to handle the lost connection:
-  globalCallback(user_data, connection);
-}
-
-
 /**
  * @brief   Disconnect all open Connections.
  */
@@ -91,19 +76,11 @@ void tmlSingleCall::DeregisterConnectionLost(tmlConnectionManageObj* connectionM
 {
   VortexConnection* connection = NULL;
   if (NULL != connectionMgr){
-    connection = connectionMgr->getVortexConnection();
-  }
-  if (NULL != connection){
-    m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "DeregisterConnectionLost", "Vortex CMD", "vortex_connection_get_status");
-    VortexStatus cStatus = vortex_connection_get_status(connection);
-    if (VortexOk == cStatus){
-      //////////////////////////////////////////////////////////////////////////////////////////////
-      // This should only happen in case of the first time I found the connection in the link list:
-      ////////////////////////////////////////////////////////////////////////
-      // Deregister callback for connection close:
-      m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "DeregisterConnectionLost", "Vortex CMD", "vortex_connection_remove_on_close_full");
-      vortex_connection_remove_on_close_full (connection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
-    }
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // This should only happen in case of the first time I found the connection in the link list:
+    ////////////////////////////////////////////////////////////////////////
+    // Deregister callback for connection close:
+    connectionMgr->setOnDisconnectFull(TML_HANDLE_TYPE_NULL);
   }
 }
 
@@ -335,11 +312,13 @@ void tmlSingleCall::setLoggingValue(int iLog)
 /**
   * @brief   Class callback method that will be called by the registered callback method in case of a close of the connection (initiated by the listener).
  */
-bool tmlSingleCall::SignalConnectionCloseToSender(void* connection)
+bool tmlSingleCall::SignalConnectionCloseToSender(void* connectionMgrObj)
 {
   if (m_bDeregistered){
     return true;
   }
+  tmlConnectionManageObj* connObj = (tmlConnectionManageObj*) connectionMgrObj;
+  VortexConnection* connection = connObj->getVortexConnection();
   /////////////////////////////////////////////////////////////////////////////
   // Maybe we are in a shutdown process / in that case don't do anything here:
   if (TML_SUCCESS == m_tmlCoreHandle->tmlCoreWrapper_IsAccessible()){
@@ -991,9 +970,8 @@ int tmlSingleCall::GetConnectionElement(const char* profile, const char* sHost, 
         if (TML_SUCCESS == iRet){
           ////////////////////////////////////////////////////////////
           // Register callback for the case of a lost of connection:
-          m_log->log (TML_LOG_VORTEX_CMD, "tmlSingleCall", "GetConnectionElement", "Vortex CMD", "vortex_connection_set_on_close_full");
           m_bDeregistered = false;
-          vortex_connection_set_on_close_full (connectionMgrWork->getVortexConnection(), connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
+          connectionMgrWork->setOnDisconnectFull(&m_internalConnectionCloseHandlerMethod);
           ///////////////////////////////////////////////////////////////////////
           // Remember the connection list element:
           connectionObj = new tmlConnectionObj(m_log);
