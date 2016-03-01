@@ -43,6 +43,7 @@
 #include "unicode.h"
 #include "logValues.h"
 #include "sidex.h"
+#include "tmlGlobalCallback.h"
 
 /**
  * @brief    Constructor.
@@ -68,8 +69,10 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
 /**
  * @brief    Constructor.
  */
-tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
+tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback)
 {
+  m_onConnectCallback = pOnConnectCallback;       // The callback method to call in case of connection
+  m_onDisconnectCallback = pOnDisconnectCallback; // The callback method to call in case of disconnection
   initConnectionManageObj(coreHandle, sNetAddress);
 }
 
@@ -126,6 +129,10 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
         log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
         iRet = TML_ERR_SENDER_INVALID_PARAMS;
       }
+      else{
+        // call the callback method for the reconnection:
+        globalCallback(m_onConnectCallback, (void*) this);
+      }
     }
     else{
       ///////////////////////////////////////////////////
@@ -159,10 +166,15 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
           log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
           iRet = TML_ERR_SENDER_INVALID_PARAMS;
         }
+        else{
+          // call the callback method for the created connection:
+          globalCallback(m_onConnectCallback, (void*) this);
+        }
       }
     }
     m_vortexConnection = connection;
   }
+
   return iRet;
 }
 

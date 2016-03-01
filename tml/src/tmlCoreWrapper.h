@@ -171,10 +171,44 @@ private:
      */
     unsigned int m_maxEventMsgQueueLength;
 
+    /**
+    * @brief    Reference to callback method that will be invoked in case of a connect action
+    */
+    TML_ON_CONNECT_CB_FUNC      m_pOnConnectCallback;
+
+
+    /**
+    * @brief    Reference to callback method parameter that will be used in case of a connect action
+    */
+    TML_POINTER                 m_pOnConnectData;
+
+    /**
+    * @brief    Reference to callback method that will be invoked in case of a disconnect action
+    */
+    TML_ON_DISCONNECT_CB_FUNC   m_pOnDisconnectCallback;
+
+
+    /**
+    * @brief    Reference to callback method parameter that will be used in case of a disconnect action
+    */
+    TML_POINTER                 m_pOnDisconnectData;
+
 protected: 
     /* data */
+    /**
+     * @brief    Reference to the class callback handling method to handle a new message
+     */
     TCallback<tmlCoreWrapper> m_ListenerCallback;
 
+    /**
+     * @brief    Reference to the class callback handling method for connection establishment
+     */
+    TCallback<tmlCoreWrapper> m_internalConnectionEstablishHandlerMethod;
+
+    /**
+     * @brief    Reference to the class callback handling method for connection close
+     */
+    TCallback<tmlCoreWrapper> m_internalConnectionCloseHandlerMethod;
 
     /* methods */
 
@@ -1981,6 +2015,16 @@ public:
 
 
     /**
+      * @brief   Class callback method that will be called by establishment of a connection
+     *
+     * connection reference to tmlConnectionManageObj instance
+     *
+     * @returns true success.
+     */
+    bool signalConnectionEstablished(void* connection);
+
+
+    /**
      * @brief   Send sync command on existing connection.
      *
      * Read TML_ON_CONNECT_CB_FUNC() for further reference.
@@ -1992,6 +2036,16 @@ public:
      * @see tmlErrors.h,tmlStdTypes.h
      */
     TML_INT32 tmlCoreWrapper_Set_OnConnect(TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
+
+
+    /**
+     * @brief   Class callback method that will be called by close of a connection
+     *
+     * connection reference to tmlConnectionManageObj instance
+     *
+     * @returns true success.
+     */
+    bool signalConnectionClosed(void* connection);
 
 
     /**

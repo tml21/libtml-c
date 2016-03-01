@@ -53,16 +53,40 @@ private:
 
 protected: 
 	  /* data */
+    /**
+     * @brief    reference counter
+     */
     int               m_iRefCounter;
 
+    /**
+     * @brief    TML core handle
+     */
     TML_CORE_HANDLE   m_coreHandle;
 
+    /**
+     * @brief    reference VortexConnection object
+     */
     VortexConnection* m_vortexConnection;
 
+    /**
+     * @brief    Betwork binding object
+     */
     tmlNetBinding*    m_binding;
 
+    /**
+     * @brief    reference to TML error code during initialisation
+     */
     TML_INT32         m_iErr;
 
+    /**
+     * @brief    reference to a callback method that will be called in case of a connection
+     */
+    void* m_onConnectCallback;
+
+    /**
+     * @brief    reference to a callback method that will be called in case of a disconnection
+     */
+    void* m_onDisconnectCallback;
 
 public:
 	  /* methods */
@@ -71,11 +95,13 @@ public:
      * @brief    Constructor.
      *
      * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
-     * @param   sNetAddress network address for connection binding.
+     * @param   sNetAddress network   address for connection binding.
+     * @param   pOnConnectCallback    reference to callback method to be invoked on connection.
+     * @param   pOnDisconnectCallback reference to callback method to be invoked on disconnection.
      *
      * @returns an instance of tmlConnectionManageObj.
      */
-    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
+    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void* pOnConnectCallback, void* pOnDisconnectCallback);
 
 
 

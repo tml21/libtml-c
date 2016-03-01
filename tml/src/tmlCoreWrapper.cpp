@@ -46,6 +46,29 @@
 #include "logValues.h"
 #include "tmlConnectionManageObj.h"
 #include "tmlListenerObj.h"
+#include "tmlGlobalCallback.h"
+
+
+/**
+ * @brief   Class callback method that will be called by establishment of a connection
+ */
+int connectionEstablishHandler(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData)
+{
+  globalCallback(pCBData, (void*)connectionHandle);
+
+  return 1;
+}
+
+
+/**
+ * @brief   Class callback method that will be called by close of a connection
+ */
+int connectionCloseHandler(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData)
+{
+  globalCallback(pCBData, (void*)connectionHandle);
+
+  return 1;
+}
 
 
 /**
@@ -66,6 +89,7 @@ bool tmlCoreWrapper::listenerCallbackMethod(void* tmlhandle)
   tml_Cmd_Free(&handle);
   return TML_SUCCESS != iRet;
 }
+
 
 /**
  * @brief   Send a Reply.
@@ -126,7 +150,7 @@ tmlLogHandler* tmlCoreWrapper::getLogHandler(){
   return m_log;
 }
 
-     
+
 /**
  * @brief    The initialization called by the constructor
  */
@@ -135,6 +159,17 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
                                           TML_INT32 iThreadRemoveSteps, TML_INT32 iThreadPoolRemovePeriod, 
                                           TML_BOOL bThreadAutoRemove, TML_BOOL bThreadPreemptive)
 {
+  m_pOnConnectData        = TML_HANDLE_TYPE_NULL;
+  m_pOnConnectCallback    = TML_HANDLE_TYPE_NULL;
+  m_pOnConnectData        = TML_HANDLE_TYPE_NULL;
+  m_pOnDisconnectCallback = TML_HANDLE_TYPE_NULL;
+  ////////////////////////////////////////////////////////////
+  // Init callback for the case of connection establishment:
+  m_internalConnectionEstablishHandlerMethod.SetCallback(this, &tmlCoreWrapper::signalConnectionEstablished);
+  ////////////////////////////////////////////////////////////
+  // Init callback for the case of connection establishment:
+  m_internalConnectionCloseHandlerMethod.SetCallback(this, &tmlCoreWrapper::signalConnectionClosed);
+
   ////////////////////////////////
   // list containing the connection manager objects
   m_connectionMgrObjs = sidex_Variant_New_List();
@@ -172,7 +207,6 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
   if (axl_true != bSuccess){
     m_log->log ("tmlCoreWrapper", "initWrapper", "vortex_init_ctx", "FAILLED");
   }
-
   /* enable automatic thread pool resize */
   m_log->log (TML_LOG_VORTEX_CMD, "tmlCoreWrapper", "initWrapper", "Vortex CMD", "vortex_thread_pool_setup");
 
@@ -2387,7 +2421,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUse
     }
   }
   if (!bFound){
-    wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress);
+    wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress, &m_internalConnectionEstablishHandlerMethod, &m_internalConnectionCloseHandlerMethod);
     tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
   }
 
@@ -2524,25 +2558,50 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendSyncMessage(TML_CONNECTI
   return iRet;
 }
 
+
+/**
+  * @brief   Class callback method that will be called by establishment of a connection
+ */
+bool tmlCoreWrapper::signalConnectionEstablished(void* connection){
+  TML_CONNECTION_HANDLE connectionMngObj = (TML_CONNECTION_HANDLE) connection;
+
+  if (TML_HANDLE_TYPE_NULL != m_pOnConnectCallback){
+    ((void(FUNC_C_DECL *)(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData))m_pOnConnectCallback)(connectionMngObj, m_pOnConnectData);
+  }
+  return true;
+}
+
 /**
   * @brief   Send sync command on existing connection.
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Set_OnConnect(TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData){
-  TML_INT32 iRet = TML_SUCCESS;
-
-  // TODO: Set_OnConnect
+  int iRet  = TML_SUCCESS;;
+  m_pOnConnectCallback = pCBFunc;
+  m_pOnConnectData = pCBData;
 
   return iRet;
 }
 
 
 /**
+  * @brief   Class callback method that will be called by close of a connection
+ */
+bool tmlCoreWrapper::signalConnectionClosed(void* connection){
+  TML_CONNECTION_HANDLE connectionMngObj = (TML_CONNECTION_HANDLE) connection;
+
+  if (TML_HANDLE_TYPE_NULL != m_pOnDisconnectCallback){
+    ((void(FUNC_C_DECL *)(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData))m_pOnDisconnectCallback)(connectionMngObj, m_pOnDisconnectData);
+  }
+  return true;
+}
+
+/**
   * @brief    Callback function to signal a closed connection.
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Set_OnDisconnect(TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData){
-  TML_INT32 iRet = TML_SUCCESS;
-
-  // TODO: Set_OnDisconnect
+  int iRet  = TML_SUCCESS;;
+  m_pOnDisconnectCallback = pCBFunc;
+  m_pOnDisconnectData = pCBData;
 
   return iRet;
 }
