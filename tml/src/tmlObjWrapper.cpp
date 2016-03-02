@@ -63,6 +63,7 @@ tmlObjWrapper::tmlObjWrapper()
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Cmd_Create", "INTERNAL", (TML_COMMAND_HANDLE)this);
 #endif //TIMEOUT_LOGGING
+  m_connectionHandle  = TML_HANDLE_TYPE_NULL;
   m_coreHandle  = TML_HANDLE_TYPE_NULL;
   m_iSessionID = -1;
   m_objChannelID = -1;
@@ -104,6 +105,7 @@ tmlObjWrapper::tmlObjWrapper(char* sID)
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Cmd_Create", sID, (TML_COMMAND_HANDLE)this);
 #endif //TIMEOUT_LOGGING
+  m_connectionHandle  = TML_HANDLE_TYPE_NULL;
   m_coreHandle  = TML_HANDLE_TYPE_NULL;
   m_iSessionID = -1;
   m_objChannelID = -1;
@@ -958,13 +960,20 @@ int tmlObjWrapper::tmlObjWrapper_Debug()
 
 
 /**
+  * @brief   Set the connection on which the command has to be sent was/received.
+  */
+TML_INT32 tmlObjWrapper::tmlObjWrapper_Set_Connection(TML_CONNECTION_HANDLE connectionHandle){
+  TML_INT32 iRet;
+  m_connectionHandle  = connectionHandle;
+  return iRet;
+}
+
+/**
   * @brief   Get the connection on which the command was previously sent/received.
   */
 TML_INT32 tmlObjWrapper::tmlObjWrapper_Get_Connection(TML_CONNECTION_HANDLE* connectionHandle){
   TML_INT32 iRet = TML_SUCCESS;  
-
-  // TODO: TML_CONNECTION_HANDLE
-
-  return (int)iRet;
+  *connectionHandle = m_connectionHandle;
+  return iRet;
 }
 

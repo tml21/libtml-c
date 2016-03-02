@@ -47,28 +47,28 @@
 #include "tmlStdTypes.h"
 #include "tmlCoreDefines.h"
 
-
 class  tmlObjWrapper
 {
 
 private:
   /* data */
-  SIDEX_HANDLE    m_sidexHandle;
-  TML_CORE_HANDLE m_coreHandle;
-  char*           m_sProfile;
-  wchar_t*        m_sProfileUtf32;
-  char16_t*       m_sProfileUtf16;
-  TML_INT32       m_UnicodeStatus;
-  int             m_iSessionID;
-  int             m_objChannelID;
-  void*           m_objChannel;
-  int             m_iMessageID;
-  bool            m_bCoreHandleIsValid;
-  bool            m_bProfileIsValid;
-  bool            m_bSessionIDIsValid;
-  bool            m_bObjChannelIsValid;
-  bool            m_bObjChannelIDIsValid;
-  bool            m_bMessageIDIsValid;
+  SIDEX_HANDLE          m_sidexHandle;
+  TML_CORE_HANDLE       m_coreHandle;
+  TML_CONNECTION_HANDLE m_connectionHandle;
+  char*                 m_sProfile;
+  wchar_t*              m_sProfileUtf32;
+  char16_t*             m_sProfileUtf16;
+  TML_INT32             m_UnicodeStatus;
+  int                   m_iSessionID;
+  int                   m_objChannelID;
+  void*                 m_objChannel;
+  int                   m_iMessageID;
+  bool                  m_bCoreHandleIsValid;
+  bool                  m_bProfileIsValid;
+  bool                  m_bSessionIDIsValid;
+  bool                  m_bObjChannelIsValid;
+  bool                  m_bObjChannelIDIsValid;
+  bool                  m_bMessageIDIsValid;
 
   /**
     * @brief    char array to set the date arribute
@@ -95,8 +95,7 @@ protected:
   tmlUnicodeID                    m_iUnicodeForStatusReply;
   TML_ON_COMMAND_READY_CB_FUNC    m_pCommandReadyCallback;
   TML_POINTER                     m_pCommandReadyCallbackData;
-  tmlCriticalSectionObj           *m_csObj;
-
+  tmlCriticalSectionObj*          m_csObj;
 
 public:
     /* data */
@@ -685,6 +684,18 @@ public:
      * @see tmlErrors.h,tmlStdTypes.h
      */
     int tmlObjWrapper_Debug();
+
+
+    /**
+     * @brief   Set the connection on which the command has to be sent was/received.
+     *
+     * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     *
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlObjWrapper_Set_Connection(TML_CONNECTION_HANDLE connectionHandle);
 
 
     /**

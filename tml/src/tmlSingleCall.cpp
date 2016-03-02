@@ -1107,6 +1107,11 @@ int tmlSingleCall::perform_SendSyncMessage(tmlConnectionObj* connectionObj, int 
     if (TML_SUCCESS == iRet){
       iRet = tml_Cmd_Header_SetErrorMessage(tmlhandle, (char*)"", 0);
     }
+    /////////////////////////////////////////////////
+    // Set the tmlConnectionObj:
+    if (TML_SUCCESS == iRet){
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Set_Connection((TML_CONNECTION_HANDLE)connectionObj);
+    }
     TML_COMMAND_ID_TYPE iCmd;
     if (TML_SUCCESS == iRet){
       ////////////////////////////////////////////////////////////
@@ -1218,6 +1223,11 @@ int tmlSingleCall::perform_SendAsyncMessage(tmlConnectionObj* connectionObj, int
     iRet = tml_Cmd_Header_SetError(tmlhandle, TML_SUCCESS);
     if (TML_SUCCESS == iRet){
       iRet = tml_Cmd_Header_SetErrorMessage(tmlhandle, (char*)"", 0);
+    }
+    /////////////////////////////////////////////////
+    // Set the tmlConnectionObj:
+    if (TML_SUCCESS == iRet){
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Set_Connection((TML_CONNECTION_HANDLE)connectionObj);
     }
     TML_COMMAND_ID_TYPE iCmd;
     if (TML_SUCCESS == iRet){
