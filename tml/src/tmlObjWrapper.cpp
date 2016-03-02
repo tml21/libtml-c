@@ -963,7 +963,7 @@ int tmlObjWrapper::tmlObjWrapper_Debug()
   * @brief   Set the connection on which the command has to be sent was/received.
   */
 TML_INT32 tmlObjWrapper::tmlObjWrapper_Set_Connection(TML_CONNECTION_HANDLE connectionHandle){
-  TML_INT32 iRet;
+  TML_INT32 iRet = TML_SUCCESS;
   m_connectionHandle  = connectionHandle;
   return iRet;
 }

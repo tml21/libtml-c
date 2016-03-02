@@ -223,12 +223,14 @@ void tmlConnectionManageObj::cleanUp(){
       if (NULL != m_vortexConnection){
         tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
         ////////////////////////////////////////////////////////////////////////
+        // remove registered callback:
+        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_remove_on_close_full");
+        vortex_connection_remove_on_close_full (m_vortexConnection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
+
+        ////////////////////////////////////////////////////////////////////////
         // shutdown connection:
         log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_shutdown");
         vortex_connection_shutdown(m_vortexConnection);
-
-        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_remove_on_close_full");
-        vortex_connection_remove_on_close_full (m_vortexConnection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
 
         ////////////////////////////////////////////////////////////////////////
         // close connection to get rid of references:

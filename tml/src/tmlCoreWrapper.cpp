@@ -344,9 +344,6 @@ int tmlCoreWrapper::registeredCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMM
         m_log->log ("tmlCoreWrapper", "registeredCmdDispatch", "ERROR returned by tmlCoreWrapper_SendReply", iRet);
       }
     }
-    else{
-      m_log->log ("tmlCoreWrapper", "registeredCmdDispatch", "ERROR tmlCoreWrapper_IsAccessible", "false");
-    }
   }
   ///////////////////////////////////////////////////////////////////////////////////////////
   // Now it's time to free memory:
@@ -355,9 +352,6 @@ int tmlCoreWrapper::registeredCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMM
     if (TML_SUCCESS != iRet){
       m_log->log ("tmlCoreWrapper", "registeredCmdDispatch", "ERROR returned by m_CoreListener->MessageFinalize", iRet);
     }
-  }
-  else{
-    m_log->log ("tmlCoreWrapper", "registeredCmdDispatch", "ERROR tmlCoreWrapper_IsAccessible2", "false");
   }
   return iRet;
 }
@@ -910,6 +904,11 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
  */
 tmlCoreWrapper::~tmlCoreWrapper()
 {
+  ////////////////////////////////
+  // destruct the connection manager objects
+  tmlCoreWrapper_Connection_CloseAll();
+  sidex_Variant_DecRef(m_connectionMgrObjs);
+
   tmlCoreWrapper_General_Deregistration();
   ////////////////////////////////////////////////////////////////////////////////////////////
   // Set contiguous log file index to make logging the right file in the destructor of the sender possible:
@@ -926,10 +925,6 @@ tmlCoreWrapper::~tmlCoreWrapper()
   delete (m_CoreListener);
   m_CoreListener = NULL;
 
-  ////////////////////////////////
-  // destruct the connection manager objects
-  tmlCoreWrapper_Connection_CloseAll();
-  sidex_Variant_DecRef(m_connectionMgrObjs);
 
 
 #ifdef LINUX
@@ -2409,14 +2404,16 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUse
 
   TML_UINT32 iCount = 0;
   bool bFound = false;
-  tmlCoreWrapper_Get_ConnectionCount(&iCount);
-  for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
-    TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
-    tmlCoreWrapper_Get_Connection (i, &connection);
-    if (connection){
-      wrapper = (tmlConnectionManageObj*)connection;
-      if (wrapper->isEqual(sAddress)){
-        bFound = true;
+  if (bUseExisting){
+    tmlCoreWrapper_Get_ConnectionCount(&iCount);
+    for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+      TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+      tmlCoreWrapper_Get_Connection (i, &connection);
+      if (connection){
+        wrapper = (tmlConnectionManageObj*)connection;
+        if (wrapper->isEqual(sAddress)){
+          bFound = true;
+        }
       }
     }
   }
@@ -2500,7 +2497,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDL
   return iRet;
 }
 
-     
+   
 /**
   * @brief   Returns the number of connections.
   */

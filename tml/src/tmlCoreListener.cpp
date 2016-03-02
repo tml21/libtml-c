@@ -44,7 +44,7 @@
 #include "tmlErrors.h"
 #include "logValues.h"
 #include "tmlObjWrapper.h"
-
+#include "tmlCoreWrapper.h"
 
 /*********************************************************************************************************************************
 *                                             "C" / Global methods / Callbacks & Threads
@@ -142,10 +142,9 @@ void listenerFrameReceivedCallback (VortexChannel* channel,
       // The core handle:
       tml_Cmd_Attr_Set_Core_Reference(cmdHandle, callbackData->tmlcorehandle); // Don't mind of return value
 
-      
-      // TODO
-      tmlConnectionManageObj* connectionObj = TML_HANDLE_TYPE_NULL;
-      ((tmlObjWrapper*)cmdHandle)->tmlObjWrapper_Set_Connection((TML_CONNECTION_HANDLE)connectionObj);
+      TML_CONNECTION_HANDLE connectionHandle = TML_HANDLE_TYPE_NULL;
+      ((tmlCoreWrapper*)callbackData->tmlcorehandle)->tmlCoreWrapper_Connect(sHostIP, sPort, true, &connectionHandle);
+      ((tmlObjWrapper*)cmdHandle)->tmlObjWrapper_Set_Connection(connectionHandle);
 
       // Now call the callback method:
       globalCallback(callbackData->callback, (void*) cmdHandle);
