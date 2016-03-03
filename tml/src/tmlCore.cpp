@@ -6111,7 +6111,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Connect");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connect(sAddress, false, connectionHandle);
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connect(sAddress, false, connectionHandle, NULL);
         if (TML_SUCCESS == iRet){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " succeeded");
         }

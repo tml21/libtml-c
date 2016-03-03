@@ -122,12 +122,40 @@ TML_INT32 tmlListenerObj::set_Enabled(TML_BOOL bEnable){
   }
   else{
     if (!m_bListnerIsEnabled){
+      ////////////////////////////////////////
+      // Enable logging:
+      //m_CoreListener->TMLCoreListener_Set_Vortex_Logging_Value(m_iLogValue);
+      ////////////////////////////////////////////////////////////////////////////////////////////
+      // Set contiguous log file index to make logging to the right file in the TMLCoreListener_Start of the sender possible:
+      //m_CoreListener->setLogFileIndex(m_iLogFileIndex);
       //////////////////////
       // Start the listener:
+      //iRet = m_CoreListener->TMLCoreListener_Start(m_sListenerIP, m_sListenerPort, &resPort, &m_ListenerCallback);
+
+      if (TML_SUCCESS == iRet){
+        //////////////////////////////////////////////////////////////
+        // in case of m_sListenerPort equals 0 the vortex_listener_new will find
+        // the next free port, so I want to save it's identification:
+        //tmlCoreWrapper_Set_ListenerPort_A((char*)resPort);
+        ////////////////////////////////////////
+        // Profile registration at the listener:
+        //int iSize = 0;
+        //iRet = m_dispatcherHashTable->hashSize(&iSize);
+        //if (TML_SUCCESS == iRet && 0 < iSize){
+          //char** retProfiles = NULL;
+          //int iRet = m_dispatcherHashTable->getKeys(&retProfiles);
+          //if (TML_SUCCESS == iRet && NULL != retProfiles){
+            //for (int i = 0;i < iSize; ++i){
+              //m_CoreListener->TMLCoreListener_RegisterProfile(retProfiles[i], (TML_CORE_HANDLE)this);
+              //delete (retProfiles[i]);
+            //}
+            //delete retProfiles;
+          //}
+        //}
+      }
     }
     else{
-      //////////////////////
-      // Stop the listener:
+      //iRet = m_CoreListener->TMLCoreListener_Stop();
     }
     // In case of TML_SUCCESS:
     if (TML_SUCCESS == iRet)

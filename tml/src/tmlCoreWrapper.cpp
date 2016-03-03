@@ -2376,7 +2376,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDL
 /**
   * @brief   Create a new connection.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
   TML_INT32 iRet = TML_SUCCESS;
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
@@ -2387,7 +2387,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* 
     sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
   #endif // LINUX
 
-  iRet = tmlCoreWrapper_Connect (sNetAddress, bUseExisting, connectionHandle);
+  iRet = tmlCoreWrapper_Connect (sNetAddress, bUseExisting, connectionHandle, vortexConnection);
 
   delete[]sNetAddress;
 
@@ -2398,7 +2398,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* 
 /**
   * @brief   Create a new connection.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
   TML_INT32 iRet = TML_SUCCESS;
   tmlConnectionManageObj* wrapper = TML_HANDLE_TYPE_NULL;
 
@@ -2418,7 +2418,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUse
     }
   }
   if (!bFound){
-    wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress, &m_internalConnectionEstablishHandlerMethod, &m_internalConnectionCloseHandlerMethod);
+    wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress, &m_internalConnectionEstablishHandlerMethod, &m_internalConnectionCloseHandlerMethod, vortexConnection);
     tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
   }
 

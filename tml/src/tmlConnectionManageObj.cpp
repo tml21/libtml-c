@@ -64,7 +64,7 @@ void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
  * @brief    Constructor.
  *
  */
-tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort, void*  pOnConnectCallback, void*  pOnDisconnectCallback)
+tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection)
 {
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
@@ -75,7 +75,7 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
     sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
   #endif // LINUX
 
-  initConnectionManageObj(coreHandle, sNetAddress, pOnConnectCallback, pOnDisconnectCallback);
+  initConnectionManageObj(coreHandle, sNetAddress, pOnConnectCallback, pOnDisconnectCallback, vortexConnection);
 
   delete[]sNetAddress;
 }
@@ -84,9 +84,9 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
 /**
  * @brief    Constructor.
  */
-tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback)
+tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection)
 {
-  initConnectionManageObj(coreHandle, sNetAddress, pOnConnectCallback, pOnDisconnectCallback);
+  initConnectionManageObj(coreHandle, sNetAddress, pOnConnectCallback, pOnDisconnectCallback, vortexConnection);
 }
 
 
@@ -101,7 +101,7 @@ tmlConnectionManageObj::~tmlConnectionManageObj()
 /**
  * @brief    init the object
  */
-void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback)
+void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection)
 {
   m_iErr = TML_SUCCESS;
   m_coreHandle = coreHandle;
@@ -110,7 +110,7 @@ void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle,
   m_onProgrammableDisconnectCallback      = TML_HANDLE_TYPE_NULL;
 
   m_binding = new tmlNetBinding(sNetAddress);
-  m_vortexConnection = NULL;
+  m_vortexConnection = vortexConnection;
 
   /////////////////////////////////////////////////////////////////////////////
   //  init the internal class callback method to handle a lost of connection
@@ -142,13 +142,17 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
     //////////////////////////////////////////////////////////
     // maybe we have a vortex connection and try to reconnect:
     if (NULL != connection){
-      log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_reconnect");
-      axl_bool bConnected;
-      bConnected = vortex_connection_reconnect (connection, NULL, NULL);
-      if (axl_false == bConnected){
-        const char* msg = vortex_connection_get_message(connection);
-        log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
-        iRet = TML_ERR_SENDER_INVALID_PARAMS;
+      log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_is_ok");
+      if (!vortex_connection_is_ok (connection, axl_false))
+      {
+        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_reconnect");
+        axl_bool bConnected;
+        bConnected = vortex_connection_reconnect (connection, NULL, NULL);
+        if (axl_false == bConnected){
+          const char* msg = vortex_connection_get_message(connection);
+          log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
+          iRet = TML_ERR_SENDER_INVALID_PARAMS;
+        }
       }
       else{
         // call the callback method for the reconnection:

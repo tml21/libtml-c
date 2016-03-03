@@ -124,10 +124,11 @@ public:
      * @param   sNetAddress network   address for connection binding.
      * @param   pOnConnectCallback    reference to callback method to be invoked on connection.
      * @param   pOnDisconnectCallback reference to callback method to be invoked on disconnection.
+     * @param   vortexConnection      reference to a VortexConnection, NULL to create a new connection
      *
      * @returns an instance of tmlConnectionManageObj.
      */
-    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void* pOnConnectCallback, void* pOnDisconnectCallback);
+    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void* pOnConnectCallback, void* pOnDisconnectCallback, VortexConnection* vortexConnection);
 
 
 
@@ -139,10 +140,11 @@ public:
      * @param   sPort            port.
      * @param   pOnConnectCallback    reference to callback method to be invoked on connection.
      * @param   pOnDisconnectCallback reference to callback method to be invoked on disconnection.
+     * @param   vortexConnection      reference to a VortexConnection, NULL to create a new connection
      *
      * @returns an instance of tmlConnectionManageObj.
      */
-    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort, void*  pOnConnectCallback, void*  pOnDisconnectCallback);
+    tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection);
 
 
     /**
@@ -152,8 +154,9 @@ public:
      * @param   sNetAddress network address for connection binding.
      * @param   pOnConnectCallback    reference to callback method to be invoked on connection.
      * @param   pOnDisconnectCallback reference to callback method to be invoked on disconnection.
+     * @param   vortexConnection      reference to a VortexConnection, NULL to create a new connection
      */
-    void initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback);
+    void initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection);
 
 
     /**

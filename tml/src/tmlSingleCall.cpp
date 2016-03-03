@@ -746,7 +746,7 @@ int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const c
   TML_INT32 iRet;
   if (TML_HANDLE_TYPE_NULL == *conectionMgr){
     // Create a new connection manage object:
-    iRet = m_tmlCoreHandle->tmlCoreWrapper_Connect(sHost, sPort, true, &connectionHandle);
+    iRet = m_tmlCoreHandle->tmlCoreWrapper_Connect(sHost, sPort, true, &connectionHandle, NULL);
   }
   else{
     // Connection manage object allready exists:
