@@ -52,7 +52,7 @@
 
 #ifdef TML_UNICODE
   #define IO_PROFILE                    (wchar_t*) L"http://wobe-team.com/profiles/plain_profile"
-  #define IO_PROFILE2                    (wchar_t*) L"http://wobe-team.com/profiles/plain_profile2"
+  #define IO_PROFILE2                   (wchar_t*) L"http://wobe-team.com/profiles/plain_profile2"
   #define LISTENER_NETWORK_INTERFACE_IP (wchar_t*) L"0.0.0.0"
   #define IO_PORT                       (wchar_t*) L"44100"
   #define DESTINATION_HOST_IP           (wchar_t*) L"127.0.0.1"
@@ -62,7 +62,7 @@
   #define SLEEP_MS                      (wchar_t*) L"SLEEP_MS"
 #else // TML_UNICODE
   #define IO_PROFILE                    (char*) "http://wobe-team.com/profiles/plain_profile"
-  #define IO_PROFILE2                    (char*) "http://wobe-team.com/profiles/plain_profile2"
+  #define IO_PROFILE2                   (char*) "http://wobe-team.com/profiles/plain_profile2"
   #define LISTENER_NETWORK_INTERFACE_IP (char*) "0.0.0.0"
   #define IO_PORT                       (char*) "44100"
   #define DESTINATION_HOST_IP           (char*) "127.0.0.1"
@@ -384,10 +384,13 @@ bool senderTest02()
   ///////////////////////////////////////////////////////////////////////
   // Errorhandling:
   if (TML_SUCCESS != iErr)
-    printf ("senderTest01 / error happened - Code = %d\n", iErr);
+    printf ("senderTest02 / error happened - Code = %d\n", iErr);
   return false;
 }
 
+/**
+ * Close core if it exists
+ */
 void closePossibleExistingCoreHandle(){
   if (TML_HANDLE_TYPE_NULL != m_coreHandle){
     tml_Core_Close(&m_coreHandle);
@@ -432,9 +435,9 @@ bool sendAndListenTest01()
     iErr = tml_Send_SyncMessage(coreSenderHandle, cmdMsg, IO_PROFILE, DESTINATION_HOST_IP, IO_PORT, 10000);
     if (TML_SUCCESS == iErr){
 #ifdef TML_UNICODE
-      fwprintf (stderr, L"Sending async command 4711 (PROFILE2) to %ls -->\n", DESTINATION_HOST_IP);
+      fwprintf (stderr, L"Sending sync command 4711 (PROFILE2) to %ls -->\n", DESTINATION_HOST_IP);
 #else// TML_UNICODE
-      printf ("Sending async command 4711 to %s -->\n", DESTINATION_HOST_IP);
+      printf ("Sending sync command 4711 to %s -->\n", DESTINATION_HOST_IP);
 #endif// TML_UNICODE
     iErr = tml_Send_SyncMessage(coreSenderHandle, cmdMsg, IO_PROFILE2, DESTINATION_HOST_IP, IO_PORT, 10000);
       }
@@ -453,7 +456,7 @@ bool sendAndListenTest01()
   ///////////////////////////////////////////////////////////////////////
   // Errorhandling:
   if (TML_SUCCESS != iErr)
-    printf ("senderTest01 / error happened - Code = %d\n", iErr);
+    printf ("sendAndListenTest01 / error happened - Code = %d\n", iErr);
   return true;
 }
 
@@ -521,7 +524,7 @@ bool sendAndListenTest02()
   ///////////////////////////////////////////////////////////////////////
   // Errorhandling:
   if (TML_SUCCESS != iErr)
-    printf ("senderTest01 / error happened - Code = %d\n", iErr);
+    printf ("sendAndListenTest02 / error happened - Code = %d\n", iErr);
   return true;
 }
 
@@ -566,9 +569,9 @@ bool sendAndListenTest03()
     iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE, cmdMsg, 10000);
     if (TML_SUCCESS == iErr){
 #ifdef TML_UNICODE
-      fwprintf (stderr, L"Sending async command 4711 (PROFILE2) to %ls -->\n", DESTINATION_HOST_IP);
+      fwprintf (stderr, L"Sending sync command 4711 (PROFILE2) to %ls -->\n", DESTINATION_HOST_IP);
 #else// TML_UNICODE
-      printf ("Sending async command 4711 to %s -->\n", DESTINATION_HOST_IP);
+      printf ("Sending sync command 4711 to %s -->\n", DESTINATION_HOST_IP);
 #endif// TML_UNICODE
     iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE2, cmdMsg, 10000);
       }
@@ -590,7 +593,7 @@ bool sendAndListenTest03()
   ///////////////////////////////////////////////////////////////////////
   // Errorhandling:
   if (TML_SUCCESS != iErr)
-    printf ("senderTest01 / error happened - Code = %d\n", iErr);
+    printf ("sendAndListenTest03 / error happened - Code = %d\n", iErr);
   return true;
 }
 
@@ -661,7 +664,7 @@ bool sendAndListenTest04()
   ///////////////////////////////////////////////////////////////////////
   // Errorhandling:
   if (TML_SUCCESS != iErr)
-    printf ("senderTest01 / error happened - Code = %d\n", iErr);
+    printf ("sendAndListenTest04 / error happened - Code = %d\n", iErr);
   return true;
 }
 
@@ -677,7 +680,7 @@ bool validateConnection(){
   SIDEX_INT32 iSize;
   iRet = sidex_Variant_List_Size (profiles, &iSize);
   if (TML_SUCCESS == iRet){
-    printf ("senderTest01 / number of profiles = %d\n", iSize);
+    printf ("validateConnection / number of profiles = %d\n", iSize);
     for (TML_INT32 i = 0; i < iSize && TML_SUCCESS == iRet; ++i){
       SIDEX_VARIANT item;
       iRet = sidex_Variant_List_Get (profiles, i, &item);
