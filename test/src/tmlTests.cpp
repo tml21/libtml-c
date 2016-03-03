@@ -60,6 +60,9 @@
 
   #define PARAMS                        (wchar_t*) L"PARAMS"
   #define SLEEP_MS                      (wchar_t*) L"SLEEP_MS"
+
+  const wchar_t* any_data1 = L"Any Data 1";
+  const wchar_t* any_data2 = L"Any Data 2";
 #else // TML_UNICODE
   #define IO_PROFILE                    (char*) "http://wobe-team.com/profiles/plain_profile"
   #define IO_PROFILE2                   (char*) "http://wobe-team.com/profiles/plain_profile2"
@@ -70,6 +73,10 @@
 
   #define PARAMS                        (char*) "PARAMS"
   #define SLEEP_MS                      (char*) "SLEEP_MS"
+
+  const char* any_data1 = "Any Data 1";
+  const char* any_data2 = "Any Data 2";
+
 #endif // TML_UNICODE
 
 TML_CORE_HANDLE m_coreHandle = TML_HANDLE_TYPE_NULL;
@@ -352,10 +359,8 @@ bool senderTest02()
     }
   }
 
-  static char* data = "BlaBlaBlub";
-  tml_Core_Set_OnConnect(m_coreHandle, &connectionEstablishHandler, data);
-  static char* data2 = "pipapo";
-  tml_Core_Set_OnDisconnect(m_coreHandle, &connectionCloseHandler, data2);
+  tml_Core_Set_OnConnect(m_coreHandle, &connectionEstablishHandler, (TML_POINTER)any_data1);
+  tml_Core_Set_OnDisconnect(m_coreHandle, &connectionCloseHandler, (TML_POINTER)any_data2);
 
   /////////////////////////////////////////////////////////////////////////
   // send command / message 
@@ -696,7 +701,7 @@ bool validateConnection(){
         char* profileName;
         iRet = sidex_Variant_As_String (item, &profileName, &iItemLength);
         if (TML_SUCCESS == iRet){
-          printf (""profile(%d): %s\n", i, profileName);
+          printf ("profile(%d): %s\n", i, profileName);
         }
 #endif // SIDEX_UNICODE
       }
