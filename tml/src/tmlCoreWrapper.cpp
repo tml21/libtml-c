@@ -44,6 +44,31 @@
 #include "tmlCore.h"
 #include "unicode.h"
 #include "logValues.h"
+#include "tmlConnectionManageObj.h"
+#include "tmlListenerObj.h"
+#include "tmlGlobalCallback.h"
+
+
+/**
+ * @brief   Class callback method that will be called by establishment of a connection
+ */
+int connectionEstablishHandler(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData)
+{
+  globalCallback(pCBData, (void*)connectionHandle);
+
+  return 1;
+}
+
+
+/**
+ * @brief   Class callback method that will be called by close of a connection
+ */
+int connectionCloseHandler(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData)
+{
+  globalCallback(pCBData, (void*)connectionHandle);
+
+  return 1;
+}
 
 
 /**
@@ -64,6 +89,7 @@ bool tmlCoreWrapper::listenerCallbackMethod(void* tmlhandle)
   tml_Cmd_Free(&handle);
   return TML_SUCCESS != iRet;
 }
+
 
 /**
  * @brief   Send a Reply.
@@ -109,6 +135,23 @@ int tmlCoreWrapper::tmlCoreWrapper_SendReply (TML_COMMAND_HANDLE tmlhandle, int 
 
 
 /**
+ * @brief    Get the Vortex execution context
+ */
+VortexCtx* tmlCoreWrapper::getVortexCtx(){
+  return m_ctx;
+}
+
+
+
+/**
+  * @brief    Get the loghandler
+  */
+tmlLogHandler* tmlCoreWrapper::getLogHandler(){
+  return m_log;
+}
+
+
+/**
  * @brief    The initialization called by the constructor
  */
 void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize, TML_INT32 iThreadPoolMaxSize, 
@@ -116,6 +159,20 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
                                           TML_INT32 iThreadRemoveSteps, TML_INT32 iThreadPoolRemovePeriod, 
                                           TML_BOOL bThreadAutoRemove, TML_BOOL bThreadPreemptive)
 {
+  m_pOnConnectData        = TML_HANDLE_TYPE_NULL;
+  m_pOnConnectCallback    = TML_HANDLE_TYPE_NULL;
+  m_pOnConnectData        = TML_HANDLE_TYPE_NULL;
+  m_pOnDisconnectCallback = TML_HANDLE_TYPE_NULL;
+  ////////////////////////////////////////////////////////////
+  // Init callback for the case of connection establishment:
+  m_internalConnectionEstablishHandlerMethod.SetCallback(this, &tmlCoreWrapper::signalConnectionEstablished);
+  ////////////////////////////////////////////////////////////
+  // Init callback for the case of connection establishment:
+  m_internalConnectionCloseHandlerMethod.SetCallback(this, &tmlCoreWrapper::signalConnectionClosed);
+
+  ////////////////////////////////
+  // list containing the connection manager objects
+  m_connectionMgrObjs = sidex_Variant_New_List();
   ////////////////////////////////
   // The debug log handler
   m_log = new tmlLogHandler();
@@ -150,7 +207,6 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
   if (axl_true != bSuccess){
     m_log->log ("tmlCoreWrapper", "initWrapper", "vortex_init_ctx", "FAILLED");
   }
-
   /* enable automatic thread pool resize */
   m_log->log (TML_LOG_VORTEX_CMD, "tmlCoreWrapper", "initWrapper", "Vortex CMD", "vortex_thread_pool_setup");
 
@@ -288,9 +344,6 @@ int tmlCoreWrapper::registeredCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMM
         m_log->log ("tmlCoreWrapper", "registeredCmdDispatch", "ERROR returned by tmlCoreWrapper_SendReply", iRet);
       }
     }
-    else{
-      m_log->log ("tmlCoreWrapper", "registeredCmdDispatch", "ERROR tmlCoreWrapper_IsAccessible", "false");
-    }
   }
   ///////////////////////////////////////////////////////////////////////////////////////////
   // Now it's time to free memory:
@@ -299,9 +352,6 @@ int tmlCoreWrapper::registeredCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMM
     if (TML_SUCCESS != iRet){
       m_log->log ("tmlCoreWrapper", "registeredCmdDispatch", "ERROR returned by m_CoreListener->MessageFinalize", iRet);
     }
-  }
-  else{
-    m_log->log ("tmlCoreWrapper", "registeredCmdDispatch", "ERROR tmlCoreWrapper_IsAccessible2", "false");
   }
   return iRet;
 }
@@ -788,7 +838,7 @@ int tmlCoreWrapper::rawCmdDispatch(TML_COMMAND_HANDLE tmlhandle, SIDEX_HANDLE sH
 /**
  * @brief    Constructor.
  */
-tmlCoreWrapper::tmlCoreWrapper(VortexCtx* ctx, int iLogValue,
+tmlCoreWrapper::tmlCoreWrapper(int iLogValue,
                                 TML_INT32 iInitialThreadPoolSize, TML_INT32 iThreadPoolMaxSize, 
                                                                   TML_INT32 iThreadAddSteps, TML_INT32 iThreadPoolAddPeriod,
                                                                   TML_INT32 iThreadRemoveSteps, TML_INT32 iThreadPoolRemovePeriod, 
@@ -854,6 +904,11 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
  */
 tmlCoreWrapper::~tmlCoreWrapper()
 {
+  ////////////////////////////////
+  // destruct the connection manager objects
+  tmlCoreWrapper_Connection_CloseAll();
+  sidex_Variant_DecRef(m_connectionMgrObjs);
+
   tmlCoreWrapper_General_Deregistration();
   ////////////////////////////////////////////////////////////////////////////////////////////
   // Set contiguous log file index to make logging the right file in the destructor of the sender possible:
@@ -869,6 +924,8 @@ tmlCoreWrapper::~tmlCoreWrapper()
   // free listener / to get rid of ctx references before vortex_exit_ctx
   delete (m_CoreListener);
   m_CoreListener = NULL;
+
+
 
 #ifdef LINUX
   #ifdef OS_X
@@ -1542,7 +1599,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Get_Logging_Value(TML_INT32* iLogValue){
 int tmlCoreWrapper::tmlCoreWrapper_SendSyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout)
 {
   int  iRet = TML_SUCCESS;
-  iRet = m_sender->sender_SendSyncMessage(profile, sHost, sPort, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true);
+  iRet = m_sender->sender_SendSyncMessage(profile, sHost, sPort, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true, TMLCOM_MODE_SYNC);
   return iRet;
 }
 
@@ -1551,10 +1608,10 @@ int tmlCoreWrapper::tmlCoreWrapper_SendSyncMessage(TML_COMMAND_HANDLE tmlhandle,
  * @brief    Send an asynchron Message.
  */
 
-int tmlCoreWrapper::tmlCoreWrapper_SendAsyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout, int iMode)
+int tmlCoreWrapper::tmlCoreWrapper_SendAsyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout)
 {
   int  iRet = TML_SUCCESS;
-  iRet = m_sender->sender_SendAsyncMessage(profile, sHost, sPort, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), iMode, true, false);
+  iRet = m_sender->sender_SendAsyncMessage(profile, sHost, sPort, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), true, false);
   return iRet;
 }
 
@@ -1728,7 +1785,7 @@ int tmlCoreWrapper::tmlCoreWrapper_EventSendSubscriptionRequest(const char* prof
   if (TML_SUCCESS == iRet)
     iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_EVENT_SUBSCRIPTION_REQUEST);
   if (TML_SUCCESS == iRet)
-    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true);
+    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -1774,7 +1831,7 @@ int tmlCoreWrapper::tmlCoreWrapper_EventSendUnsubscriptionRequest(const char* pr
     iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_EVENT_UNSUBSCRIPTION_REQUEST);
 
   if (TML_SUCCESS == iRet)
-    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true);
+    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -1911,7 +1968,7 @@ int tmlCoreWrapper::tmlCoreWrapper_LoadBalancedSendSubscriptionRequest(const cha
     iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_LOAD_BALANCED_SUBSCRIPTION_REQUEST);
 
   if (TML_SUCCESS == iRet)
-    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true);
+    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -1958,7 +2015,7 @@ int tmlCoreWrapper::tmlCoreWrapper_LoadBalancedSendUnsubscriptionRequest(const c
     iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST);
 
   if (TML_SUCCESS == iRet)
-    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true);
+    iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -2234,4 +2291,314 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
  */
 int tmlCoreWrapper::getLogFileIndex(){
   return m_iLogFileIndex;
+}
+
+
+/**
+  * @brief   Create a new listener.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  tmlListenerObj* wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, sAddress);
+  *listenerHandle = (TML_LISTENER_HANDLE) wrapper;
+
+  // TODO: - Add listener to list
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Close a listener and release resources.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // Do make the cast to (tmlListenerObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
+  delete (tmlListenerObj*)*listenerHandle;
+  *listenerHandle = TML_HANDLE_TYPE_NULL;
+
+  // TODO: - remove listener from list
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Get the number of listeners.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ListenerCount(TML_UINT32* iCount){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: - listener count
+
+  return iRet;
+}
+
+/**
+  * @brief   Get listener's handle from a TML core.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: TML_LISTENER_HANDLE
+  *listenerHandle = TML_HANDLE_TYPE_NULL;
+
+  return iRet;
+}
+
+
+/**
+  * @brief    Enable/disable a listener. 
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: enable / disable the listener
+
+  return iRet;
+}
+
+
+/**
+  * @brief    Get enable status of a listener.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL* bEnable){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  // TODO: Get enable status of a listener
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Create a new connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
+  TML_INT32 iRet = TML_SUCCESS;
+  int iLength = strlen(sHost) + strlen(sPort) + 2;
+
+  char* sNetAddress = new char[iLength];
+  #if defined(LINUX) || defined (MINGW_BUILD)
+    sprintf(sNetAddress, "%s:%s", sHost, sPort);
+  #else // LINUX
+    sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
+  #endif // LINUX
+
+  iRet = tmlCoreWrapper_Connect (sNetAddress, bUseExisting, connectionHandle, vortexConnection);
+
+  delete[]sNetAddress;
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Create a new connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
+  TML_INT32 iRet = TML_SUCCESS;
+  tmlConnectionManageObj* wrapper = TML_HANDLE_TYPE_NULL;
+
+  TML_UINT32 iCount = 0;
+  bool bFound = false;
+  if (bUseExisting){
+    tmlCoreWrapper_Get_ConnectionCount(&iCount);
+    for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+      TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+      tmlCoreWrapper_Get_Connection (i, &connection);
+      if (connection){
+        wrapper = (tmlConnectionManageObj*)connection;
+        if (wrapper->isEqual(sAddress)){
+          bFound = true;
+        }
+      }
+    }
+  }
+  if (!bFound){
+    wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress, &m_internalConnectionEstablishHandlerMethod, &m_internalConnectionCloseHandlerMethod, vortexConnection);
+    tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
+  }
+
+  *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
+
+  return iRet = wrapper->getLastErr();
+}
+
+
+/**
+  * @brief   Close a connection and release resources.
+  */
+TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle, bool bDeregisterSenderRegistration){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  if (bDeregisterSenderRegistration){
+    m_sender->DeregisterConnectionLostAndFree((tmlConnectionManageObj*)*connectionHandle);
+  }
+
+  // Delete a TML connection handle from the connection list:
+  tmlCoreWrapper_Delete_ConnectionItem(*connectionHandle);
+
+  // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
+  delete (tmlConnectionManageObj*)*connectionHandle;
+  *connectionHandle = TML_HANDLE_TYPE_NULL;
+
+  return iRet;
+}
+
+
+/**
+  * @brief     Close al connections and release resources.
+  */
+void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  for (TML_UINT32 i = 0; i < iCount; ++i){
+    TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Connection (i, &connection);
+    if (connection){
+      tmlCoreWrapper_Connection_Close(&connection, false);
+    }
+  }
+}
+
+     
+/**
+  * @brief    Delete a TML connection handle from the connection list
+  */
+void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE handle){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  bool bFound = false;
+  for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+    TML_CONNECTION_HANDLE tmpConnection = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Connection (i, &tmpConnection);
+    if (handle == tmpConnection){
+      bFound = true;
+      sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
+    }
+  }
+}
+
+     
+/**
+  * @brief    Add a TML connection handle to the connection list
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE handle){
+  SIDEX_INT32 iRet;
+  SIDEX_INT32 iPos;
+  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(handle);
+  iRet = sidex_Variant_List_Append(m_connectionMgrObjs, vObj, &iPos);
+  sidex_Variant_DecRef(vObj);
+  return iRet;
+}
+
+   
+/**
+  * @brief   Returns the number of connections.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount(TML_UINT32* iCount){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  TML_INT32 iSize = 0;
+  iRet = sidex_Variant_List_Size (m_connectionMgrObjs, &iSize);
+  *iCount = (TML_UINT32)iSize;
+
+  if (SIDEX_SUCCESS != iRet){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
+  return iRet;
+}
+
+/**
+  * @brief   Get connection handle from a TML core.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  SIDEX_VARIANT vObj;
+  iRet = sidex_Variant_List_Get(m_connectionMgrObjs, index, &vObj);
+  if (SIDEX_SUCCESS == iRet){
+    SIDEX_INT64 iHandle = 0;
+    iRet = sidex_Variant_As_Integer (vObj, &iHandle);
+    if (SIDEX_SUCCESS == iRet){
+      *connectionHandle = (TML_CONNECTION_HANDLE) iHandle;
+    }
+  }
+  if (SIDEX_SUCCESS != iRet){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
+  return iRet;
+}
+
+
+/**
+  * @brief   Send async command on existing connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  int  iRet = TML_SUCCESS;
+  iRet = m_sender->sender_SendAsyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true);
+  return iRet;
+}
+
+
+/**
+  * @brief   Send sync command on existing connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendSyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
+  int  iRet = TML_SUCCESS;
+  iRet = m_sender->sender_SendSyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true, TMLCOM_MODE_SYNC);
+  return iRet;
+}
+
+
+/**
+  * @brief   Class callback method that will be called by establishment of a connection
+ */
+bool tmlCoreWrapper::signalConnectionEstablished(void* connection){
+  TML_CONNECTION_HANDLE connectionMngObj = (TML_CONNECTION_HANDLE) connection;
+
+  if (TML_HANDLE_TYPE_NULL != m_pOnConnectCallback){
+    ((void(FUNC_C_DECL *)(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData))m_pOnConnectCallback)(connectionMngObj, m_pOnConnectData);
+  }
+  return true;
+}
+
+/**
+  * @brief   Send sync command on existing connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Set_OnConnect(TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData){
+  int iRet  = TML_SUCCESS;;
+  m_pOnConnectCallback = pCBFunc;
+  m_pOnConnectData = pCBData;
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Class callback method that will be called by close of a connection
+ */
+bool tmlCoreWrapper::signalConnectionClosed(void* connection){
+  TML_CONNECTION_HANDLE connectionMngObj = (TML_CONNECTION_HANDLE) connection;
+
+  if (TML_HANDLE_TYPE_NULL != m_pOnDisconnectCallback){
+    ((void(FUNC_C_DECL *)(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData))m_pOnDisconnectCallback)(connectionMngObj, m_pOnDisconnectData);
+  }
+  return true;
+}
+
+/**
+  * @brief    Callback function to signal a closed connection.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Set_OnDisconnect(TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData){
+  int iRet  = TML_SUCCESS;;
+  m_pOnDisconnectCallback = pCBFunc;
+  m_pOnDisconnectData = pCBData;
+
+  return iRet;
 }

@@ -689,8 +689,12 @@ void AsyncHandlingThreadMethod (LPVOID pParam)
   if (NULL == channelPoolAttr){
     //////////////////////////////////////////////
     // The first time allocation of a thread pool:
+    tmlConnectionManageObj* connectionMgr;
     VortexConnection* connectionAttr = NULL;
-    pThreadData->connectionObj->getConnection(&connectionAttr);
+    pThreadData->connectionObj->getConnectionManageObj(&connectionMgr);
+    if (NULL != connectionMgr){
+      connectionAttr = connectionMgr->getVortexConnection();
+    }
     char* profile = NULL;
     pThreadData->connectionObj->getProfile(&profile);
     if (NULL != connectionAttr && NULL != profile){

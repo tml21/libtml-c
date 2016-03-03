@@ -97,6 +97,20 @@ typedef TML_HANDLE_TYPE       TML_COMMAND_HANDLE;
 
 
 /**
+* @brief    TML listener handle
+* @ingroup tmlTypes
+*/
+typedef TML_HANDLE_TYPE       TML_LISTENER_HANDLE;
+
+
+/**
+* @brief    TML connection handle
+* @ingroup tmlTypes
+*/
+typedef TML_HANDLE_TYPE       TML_CONNECTION_HANDLE;
+
+
+/**
 * @brief    TML null handle
 */
 #define TML_HANDLE_TYPE_NULL    SIDEX_HANDLE_TYPE_NULL
@@ -279,6 +293,30 @@ typedef  TML_BOOL (*TML_ON_PEER_REGISTRATION_CB_FUNC)(TML_BOOL bSubscribe, TML_C
  * @see tml_Profile_Register_Cmd()
  */
 typedef  void (*TML_ON_CMD_DISPATCH_CB_FUNC)(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
+
+
+/**
+ * @brief   Callback function to signal a new connection.
+ * @ingroup tmlCBFunctions
+ *
+ * @param   connectionHandle  TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   pCBData   custom data from handler registration (tml_Core_Set_OnConnect()) or TML_HANDLE_TYPE_NULL
+ *
+ * @see tml_Core_Set_OnConnect()
+ */
+typedef  void (*TML_ON_CONNECT_CB_FUNC)(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData);
+
+
+/**
+ * @brief   Callback function to signal a closed connection.
+ * @ingroup tmlCBFunctions
+ *
+ * @param   connectionHandle  TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   pCBData   custom data from handler registration (tml_Core_Set_OnDisconnect()) or TML_HANDLE_TYPE_NULL
+ *
+ * @see tml_Core_Set_OnDisconnect()
+ */
+typedef  void (*TML_ON_DISCONNECT_CB_FUNC)(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData);
 
 
 /**

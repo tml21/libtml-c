@@ -58,6 +58,7 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlCollectCall.h
                       tmlCollectCallDestinationObj.h
                       tmlCollectCallDestinationObjHandler.h
+                      tmlConnectionManageObj.h
                       tmlConnectionObj.h
                       tmlCoreDefines.h
                       tmlCoreHash.h
@@ -73,8 +74,10 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlEventDataQueue.h
                       tmlEventHandler.h
                       tmlGlobalCallback.h
+                      tmlListenerObj.h
                       tmlLogHandler.h
                       tmlMultiAsyncMsg.h
+                      tmlNetBinding.h
                       tmlObjWrapper.h
                       tmlProfileHandler.h
                       tmlReceiverStream.h
@@ -89,6 +92,7 @@ set (TML_COMMON_SOURCES ${COMMON_SRC_PATH}/systemBase.cpp
 set (TML_SOURCES      tmlCollectCall.cpp
                       tmlCollectCallDestinationObj.cpp
                       tmlCollectCallDestinationObjHandler.cpp
+                      tmlConnectionManageObj.cpp
                       tmlConnectionObj.cpp
                       tmlCore.cpp
                       tmlCoreHash.cpp
@@ -104,8 +108,10 @@ set (TML_SOURCES      tmlCollectCall.cpp
                       tmlEventDataQueue.cpp
                       tmlEventHandler.cpp
                       tmlGlobalCallback.cpp
+                      tmlListenerObj.cpp
                       tmlLogHandler.cpp
                       tmlMultiAsyncMsg.cpp
+                      tmlNetBinding.cpp
                       tmlObjWrapper.cpp
                       tmlProfileHandler.cpp
                       tmlReceiverStream.cpp

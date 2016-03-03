@@ -43,7 +43,8 @@
 #include "tmlGlobalCallback.h"
 #include "tmlErrors.h"
 #include "logValues.h"
-
+#include "tmlObjWrapper.h"
+#include "tmlCoreWrapper.h"
 
 /*********************************************************************************************************************************
 *                                             "C" / Global methods / Callbacks & Threads
@@ -69,6 +70,14 @@ void listenerFrameReceivedCallback (VortexChannel* channel,
   // Die Connection ID:
   callbackData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listenerFrameReceivedCallback", "Vortex CMD", "vortex_connection_get_id");
   int iConnectionID = vortex_connection_get_id(connection);
+  ///////////////////////////
+  // Die Host IP:
+  callbackData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listenerFrameReceivedCallback", "Vortex CMD", "vortex_connection_get_host_ip");
+  const char* sHostIP = vortex_connection_get_host_ip(connection);
+  ///////////////////////////
+  // Der Port:
+  callbackData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listenerFrameReceivedCallback", "Vortex CMD", "vortex_connection_get_local_port");
+  const char* sPort = vortex_connection_get_local_port(connection);
   ///////////////////////////
   // Die Channel ID:
   callbackData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listenerFrameReceivedCallback", "Vortex CMD", "vortex_channel_get_number");
@@ -132,6 +141,12 @@ void listenerFrameReceivedCallback (VortexChannel* channel,
       tml_Cmd_Attr_Set_Profile(cmdHandle, sProfile);
       // The core handle:
       tml_Cmd_Attr_Set_Core_Reference(cmdHandle, callbackData->tmlcorehandle); // Don't mind of return value
+
+      TML_CONNECTION_HANDLE connectionHandle = TML_HANDLE_TYPE_NULL;
+      //////////////////////////////////////////////////////////////////
+      // Add the connection to the list:
+      ((tmlCoreWrapper*)callbackData->tmlcorehandle)->tmlCoreWrapper_Connect(sHostIP, sPort, true, &connectionHandle, connection);
+      ((tmlObjWrapper*)cmdHandle)->tmlObjWrapper_Set_Connection(connectionHandle);
 
       // Now call the callback method:
       globalCallback(callbackData->callback, (void*) cmdHandle);

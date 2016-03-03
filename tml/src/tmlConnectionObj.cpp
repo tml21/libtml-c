@@ -51,7 +51,7 @@ tmlConnectionObj::tmlConnectionObj(tmlLogHandler* loghandler)
   m_channel = NULL;
   m_channelPool = NULL;
   m_sender = NULL;
-  m_connection = NULL;
+  m_connectionMgr = NULL;
   m_callbackData = new VORTEXSenderFrameReceivedCallbackData;
   m_bLocked = false;
   m_bRawViaVortexPayloadFeeder = false;
@@ -80,7 +80,7 @@ tmlConnectionObj::~tmlConnectionObj()
   m_channel = NULL;
   m_channelPool = NULL;
   m_sender = NULL;
-  m_connection = NULL;
+  m_connectionMgr = NULL;
   delete m_callbackData;
   ////////////////////////////////////////////////////////////////////////////
   // Destroy the mutex that protect critial section about communication data:
@@ -91,7 +91,7 @@ tmlConnectionObj::~tmlConnectionObj()
 /**
  * @brief Set all connection relevant params.
  */
-void tmlConnectionObj::setConnectionObj(const char* profile, const char* sHost, const char* sPort, TMLCoreSender* sender, VortexChannelPool* channelPool, VortexConnection* connection)
+void tmlConnectionObj::setConnectionObj(const char* profile, const char* sHost, const char* sPort, TMLCoreSender* sender, VortexChannelPool* channelPool, tmlConnectionManageObj* connectionMgrObj)
 {
   int iSize;
 
@@ -140,7 +140,7 @@ void tmlConnectionObj::setConnectionObj(const char* profile, const char* sHost, 
   m_sender = sender;
 
   // Connection:
-  m_connection = connection;
+  m_connectionMgr = connectionMgrObj;
 }
 
 /**
@@ -281,10 +281,10 @@ bool tmlConnectionObj::isPendingToBeRemoved(){
 
 
 /**
- * @brief Get the VortexConnection object.
+ * @brief Get the tmlConnectionManageObj object.
  */
-void tmlConnectionObj::getConnection(VortexConnection** connection){
-  *connection = m_connection;
+void tmlConnectionObj::getConnectionManageObj(tmlConnectionManageObj** connection){
+  *connection = m_connectionMgr;
 }
 
 
