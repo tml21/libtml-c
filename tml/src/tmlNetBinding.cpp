@@ -732,7 +732,7 @@ TML_BOOL tmlNetBinding::isIPV6(){
   * @brief check the network host type.
   */
 TML_BOOL tmlNetBinding::isIPV6(TML_INT32 index){
-  TML_BOOL bIsIPV6 = NULL;
+  TML_BOOL bIsIPV6 = TML_FALSE;
   if (m_iBindings){
     SIDEX_VARIANT vType;
     SIDEX_INT32 iRet = sidex_Variant_List_Get(m_isIPV6, index, &vType);
