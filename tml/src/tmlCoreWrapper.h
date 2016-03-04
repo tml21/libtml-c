@@ -57,6 +57,11 @@ private:
     /* data */
 
     /**
+     * @brief    Reference to list containing listener objects
+     */
+    SIDEX_VARIANT          m_listenerObjs;
+
+    /**
      * @brief    Reference to list containing connection manager objects
      */
     SIDEX_VARIANT          m_connectionMgrObjs;
@@ -1821,6 +1826,19 @@ public:
     /**
      * @brief   Create a new listener.
      *
+     * @param   sHost            network host / ip.
+     * @param   sPort            port.
+     * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Create(const char* sHost, const char* sPort, TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief   Create a new listener.
+     *
      * @param   sAddress         network address for listener binding
      * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
      *
@@ -1839,6 +1857,31 @@ public:
      * @see tmlErrors.h,tmlStdTypes.h
      */
     TML_INT32 tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief     Close all listener instances and release resources.
+     */
+    void tmlCoreWrapper_Listener_CloseAll();
+
+
+    /**
+     * @brief    Delete a TML listener handle from the listener list
+     *
+     * @param   listenerHandle TML listener handle (TML_LISTENER_HANDLE)
+     */
+    void tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE handle);
+
+
+    /**
+     * @brief    Add a TML listener handle to the listener list
+     *
+     * @param   listenerHandle TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE handle);
 
 
     /**
@@ -1934,7 +1977,7 @@ public:
 
 
     /**
-     * @brief     Close al connections and release resources.
+     * @brief     Close all connections and release resources.
      */
     void tmlCoreWrapper_Connection_CloseAll();
 

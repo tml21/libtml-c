@@ -171,6 +171,9 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
   m_internalConnectionCloseHandlerMethod.SetCallback(this, &tmlCoreWrapper::signalConnectionClosed);
 
   ////////////////////////////////
+  // list containing the listener objects
+  m_listenerObjs = sidex_Variant_New_List();
+  ////////////////////////////////
   // list containing the connection manager objects
   m_connectionMgrObjs = sidex_Variant_New_List();
   ////////////////////////////////
@@ -908,6 +911,11 @@ tmlCoreWrapper::~tmlCoreWrapper()
   // destruct the connection manager objects
   tmlCoreWrapper_Connection_CloseAll();
   sidex_Variant_DecRef(m_connectionMgrObjs);
+
+  ////////////////////////////////
+  // destruct the listener objects
+  tmlCoreWrapper_Listener_CloseAll();
+  sidex_Variant_DecRef(m_listenerObjs);
 
   tmlCoreWrapper_General_Deregistration();
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -2297,13 +2305,51 @@ int tmlCoreWrapper::getLogFileIndex(){
 /**
   * @brief   Create a new listener.
   */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sHost, const char* sPort, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  int iLength = strlen(sHost) + strlen(sPort) + 2;
+
+  char* sNetAddress = new char[iLength];
+  #if defined(LINUX) || defined (MINGW_BUILD)
+    sprintf(sNetAddress, "%s:%s", sHost, sPort);
+  #else // LINUX
+    sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
+  #endif // LINUX
+
+  iRet = tmlCoreWrapper_Listener_Create (sNetAddress, listenerHandle);
+
+  delete[]sNetAddress;
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Create a new listener.
+  */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, TML_LISTENER_HANDLE* listenerHandle){
   TML_INT32 iRet = TML_SUCCESS;
+  tmlListenerObj* wrapper = TML_HANDLE_TYPE_NULL;
 
-  tmlListenerObj* wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, sAddress);
+  TML_UINT32 iCount = 0;
+  bool bFound = false;
+  tmlCoreWrapper_Get_ListenerCount(&iCount);
+  for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+    TML_LISTENER_HANDLE listener = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Listener (i, &listener);
+    if (listener){
+      wrapper = (tmlListenerObj*)listener;
+      if (wrapper->isEqual(sAddress)){
+        bFound = true;
+      }
+    }
+  }
+  if (!bFound){
+    wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, sAddress);
+    tmlCoreWrapper_Add_ListenerItem((TML_LISTENER_HANDLE) wrapper);
+  }
+
   *listenerHandle = (TML_LISTENER_HANDLE) wrapper;
-
-  // TODO: - Add listener to list
 
   return iRet;
 }
@@ -2315,12 +2361,62 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, T
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* listenerHandle){
   TML_INT32 iRet = TML_SUCCESS;
 
+  // Delete a TML connection handle from the connection list:
+  tmlCoreWrapper_Delete_ListenerItem(*listenerHandle);
+
   // Do make the cast to (tmlListenerObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
   delete (tmlListenerObj*)*listenerHandle;
   *listenerHandle = TML_HANDLE_TYPE_NULL;
 
-  // TODO: - remove listener from list
+  return iRet;
+}
 
+
+/**
+  * @brief     Close all listener instances and release resources.
+  */
+void tmlCoreWrapper::tmlCoreWrapper_Listener_CloseAll(){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ListenerCount(&iCount);
+  for (TML_UINT32 i = 0; i < iCount; ++i){
+    TML_LISTENER_HANDLE listener = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Listener (i, &listener);
+    if (listener){
+      tmlCoreWrapper_Listener_Close(&listener);
+    }
+  }
+}
+
+
+/**
+ * @brief    Delete a TML listener handle from the listener list
+ */
+void tmlCoreWrapper::tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE handle){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ListenerCount(&iCount);
+  bool bFound = false;
+  for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+    TML_LISTENER_HANDLE tmpListener = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Listener (i, &tmpListener);
+    if (handle == tmpListener){
+      bFound = true;
+      sidex_Variant_List_DeleteItem (m_listenerObjs, i);
+    }
+  }
+}
+
+     
+/**
+  * @brief    Add a TML listener handle to the listener list
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE handle){
+  SIDEX_INT32 iRet;
+  SIDEX_INT32 iPos;
+  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(handle);
+  iRet = sidex_Variant_List_Append(m_listenerObjs, vObj, &iPos);
+  sidex_Variant_DecRef(vObj);
   return iRet;
 }
 
@@ -2331,8 +2427,13 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* lis
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ListenerCount(TML_UINT32* iCount){
   TML_INT32 iRet = TML_SUCCESS;
 
-  // TODO: - listener count
+  TML_INT32 iSize = 0;
+  iRet = sidex_Variant_List_Size (m_listenerObjs, &iSize);
+  *iCount = (TML_UINT32)iSize;
 
+  if (SIDEX_SUCCESS != iRet){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
   return iRet;
 }
 
@@ -2342,9 +2443,18 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ListenerCount(TML_UINT32* iCount){
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle){
   TML_INT32 iRet = TML_SUCCESS;
 
-  // TODO: TML_LISTENER_HANDLE
-  *listenerHandle = TML_HANDLE_TYPE_NULL;
-
+  SIDEX_VARIANT vObj;
+  iRet = sidex_Variant_List_Get(m_listenerObjs, index, &vObj);
+  if (SIDEX_SUCCESS == iRet){
+    SIDEX_INT64 iHandle = 0;
+    iRet = sidex_Variant_As_Integer (vObj, &iHandle);
+    if (SIDEX_SUCCESS == iRet){
+      *listenerHandle = (TML_LISTENER_HANDLE) iHandle;
+    }
+  }
+  if (SIDEX_SUCCESS != iRet){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
   return iRet;
 }
 
@@ -2450,7 +2560,7 @@ TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE
 
 
 /**
-  * @brief     Close al connections and release resources.
+  * @brief     Close all connections and release resources.
   */
 void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
 

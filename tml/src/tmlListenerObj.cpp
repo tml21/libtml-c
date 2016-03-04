@@ -42,18 +42,30 @@
 
 /**
  * @brief    Constructor.
- *
  */
 tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress)
 {
-  m_bListnerIsEnabled = TML_FALSE;
+  initListenerObj(coreHandle, sNetAddress);
+}
 
-  m_coreHandle = coreHandle;
 
-  // TODO: new listener
-  m_binding = new tmlNetBinding(sNetAddress);
+/**
+ * @brief    Constructor.
+ */
+tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort)
+{
+  int iLength = strlen(sHost) + strlen(sPort) + 2;
 
-   m_iRefCounter = 1;
+  char* sNetAddress = new char[iLength];
+  #if defined(LINUX) || defined (MINGW_BUILD)
+    sprintf(sNetAddress, "%s:%s", sHost, sPort);
+  #else // LINUX
+    sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
+  #endif // LINUX
+
+  initListenerObj(coreHandle, sNetAddress);
+
+  delete[]sNetAddress;
 }
 
 
@@ -64,6 +76,22 @@ tmlListenerObj::~tmlListenerObj()
 {
   cleanUp();
 }
+
+
+
+/**
+  * @brief    init the object
+  */
+void tmlListenerObj::initListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress){
+  m_bListnerIsEnabled = TML_FALSE;
+
+  m_coreHandle = coreHandle;
+
+  m_binding = new tmlNetBinding(sNetAddress);
+
+   m_iRefCounter = 1;
+}
+
 
 /**
  * @brief    Cleans up refCounter dependent allocations.
@@ -86,7 +114,61 @@ TML_CORE_HANDLE tmlListenerObj::getCoreHandle(){
 
 
 /**
- * @brief Get the network address for listener binding.
+ * @brief Get the network hostname / IP of the listener binding.
+ */
+TML_INT32 tmlListenerObj::getHost(char** sHost){
+  TML_INT32 iRet = m_binding->getHost(sHost);
+  return iRet;
+}
+
+
+/**
+  * @brief Get the network hostname / IP of the listener binding.
+  */
+TML_INT32 tmlListenerObj::getHost(wchar_t** sHost){
+  TML_INT32 iRet = m_binding->getHost(sHost);
+  return iRet;
+}
+
+
+/**
+  * @brief Get the network hostname / IP of the listener binding.
+  */
+TML_INT32 tmlListenerObj::getHost(char16_t** sHost){
+  TML_INT32 iRet = m_binding->getHost(sHost);
+  return iRet;
+}
+
+
+/**
+ * @brief Get the network port of the listener binding.
+ */
+TML_INT32 tmlListenerObj::getPort(char** sPort){
+  TML_INT32 iRet = m_binding->getPort(sPort);
+  return iRet;
+}
+
+
+/**
+  * @brief Get the network port of the listener binding.
+  */
+TML_INT32 tmlListenerObj::getPort(wchar_t** sPort){
+  TML_INT32 iRet = m_binding->getPort(sPort);
+  return iRet;
+}
+
+
+/**
+  * @brief Get the network port of the listener binding.
+  */
+TML_INT32 tmlListenerObj::getPort(char16_t** sPort){
+  TML_INT32 iRet = m_binding->getPort(sPort);
+  return iRet;
+}
+
+
+/**
+ * @brief Get the network address of the listener binding.
  */
 TML_INT32 tmlListenerObj::getAddress(char** sAddress){
   TML_INT32 iRet = m_binding->getAddress(sAddress);
@@ -95,7 +177,7 @@ TML_INT32 tmlListenerObj::getAddress(char** sAddress){
 
 
 /**
- * @brief Get the network address for listener binding.
+ * @brief Get the network address of the listener binding.
   */
 TML_INT32 tmlListenerObj::getAddress(wchar_t** sAddress){
   TML_INT32 iRet = m_binding->getAddress(sAddress);
@@ -104,11 +186,27 @@ TML_INT32 tmlListenerObj::getAddress(wchar_t** sAddress){
 
 
 /**
- * @brief Get the network address for listener binding.
+ * @brief Get the network address of the listener binding.
   */
 TML_INT32 tmlListenerObj::getAddress(char16_t** sAddress){
   TML_INT32 iRet = m_binding->getAddress(sAddress);
   return iRet;
+}
+
+
+/**
+ * @brief Check for equality of this listener with the requested parameter.
+ */
+bool tmlListenerObj::isEqual(const char* sAddress){
+  bool bEqual = false;
+  char* sRefAddress;
+  TML_INT32 iRet = getAddress(&sRefAddress);
+  if (TML_SUCCESS == iRet){
+    if (0 == strcmp(sRefAddress, sAddress)){
+      bEqual = true;
+    }
+  }
+  return bEqual;
 }
 
 

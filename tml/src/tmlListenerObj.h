@@ -65,21 +65,44 @@ protected:
 
 public:
 	  /* methods */
+
     /**
      * @brief    Constructor.
      *
      * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
-     * @param   sNetAddress network address for listener binding.
+     * @param   sNetAddress network address of the listener binding.
      *
      * @returns an instance of tmlListenerObj.
      */
-    explicit tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
+    tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
+
+
+
+    /**
+     * @brief    Constructor.
+     *
+     * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
+     * @param   sHost            network host / ip.
+     * @param   sPort            port.
+     *
+     * @returns an instance of tmlListenerObj.
+     */
+    tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort);
 
 
     /**
      * @brief    Destructor.
      */
     virtual ~tmlListenerObj();
+
+
+    /**
+     * @brief    init the object
+     *
+     * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
+     * @param   sNetAddress network address for connection binding.
+     */
+    void initListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
 
 
     /**
@@ -95,7 +118,73 @@ public:
 
 
     /**
-     * @brief Get the network address for listener binding.
+     * @brief Get the network hostname / IP of the listener binding.
+     *
+     * @param   sHost         borrowed reference to hostname / IP
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getHost(char** sHost);
+
+
+    /**
+     * @brief Get the network hostname / IP of the listener binding.
+     *
+     * @param   sHost         borrowed reference to hostname / IP
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getHost(wchar_t** sHost);
+
+
+    /**
+     * @brief Get the network hostname / IP of the listener binding.
+     *
+     * @param   sHost         borrowed reference to hostname / IP
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getHost(char16_t** sHost);
+
+
+    /**
+     * @brief Get the network port of the listener binding.
+     *
+     * @param   sPort         borrowed reference to port
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getPort(char** sPort);
+
+
+    /**
+     * @brief Get the network port of the listener binding.
+     *
+     * @param   sPort         borrowed reference to port
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getPort(wchar_t** sPort);
+
+
+    /**
+     * @brief Get the network port of the listener binding.
+     *
+     * @param   sPort         borrowed reference to port
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getPort(char16_t** sPort);
+
+
+    /**
+     * @brief Get the network address of the listener binding.
      *
      * @param   sAddress         borrowed reference to network binding address
      *
@@ -106,7 +195,7 @@ public:
 
 
     /**
-     * @brief Get the network address for listener binding.
+     * @brief Get the network address of the listener binding.
      *
      * @param   sAddress         borrowed reference to network binding address
      *
@@ -117,7 +206,17 @@ public:
 
 
     /**
-     * @brief Get the network address for listener binding.
+     * @brief Check for equality of this listener with the requested parameter.
+     *
+     * @param   sAddress         network binding address
+     *
+     * @returns true if equal
+     */
+    bool isEqual(const char* sAddress);
+
+
+    /**
+     * @brief Get the network address of the listener binding.
      *
      * @param   sAddress         borrowed reference to network binding address
      *
