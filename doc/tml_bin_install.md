@@ -30,6 +30,21 @@ The libTML-c binary package depends on the **libiconv** library (except on Windo
 
 ----------
 
+## Runtime environment ##
+
+The libTML-c binary package depends on the following runtime environment:
+
+- **Windows:** Visual Studio 2010 Runtime
+- **Debian i386:** gcc 4.8.4
+- **Debian amd64:** gcc 4.8.4
+- **Debian armhf:** gcc 4.6.3
+- **FreeBSD:** gcc 4.9.4
+- **OS X:** AppleClang 5.0.0
+
+<br>
+
+----------
+
 <a name="WinLink"></a>
 ## Windows installer (32/64 bit) ##
 
