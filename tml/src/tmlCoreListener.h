@@ -43,9 +43,12 @@
 #endif // _MSC_VER > 1000
 
 #include "tmlCoreDefines.h"
+#include "tmlStdTypes.h"
 #include "tmlLogHandler.h"
 #include "tmlStreamHandler.h"
 #include "tmlProfileHandler.h"
+#include "tmlListenerObj.h"
+#include <vortex.h>
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -110,7 +113,10 @@ class TMLCoreListener
      * @brief    Flag shows the start status
      */
     int m_iMultiSyncMessageCounter;
-    VortexConnection* m_connection;
+    /**
+     * @brief    reference to instance of tmlListenerObj
+     */
+    tmlListenerObj* m_listener;
 
     /**
      * @brief   Log- File index for explicit logs with closing the file
@@ -128,13 +134,14 @@ class TMLCoreListener
     /**
      * @brief    Constructor.
      *
-     * @param   loghandler   Reference to a log handler.
-     * @param   ctx          Reference Vortex execution context.
-     * @param   pHandler     Reference to tmlProfileHandler.
+     * @param   tmlcorehandle Reference to the core handle.
+     * @param   loghandler    Reference to a log handler.
+     * @param   ctx           Reference Vortex execution context.
+     * @param   pHandler      Reference to tmlProfileHandler.
      *
      * @returns an instance of TMLCoreListener
      */
-    TMLCoreListener(tmlLogHandler* loghandler, VortexCtx* ctx, tmlProfileHandler* pHandler);
+    TMLCoreListener(TML_CORE_HANDLE tmlcorehandle, tmlLogHandler* loghandler, VortexCtx* ctx, tmlProfileHandler* pHandler);
 
 
     /**
@@ -277,6 +284,14 @@ class TMLCoreListener
   private:
     // Members:
 
+    /**
+     * @brief    TML core handle
+     */
+    TML_CORE_HANDLE m_coreHandle;
+
+    /**
+     * @brief    reference to instance of tmlProfileHandler
+     */
     tmlProfileHandler* m_pHandler;
 
     /**

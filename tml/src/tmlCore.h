@@ -3358,13 +3358,15 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
  * @brief    Create a new listener.
  *
  * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
- * @param   sAddress         network address for listener binding
+ * @param   sAddress         network address for listener binding.<br>
+ *                           A network address port number 0 results into a random calculated free port number during tml_Listener_Set_Enabled() execution.
  * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
- */
+  * @see tml_Listener_Set_Enabled(), tml_Listener_Get_Address()
+*/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_LISTENER_HANDLE* listenerHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_W(TML_CORE_HANDLE coreHandle, const char16_t* sAddress, TML_LISTENER_HANDLE* listenerHandle);

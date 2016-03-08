@@ -107,6 +107,7 @@ void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle,
   m_coreHandle = coreHandle;
   m_onConnectCallback    = pOnConnectCallback;       // The callback method to call in case of connection
   m_onDisconnectCallback = pOnDisconnectCallback;    // The callback method to call in case of disconnection
+  m_bIsOwner = (NULL == vortexConnection); // If the vortexConnection didn't come I have to create and destroy it 
   m_onProgrammableDisconnectCallback      = TML_HANDLE_TYPE_NULL;
 
   m_binding = new tmlNetBinding(sNetAddress);
@@ -157,6 +158,11 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
       else{
         // call the callback method for the reconnection:
         globalCallback(m_onConnectCallback, (void*) this);
+
+        ////////////////////////////////////////////////////////////
+        // Register callback for the case of a lost of connection:
+        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_set_on_close_full");
+        vortex_connection_set_on_close_full (connection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
       }
     }
     else{
@@ -224,7 +230,8 @@ TML_INT32 tmlConnectionManageObj::getLastErr(){
 void tmlConnectionManageObj::cleanUp(){
   if (getRef())
     if (decRef() == 0){
-      if (NULL != m_vortexConnection){
+      // If I am the owner I have to close the connection:
+      if (NULL != m_vortexConnection && m_bIsOwner){ 
         tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
         ////////////////////////////////////////////////////////////////////////
         // remove registered callback:
@@ -441,12 +448,14 @@ TML_INT32 tmlConnectionManageObj::validate(TML_BOOL bReconnect, TML_BOOL* bConne
   return iRet;
 }
 
+
 /**
   * @brief   Get Vortex connection 
   */
 VortexConnection* tmlConnectionManageObj::getVortexConnection(){
   return m_vortexConnection;
 }
+
 
 /**
  * @brief   Decrement the reference counter value of this data object for the memory management.
@@ -485,6 +494,10 @@ bool tmlConnectionManageObj::SignalConnectionClose(void* connection)
   if (TML_HANDLE_TYPE_NULL != m_onProgrammableDisconnectCallback){
   // call Programmable callback method to inform about disconnection:
     globalCallback(m_onProgrammableDisconnectCallback, (void*) this);
+  }
+  //If I am not the owner I have to remove the connection and it's resources because it is invalid now:
+  if (!m_bIsOwner){
+    ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Delete_ConnectionItem((TML_CONNECTION_HANDLE) this);
   }
 
   return true;

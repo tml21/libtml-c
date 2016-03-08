@@ -6039,11 +6039,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDL
         iRet = TML_ERR_MISSING_OBJ;
       }
       else{
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Get_Enabled");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Get_Enabled(listenerHandle, bEnable);
-      }
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Get_Enabled");
+          *bEnable = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Get_Enabled(listenerHandle);
+        }
       }
     }
     catch (...){

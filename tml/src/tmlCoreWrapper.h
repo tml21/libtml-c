@@ -1870,7 +1870,7 @@ public:
      *
      * @param   listenerHandle TML listener handle (TML_LISTENER_HANDLE)
      */
-    void tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE handle);
+    void tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE listenerHandle);
 
 
     /**
@@ -1881,7 +1881,7 @@ public:
      * @returns TML_SUCCESS in case of success.
      * @see tmlErrors.h,tmlStdTypes.h
      */
-    TML_INT32 tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE handle);
+    TML_INT32 tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE listenerHandle);
 
 
     /**
@@ -1926,13 +1926,12 @@ public:
      * @brief    Get enable status of a listener.
      *
      * @param   listenerHandle TML listener handle
-     * @param   bEnable        reference to listener enable status
      *
-     * @returns TML_SUCCESS in case of success.
+     * @returns listener enable status.
      *
      * @see tmlErrors.h,tmlStdTypes.h
      */
-    TML_INT32 tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL* bEnable);
+    TML_BOOL tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle);
 
 
     /**
@@ -1987,7 +1986,7 @@ public:
      *
      * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
      */
-    void tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE handle);
+    void tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle);
 
 
     /**
@@ -1998,7 +1997,7 @@ public:
      * @returns TML_SUCCESS in case of success.
      * @see tmlErrors.h,tmlStdTypes.h
      */
-    TML_INT32 tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE handle);
+    TML_INT32 tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle);
 
 
     /**

@@ -245,7 +245,7 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   ////////////////////////////////
   // TMLCoreListener:
-  m_CoreListener = new TMLCoreListener(m_log, m_ctx, m_pHandler);
+  m_CoreListener = new TMLCoreListener((TML_CORE_HANDLE)this, m_log, m_ctx, m_pHandler);
   ////////////////////////////////
   // Dispatcher hash table:
   m_dispatcherHashTable = NULL;
@@ -2345,7 +2345,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, T
     }
   }
   if (!bFound){
-    wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, sAddress);
+    wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, m_ctx, sAddress);
     tmlCoreWrapper_Add_ListenerItem((TML_LISTENER_HANDLE) wrapper);
   }
 
@@ -2392,7 +2392,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Listener_CloseAll(){
 /**
  * @brief    Delete a TML listener handle from the listener list
  */
-void tmlCoreWrapper::tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE handle){
+void tmlCoreWrapper::tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE listenerHandle){
 
   TML_UINT32 iCount = 0;
   tmlCoreWrapper_Get_ListenerCount(&iCount);
@@ -2400,7 +2400,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE hand
   for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
     TML_LISTENER_HANDLE tmpListener = TML_HANDLE_TYPE_NULL;
     tmlCoreWrapper_Get_Listener (i, &tmpListener);
-    if (handle == tmpListener){
+    if (listenerHandle == tmpListener){
       bFound = true;
       sidex_Variant_List_DeleteItem (m_listenerObjs, i);
     }
@@ -2411,10 +2411,10 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE hand
 /**
   * @brief    Add a TML listener handle to the listener list
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE handle){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE listenerHandle){
   SIDEX_INT32 iRet;
   SIDEX_INT32 iPos;
-  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(handle);
+  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(listenerHandle);
   iRet = sidex_Variant_List_Append(m_listenerObjs, vObj, &iPos);
   sidex_Variant_DecRef(vObj);
   return iRet;
@@ -2465,7 +2465,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LIST
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable){
   TML_INT32 iRet = TML_SUCCESS;
 
-  // TODO: enable / disable the listener
+  iRet = ((tmlListenerObj*)listenerHandle)->set_Enabled(bEnable);
 
   return iRet;
 }
@@ -2474,12 +2474,8 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDL
 /**
   * @brief    Get enable status of a listener.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL* bEnable){
-  TML_INT32 iRet = TML_SUCCESS;
-
-  // TODO: Get enable status of a listener
-
-  return iRet;
+TML_BOOL tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle){
+  return ((tmlListenerObj*)listenerHandle)->get_Enabled();
 }
 
 
@@ -2579,7 +2575,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
 /**
   * @brief    Delete a TML connection handle from the connection list
   */
-void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE handle){
+void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle){
 
   TML_UINT32 iCount = 0;
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
@@ -2587,7 +2583,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
   for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
     TML_CONNECTION_HANDLE tmpConnection = TML_HANDLE_TYPE_NULL;
     tmlCoreWrapper_Get_Connection (i, &tmpConnection);
-    if (handle == tmpConnection){
+    if (connectionHandle == tmpConnection){
       bFound = true;
       sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
     }
@@ -2598,10 +2594,10 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
 /**
   * @brief    Add a TML connection handle to the connection list
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE handle){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle){
   SIDEX_INT32 iRet;
   SIDEX_INT32 iPos;
-  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(handle);
+  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(connectionHandle);
   iRet = sidex_Variant_List_Append(m_connectionMgrObjs, vObj, &iPos);
   sidex_Variant_DecRef(vObj);
   return iRet;

@@ -391,8 +391,9 @@ int TMLCoreListener::SendError(VortexChannel* channel, int iMsgID, char* data, i
 /**
  * @brief    Constructor.
  */
-TMLCoreListener::TMLCoreListener(tmlLogHandler* loghandler, VortexCtx* ctx, tmlProfileHandler* pHandler)
+TMLCoreListener::TMLCoreListener(TML_CORE_HANDLE tmlcorehandle, tmlLogHandler* loghandler, VortexCtx* ctx, tmlProfileHandler* pHandler)
 {
+  m_coreHandle = tmlcorehandle;
   m_log = loghandler;
 
   m_pHandler = pHandler;
@@ -411,7 +412,7 @@ TMLCoreListener::TMLCoreListener(tmlLogHandler* loghandler, VortexCtx* ctx, tmlP
   m_callbackData.callback= NULL;
   m_callbackData.pLog = NULL;
   m_callbackData.tmlcorehandle = TML_HANDLE_TYPE_NULL;
-  m_connection = NULL;
+  m_listener = NULL;
 }
 
 
@@ -718,52 +719,24 @@ int TMLCoreListener::TMLCoreListener_Start(const char* host, const char*port, co
         iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
       }
     }
+    TML_LISTENER_HANDLE listenerHandle;
     if (TML_SUCCESS == iRet){
-      // create a vortex listener:
-      m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_listener_new");
-      m_connection = vortex_listener_new (m_ctx, host, port, NULL, NULL);
-      // Check the vortex listener:
-      m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_is_ok");
-      if (! vortex_connection_is_ok (m_connection, axl_false)) {
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_get_status");
-        VortexStatus status = vortex_connection_get_status (m_connection);
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_get_message");
-        const char* msg = vortex_connection_get_message (m_connection);
-        m_log->log ("TMLCoreListener", "TMLCoreListener:TMLCoreListener_Start", "ERROR: failed to start listener, error msg", msg);
-        // Error / unable to create the listener:
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_listener_shutdown");
-        vortex_listener_shutdown(m_connection, axl_true);
-        m_connection = NULL;
-        if (VortexBindError == status){
-          iRet = TML_ERR_LISTENER_ADDRESS_BINDING;
-        }
-        else{
-          iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
-        }
-      }
-      else{
-        //////////////////////////////////////////////////////////////
-        // in case of port equals 0 the vortex_listener_new will find
-        // the next free port, so I want to know it's identification:
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_get_port");
-        *resPort = vortex_connection_get_port(m_connection);
-        if (NULL == *resPort){
-          m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_listener_shutdown");
-          vortex_listener_shutdown(m_connection, axl_true);
-          m_connection = NULL;
-          iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
-        }
-      }
-      if (TML_SUCCESS == iRet){
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_get_status");
-        VortexStatus s = vortex_connection_get_status (m_connection);
-        if (VortexOk != s){
-          m_log->log ("TMLCoreListener", "TMLCoreListener_Start", "Vorex", "Not Ok");
-        }
-        ///////////////////////////////////////////////////////////////////////////
-        // configure connection notification callback:
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_listener_set_on_connection_accepted");
-        vortex_listener_set_on_connection_accepted (m_ctx, listener_connection_accept_handler, &m_connectionsLimitCheckData);
+      iRet = ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Listener_Create(host, port, &listenerHandle);
+    }
+    if (TML_SUCCESS == iRet){
+      m_listener = (tmlListenerObj*) listenerHandle;
+      iRet = m_listener->set_Enabled(TML_TRUE);
+    }
+    if (TML_SUCCESS == iRet){
+      //////////////////////////////////////////////////////////////
+      // in case of port equals 0 the vortex_listener_new will find
+      // the next free port, so I want to know it's identification:
+      m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_get_port");
+      iRet = m_listener->getPort((char**)resPort);
+      if (TML_SUCCESS != iRet){
+        ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Listener_Close(&listenerHandle);
+        m_listener= NULL;
+        iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
       }
     }
     if (TML_SUCCESS == iRet){
@@ -796,13 +769,10 @@ int TMLCoreListener::TMLCoreListener_Stop()
     m_ctx = NULL;
   }
 */
-    m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Stop", "Vortex CMD", "vortex_listener_shutdown");
-    vortex_listener_shutdown(m_connection, axl_true);
+    m_listener = NULL;
     m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Stop", "Vortex CMD", "vortex_listener_set_on_connection_accepted");
     vortex_listener_set_on_connection_accepted (m_ctx, NULL, NULL);
 
-    //m_log->log ("TMLCoreListener", "TMLCoreListener_Stop", "DONE", "");
-    m_connection = NULL;
     /////////////////////////////////////
     // Destroy allocated handle:
     m_hValidListenerThread = false;
