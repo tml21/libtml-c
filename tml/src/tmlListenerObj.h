@@ -44,6 +44,8 @@
 
 #include "tmlStdTypes.h"
 #include "tmlNetBinding.h"
+#include "tmlCoreDefines.h"
+#include <vortex.h>
 
 class tmlListenerObj //listener object class
 {
@@ -55,31 +57,86 @@ private:
      */
     TML_BOOL m_bListnerIsEnabled;
 
+    /**
+     * @brief    Maximum of accepted connections / in case of iMax = -1 it is unlimited
+     */
+    VORTEXLimitCheckDataCallbackData m_connectionsLimitCheckData;
+
 protected: 
 	  /* data */
+    /**
+     * @brief    reference counter
+     */
     int m_iRefCounter;
 
+    /**
+     * @brief    TML core handle
+     */
     TML_CORE_HANDLE m_coreHandle;
 
+    /**
+     * @brief    Betwork binding object
+     */
     tmlNetBinding *m_binding;
 
+    /**
+     * @brief    reference VortexConnection object
+     */
+    VortexConnection* m_vortexConnection;
+
+    /**
+     * @brief    reference to VORTEX instance
+     */
+    VortexCtx* m_ctx;
+
+    /**
+     * @brief    reference to TML error code during initialisation
+     */
+    TML_INT32 m_iErr;
 public:
 	  /* methods */
+
     /**
      * @brief    Constructor.
      *
      * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
-     * @param   sNetAddress network address for listener binding.
+     * @param   ctx         reference to Vortex execution context
+     * @param   sNetAddress network address of the listener binding.
      *
      * @returns an instance of tmlListenerObj.
      */
-    explicit tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
+    tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sNetAddress);
+
+
+
+    /**
+     * @brief    Constructor.
+     *
+     * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
+     * @param   ctx         reference to Vortex execution context
+     * @param   sHost       network host / ip.
+     * @param   sPort       port.
+     *
+     * @returns an instance of tmlListenerObj.
+     */
+    tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sHost, const char* sPort);
 
 
     /**
      * @brief    Destructor.
      */
     virtual ~tmlListenerObj();
+
+
+    /**
+     * @brief    init the object
+     *
+     * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
+     * @param   ctx         reference to Vortex execution context
+     * @param   sNetAddress network address for connection binding.
+     * @param   ctx         reference to Vortex execution context
+     */
+    void initListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sNetAddress);
 
 
     /**
@@ -95,7 +152,73 @@ public:
 
 
     /**
-     * @brief Get the network address for listener binding.
+     * @brief Get the network hostname / IP of the listener binding.
+     *
+     * @param   sHost         borrowed reference to hostname / IP
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getHost(char** sHost);
+
+
+    /**
+     * @brief Get the network hostname / IP of the listener binding.
+     *
+     * @param   sHost         borrowed reference to hostname / IP
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getHost(wchar_t** sHost);
+
+
+    /**
+     * @brief Get the network hostname / IP of the listener binding.
+     *
+     * @param   sHost         borrowed reference to hostname / IP
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getHost(char16_t** sHost);
+
+
+    /**
+     * @brief Get the network port of the listener binding.
+     *
+     * @param   sPort         borrowed reference to port
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getPort(char** sPort);
+
+
+    /**
+     * @brief Get the network port of the listener binding.
+     *
+     * @param   sPort         borrowed reference to port
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getPort(wchar_t** sPort);
+
+
+    /**
+     * @brief Get the network port of the listener binding.
+     *
+     * @param   sPort         borrowed reference to port
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_NET_BINDING network binding syntax error
+     */
+    TML_INT32 getPort(char16_t** sPort);
+
+
+    /**
+     * @brief Get the network address of the listener binding.
      *
      * @param   sAddress         borrowed reference to network binding address
      *
@@ -106,7 +229,7 @@ public:
 
 
     /**
-     * @brief Get the network address for listener binding.
+     * @brief Get the network address of the listener binding.
      *
      * @param   sAddress         borrowed reference to network binding address
      *
@@ -117,7 +240,17 @@ public:
 
 
     /**
-     * @brief Get the network address for listener binding.
+     * @brief Check for equality of this listener with the requested parameter.
+     *
+     * @param   sAddress         network binding address
+     *
+     * @returns true if equal
+     */
+    bool isEqual(const char* sAddress);
+
+
+    /**
+     * @brief Get the network address of the listener binding.
      *
      * @param   sAddress         borrowed reference to network binding address
      *
@@ -173,6 +306,20 @@ public:
      * @returns The reference counter value.
      */
     int getRef();
+
+
+    /**
+      * @brief   returns the last error code
+      */
+    TML_INT32 getLastErr();
+
+
+    /**
+     * @brief   Get Vortex connection 
+     *
+     * @returns the Vortex connection / NULL if invalid
+     */
+    VortexConnection* getVortexConnection();
 };
 
 #endif // TMLLISTENEROBJ_H

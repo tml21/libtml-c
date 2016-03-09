@@ -89,6 +89,13 @@
   */  
 
 /** @ingroup coreHandle
+  * @defgroup multiListener Multiple listener management
+  * @brief TMLCore multiple listener management
+  *
+  * A TMLCore connection must be initialized to send data.
+  */  
+
+/** @ingroup coreHandle
   * @defgroup connectionManagement Connection management
   * @brief TMLCore connection management
   *
@@ -3354,17 +3361,19 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
 
 
 /**
- * @ingroup  coreManagement
+ * @ingroup  multiListener
  * @brief    Create a new listener.
  *
  * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
- * @param   sAddress         network address for listener binding
+ * @param   sAddress         network address for listener binding.<br>
+ *                           A network address port number 0 results into a random calculated free port number during tml_Listener_Set_Enabled() execution.
  * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
- */
+  * @see tml_Listener_Set_Enabled(), tml_Listener_Get_Address()
+*/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_LISTENER_HANDLE* listenerHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_W(TML_CORE_HANDLE coreHandle, const char16_t* sAddress, TML_LISTENER_HANDLE* listenerHandle);
@@ -3383,7 +3392,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE 
 
 
 /**
- * @ingroup  coreManagement
+ * @ingroup  multiListener
  * @brief    Close a listener and release resources.
  *
  * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
@@ -3395,7 +3404,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* lis
 
 
 /**
- * @ingroup  coreManagement
+ * @ingroup  multiListener
  * @brief    Returns the listener's network binding address.
  *
  * @param   listenerHandle   TML listener handle (TML_LISTENER_HANDLE)
@@ -3424,7 +3433,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_A(TML_LISTENER_HAN
 
 
 /**
- * @ingroup  coreManagement
+ * @ingroup  multiListener
  * @brief    Get the number of listeners.
  *
  * @param   coreHandle TML core handle
@@ -3437,7 +3446,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerCount(TML_CORE_HANDLE 
 
 
 /**
- * @ingroup  coreManagement
+ * @ingroup  multiListener
  * @brief    Get listener's handle from a TML core.
  *
  * @param   coreHandle TML core handle
@@ -3451,7 +3460,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreH
 
 
 /**
- * @ingroup  coreManagement
+ * @ingroup  multiListener
  * @brief    Enable/disable a listener.
  *
  * To enable / disable all listeners, use tml_Core_Set_ListenerEnabled().
@@ -3468,7 +3477,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Set_Enabled(TML_LISTENER_HANDL
 
 
 /**
- * @ingroup  coreManagement
+ * @ingroup  multiListener
  * @brief    Get enable status of a listener.
  *
  * @param   listenerHandle TML listener handle
