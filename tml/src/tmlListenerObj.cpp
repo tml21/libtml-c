@@ -299,7 +299,7 @@ TML_INT32 tmlListenerObj::set_Enabled(TML_BOOL bEnable){
           // the next free port, so I want to know it's identification:
           log->log (TML_LOG_VORTEX_CMD, "tmlListenerObj", "set_Enabled", "Vortex CMD", "vortex_connection_get_port");
           const char* resPort = vortex_connection_get_port(m_vortexConnection);
-          if (NULL == *resPort){
+          if (NULL == resPort){
             vortex_listener_shutdown(m_vortexConnection, axl_true);
             m_vortexConnection = NULL;
             iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
@@ -316,18 +316,10 @@ TML_INT32 tmlListenerObj::set_Enabled(TML_BOOL bEnable){
                 delete m_binding;
                 char buffer[256];
                 if (bIsIPV6){
-#if defined(LINUX) || defined (MINGW_BUILD)
-                  sprintf(sNetAddress, "[%s]:%s", sHost, resPort);
-#else // LINUX
                   sprintf_s(buffer,256, "[%s]:%s", sHost, resPort);
-#endif // LINUX
                 }
                 else{
-#if defined(LINUX) || defined (MINGW_BUILD)
-                  sprintf(sNetAddress, "%s:%s", sHost, resPort);
-#else // LINUX
                   sprintf_s(buffer,256, "%s:%s", sHost, resPort);
-#endif // LINUX
                 }
                 m_binding = new tmlNetBinding(buffer);
               }
