@@ -316,10 +316,18 @@ TML_INT32 tmlListenerObj::set_Enabled(TML_BOOL bEnable){
                 delete m_binding;
                 char buffer[256];
                 if (bIsIPV6){
+#if defined(LINUX) || defined (MINGW_BUILD)
+                  sprintf(buffer, "[%s]:%s", sHost, resPort);
+#else // LINUX
                   sprintf_s(buffer,256, "[%s]:%s", sHost, resPort);
+#endif // LINUX
                 }
                 else{
+#if defined(LINUX) || defined (MINGW_BUILD)
+                  sprintf(buffer, "%s:%s", sHost, resPort);
+#else // LINUX
                   sprintf_s(buffer,256, "%s:%s", sHost, resPort);
+#endif // LINUX
                 }
                 m_binding = new tmlNetBinding(buffer);
               }
