@@ -412,7 +412,6 @@ TMLCoreListener::TMLCoreListener(TML_CORE_HANDLE tmlcorehandle, tmlLogHandler* l
   m_callbackData.callback= NULL;
   m_callbackData.pLog = NULL;
   m_callbackData.tmlcorehandle = TML_HANDLE_TYPE_NULL;
-  m_listener = NULL;
 }
 
 
@@ -719,23 +718,35 @@ int TMLCoreListener::TMLCoreListener_Start(const char* host, const char*port, co
         iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
       }
     }
-    TML_LISTENER_HANDLE listenerHandle;
+    tmlListenerObj* listenerMngObj = NULL;
+    TML_LISTENER_HANDLE listenerHandle = TML_HANDLE_TYPE_NULL;
+    TML_BOOL bHasAnyListener = TML_FALSE;
     if (TML_SUCCESS == iRet){
-      iRet = ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Listener_Create(host, port, &listenerHandle);
-    }
-    if (TML_SUCCESS == iRet){
-      m_listener = (tmlListenerObj*) listenerHandle;
-      iRet = m_listener->set_Enabled(TML_TRUE);
+      bHasAnyListener = ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Has_Any_Listener();
+      if (!bHasAnyListener){
+        iRet = ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Listener_Create(host, port, &listenerHandle);
+      }
+      else{
+        iRet = ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Get_Listener(0, &listenerHandle);
+      }
+      if (TML_SUCCESS == iRet){
+        listenerMngObj = (tmlListenerObj*) listenerHandle;
+        iRet = listenerMngObj->set_Enabled(TML_TRUE);
+        if (TML_SUCCESS != iRet && !bHasAnyListener){
+          ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Listener_Close(&listenerHandle);
+        }
+      }
     }
     if (TML_SUCCESS == iRet){
       //////////////////////////////////////////////////////////////
       // in case of port equals 0 the vortex_listener_new will find
       // the next free port, so I want to know it's identification:
       m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Start", "Vortex CMD", "vortex_connection_get_port");
-      iRet = m_listener->getPort((char**)resPort);
+      iRet = listenerMngObj->getPort((char**)resPort);
       if (TML_SUCCESS != iRet){
-        ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Listener_Close(&listenerHandle);
-        m_listener= NULL;
+        if (!bHasAnyListener){
+          ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Listener_Close(&listenerHandle);
+        }
         iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
       }
     }
@@ -769,7 +780,6 @@ int TMLCoreListener::TMLCoreListener_Stop()
     m_ctx = NULL;
   }
 */
-    m_listener = NULL;
     m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_Stop", "Vortex CMD", "vortex_listener_set_on_connection_accepted");
     vortex_listener_set_on_connection_accepted (m_ctx, NULL, NULL);
 

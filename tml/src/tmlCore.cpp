@@ -6010,10 +6010,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Set_Enabled(TML_LISTENER_HANDL
       }
       else{
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Set_Enabled");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Set_Enabled(listenerHandle, bEnable);
-      }
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Listener_Set_Enabled");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Set_Enabled(listenerHandle, bEnable);
+        }
       }
     }
     catch (...){

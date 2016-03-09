@@ -907,17 +907,8 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
  */
 tmlCoreWrapper::~tmlCoreWrapper()
 {
-  ////////////////////////////////
-  // destruct the connection manager objects
-  tmlCoreWrapper_Connection_CloseAll();
-  sidex_Variant_DecRef(m_connectionMgrObjs);
-
-  ////////////////////////////////
-  // destruct the listener objects
-  tmlCoreWrapper_Listener_CloseAll();
-  sidex_Variant_DecRef(m_listenerObjs);
-
   tmlCoreWrapper_General_Deregistration();
+
   ////////////////////////////////////////////////////////////////////////////////////////////
   // Set contiguous log file index to make logging the right file in the destructor of the sender possible:
   m_sender->setLogFileIndex(m_iLogFileIndex);
@@ -928,11 +919,23 @@ tmlCoreWrapper::~tmlCoreWrapper()
   ////////////////////////////////
   // unregister profiles:
   unregisterAll_Registered_Profiles();
+
+  ////////////////////////////////
+  // destruct the listener objects
+  tmlCoreWrapper_Listener_CloseAll();
+
   ////////////////////////////////////////////////////////////////////////////////////////////
   // free listener / to get rid of ctx references before vortex_exit_ctx
   delete (m_CoreListener);
   m_CoreListener = NULL;
 
+  ////////////////////////////////
+  // destruct the connection manager objects
+  tmlCoreWrapper_Connection_CloseAll();
+
+
+  sidex_Variant_DecRef(m_connectionMgrObjs);
+  sidex_Variant_DecRef(m_listenerObjs);
 
 
 #ifdef LINUX
@@ -1527,6 +1530,17 @@ int tmlCoreWrapper::tmlCoreWrapper_Enable_Listener(bool bEnable){
     }
     else{
       iRet = m_CoreListener->TMLCoreListener_Stop();
+      if (TML_SUCCESS == iRet){
+        TML_UINT32 iCount = 0;
+        iRet = tmlCoreWrapper_Get_ListenerCount(&iCount);
+        if (TML_SUCCESS == iRet && iCount){
+          TML_LISTENER_HANDLE listener = TML_HANDLE_TYPE_NULL;
+          iRet = tmlCoreWrapper_Get_Listener (0, &listener);
+          if (listener){
+            iRet = ((tmlListenerObj*)listener)->set_Enabled(TML_FALSE);
+          }
+        }
+      }
     }
     // In case of TML_SUCCESS:
     if (TML_SUCCESS == iRet)
@@ -2422,6 +2436,19 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE li
 
 
 /**
+  * @brief   Is any listener registered
+  */
+TML_BOOL tmlCoreWrapper::tmlCoreWrapper_Has_Any_Listener(){
+  TML_UINT32 iCount = 0;
+  TML_BOOL bHasAnyListener = TML_FALSE;
+  TML_INT32 iRet = tmlCoreWrapper_Get_ListenerCount(&iCount);
+  if (SIDEX_SUCCESS == iRet){
+    bHasAnyListener = iCount > 0;
+  }
+  return bHasAnyListener;
+}
+
+/**
   * @brief   Get the number of listeners.
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ListenerCount(TML_UINT32* iCount){
@@ -2466,6 +2493,9 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDL
   TML_INT32 iRet = TML_SUCCESS;
 
   iRet = ((tmlListenerObj*)listenerHandle)->set_Enabled(bEnable);
+  if (TML_SUCCESS == iRet){
+    tmlCoreWrapper_Enable_Listener(TML_TRUE == bEnable);
+  }
 
   return iRet;
 }

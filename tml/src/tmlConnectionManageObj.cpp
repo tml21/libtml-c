@@ -56,7 +56,12 @@ void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
 {
   // Call the class callback handling method with all it's member- attributes 
   // to handle the lost connection:
-  globalCallback(user_data, connection);
+  try{
+    globalCallback(user_data, connection);
+  }
+  catch(...){
+    printf ("Exception caught in connectionCloseHandler / maybe caused by a shudown\n");
+  }
 }
 
 

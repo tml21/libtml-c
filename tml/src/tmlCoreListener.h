@@ -113,10 +113,6 @@ class TMLCoreListener
      * @brief    Flag shows the start status
      */
     int m_iMultiSyncMessageCounter;
-    /**
-     * @brief    reference to instance of tmlListenerObj
-     */
-    tmlListenerObj* m_listener;
 
     /**
      * @brief   Log- File index for explicit logs with closing the file

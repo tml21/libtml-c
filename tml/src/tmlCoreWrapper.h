@@ -1885,6 +1885,14 @@ public:
 
 
     /**
+     * @brief   Is any listener registered
+     *
+     * @returns TML_TRUE, is any listener is registered.
+     */
+    TML_BOOL tmlCoreWrapper_Has_Any_Listener();
+
+
+    /**
      * @brief   Get the number of listeners.
      *
      * @param   iCount     reference to the number of listeners
