@@ -44,9 +44,10 @@ using namespace std;
 #include "TmlCore.h"
 
 TmlCore::TmlCore(SIDEX_TCHAR* name) {
-	errorLocationOutput = new char[50]();
-	tmlrt_cat(errorLocationOutput, name);
-	tmlrt_cat(errorLocationOutput, tmlrtT(" - TmlCore"));
+// RK: Commented because ist did not build
+//	errorLocationOutput = new char[50]();
+//	tmlrt_cat(errorLocationOutput, name);
+//	tmlrt_cat(errorLocationOutput, tmlrtT(" - TmlCore"));
 	core = TML_HANDLE_TYPE_NULL;
 	profileNames = TmlList(errorLocationOutput);
 }

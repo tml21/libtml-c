@@ -56,11 +56,13 @@ using namespace std;
 * @returns int : Returns value of either wcscat or strcat, depending on definition of SIDEX_UNICODE
 */
 SIDEX_TCHAR * tmlrt_cat( SIDEX_TCHAR * destination, const SIDEX_TCHAR * source) {
+  // RK: Commented because ist did not build
 #ifdef SIDEX_UNICODE
-    return wcscat_s(destination, source);
+//    return wcscat_s(destination, source);
 #else /// SIDEX_UNICODE
-    return strcat(destination, source);
+//    return strcat(destination, source);
 #endif // SIDEX_UNICODE
+  return NULL;
 }
 
 
