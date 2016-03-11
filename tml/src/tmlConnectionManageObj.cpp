@@ -233,7 +233,7 @@ TML_INT32 tmlConnectionManageObj::getLastErr(){
  * @brief    Cleans up refCounter dependent allocations.
  */
 void tmlConnectionManageObj::cleanUp(){
-  if (getRef())
+  if (getRef()){
     if (decRef() == 0){
       // If I am the owner I have to close the connection:
       if (NULL != m_vortexConnection && m_bIsOwner){ 
@@ -256,6 +256,7 @@ void tmlConnectionManageObj::cleanUp(){
       }
       delete m_binding;
     }
+  }
 }
 
 
@@ -504,7 +505,6 @@ bool tmlConnectionManageObj::SignalConnectionClose(void* connection)
   if (!m_bIsOwner){
     ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Delete_ConnectionItem((TML_CONNECTION_HANDLE) this);
   }
-
   return true;
 }
 
