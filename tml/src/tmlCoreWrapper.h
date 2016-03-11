@@ -394,6 +394,12 @@ public:
 
 
     /**
+     * @brief  helper method / sleep for millisecond
+    */
+    void SleepForMilliSeconds(DWORD mSecs);
+
+
+    /**
      * @brief   Set the callback method for thread creation.
      *
      * @param   pCBCreate   reference to callback method.

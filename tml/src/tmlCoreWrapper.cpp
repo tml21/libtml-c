@@ -934,10 +934,6 @@ tmlCoreWrapper::~tmlCoreWrapper()
   tmlCoreWrapper_Connection_CloseAll();
 
 
-  sidex_Variant_DecRef(m_connectionMgrObjs);
-  sidex_Variant_DecRef(m_listenerObjs);
-
-
 #ifdef LINUX
   #ifdef OS_X
     m_log->log (TML_LOG_VORTEX_MUTEX, "TMLCoreSender", "initSender", "Vortex CMD", "vortex_conf_set");
@@ -946,10 +942,19 @@ tmlCoreWrapper::~tmlCoreWrapper()
   #endif // OSX
 #else // LINUX
 #endif // LINUX
-  // now call to exit
+  // now call to exit and wait until it is finished:
   m_log->log (TML_LOG_VORTEX_CMD, "tmlCoreWrapper", "~tmlCoreWrapper", "Vortex CMD", "vortex_exit_ctx");
-  vortex_exit_ctx (m_ctx, axl_true);
+  vortex_exit_ctx (m_ctx, axl_false);
+  axl_bool bExit = axl_false;
+  do{
+    SleepForMilliSeconds(50);
+    m_log->log (TML_LOG_VORTEX_CMD, "tmlCoreWrapper", "~tmlCoreWrapper", "Vortex CMD", "vortex_is_exiting");
+    bExit = vortex_is_exiting(m_ctx);
+  }while (!bExit);
+  vortex_ctx_free(m_ctx);
 
+  sidex_Variant_DecRef(m_connectionMgrObjs);
+  sidex_Variant_DecRef(m_listenerObjs);
 
 ///////////////////////////////////////
 // To debug m_ctx ref counting:
@@ -995,6 +1000,25 @@ vortex_ctx_unref (&m_ctx);
   ////////////////////////////////
   // Critical section object
   delete (m_csObj);
+}
+
+
+/**
+ * @brief  helper method / sleep for millisecond
+*/
+void tmlCoreWrapper::SleepForMilliSeconds(DWORD mSecs){
+#ifdef LINUX // LINUX
+  ///////////////////////////////////////////////////////////////////////////
+  // Delay for one millisecond:
+  timespec delay;
+  delay.tv_sec = 0;
+  delay.tv_nsec = 1000000 * mSecs;  // 1 milli sec * mSecs
+  // sleep for delay time
+  nanosleep(&delay, NULL);
+  return;
+#else // LINUX
+  Sleep (mSecs);
+#endif // LINUX
 }
 
 
