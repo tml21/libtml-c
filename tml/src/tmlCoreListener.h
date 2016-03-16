@@ -134,10 +134,11 @@ class TMLCoreListener
      * @param   loghandler    Reference to a log handler.
      * @param   ctx           Reference Vortex execution context.
      * @param   pHandler      Reference to tmlProfileHandler.
+     * @param   callback      Reference to callback method to handle the frame receive payload to.
      *
      * @returns an instance of TMLCoreListener
      */
-    TMLCoreListener(TML_CORE_HANDLE tmlcorehandle, tmlLogHandler* loghandler, VortexCtx* ctx, tmlProfileHandler* pHandler);
+    TMLCoreListener(TML_CORE_HANDLE tmlcorehandle, tmlLogHandler* loghandler, VortexCtx* ctx, tmlProfileHandler* pHandler, void* callback);
 
 
     /**
@@ -198,7 +199,6 @@ class TMLCoreListener
     * @brief    Register a profile
      *
      * @param   profile   The BEEP communication profile to register.
-     * @param   tmlcorehandle reference to the core handle.
      *
      * @returns TML_SUCCESS in case of success.<br>
      *          TML_ERR_LISTENER_NOT_INITIALIZED if the start / initialization failed.<br>
@@ -206,7 +206,7 @@ class TMLCoreListener
      *
      * @see tmlErrors.h
      */
-    int TMLCoreListener_RegisterProfile(const char* profile, TML_CORE_HANDLE tmlcorehandle);
+    int TMLCoreListener_RegisterProfile(const char* profile);
 
 
     /**
@@ -245,8 +245,6 @@ class TMLCoreListener
      * @param   resPort   If port is equals to "0" a random free port will be detected and the reference to it's identification returned.<br>
      *                    Otherwise it is equals to port.
      *
-     * @param   callback  Reference to callback method to handle the frame receive payload to.
-     *
      * @returns TML_SUCCESS in case of success.<br>
      *          TML_ERR_LISTENER_ADDRESS_BINDING unable to bind listener address. Maybe the IP/port is already in use or insufficient permission.<br>
      *          TML_ERR_LISTENER_NOT_INITIALIZED if the start / initialization failed.<br>
@@ -254,7 +252,7 @@ class TMLCoreListener
      *
      * @see tmlErrors.h
      */
-    int TMLCoreListener_Start(const char* host, const char*port, const char** resPort, void* callback);
+    int TMLCoreListener_Start(const char* host, const char*port, const char** resPort);
 
 
     /**
@@ -311,11 +309,6 @@ class TMLCoreListener
      * @brief    Flag of a valid the ListenerThread
      */
     bool m_hValidListenerThread;
-
-    /**
-     * @brief    reference to a callback method that will be called in case of a frame receive
-     */
-    void* m_FrameReceiveCallback;
 
     /**
      * @brief    reference to VORTEX instance

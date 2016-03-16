@@ -245,7 +245,7 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   ////////////////////////////////
   // TMLCoreListener:
-  m_CoreListener = new TMLCoreListener((TML_CORE_HANDLE)this, m_log, m_ctx, m_pHandler);
+  m_CoreListener = new TMLCoreListener((TML_CORE_HANDLE)this, m_log, m_ctx, m_pHandler, &m_ListenerCallback);
   ////////////////////////////////
   // Dispatcher hash table:
   m_dispatcherHashTable = NULL;
@@ -1064,9 +1064,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Register_Profile(const char* profile){
         m_dispatcherHashTable->setValue(profileCopy, pDispatcher);
         ////////////////////////////////////////////////////////////
         // Profile registration at the listener:
-        if (m_bListnerIsEnabled){
-          m_CoreListener->TMLCoreListener_RegisterProfile(profileCopy, (TML_CORE_HANDLE)this);
-        }
+        m_CoreListener->TMLCoreListener_RegisterProfile(profileCopy);
       }
     }
   }
@@ -1528,7 +1526,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Enable_Listener(bool bEnable){
       m_CoreListener->setLogFileIndex(m_iLogFileIndex);
       //////////////////////
       // Start the listener:
-      iRet = m_CoreListener->TMLCoreListener_Start(m_sListenerIP, m_sListenerPort, &resPort, &m_ListenerCallback);
+      iRet = m_CoreListener->TMLCoreListener_Start(m_sListenerIP, m_sListenerPort, &resPort);
 
       if (TML_SUCCESS == iRet){
         //////////////////////////////////////////////////////////////
@@ -1544,7 +1542,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Enable_Listener(bool bEnable){
           int iRet = m_dispatcherHashTable->getKeys(&retProfiles);
           if (TML_SUCCESS == iRet && NULL != retProfiles){
             for (int i = 0;i < iSize; ++i){
-              m_CoreListener->TMLCoreListener_RegisterProfile(retProfiles[i], (TML_CORE_HANDLE)this);
+              m_CoreListener->TMLCoreListener_RegisterProfile(retProfiles[i]);
               delete (retProfiles[i]);
             }
             delete retProfiles;
@@ -2701,7 +2699,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CO
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
   int  iRet = TML_SUCCESS;
-  iRet = m_sender->sender_SendAsyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true);
+  iRet = m_sender->sender_SendAsyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, false);
   return iRet;
 }
 
