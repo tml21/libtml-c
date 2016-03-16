@@ -1,6 +1,6 @@
 /* 
  *  libTML:  A BEEP based Messaging Suite
- *  Copyright (C) 2015 wobe-systems GmbH
+ *  Copyright (C) 2016 wobe-systems GmbH
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public License
@@ -30,39 +30,56 @@
  *
  *    wobe-systems GmbH
  *    support@libtml.org
- * 
+ *
  * Contributors:
  *    wobe-systems GmbH
  */
-#ifndef SDXRT_TEST_STRING_H
-#define SDXRT_TEST_STRING_H
+#ifndef TESTING_PROCESS_H
+#define TESTING_PROCESS_H
 
-
+#include <iostream>
+#include <list>
+#include <array>
+using namespace std;
 #include <sidex.h>
+#include <tmlCore.h>
+#include "TestingForReturns.h"
+#include "TmlCore.h"
+#include "TmlList.h"
 
-/** @defgroup Sidex_String_Tests
-  * @brief Test Reference for Sidex_String
-  */
 
-/* calls all tests */
-bool test_sidex_string(int test, bool stop);
-//test_string_01 - checks sidex_Variant_New_String with a small (" ") value of string
-bool test_string_01();
-//test_string_02 - checks a big value for a sidex_string
-bool test_string_02();
-//test_string_03 - checks sidex_Variant_New_String and sidex_Variant_String_Check, provoking errors
-bool test_string_03();
-//test_string_04 - checks sidex_String_Read, provoking errors
-bool test_string_04();
-//test_string_05 - checks sidex_String_Write- provoking errors
-bool test_string_05();
-//test_string_06 - checks sidex_String_Length- provoking errors
-bool test_string_06();
-//test_string_07 - checks sidex_Variant_As_String, - also provoking errors
-bool test_string_07();
-//test_string_08 - check sidex_Variant_As_String_Length, - also provoking an error
-bool test_string_08();
-//test_string_09 - check sidex_Variant_SetFormat and _GetFormat,- also provoking an error
-bool test_string_09();
 
-#endif      //SDXRT_TEST_STRING_H
+class TestingProcess : TestingForReturns{//search for better class name?
+public:
+	static const int amountOfCmds = 5;
+	void defaultListenerInit();
+	void freeTmlCores();
+	void sendArbitraryCmds();
+	void initSenderSide();
+	TestingProcess(SIDEX_TCHAR* name);
+	void freeCmds();
+
+	//static bool[amountOfCmds] cmdsReceived = {true, true, true, true, true};
+
+
+protected:
+	TML_INT32 sendArbitraryCmd(TML_INT32 cmdIndex, TML_INT32 profilIndex);
+	TML_INT32 produceCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value);
+	TML_INT32 freeCmd(TML_COMMAND_HANDLE* cmd);
+	TML_INT32 createSetOfCmds();
+
+private:
+	TML_INT32 createCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value);
+	bool testOK;
+	TmlCore coreSenderSide;	//as list?
+    TmlCore coreListenerSide;
+	TML_COMMAND_HANDLE cmdMessage;//  = TML_HANDLE_TYPE_NULL; //as list?
+	array<TML_COMMAND_HANDLE,amountOfCmds> Cmds;
+
+	//array of cmd-codes
+	array<int, amountOfCmds> cmdCodes;
+};
+
+
+
+#endif	//TESTING_PROCESS_H

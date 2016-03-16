@@ -1,6 +1,6 @@
 /* 
  *  libTML:  A BEEP based Messaging Suite
- *  Copyright (C) 2015 wobe-systems GmbH
+ *  Copyright (C) 2016 wobe-systems GmbH
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public License
@@ -30,39 +30,38 @@
  *
  *    wobe-systems GmbH
  *    support@libtml.org
- * 
+ *
  * Contributors:
  *    wobe-systems GmbH
  */
-#ifndef SDXRT_TEST_STRING_H
-#define SDXRT_TEST_STRING_H
+#ifndef TMLLIST_H
+#define TMLLIST_H
 
-
+#include <iostream>
+using namespace std;
 #include <sidex.h>
+#include <tmlCore.h>
+#include "TestingForReturns.h"
 
-/** @defgroup Sidex_String_Tests
-  * @brief Test Reference for Sidex_String
-  */
+class TmlList : TestingForReturns {
+public: 
+	TmlList();
+	TmlList(SIDEX_TCHAR* name);
+	SIDEX_INT32 size();
+	SIDEX_INT32 append(SIDEX_TCHAR* string);
+	SIDEX_INT32 append(SIDEX_BOOL boolean);
+	//SIDEX_INT32 insertString(SIDEX_TCHAR* string);
+	SIDEX_INT32 setBool(SIDEX_INT32 index, SIDEX_BOOL boolean);
+	SIDEX_TCHAR* getString(SIDEX_INT32 index);
+	SIDEX_BOOL getBool(SIDEX_INT32 index);
+	~TmlList();
+private:
+	SIDEX_VARIANT formatStringToSidexVariant(SIDEX_TCHAR* string);
+	SIDEX_VARIANT sidexList;
+	SIDEX_VARIANT item;
+	SIDEX_INT32 amount;
+	SIDEX_INT32 itemPosition;
+};
 
-/* calls all tests */
-bool test_sidex_string(int test, bool stop);
-//test_string_01 - checks sidex_Variant_New_String with a small (" ") value of string
-bool test_string_01();
-//test_string_02 - checks a big value for a sidex_string
-bool test_string_02();
-//test_string_03 - checks sidex_Variant_New_String and sidex_Variant_String_Check, provoking errors
-bool test_string_03();
-//test_string_04 - checks sidex_String_Read, provoking errors
-bool test_string_04();
-//test_string_05 - checks sidex_String_Write- provoking errors
-bool test_string_05();
-//test_string_06 - checks sidex_String_Length- provoking errors
-bool test_string_06();
-//test_string_07 - checks sidex_Variant_As_String, - also provoking errors
-bool test_string_07();
-//test_string_08 - check sidex_Variant_As_String_Length, - also provoking an error
-bool test_string_08();
-//test_string_09 - check sidex_Variant_SetFormat and _GetFormat,- also provoking an error
-bool test_string_09();
 
-#endif      //SDXRT_TEST_STRING_H
+#endif	//TMLLIST_H

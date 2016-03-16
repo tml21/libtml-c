@@ -114,6 +114,11 @@ protected:
      */
     TCallback<tmlConnectionManageObj> m_internalConnectionCloseHandlerMethod;
 
+    /**
+     * @brief    true is the vortexConnection was allocated new
+     */
+    bool m_bIsOwner;
+
 public:
 	  /* methods */
 
@@ -300,7 +305,6 @@ public:
     /**
      * @brief Check the connection
      *
-     * @param   bReconnect       TML_TRUE = try to reconnect if disconnected / TML_FALSE = don't try to reconnect
      * @param   bConnected       reference to the connection status, TML_TRUE if the connection is valid
      */
     void checkConnection(TML_BOOL* bConnected);

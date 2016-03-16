@@ -171,6 +171,9 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
   m_internalConnectionCloseHandlerMethod.SetCallback(this, &tmlCoreWrapper::signalConnectionClosed);
 
   ////////////////////////////////
+  // list containing the listener objects
+  m_listenerObjs = sidex_Variant_New_List();
+  ////////////////////////////////
   // list containing the connection manager objects
   m_connectionMgrObjs = sidex_Variant_New_List();
   ////////////////////////////////
@@ -242,7 +245,7 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   ////////////////////////////////
   // TMLCoreListener:
-  m_CoreListener = new TMLCoreListener(m_log, m_ctx, m_pHandler);
+  m_CoreListener = new TMLCoreListener((TML_CORE_HANDLE)this, m_log, m_ctx, m_pHandler);
   ////////////////////////////////
   // Dispatcher hash table:
   m_dispatcherHashTable = NULL;
@@ -904,12 +907,8 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
  */
 tmlCoreWrapper::~tmlCoreWrapper()
 {
-  ////////////////////////////////
-  // destruct the connection manager objects
-  tmlCoreWrapper_Connection_CloseAll();
-  sidex_Variant_DecRef(m_connectionMgrObjs);
-
   tmlCoreWrapper_General_Deregistration();
+
   ////////////////////////////////////////////////////////////////////////////////////////////
   // Set contiguous log file index to make logging the right file in the destructor of the sender possible:
   m_sender->setLogFileIndex(m_iLogFileIndex);
@@ -920,11 +919,19 @@ tmlCoreWrapper::~tmlCoreWrapper()
   ////////////////////////////////
   // unregister profiles:
   unregisterAll_Registered_Profiles();
+
+  ////////////////////////////////
+  // destruct the listener objects
+  tmlCoreWrapper_Listener_CloseAll();
+
   ////////////////////////////////////////////////////////////////////////////////////////////
   // free listener / to get rid of ctx references before vortex_exit_ctx
   delete (m_CoreListener);
   m_CoreListener = NULL;
 
+  ////////////////////////////////
+  // destruct the connection manager objects
+  tmlCoreWrapper_Connection_CloseAll();
 
 
 #ifdef LINUX
@@ -935,10 +942,19 @@ tmlCoreWrapper::~tmlCoreWrapper()
   #endif // OSX
 #else // LINUX
 #endif // LINUX
-  // now call to exit
+  // now call to exit and wait until it is finished:
   m_log->log (TML_LOG_VORTEX_CMD, "tmlCoreWrapper", "~tmlCoreWrapper", "Vortex CMD", "vortex_exit_ctx");
-  vortex_exit_ctx (m_ctx, axl_true);
+  vortex_exit_ctx (m_ctx, axl_false);
+  axl_bool bExit = axl_false;
+  do{
+    SleepForMilliSeconds(50);
+    m_log->log (TML_LOG_VORTEX_CMD, "tmlCoreWrapper", "~tmlCoreWrapper", "Vortex CMD", "vortex_is_exiting");
+    bExit = vortex_is_exiting(m_ctx);
+  }while (!bExit);
+  vortex_ctx_free(m_ctx);
 
+  sidex_Variant_DecRef(m_connectionMgrObjs);
+  sidex_Variant_DecRef(m_listenerObjs);
 
 ///////////////////////////////////////
 // To debug m_ctx ref counting:
@@ -984,6 +1000,25 @@ vortex_ctx_unref (&m_ctx);
   ////////////////////////////////
   // Critical section object
   delete (m_csObj);
+}
+
+
+/**
+ * @brief  helper method / sleep for millisecond
+*/
+void tmlCoreWrapper::SleepForMilliSeconds(DWORD mSecs){
+#ifdef LINUX // LINUX
+  ///////////////////////////////////////////////////////////////////////////
+  // Delay for one millisecond:
+  timespec delay;
+  delay.tv_sec = 0;
+  delay.tv_nsec = 1000000 * mSecs;  // 1 milli sec * mSecs
+  // sleep for delay time
+  nanosleep(&delay, NULL);
+  return;
+#else // LINUX
+  Sleep (mSecs);
+#endif // LINUX
 }
 
 
@@ -1519,6 +1554,17 @@ int tmlCoreWrapper::tmlCoreWrapper_Enable_Listener(bool bEnable){
     }
     else{
       iRet = m_CoreListener->TMLCoreListener_Stop();
+      if (TML_SUCCESS == iRet){
+        TML_UINT32 iCount = 0;
+        iRet = tmlCoreWrapper_Get_ListenerCount(&iCount);
+        if (TML_SUCCESS == iRet && iCount){
+          TML_LISTENER_HANDLE listener = TML_HANDLE_TYPE_NULL;
+          iRet = tmlCoreWrapper_Get_Listener (0, &listener);
+          if (listener){
+            iRet = ((tmlListenerObj*)listener)->set_Enabled(TML_FALSE);
+          }
+        }
+      }
     }
     // In case of TML_SUCCESS:
     if (TML_SUCCESS == iRet)
@@ -2297,13 +2343,51 @@ int tmlCoreWrapper::getLogFileIndex(){
 /**
   * @brief   Create a new listener.
   */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sHost, const char* sPort, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  int iLength = strlen(sHost) + strlen(sPort) + 2;
+
+  char* sNetAddress = new char[iLength];
+  #if defined(LINUX) || defined (MINGW_BUILD)
+    sprintf(sNetAddress, "%s:%s", sHost, sPort);
+  #else // LINUX
+    sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
+  #endif // LINUX
+
+  iRet = tmlCoreWrapper_Listener_Create (sNetAddress, listenerHandle);
+
+  delete[]sNetAddress;
+
+  return iRet;
+}
+
+
+/**
+  * @brief   Create a new listener.
+  */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, TML_LISTENER_HANDLE* listenerHandle){
   TML_INT32 iRet = TML_SUCCESS;
+  tmlListenerObj* wrapper = TML_HANDLE_TYPE_NULL;
 
-  tmlListenerObj* wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, sAddress);
+  TML_UINT32 iCount = 0;
+  bool bFound = false;
+  tmlCoreWrapper_Get_ListenerCount(&iCount);
+  for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+    TML_LISTENER_HANDLE listener = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Listener (i, &listener);
+    if (listener){
+      wrapper = (tmlListenerObj*)listener;
+      if (wrapper->isEqual(sAddress)){
+        bFound = true;
+      }
+    }
+  }
+  if (!bFound){
+    wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, m_ctx, sAddress);
+    tmlCoreWrapper_Add_ListenerItem((TML_LISTENER_HANDLE) wrapper);
+  }
+
   *listenerHandle = (TML_LISTENER_HANDLE) wrapper;
-
-  // TODO: - Add listener to list
 
   return iRet;
 }
@@ -2315,15 +2399,78 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, T
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* listenerHandle){
   TML_INT32 iRet = TML_SUCCESS;
 
+  // Delete a TML connection handle from the connection list:
+  tmlCoreWrapper_Delete_ListenerItem(*listenerHandle);
+
   // Do make the cast to (tmlListenerObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
   delete (tmlListenerObj*)*listenerHandle;
   *listenerHandle = TML_HANDLE_TYPE_NULL;
 
-  // TODO: - remove listener from list
-
   return iRet;
 }
 
+
+/**
+  * @brief     Close all listener instances and release resources.
+  */
+void tmlCoreWrapper::tmlCoreWrapper_Listener_CloseAll(){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ListenerCount(&iCount);
+  for (TML_UINT32 i = 0; i < iCount; ++i){
+    TML_LISTENER_HANDLE listener = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Listener (i, &listener);
+    if (listener){
+      tmlCoreWrapper_Listener_Close(&listener);
+    }
+  }
+}
+
+
+/**
+ * @brief    Delete a TML listener handle from the listener list
+ */
+void tmlCoreWrapper::tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE listenerHandle){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ListenerCount(&iCount);
+  bool bFound = false;
+  for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+    TML_LISTENER_HANDLE tmpListener = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Listener (i, &tmpListener);
+    if (listenerHandle == tmpListener){
+      bFound = true;
+      sidex_Variant_List_DeleteItem (m_listenerObjs, i);
+    }
+  }
+}
+
+     
+/**
+  * @brief    Add a TML listener handle to the listener list
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE listenerHandle){
+  SIDEX_INT32 iRet;
+  SIDEX_INT32 iPos;
+  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(listenerHandle);
+  iRet = sidex_Variant_List_Append(m_listenerObjs, vObj, &iPos);
+  sidex_Variant_DecRef(vObj);
+  return iRet;
+}
+
+
+/**
+  * @brief   Is any listener registered
+  */
+TML_BOOL tmlCoreWrapper::tmlCoreWrapper_Has_Any_Listener(){
+  TML_UINT32 iCount = 0;
+  TML_BOOL bHasAnyListener = TML_FALSE;
+  TML_INT32 iRet = tmlCoreWrapper_Get_ListenerCount(&iCount);
+  if (SIDEX_SUCCESS == iRet){
+    bHasAnyListener = iCount > 0;
+  }
+  return bHasAnyListener;
+}
 
 /**
   * @brief   Get the number of listeners.
@@ -2331,8 +2478,13 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* lis
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ListenerCount(TML_UINT32* iCount){
   TML_INT32 iRet = TML_SUCCESS;
 
-  // TODO: - listener count
+  TML_INT32 iSize = 0;
+  iRet = sidex_Variant_List_Size (m_listenerObjs, &iSize);
+  *iCount = (TML_UINT32)iSize;
 
+  if (SIDEX_SUCCESS != iRet){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
   return iRet;
 }
 
@@ -2342,9 +2494,18 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ListenerCount(TML_UINT32* iCount){
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle){
   TML_INT32 iRet = TML_SUCCESS;
 
-  // TODO: TML_LISTENER_HANDLE
-  *listenerHandle = TML_HANDLE_TYPE_NULL;
-
+  SIDEX_VARIANT vObj;
+  iRet = sidex_Variant_List_Get(m_listenerObjs, index, &vObj);
+  if (SIDEX_SUCCESS == iRet){
+    SIDEX_INT64 iHandle = 0;
+    iRet = sidex_Variant_As_Integer (vObj, &iHandle);
+    if (SIDEX_SUCCESS == iRet){
+      *listenerHandle = (TML_LISTENER_HANDLE) iHandle;
+    }
+  }
+  if (SIDEX_SUCCESS != iRet){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
   return iRet;
 }
 
@@ -2355,7 +2516,10 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LIST
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable){
   TML_INT32 iRet = TML_SUCCESS;
 
-  // TODO: enable / disable the listener
+  iRet = ((tmlListenerObj*)listenerHandle)->set_Enabled(bEnable);
+  if (TML_SUCCESS == iRet){
+    tmlCoreWrapper_Enable_Listener(TML_TRUE == bEnable);
+  }
 
   return iRet;
 }
@@ -2364,12 +2528,8 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDL
 /**
   * @brief    Get enable status of a listener.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL* bEnable){
-  TML_INT32 iRet = TML_SUCCESS;
-
-  // TODO: Get enable status of a listener
-
-  return iRet;
+TML_BOOL tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle){
+  return ((tmlListenerObj*)listenerHandle)->get_Enabled();
 }
 
 
@@ -2450,7 +2610,7 @@ TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE
 
 
 /**
-  * @brief     Close al connections and release resources.
+  * @brief     Close all connections and release resources.
   */
 void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
 
@@ -2469,7 +2629,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
 /**
   * @brief    Delete a TML connection handle from the connection list
   */
-void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE handle){
+void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle){
 
   TML_UINT32 iCount = 0;
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
@@ -2477,7 +2637,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
   for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
     TML_CONNECTION_HANDLE tmpConnection = TML_HANDLE_TYPE_NULL;
     tmlCoreWrapper_Get_Connection (i, &tmpConnection);
-    if (handle == tmpConnection){
+    if (connectionHandle == tmpConnection){
       bFound = true;
       sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
     }
@@ -2488,10 +2648,10 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
 /**
   * @brief    Add a TML connection handle to the connection list
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE handle){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle){
   SIDEX_INT32 iRet;
   SIDEX_INT32 iPos;
-  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(handle);
+  SIDEX_VARIANT vObj = sidex_Variant_New_Integer(connectionHandle);
   iRet = sidex_Variant_List_Append(m_connectionMgrObjs, vObj, &iPos);
   sidex_Variant_DecRef(vObj);
   return iRet;

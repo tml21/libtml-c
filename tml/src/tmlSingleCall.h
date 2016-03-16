@@ -536,8 +536,8 @@ public:
      * @param   iWindowSize    The window size.
      * @param   tmlhandle      Reference to an instance of TML_COMMAND_HANDLE containing the data to send.
      * @param   iTimeout       Timeout for the command execution (in ms).
-     * @param   mutexCriticalSection  If not NULL the mutex will be unlocked just before sending the message
-     * @param   iMode       The command mode (TMLCOM_MODE_ASYNC or TMLCOM_MODE_EVT).
+     * @param   bLockCritical  Flag shows if mutex for critical section shall be fetched.
+     * @param   bRawViaVortexPayloadFeeder  True in case of using the Vortex Payload Feeder API.
      *
      * @returns TML_SUCCESS in case of success.<br>
      *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>

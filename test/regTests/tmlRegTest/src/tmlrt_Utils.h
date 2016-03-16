@@ -1,6 +1,6 @@
 ﻿/* 
  *  libTML:  A BEEP based Messaging Suite
- *  Copyright (C) 2015 wobe-systems GmbH
+ *  Copyright (C) 2016 wobe-systems GmbH
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public License
@@ -30,13 +30,18 @@
  *
  *    wobe-systems GmbH
  *    support@libtml.org
- * 
+ *
  * Contributors:
  *    wobe-systems GmbH
  */
+#ifndef TMLRT_UTILS_H
+#define TMLRT_UTILS_H
 
 #include <iostream>
+#include <array>
 using namespace std;
+#include <sidex.h>
+#include <tmlCore.h>
 
 //constants for reuse
 #ifdef SIDEX_UNICODE
@@ -92,14 +97,54 @@ using namespace std;
 #endif
 
 
+#ifdef TML_UNICODE
+  #define IO_PROFILE                    (wchar_t*) L"http://wobe-team.com/profiles/plain_profile"
+  #define IO_PROFILE_TWO				(wchar_t*) L"http://wobe-team.com/profiles/simple_profile"
+  #define IO_PROFILE_THREE				(wchar_t*) L"http://wobe-team.com/profiles/basic_profile"
+  #define LISTENER_NETWORK_INTERFACE_IP (wchar_t*) L"0.0.0.0"
+  #define IO_PORT                       (wchar_t*) L"44100"
+  #define IO_PORT_TWO                   (wchar_t*) L"44102"
+  #define IO_PORT_THREE                 (wchar_t*) L"44103"
+  #define IO_PORT_FOUR	                (wchar_t*) L"44104"
+  #define IO_PORT_FIVE					(wchar_t*) L"44105"
+  #define DESTINATION_HOST_IP           (wchar_t*) L"127.0.0.1"
 
-/** @defgroup Test_Utils
-* @brief Helper functions which get used often
-*/
+  #define MEANING                       (wchar_t*) L"Meaning"
+  #define OF_LIFE                       (wchar_t*) L"ofLife"
+
+  #define DEFAULT_BOOTSTRAP				(wchar_t*) L"bootstrapTemplate.sdx"
+#else // TML_UNICODE
+  #define IO_PROFILE                    (char*) "http://wobe-team.com/profiles/plain_profile"
+  #define IO_PROFILE_TWO                (char*) "http://wobe-team.com/profiles/simple_profile"
+  #define IO_PROFILE_THREE              (char*) "http://wobe-team.com/profiles/basic_profile"
+  #define LISTENER_NETWORK_INTERFACE_IP (char*) "0.0.0.0"
+  #define IO_PORT                       (char*) "44100"
+  #define IO_PORT_TWO                   (char*) "44102"
+  #define IO_PORT_THREE                 (char*) "44103"
+  #define IO_PORT_FOUR	                (char*) "44104"
+  #define IO_PORT_FIVE					(char*) "44105"
+  #define DESTINATION_HOST_IP           (char*) "127.0.0.1"
+
+  #define MEANING                       (char*) "Meaning"
+  #define OF_LIFE                       (char*) "ofLife"
+
+  #define DEFAULT_BOOTSTRAP				(char*) "bootstrapTemplate.sdx"
+#endif // TML_UNICODE
+
+const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
+
+//makro for creating strings in the right format
+#ifdef SIDEX_UNICODE
+#define tmlrtT(a) (wchar_t*) L ## a
+#else // SIDEX_UNICODE
+#define tmlrtT(a) (char*) a
+#endif // SIDEX_UNICODE
+
+//Wrapper function for concatenating two strings
+SIDEX_TCHAR * tmlrt_cat( SIDEX_TCHAR * destination, const SIDEX_TCHAR * source);
+
+//cb for cmd 
+void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data);
 
 
-//see .cpp-file for more details
-bool errLog(bool test, const  char* arg1, const char* arg2, int no);
-
-//overloaded errLog function
-bool errLog(bool test, const char* functionName);
+#endif //TMLRT_UTILS_H

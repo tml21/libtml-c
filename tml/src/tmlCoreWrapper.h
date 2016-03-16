@@ -57,6 +57,11 @@ private:
     /* data */
 
     /**
+     * @brief    Reference to list containing listener objects
+     */
+    SIDEX_VARIANT          m_listenerObjs;
+
+    /**
      * @brief    Reference to list containing connection manager objects
      */
     SIDEX_VARIANT          m_connectionMgrObjs;
@@ -386,6 +391,12 @@ public:
      * @brief    make all deregistrations / sometimes useful before calling the destructor.
      */
     void tmlCoreWrapper_General_Deregistration();
+
+
+    /**
+     * @brief  helper method / sleep for millisecond
+    */
+    void SleepForMilliSeconds(DWORD mSecs);
 
 
     /**
@@ -1821,6 +1832,19 @@ public:
     /**
      * @brief   Create a new listener.
      *
+     * @param   sHost            network host / ip.
+     * @param   sPort            port.
+     * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Create(const char* sHost, const char* sPort, TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief   Create a new listener.
+     *
      * @param   sAddress         network address for listener binding
      * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
      *
@@ -1839,6 +1863,39 @@ public:
      * @see tmlErrors.h,tmlStdTypes.h
      */
     TML_INT32 tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief     Close all listener instances and release resources.
+     */
+    void tmlCoreWrapper_Listener_CloseAll();
+
+
+    /**
+     * @brief    Delete a TML listener handle from the listener list
+     *
+     * @param   listenerHandle TML listener handle (TML_LISTENER_HANDLE)
+     */
+    void tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE listenerHandle);
+
+
+    /**
+     * @brief    Add a TML listener handle to the listener list
+     *
+     * @param   listenerHandle TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE listenerHandle);
+
+
+    /**
+     * @brief   Is any listener registered
+     *
+     * @returns TML_TRUE, is any listener is registered.
+     */
+    TML_BOOL tmlCoreWrapper_Has_Any_Listener();
 
 
     /**
@@ -1883,13 +1940,12 @@ public:
      * @brief    Get enable status of a listener.
      *
      * @param   listenerHandle TML listener handle
-     * @param   bEnable        reference to listener enable status
      *
-     * @returns TML_SUCCESS in case of success.
+     * @returns listener enable status.
      *
      * @see tmlErrors.h,tmlStdTypes.h
      */
-    TML_INT32 tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL* bEnable);
+    TML_BOOL tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle);
 
 
     /**
@@ -1934,7 +1990,7 @@ public:
 
 
     /**
-     * @brief     Close al connections and release resources.
+     * @brief     Close all connections and release resources.
      */
     void tmlCoreWrapper_Connection_CloseAll();
 
@@ -1944,7 +2000,7 @@ public:
      *
      * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
      */
-    void tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE handle);
+    void tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle);
 
 
     /**
@@ -1955,7 +2011,7 @@ public:
      * @returns TML_SUCCESS in case of success.
      * @see tmlErrors.h,tmlStdTypes.h
      */
-    TML_INT32 tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE handle);
+    TML_INT32 tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle);
 
 
     /**

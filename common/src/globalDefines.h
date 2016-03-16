@@ -54,9 +54,10 @@
   #ifdef OS_X
     #define FUNC_C_DECL __attribute__ (( ))
   #else //OS_X
-    #define FUNC_C_DECL __attribute__ (( ))
     #ifndef GCC4
       #define FUNC_C_DECL __attribute__ ((cdecl))
+    #else // GCC4
+      #define FUNC_C_DECL __attribute__ (( ))
     #endif // GCC4
   #endif // OS_X
 #else // LINUX

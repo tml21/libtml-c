@@ -72,7 +72,6 @@ public:
     /**
      * @brief    Constructor.
      *
-     * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
      * @param   sNetAddress network address for listener binding.
      *
      * @returns an instance of tmlNetBinding.
