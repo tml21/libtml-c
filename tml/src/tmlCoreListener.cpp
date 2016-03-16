@@ -145,7 +145,7 @@ void listenerFrameReceivedCallback (VortexChannel* channel,
       TML_CONNECTION_HANDLE connectionHandle = TML_HANDLE_TYPE_NULL;
       //////////////////////////////////////////////////////////////////
       // Add the connection to the list:
-      ((tmlCoreWrapper*)callbackData->tmlcorehandle)->tmlCoreWrapper_Connect(sHostIP, sPort, true, &connectionHandle, connection);
+      ((tmlCoreWrapper*)callbackData->tmlcorehandle)->tmlCoreWrapper_Connect(sHostIP, sPort, false, &connectionHandle, connection);
       ((tmlObjWrapper*)cmdHandle)->tmlObjWrapper_Set_Connection(connectionHandle);
 
       // Now call the callback method:

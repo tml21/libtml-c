@@ -1953,28 +1953,28 @@ public:
      *
      * @param   sHost            network host / ip.
      * @param   sPort            port.
-     * @param   bUseExisting     if true search for an existing connection matching the network network host / ip and port.
+     * @param   bExistingFail    if true a successful search for an existing connection reaches into an Error (is not allowed).
      * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
      * @param   vortexConnection reference to a VortexConnection, NULL to create a new connection
      *
      * @returns TML_SUCCESS in case of success.
      * @see tmlErrors.h,tmlStdTypes.h
      */
-    TML_INT32 tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection);
+    TML_INT32 tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bExistingFail, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection);
 
 
     /**
      * @brief   Create a new connection.
      *
      * @param   sAddress         network address
-     * @param   bUseExisting     if true search for an existing connection matching the network address
+     * @param   bExistingFail    if true a successful search for an existing connection reaches into an Error (is not allowed).
      * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
      * @param   vortexConnection reference to a VortexConnection, NULL to create a new connection
      *
      * @returns TML_SUCCESS in case of success.
      * @see tmlErrors.h,tmlStdTypes.h
      */
-    TML_INT32 tmlCoreWrapper_Connect(const char* sAddress, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection);
+    TML_INT32 tmlCoreWrapper_Connect(const char* sAddress, bool bExistingFail, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection);
 
 
     /**

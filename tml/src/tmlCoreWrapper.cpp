@@ -2534,7 +2534,7 @@ TML_BOOL tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE
 /**
   * @brief   Create a new connection.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bExistingFail, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
   TML_INT32 iRet = TML_SUCCESS;
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
@@ -2545,7 +2545,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* 
     sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
   #endif // LINUX
 
-  iRet = tmlCoreWrapper_Connect (sNetAddress, bUseExisting, connectionHandle, vortexConnection);
+  iRet = tmlCoreWrapper_Connect (sNetAddress, bExistingFail, connectionHandle, vortexConnection);
 
   delete[]sNetAddress;
 
@@ -2556,33 +2556,37 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* 
 /**
   * @brief   Create a new connection.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bExistingFail, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
   TML_INT32 iRet = TML_SUCCESS;
   tmlConnectionManageObj* wrapper = TML_HANDLE_TYPE_NULL;
 
   TML_UINT32 iCount = 0;
   bool bFound = false;
-  if (bUseExisting){
-    tmlCoreWrapper_Get_ConnectionCount(&iCount);
-    for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
-      TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
-      tmlCoreWrapper_Get_Connection (i, &connection);
-      if (connection){
-        wrapper = (tmlConnectionManageObj*)connection;
-        if (wrapper->isEqual(sAddress)){
-          bFound = true;
-        }
+  tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
+    TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Connection (i, &connection);
+    if (connection){
+      wrapper = (tmlConnectionManageObj*)connection;
+      if (wrapper->isEqual(sAddress)){
+        bFound = true;
       }
     }
   }
-  if (!bFound){
+  if (bFound){
+    if (bExistingFail){
+      iRet = TML_ERR_CONNECT;
+    }
+  }
+  else{
     wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress, &m_internalConnectionEstablishHandlerMethod, &m_internalConnectionCloseHandlerMethod, vortexConnection);
     tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
+    iRet = wrapper->getLastErr();
   }
-
-  *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
-
-  return iRet = wrapper->getLastErr();
+  if (TML_SUCCESS == iRet){
+    *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
+  }
+  return iRet;
 }
 
 

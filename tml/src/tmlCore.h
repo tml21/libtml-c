@@ -3505,6 +3505,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDL
  *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
  *          TML_ERR_NET_BINDING network binding syntax error<br>
  *          TML_ERR_MISSING_OBJ invalid handle
+ *          TML_ERR_CONNECT a connection for the requested network address allready exists
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
