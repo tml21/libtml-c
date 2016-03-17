@@ -145,7 +145,7 @@ void listenerFrameReceivedCallback (VortexChannel* channel,
       TML_CONNECTION_HANDLE connectionHandle = TML_HANDLE_TYPE_NULL;
       //////////////////////////////////////////////////////////////////
       // Add the connection to the list:
-      ((tmlCoreWrapper*)callbackData->tmlcorehandle)->tmlCoreWrapper_Connect(sHostIP, sPort, true, &connectionHandle, connection);
+      ((tmlCoreWrapper*)callbackData->tmlcorehandle)->tmlCoreWrapper_Connect(sHostIP, sPort, false, &connectionHandle, connection);
       ((tmlObjWrapper*)cmdHandle)->tmlObjWrapper_Set_Connection(connectionHandle);
 
       // Now call the callback method:
@@ -239,14 +239,9 @@ int TMLCoreListener::SendRawAnswerReplyFromFeeder (TML_COMMAND_HANDLE tmlCommand
     TML_INT32 iMsgID;
     iRet = tml_Cmd_Attr_Get_Message_ID(tmlCommand, &iMsgID);
     if (TML_SUCCESS == iRet){
-      if (m_hValidListenerThread){
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendRawAnswerReplyFromFeeder", "Vortex CMD", "vortex_channel_send_rpy_from_feeder");
-        if (axl_false == vortex_channel_send_rpy_from_feeder (channel, feeder, iMsgID)){
-          iRet = TML_ERR_LISTENER_COMMUNICATION;
-        }
-      }
-      else{
-        iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
+      m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendRawAnswerReplyFromFeeder", "Vortex CMD", "vortex_channel_send_rpy_from_feeder");
+      if (axl_false == vortex_channel_send_rpy_from_feeder (channel, feeder, iMsgID)){
+        iRet = TML_ERR_LISTENER_COMMUNICATION;
       }
     }
     else{
@@ -262,27 +257,11 @@ int TMLCoreListener::SendRawAnswerReplyFromFeeder (TML_COMMAND_HANDLE tmlCommand
  */
 int TMLCoreListener::SendReply (VortexChannel* channel, int iMsgID, char* data, int iDataLength)
 {
-  int iRet;
+  int iRet = TML_SUCCESS;
 
-  if (m_hValidListenerThread){
-    m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendReply", "Vortex CMD", "vortex_channel_send_rpy");
-    // Uncomment to debug error 47
-    //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "SendReply", "Vortex CMD", "vortex_channel_send_rpy");
-    if (axl_true == vortex_channel_send_rpy (channel, data, iDataLength, iMsgID)){
-      // Uncomment to debug error 47
-      //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "SUCCESSFULL", "DONE", "vortex_channel_send_rpy");
-      iRet = TML_SUCCESS;
-    }
-    else{
-      // Uncomment to debug error 47
-      //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "UNSUCCESS", "FAIL", "vortex_channel_send_rpy");
-      iRet = TML_ERR_LISTENER_COMMUNICATION;
-    }
-  }
-  else{
-    // Uncomment to debug error 47
-    //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "no", "valid", "m_hValidListenerThread");
-    iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
+  m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendReply", "Vortex CMD", "vortex_channel_send_rpy");
+  if (axl_false == vortex_channel_send_rpy (channel, data, iDataLength, iMsgID)){
+    iRet = TML_ERR_LISTENER_COMMUNICATION;
   }
   return iRet;
 }
@@ -293,29 +272,12 @@ int TMLCoreListener::SendReply (VortexChannel* channel, int iMsgID, char* data, 
  */
 int TMLCoreListener::SendAnsReply(VortexChannel* channel, int iMsgID, char* data, int iDataLength)
 {
-  int iRet;
+  int iRet = TML_SUCCESS;
 
-  if (m_hValidListenerThread){
-    m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendAnsReply", "Vortex CMD", "vortex_channel_send_ans_rpy");
-    // Uncomment to debug error 47
-    //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "SendAnsReply", "Vortex CMD", "vortex_channel_send_ans_rpy");
-    if (axl_true == vortex_channel_send_ans_rpy (channel, data, iDataLength, iMsgID)){
-      // Uncomment to debug error 47
-      //m_log->log (TML_LOG_SPECIAL2, "", "", "", data);
-      //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "SUCCESSFULL", "DONE", "vortex_channel_send_ans_rpy");
-      iRet = TML_SUCCESS;
-    }
-    else{
-      iRet = TML_ERR_LISTENER_COMMUNICATION;
-      // Uncomment to debug error 47
-      //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "UNSUCCESS", "FAIL", "vortex_channel_send_ans_rpy");
-      m_log->log (TML_LOG_MULTI_SYNC_CMDS, "TMLCoreListener", "SendAnsReply", "Communication error using", "vortex_channel_send_ans_rpy");
-    }
-  }
-  else{
-    // Uncomment to debug error 47
-    //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "no", "valid", "m_hValidListenerThread");
-    iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
+  m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendAnsReply", "Vortex CMD", "vortex_channel_send_ans_rpy");
+  if (axl_false == vortex_channel_send_ans_rpy (channel, data, iDataLength, iMsgID)){
+    iRet = TML_ERR_LISTENER_COMMUNICATION;
+    m_log->log (TML_LOG_MULTI_SYNC_CMDS, "TMLCoreListener", "SendAnsReply", "Communication error using", "vortex_channel_send_ans_rpy");
   }
   return iRet;
 }
@@ -326,35 +288,17 @@ int TMLCoreListener::SendAnsReply(VortexChannel* channel, int iMsgID, char* data
  */
 int TMLCoreListener::SendFinalAnsReply(VortexChannel* channel, int iMsgID)
 {
-  int iRet;
+  int iRet = TML_SUCCESS;
 
-  if (m_hValidListenerThread){
-    // DEBUG_QVENT_QUEUE */ m_log->log ("TMLCoreListener", "SendFinalAnsReply", "Vortex CMD vortex_channel_finalize_ans_rpy No ", iMsgID);
-    m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendFinalAnsReply", "Vortex CMD", "vortex_channel_finalize_ans_rpy");
-    // Uncomment to debug error 47
-    //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "SendFinalAnsReply", "Vortex CMD", "vortex_channel_finalize_ans_rpy");
-    if (m_log->getLoggingValue() & TML_LOG_MULTI_SYNC_CMDS){
-      m_log->log (TML_LOG_MULTI_SYNC_CMDS, "TMLCoreListener", "SendFinalAnsReply", "MessageCounter", m_iMultiSyncMessageCounter);
-      // Uncomment to debug error 47
-      //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "SendFinalAnsReply", "MessageCounter", m_iMultiSyncMessageCounter);
-      ++m_iMultiSyncMessageCounter;
-    }
-    if (axl_true == vortex_channel_finalize_ans_rpy (channel, iMsgID)){
-      // Uncomment to debug error 47
-      //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "SUCCESSFULL", "DONE", "vortex_channel_finalize_ans_rpy");
-      iRet = TML_SUCCESS;
-    }
-    else{
-      iRet = TML_ERR_LISTENER_COMMUNICATION;
-      // Uncomment to debug error 47
-      //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "UNSUCCESS", "FAIL", "vortex_channel_finalize_ans_rpy");
-      m_log->log (TML_LOG_MULTI_SYNC_CMDS, "TMLCoreListener", "SendAnsReply", "Communication error using", "vortex_channel_finalize_ans_rpy");
-    }
+  // DEBUG_QVENT_QUEUE */ m_log->log ("TMLCoreListener", "SendFinalAnsReply", "Vortex CMD vortex_channel_finalize_ans_rpy No ", iMsgID);
+  m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendFinalAnsReply", "Vortex CMD", "vortex_channel_finalize_ans_rpy");
+  if (m_log->getLoggingValue() & TML_LOG_MULTI_SYNC_CMDS){
+    m_log->log (TML_LOG_MULTI_SYNC_CMDS, "TMLCoreListener", "SendFinalAnsReply", "MessageCounter", m_iMultiSyncMessageCounter);
+    ++m_iMultiSyncMessageCounter;
   }
-  else{
-    // Uncomment to debug error 47
-    //m_log->log (TML_LOG_SPECIAL2, "TMLCoreListener", "no", "valid", "m_hValidListenerThread");
-    iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
+  if (axl_false == vortex_channel_finalize_ans_rpy (channel, iMsgID)){
+    iRet = TML_ERR_LISTENER_COMMUNICATION;
+    m_log->log (TML_LOG_MULTI_SYNC_CMDS, "TMLCoreListener", "SendAnsReply", "Communication error using", "vortex_channel_finalize_ans_rpy");
   }
   return iRet;
 }
@@ -365,19 +309,11 @@ int TMLCoreListener::SendFinalAnsReply(VortexChannel* channel, int iMsgID)
  */
 int TMLCoreListener::SendError(VortexChannel* channel, int iMsgID, char* data, int iDataLength)
 {
-  int iRet;
+  int iRet = TML_SUCCESS;
 
-  if (m_hValidListenerThread){
-    m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendError", "Vortex CMD", "vortex_channel_send_err");
-    if (axl_true == vortex_channel_send_err (channel, data, iDataLength, iMsgID)){
-      iRet = TML_SUCCESS;
-    }
-    else{
-      iRet = TML_ERR_LISTENER_COMMUNICATION;
-    }
-  }
-  else{
-    iRet = TML_ERR_LISTENER_NOT_INITIALIZED;
+  m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "SendError", "Vortex CMD", "vortex_channel_send_err");
+  if (axl_false == vortex_channel_send_err (channel, data, iDataLength, iMsgID)){
+    iRet = TML_ERR_LISTENER_COMMUNICATION;
   }
   return iRet;
 }
@@ -391,7 +327,7 @@ int TMLCoreListener::SendError(VortexChannel* channel, int iMsgID, char* data, i
 /**
  * @brief    Constructor.
  */
-TMLCoreListener::TMLCoreListener(TML_CORE_HANDLE tmlcorehandle, tmlLogHandler* loghandler, VortexCtx* ctx, tmlProfileHandler* pHandler)
+TMLCoreListener::TMLCoreListener(TML_CORE_HANDLE tmlcorehandle, tmlLogHandler* loghandler, VortexCtx* ctx, tmlProfileHandler* pHandler, void* callback)
 {
   m_coreHandle = tmlcorehandle;
   m_log = loghandler;
@@ -408,10 +344,9 @@ TMLCoreListener::TMLCoreListener(TML_CORE_HANDLE tmlcorehandle, tmlLogHandler* l
   m_connectionsLimitCheckData.pLog = loghandler;
   m_channelsPerConnectionLimitCheckData.iMax = -1;
   m_channelsPerConnectionLimitCheckData.pLog = loghandler;
-  m_FrameReceiveCallback = NULL;
-  m_callbackData.callback= NULL;
-  m_callbackData.pLog = NULL;
-  m_callbackData.tmlcorehandle = TML_HANDLE_TYPE_NULL;
+  m_callbackData.callback = callback;
+  m_callbackData.pLog = m_log;
+  m_callbackData.tmlcorehandle = tmlcorehandle;
 }
 
 
@@ -589,14 +524,10 @@ int TMLCoreListener::MessageFinalize (TML_COMMAND_HANDLE tmlCommand)
 /**
  * @brief    Register a profile
  */
-int TMLCoreListener::TMLCoreListener_RegisterProfile(const char* profile, TML_CORE_HANDLE tmlcorehandle) 
+int TMLCoreListener::TMLCoreListener_RegisterProfile(const char* profile) 
 {
   int iRet = TML_SUCCESS;
   if (NULL != m_ctx){
-        m_callbackData.callback = m_FrameReceiveCallback;
-        m_callbackData.pLog = m_log;
-        m_callbackData.tmlcorehandle = tmlcorehandle;
-
         bool bRegisterProfile = false;
         bool bRegisterCB = false;
         m_pHandler->tmlProfileRegister(profile, true, (void*)listenerFrameReceivedCallback, &m_callbackData, &bRegisterProfile, &bRegisterCB);
@@ -693,12 +624,11 @@ int TMLCoreListener::TMLCoreListener_Set_Vortex_Logging_Value(int iLogValue)
 /**
  * @brief    Start the TMLCoreListener.
  */
-int TMLCoreListener::TMLCoreListener_Start(const char* host, const char*port, const char** resPort, void* callback) 
+int TMLCoreListener::TMLCoreListener_Start(const char* host, const char*port, const char** resPort) 
 {
   int iRet = TML_SUCCESS;
 
 //tml_log(0xFFFFFFFF, "tmlCoreWrapper", "~tmlCoreWrapper", "POS", "Start-a");
-  m_FrameReceiveCallback = callback; // The callback method to call in case of incoming messages 
 
   if (!m_hValidListenerThread){
     axl_bool bSuccess = axl_true;

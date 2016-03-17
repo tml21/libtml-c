@@ -5845,11 +5845,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE 
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* listenerHandle){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == listenerHandle){
+  if (TML_HANDLE_TYPE_NULL == *listenerHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)listenerHandle)->getCoreHandle();
+    TML_CORE_HANDLE coreHandle = ((tmlListenerObj*)*listenerHandle)->getCoreHandle();
     if (TML_HANDLE_TYPE_NULL == coreHandle){
       iRet = TML_ERR_MISSING_OBJ;
     }
@@ -5995,6 +5995,71 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreH
 
 
 /**
+ * @brief    Get listener's handle from a TML core.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress(TML_CORE_HANDLE coreHandle, TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_X(TML_CORE_HANDLE coreHandle, wchar_t* sAddress, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Address = UTF32toUTF8((wchar_t*)sAddress, &iLengthUtf8);
+  if (NULL != utf8Address){
+    try{
+      iRet = tml_Core_Get_ListenerByAddress_A(coreHandle, utf8Address, listenerHandle);
+      delete[] utf8Address;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_W(TML_CORE_HANDLE coreHandle, char16_t* sAddress, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Address = UTF16toUTF8((wchar_t*)sAddress, &iLengthUtf8);
+  if (NULL != utf8Address){
+    try{
+      iRet = tml_Core_Get_ListenerByAddress_A(coreHandle, utf8Address, listenerHandle);
+      delete[] utf8Address;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_A(TML_CORE_HANDLE coreHandle, char* sAddress, TML_LISTENER_HANDLE* listenerHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_ListenerByAddress");
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_ListenerByAddress(sAddress, listenerHandle);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
  * @brief    Enable/disable a listener.
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable){
@@ -6111,7 +6176,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Connect");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connect(sAddress, false, connectionHandle, NULL);
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connect(sAddress, true, connectionHandle, NULL);
         if (TML_SUCCESS == iRet){
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " succeeded");
         }
@@ -6329,6 +6394,71 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE cor
         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_Connection");
         iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_Connection(index, connectionHandle);
       }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Get connection handle from a TML core.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress(TML_CORE_HANDLE coreHandle, TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_X(TML_CORE_HANDLE coreHandle, wchar_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Address = UTF32toUTF8((wchar_t*)sAddress, &iLengthUtf8);
+  if (NULL != utf8Address){
+    try{
+      iRet = tml_Core_Get_ConnectionByAddress_A(coreHandle, utf8Address, connectionHandle);
+      delete[] utf8Address;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_W(TML_CORE_HANDLE coreHandle, char16_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Address = UTF16toUTF8((wchar_t*)sAddress, &iLengthUtf8);
+  if (NULL != utf8Address){
+    try{
+      iRet = tml_Core_Get_ConnectionByAddress_A(coreHandle, utf8Address, connectionHandle);
+      delete[] utf8Address;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_A(TML_CORE_HANDLE coreHandle, char* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_ConnectionByAddress");
+      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_ConnectionByAddress(sAddress, connectionHandle);
     }
     catch (...){
       iRet = TML_ERR_COMMON;
