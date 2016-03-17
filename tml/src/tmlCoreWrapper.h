@@ -1922,6 +1922,18 @@ public:
 
 
     /**
+     * @brief    Get listener's handle from a TML core.
+     *
+     * @param   sAddress network binding address
+     * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_INFORMATION_UNDEFINED a listener for the requested network binding address don't exist
+     */
+    TML_INT32 tmlCoreWrapper_Get_ListenerByAddress(char* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
      * @brief    Enable/disable a listener. 
      *
      * To enable / disable all listeners, use tmlCoreWrapper_Enable_Listener()
@@ -2118,5 +2130,17 @@ public:
      * @see tmlErrors.h,tmlStdTypes.h
      */
     TML_INT32 tmlCoreWrapper_Set_OnDisconnect(TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
+
+
+    /**
+     * @brief    Get connection handle.
+     *
+     * @param   sAddress         requested network binding address
+     * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested network address don't exist
+     */
+    TML_INT32 tmlCoreWrapper_Get_ConnectionByAddress(char* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
 };
 #endif  // TMLCOREWRAPPER_H

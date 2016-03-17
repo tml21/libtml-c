@@ -54,7 +54,7 @@
 
 //------------------------------------------------------------
 // Noch frei Fehlernummern:
-// 4;5;6;7;8;9;10;24;26;29;34;36;46
+// 5;6;7;8;9;10;24;26;29;34;36;46
 
 /**
 * @brief    operation successful
@@ -91,6 +91,12 @@
 #define TML_ERR_NET_BINDING                    3
 
 /**
+* @brief    listener already exists
+* @ingroup coreErrors
+*/
+#define TML_ERR_LISTENER_ALREADY_EXISTS       4
+
+/**
 * @brief    stream does not exist
 * @ingroup coreErrors
 */
@@ -109,10 +115,10 @@
 #define TML_ERR_COMMON                        13
 
 /**
-* @brief    connection failed
+* @brief    connection already exists
 * @ingroup coreErrors
 */
-#define TML_ERR_CONNECT                       14
+#define TML_ERR_CONNECTION_ALREADY_EXISTS     14
 
 /**
 * @brief    a required object is missing

@@ -3365,14 +3365,18 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
  * @brief    Create a new listener.
  *
  * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
- * @param   sAddress         network address for listener binding.<br>
+ * @param   sAddress         network address for listener binding.<br><br>
+ *                           <host>:<port><br>
+ *                           <IPv4Addr>:<port><br>
+ *                           \[<IPv6Addr>\]:<port><br><br>
  *                           A network address port number 0 results into a random calculated free port number during tml_Listener_Set_Enabled() execution.
  * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_LISTENER_ALREADY_EXISTS a listener for the requested network address already exists<br> 
  *          TML_ERR_MISSING_OBJ invalid core handle
-  * @see tml_Listener_Set_Enabled(), tml_Listener_Get_Address()
+ * @see tml_Listener_Set_Enabled(), tml_Listener_Get_Address()
 */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_LISTENER_HANDLE* listenerHandle);
@@ -3454,9 +3458,39 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerCount(TML_CORE_HANDLE 
  * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_INFORMATION_UNDEFINED  a listener for the requested index don't exist
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle);
+
+
+/**
+ * @ingroup  multiListener
+ * @brief    Get listener's handle from a TML core.
+ *
+ * @param   coreHandle TML core handle
+ * @param   sAddress network binding address
+ * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_INFORMATION_UNDEFINED  a listener for the requested network binding address don't exist
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress(TML_CORE_HANDLE coreHandle, TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_X(TML_CORE_HANDLE coreHandle, wchar_t* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_W(TML_CORE_HANDLE coreHandle, char16_t* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_A(TML_CORE_HANDLE coreHandle, char* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Core_Get_ListenerByAddress  tml_Core_Get_ListenerByAddress_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Core_Get_ListenerByAddress  tml_Core_Get_ListenerByAddress_W
+    #else
+      #define tml_Core_Get_ListenerByAddress  tml_Core_Get_ListenerByAddress_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
 
 
 /**
@@ -3496,7 +3530,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDL
  * @brief    Create a new connection.
  *
  * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
- * @param   sAddress         network address
+ * @param   sAddress         network address.<br><br>
+ *                           <host>:<port><br>
+ *                           <IPv4Addr>:<port><br>
+ *                           \[<IPv6Addr>\]:<port><br>
  * @param   connectionHandle reference to a new TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
@@ -3504,8 +3541,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDL
  *          TML_ERR_SENDER_NOT_INITIALIZED  error initializing sender<br> 
  *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
  *          TML_ERR_NET_BINDING network binding syntax error<br>
- *          TML_ERR_MISSING_OBJ invalid handle
- *          TML_ERR_CONNECT a connection for the requested network address allready exists
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
+ *          TML_ERR_CONNECTION_ALREADY_EXISTS a connection for the requested network address already exists
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_X(TML_CORE_HANDLE coreHandle, const wchar_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
@@ -3624,10 +3661,39 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDL
  * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_INFORMATION_UNDEFINED  information is missing<br>
+ *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested index don't exist<br>
  *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle);
+
+
+/**
+ * @ingroup  connectionManagement
+ * @brief    Get connection handle from a TML core.
+ *
+ * @param   coreHandle TML core handle
+ * @param   sAddress network address
+ * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_INFORMATION_UNDEFINED  a connection for the requested network address don't exist<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress(TML_CORE_HANDLE coreHandle, TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_X(TML_CORE_HANDLE coreHandle, wchar_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_W(TML_CORE_HANDLE coreHandle, char16_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_A(TML_CORE_HANDLE coreHandle, char* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Core_Get_ConnectionByAddress  tml_Core_Get_ConnectionByAddress_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Core_Get_ConnectionByAddress  tml_Core_Get_ConnectionByAddress_W
+    #else
+      #define tml_Core_Get_ConnectionByAddress  tml_Core_Get_ConnectionByAddress_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
 
 
 /**
@@ -3638,7 +3704,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE cor
  * possible error needs to be handled a callback function has to be registered with tml_Cmd_Register_CommandReady()
  * before the call. 
  *
- * @param  connectionHandle TML connection handle (TML_CORE_HANDLE)
+ * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param  sProfile         profile identification string
  * @param  tmlhandle        TML command handle
  * @param  iTimeout         timeout in milliseconds
@@ -3678,7 +3744,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_A(TML_CONNECTION_H
  * Sending a message synchronously means that the call returns after the result of the message call
  * was received or an error occurred.
  *
- * @param  connectionHandle TML connection handle (TML_CORE_HANDLE)
+ * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param  sProfile         profile identification string
  * @param  tmlhandle        TML command handle
  * @param  iTimeout         timeout in milliseconds
