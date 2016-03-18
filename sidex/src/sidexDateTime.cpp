@@ -252,11 +252,11 @@ void sidexDateTime::cleanUp(){
       delete[] value;
       value = NULL;
       if (NULL != xValue){
-        delete xValue;
+        delete[] xValue;
         xValue = NULL;
       }
       if (NULL != wValue){
-        delete wValue;
+        delete[] wValue;
         wValue = NULL;
       }
     }
@@ -296,11 +296,11 @@ int sidexDateTime::setValue(char* newValue)
 #endif
 
     if (NULL != xValue){
-      delete xValue;
+      delete[] xValue;
       xValue = NULL;
     }
     if (NULL != wValue){
-      delete wValue;
+      delete[] wValue;
       wValue = NULL;
     }
   }

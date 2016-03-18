@@ -136,11 +136,11 @@ bool tmlCollectCall::InternalAsyncEventMessageReturnMethod(void* callbackData)
                         ((void(FUNC_C_DECL *)(wchar_t*, wchar_t*, wchar_t*, TML_COMMAND_ID_TYPE, TML_INT32, TML_POINTER))pCBFunc)(utf16profile, utf16host, utf16port, iCmd, iErrorOutOfHeader, pCBData);
                         //m_log->log ("tmlCollectCall:InternalAsyncEventMessageReturnMethod:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
                         //tml_log_A(TML_LOG_EVENT, "tmlCollectCall:InternalAsyncEventMessageReturnMethod:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
-                        delete (utf16port);
+                        delete[] utf16port;
                       }
-                      delete (utf16host);
+                      delete[] utf16host;
                     }
-                    delete (utf16profile);
+                    delete[] utf16profile;
                   }
                 }
                 break;
@@ -158,11 +158,11 @@ bool tmlCollectCall::InternalAsyncEventMessageReturnMethod(void* callbackData)
                         ((void(FUNC_C_DECL *)(char16_t*, char16_t*, char16_t*, TML_COMMAND_ID_TYPE, TML_INT32, TML_POINTER))pCBFunc)(utf16profile, utf16host, utf16port, iCmd, iErrorOutOfHeader, pCBData);
                         //m_log->log ("tmlCollectCall:InternalAsyncEventMessageReturnMethod:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
                         //tml_log_A(TML_LOG_EVENT, "tmlCollectCall:InternalAsyncEventMessageReturnMethod:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
-                        delete utf16port;
+                        delete[] utf16port;
                       }
-                      delete utf16host;
+                      delete[] utf16host;
                     }
-                    delete utf16profile;
+                    delete[] utf16profile;
                   }
                 }
                  break;
@@ -501,7 +501,7 @@ void tmlCollectCall::eventQueueOverflowHandling(tmlEventDataQueue* pDataQueue, T
                     ((void(FUNC_C_DECL *)(wchar_t*, TML_COMMAND_ID_TYPE, TML_POINTER))pCBFunc)(utf16profile, iCmd, pCBData);
                     //m_log->log ("tmlCollectCall:eventQueueOverflowHandling:eventGetRegisteredCallbackOnQueueOverflow", sHost, sPort, "BACK");
                     //tml_log_A(TML_LOG_EVENT, "tmlCollectCall:eventQueueOverflowHandling:eventGetRegisteredCallbackOnQueueOverflow", sHost, sPort, "BACK");
-                    delete (utf16profile);
+                    delete[] utf16profile;
                   }
                 }
                 break;
@@ -523,7 +523,7 @@ void tmlCollectCall::eventQueueOverflowHandling(tmlEventDataQueue* pDataQueue, T
                     ((void(FUNC_C_DECL *)(char16_t*, TML_COMMAND_ID_TYPE, TML_POINTER))pCBFunc)(utf16profile, iCmd, pCBData);
                     //m_log->log ("tmlCollectCall:eventQueueOverflowHandling:eventGetRegisteredCallbackOnQueueOverflow", sHost, sPort, "BACK");
                     //tml_log_A(TML_LOG_EVENT, "tmlCollectCall:eventQueueOverflowHandling:eventGetRegisteredCallbackOnQueueOverflow", sHost, sPort, "BACK");
-                    delete utf16profile;
+                    delete[] utf16profile;
                   }
                 }
                 break;
@@ -784,11 +784,11 @@ bool tmlCollectCall::eventSendMessage2ndStep(void* callbackData)
                               ((void(FUNC_C_DECL *)(wchar_t*, wchar_t*, wchar_t*, TML_COMMAND_ID_TYPE, TML_INT32, TML_POINTER))pCBFunc)(utf16profile, utf16host, utf16port, iCmd, iErrorOutOfSendAsyncMessage, pCBData);
                               //m_log->log ("tmlCollectCall:eventSendMessage2ndStep:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
                               //tml_log_A(TML_LOG_EVENT, "tmlCollectCall:eventSendMessage2ndStep:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
-                              delete (utf16port);
+                              delete[] utf16port;
                             }
-                            delete (utf16host);
+                            delete[] utf16host;
                           }
-                          delete (utf16profile);
+                          delete[] utf16profile;
                         }
                       }
                       break;
@@ -806,11 +806,11 @@ bool tmlCollectCall::eventSendMessage2ndStep(void* callbackData)
                               ((void(FUNC_C_DECL *)(char16_t*, char16_t*, char16_t*, TML_COMMAND_ID_TYPE, TML_INT32, TML_POINTER))pCBFunc)(utf16profile, utf16host, utf16port, iCmd, iErrorOutOfSendAsyncMessage, pCBData);
                               //m_log->log ("tmlCollectCall:eventSendMessage2ndStep:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
                               //tml_log_A(TML_LOG_EVENT, "tmlCollectCall:eventSendMessage2ndStep:eventGetRegisteredCallbackOnError","BACK", sHost, sPort);
-                              delete utf16port;
+                              delete[] utf16port;
                             }
-                            delete utf16host;
+                            delete[] utf16host;
                           }
-                          delete utf16profile;
+                          delete[] utf16profile;
                         }
                       }
                       break;
@@ -1355,7 +1355,7 @@ void tmlCollectCall::getEventDestinationCount(tmlCollectCallDestinationObjHandle
                 wchar_t* utf16profile = UTF8toUTF32((char*)profile, &iUTF16Length);
                 if (NULL != utf16profile){
                     iRet = ((TML_INT32(FUNC_C_DECL *)(wchar_t*, TML_POINTER))pCBFunc)(utf16profile, pCBData);
-                  delete (utf16profile);
+                  delete[] utf16profile;
                 }
                 else{
                   iRet = TML_ERR_UNICODE;
@@ -1368,7 +1368,7 @@ void tmlCollectCall::getEventDestinationCount(tmlCollectCallDestinationObjHandle
                 char16_t* utf16profile = (char16_t*)UTF8toUTF16((char*)profile, &iUTF16Length);
                 if (NULL != utf16profile){
                     iRet = ((TML_INT32(FUNC_C_DECL *)(char16_t*, TML_POINTER))pCBFunc)(utf16profile, pCBData);
-                  delete utf16profile;
+                  delete[] utf16profile;
                 }
                 else{
                   iRet = TML_ERR_UNICODE;
@@ -1419,7 +1419,7 @@ void tmlCollectCall::getLoadBalancedDestinationCount(tmlCollectCallDestinationOb
                 wchar_t* utf16profile = UTF8toUTF32((char*)profile, &iUTF16Length);
                 if (NULL != utf16profile){
                     iRet = ((TML_INT32(FUNC_C_DECL *)(wchar_t*, TML_POINTER))pCBFunc)(utf16profile, pCBData);
-                  delete (utf16profile);
+                  delete[] utf16profile;
                 }
                 else{
                   iRet = TML_ERR_UNICODE;
@@ -1432,7 +1432,7 @@ void tmlCollectCall::getLoadBalancedDestinationCount(tmlCollectCallDestinationOb
                 char16_t* utf16profile = (char16_t*)UTF8toUTF16((char*)profile, &iUTF16Length);
                 if (NULL != utf16profile){
                     iRet = ((TML_INT32(FUNC_C_DECL *)(char16_t*, TML_POINTER))pCBFunc)(utf16profile, pCBData);
-                  delete utf16profile;
+                  delete[] utf16profile;
                 }
                 else{
                   iRet = TML_ERR_UNICODE;
