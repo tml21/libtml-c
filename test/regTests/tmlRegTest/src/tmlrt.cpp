@@ -48,8 +48,6 @@
 using namespace std;
 #include <tmlCore.h>
 #include <sidex.h>
-#include "tmlrt_SendingCommands.h"
-//#include "tmlrt_LoadBalancing.h"
 #include "tmlrt_Utils.h"
 #include "TestingProcess.h"
 #include "tmlrt_MultipleListeners.h"
@@ -66,18 +64,6 @@ using namespace std;
     int _tmain(int argc, char* argv[])
 #endif
 {	
-	//wenn datei mit defaultnamen da ist, benutzte es. wenn was übergeben wurde, nutze diesen namen. Wenn weder defaultname noch übergebener name da ist, dont execute that special section
-	//defaultname in tmlrt_Utils
-	if(2 == argc) {
-		//text ungefähr: 
-		//noch kein template: es wird ein template erzeugt in diesem verzeichnis. (funktionsaufruf) dann werden keine (?) tests ausgeführt.
-		// template: wenn ein fehler auftritt, könnten die ip-adressen fehlerhaft sein(oder der name der file?)
-	}
-
-
-
-	//for testing purposes
-	//testing to send messages
 	simpleTestTmlMultiListenerSendSyncMessage();	
 	simpleTestTmlMultiListener();
 	testTmlCoreListenerClose();
@@ -87,61 +73,5 @@ using namespace std;
 	testTmlCoreGetListenerErrorCodes();
 	testTmlListenerGetSetEnabledForErrorCodes();
 
-	
-   /* testTmlSendSyncMessage();
-    simpleTestTmlSendAsyncMessage();
-    testTmlSendAsyncMessage();	
-
-	//testing to send balanced messages
-    simpleTestTmlSendBalancedSyncMessage();
-	simpleTestTmlSendBalancedSyncMessageAndSendSubscribeRequest();
-	testTmlSendBalancedSyncMessageAndBalancer();
-
-	simpleTestTmlSendBalancedAsyncMessage();
-	simpleTestTmlSendBalancedAsyncMessageAndSendSubscribeRequest();
-	testTmlSendBalancedAsyncMessageAndBalancer();
-
-	testTmlsendBalSyncMsgs();
-	testTmlsendBalAsyncMsgs();
-
-	//testing functions for expected error codes
-	testTmlBal_Subscribe_MessageDestination();
-	testTmlBal_Send_SubscriptionRequest();*/
-
-
     return 0;
 }
-
-
-
-
-
-//function for creating the bootstrap template
-/*void createBootstrapTemplate() {
-	SIDEX_INT32 iErr =  0;
-	SIDEX_HANDLE bootstrapDocument = SIDEX_HANDLE_TYPE_NULL;
-
-	//create a new sidex document
-	iErr =  sidex_Create(DEFAULT_BOOTSTRAP, &bootstrapDocument);
-	errLog(SIDEX_SUCCESS == iErr, "createBootstrapTemplate", "sidex_Create", 1);
-
-	//add parameters
-
-
-
-	//save the document as a file
-	iErr = sidex_Save_Content(bootstrapDocument, DEFAULT_BOOTSTRAP);
-	errLog(SIDEX_SUCCESS == iErr, "createBootstrapTemplate", "sidex_Save_Content", 1);
-}*/
-
-//function for checking whether the bootstrap file already exists
-
-
-
-
-
-
-
-
-
-//function for loading variables from the bootstrap file
