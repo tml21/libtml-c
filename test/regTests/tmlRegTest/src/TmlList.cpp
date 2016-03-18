@@ -54,28 +54,28 @@ TmlList::~TmlList() {
 }
 
 SIDEX_INT32 TmlList::size() {
-	iErr = sidex_Variant_List_Size(sidexList, &amount);
+	m_iErr = sidex_Variant_List_Size(sidexList, &amount);
 	checkForSuccess();
 	return amount;
 }
 
 SIDEX_INT32 TmlList::append(SIDEX_TCHAR* string) {
 	item = formatStringToSidexVariant(string);
-	iErr = sidex_Variant_List_Append(sidexList, item, &itemPosition);
+	m_iErr = sidex_Variant_List_Append(sidexList, item, &itemPosition);
 	checkForSuccess();
 	//sidex_Variant_DecRef(item);
 	return itemPosition;
 }
 
 SIDEX_VARIANT TmlList::formatStringToSidexVariant(SIDEX_TCHAR* string) {
-	iErr = sidex_Variant_New_String(string, &item);
+	m_iErr = sidex_Variant_New_String(string, &item);
 	checkForSuccess();
 	return item;	//careful. item has to be 'decRef'ed
 }
 
 SIDEX_INT32 TmlList::append(SIDEX_BOOL boolean) {
 	item = sidex_Variant_New_Boolean(boolean);
-	iErr = sidex_Variant_List_Append(sidexList, item, &itemPosition);
+	m_iErr = sidex_Variant_List_Append(sidexList, item, &itemPosition);
 	checkForSuccess();
 	sidex_Variant_DecRef(item);
 	return itemPosition;
@@ -83,29 +83,29 @@ SIDEX_INT32 TmlList::append(SIDEX_BOOL boolean) {
 
 SIDEX_INT32 TmlList::setBool(SIDEX_INT32 index, SIDEX_BOOL boolean) {
 	item = sidex_Variant_New_Boolean(boolean);
-	iErr = sidex_Variant_List_Set(sidexList, item, index);
+	m_iErr = sidex_Variant_List_Set(sidexList, item, index);
 	checkForSuccess();
 	//sidex_Variant_DecRef(item);
-	return iErr;
+	return m_iErr;
 }
 
 SIDEX_TCHAR* TmlList::getString(SIDEX_INT32 index) {
-	iErr = sidex_Variant_List_Get(sidexList, index, &item);
+	m_iErr = sidex_Variant_List_Get(sidexList, index, &item);
 	checkForSuccess();
 
 	SIDEX_INT32 lengthOfString;
 	SIDEX_TCHAR* stringListItem;
-	iErr = sidex_Variant_As_String(item, &stringListItem, &lengthOfString);
+	m_iErr = sidex_Variant_As_String(item, &stringListItem, &lengthOfString);
 	checkForSuccess();
 	return stringListItem;
 }
 
 SIDEX_BOOL TmlList::getBool(SIDEX_INT32 index) {
-	iErr = sidex_Variant_List_Get(sidexList, index, &item);
+	m_iErr = sidex_Variant_List_Get(sidexList, index, &item);
 	checkForSuccess();
 
 	SIDEX_BOOL boolListItem;
-	iErr = sidex_Variant_As_Boolean(item, &boolListItem);
+	m_iErr = sidex_Variant_As_Boolean(item, &boolListItem);
 	checkForSuccess();
 	return boolListItem;
 }

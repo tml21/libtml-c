@@ -57,7 +57,7 @@ bool testTmlConnections()
 	  //conTester->testB();
 	  //conTester->testC();
 
-    success = conTester->testOK;
+    success = conTester->isTestOK();
 
 	  delete(conTester);
     conTester = NULL;

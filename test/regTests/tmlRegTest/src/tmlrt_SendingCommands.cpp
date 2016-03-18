@@ -70,14 +70,26 @@ bool simpleTestTmlSendSyncMessage()
   TestingProcess* simpleSendSyncMessage = new TestingProcess(tmlrtT("simpleSendSyncMessage"));
   if(simpleSendSyncMessage)
   {
+    simpleSendSyncMessage->messageOutput(tmlrtT("Start..."));
+
     simpleSendSyncMessage->defaultListenerInit();
-    simpleSendSyncMessage->initSenderSide();
-    simpleSendSyncMessage->sendArbitraryCmds();
-    simpleSendSyncMessage->freeCmds();
-    simpleSendSyncMessage->freeTmlCores();
+    if(simpleSendSyncMessage->isTestOK())
+    {
+      simpleSendSyncMessage->initSenderSide();
+      if(simpleSendSyncMessage->isTestOK())
+      {
+        simpleSendSyncMessage->sendArbitraryCmds();
+        if(simpleSendSyncMessage->isTestOK())
+        {
+          simpleSendSyncMessage->freeCmds();
+        }
+      }
+      simpleSendSyncMessage->freeTmlCores();
+    }
 
-    success = simpleSendSyncMessage->testOK;
-
+    success = simpleSendSyncMessage->isTestOK();
+    simpleSendSyncMessage->messageOutput(success ? tmlrtT("Finish. (Success)")
+                                                 : tmlrtT("Finish. (Failed)"));
     delete(simpleSendSyncMessage);
     simpleSendSyncMessage = NULL;
   }

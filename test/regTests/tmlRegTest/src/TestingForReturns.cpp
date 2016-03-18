@@ -42,8 +42,8 @@ TestingForReturns::TestingForReturns(SIDEX_TCHAR* testProcessName)
   if(testProcessName && (!testProcessName[0])) testProcessName = NULL;
   if(!testProcessName) testProcessName = tmlrtT("<unnamed>");
   m_testProcessName = testProcessName;
-  testOK = true;
-  iErr   = TML_SUCCESS;
+  m_testOK = true;
+  m_iErr   = TML_SUCCESS;
 }
 
 TestingForReturns::~TestingForReturns()
@@ -51,38 +51,71 @@ TestingForReturns::~TestingForReturns()
   m_testProcessName = NULL;
 }
 
+void TestingForReturns::reset()
+{
+  m_testOK = true;
+  m_iErr   = TML_SUCCESS;
+}
+
+SIDEX_TCHAR* TestingForReturns::getTestProcessName()
+{
+  return(m_testProcessName);
+}
+
+TML_INT32 TestingForReturns::getLastErrorCode()
+{
+  return(m_iErr);
+}
+
+bool TestingForReturns::isTestOK()
+{
+  return(m_testOK);
+}
+
 void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withProcessName, SIDEX_TCHAR* testFunctionName)
 {
+  bool hasText = withProcessName;
   if(withProcessName) wcout << m_testProcessName;
   if(testFunctionName)
   {
-    if(testFunctionName[0]) wcout << ":" << testFunctionName;
+    if(testFunctionName[0])
+    {
+      if(hasText) wcout << ":";
+      wcout << testFunctionName;
+      hasText = true;
+    }
   }
   if(messageTextOutput)
   {
-    if(messageTextOutput[0]) wcout << " - " << messageTextOutput;
+    if(messageTextOutput[0])
+    {
+      if(hasText) wcout << " - ";
+      wcout << messageTextOutput;
+      hasText = true;
+    }
   }
-  wcout << endl;
+  if(hasText) wcout << endl;
 }
 
 void TestingForReturns::errorOutput(SIDEX_TCHAR* testFunctionName)
 {
-  //TODO only output, enough output for locating?
   wcout << "Test failed at " << m_testProcessName;
   if(testFunctionName)
   {
     if(testFunctionName[0]) wcout << ":" << testFunctionName;
   }
-  wcout << " with ErrorCode " << iErr << endl;
-  testOK = false;
+  wcout << " with ErrorCode " << m_iErr << endl;
+  m_testOK = false;
 }
 
-void TestingForReturns::checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* testFunctionName)
+bool TestingForReturns::checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* testFunctionName)
 {
-  if(expectedReturnCode != iErr) errorOutput(testFunctionName);
+  bool result = (expectedReturnCode == m_iErr);
+  if(!result) errorOutput(testFunctionName);
+  return(result);
 }
 
-void TestingForReturns::checkForSuccess(SIDEX_TCHAR* testFunctionName)
+bool TestingForReturns::checkForSuccess(SIDEX_TCHAR* testFunctionName)
 {
-  checkForExpectedReturnCode(TML_SUCCESS, testFunctionName);
+  return(checkForExpectedReturnCode(TML_SUCCESS, testFunctionName));
 }

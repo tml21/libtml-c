@@ -44,33 +44,33 @@ using namespace std;
 #include "TmlList.h"
 
 
-TestingProcess::TestingProcess (SIDEX_TCHAR* testProcessName)
+TestingProcess::TestingProcess(SIDEX_TCHAR* testProcessName)
               : TestingForReturns(testProcessName)
 {
 	cmdCodes = COMMAND_CODES_LIST;
 }
 
 void TestingProcess::initSenderSide() {
-	iErr = coreSenderSide.initCore();
+	m_iErr = coreSenderSide.initCore();
 	checkForSuccess();
 }
 
 void TestingProcess::defaultListenerInit() {
 	coreListenerSide = TmlCore(m_testProcessName);
-	iErr = coreListenerSide.defaultInit();
+	m_iErr = coreListenerSide.defaultInit();
 	checkForSuccess();
-	iErr = coreListenerSide.registerDefaultCmds(cmdCodes);
+	m_iErr = coreListenerSide.registerDefaultCmds(cmdCodes);
 	checkForSuccess();
 }
 
 void TestingProcess::freeTmlCores() {
 	if(coreListenerSide.isInitialized()) {
-		iErr = coreListenerSide.freeTmlCore();
+		m_iErr = coreListenerSide.freeTmlCore();
 		checkForSuccess();
 	}
 
 	if(coreSenderSide.isInitialized()) {
-		iErr = coreSenderSide.freeTmlCore();
+		m_iErr = coreSenderSide.freeTmlCore();
 		checkForSuccess();
 	}
 }
@@ -80,27 +80,27 @@ TML_INT32 TestingProcess::produceCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value) {
 
     // Set cmdMessage parameter
     SIDEX_HANDLE sHandle = SIDEX_HANDLE_TYPE_NULL;
-    if (TML_SUCCESS == iErr)
-        iErr = tml_Cmd_Acquire_Sidex_Handle(*cmd, &sHandle);
-    if (TML_SUCCESS == iErr)
+    if (TML_SUCCESS == m_iErr)
+        m_iErr = tml_Cmd_Acquire_Sidex_Handle(*cmd, &sHandle);
+    if (TML_SUCCESS == m_iErr)
         sidex_Integer_Write(sHandle, GROUP, KEY, value);
-    if (TML_SUCCESS == iErr)
-        iErr = tml_Cmd_Release_Sidex_Handle(*cmd);
+    if (TML_SUCCESS == m_iErr)
+        m_iErr = tml_Cmd_Release_Sidex_Handle(*cmd);
 
-     return iErr;
+     return m_iErr;
 }
 
 TML_INT32 TestingProcess::createCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value) {
 	TML_COMMAND_HANDLE cmdMsg = TML_HANDLE_TYPE_NULL;
-    iErr = tml_Cmd_Create (&cmdMsg);
+    m_iErr = tml_Cmd_Create (&cmdMsg);
     checkForSuccess();
 
-    iErr = tml_Cmd_Header_SetCommand (cmdMsg, (TML_COMMAND_ID_TYPE) value);
+    m_iErr = tml_Cmd_Header_SetCommand (cmdMsg, (TML_COMMAND_ID_TYPE) value);
 	checkForSuccess();
 
-	if (TML_SUCCESS == iErr)
+	if (TML_SUCCESS == m_iErr)
         *cmd = cmdMsg;
-	return iErr;
+	return m_iErr;
 }
 
 TML_INT32 TestingProcess::sendArbitraryCmd(TML_INT32 cmdIndex, TML_INT32 profileIndex) {
@@ -108,8 +108,8 @@ TML_INT32 TestingProcess::sendArbitraryCmd(TML_INT32 cmdIndex, TML_INT32 profile
 	TmlList listOfProfilenames = coreListenerSide.getProfileNames();
 	SIDEX_TCHAR* profileURL = listOfProfilenames.getString(profileIndex);
 
-	iErr = tml_Send_SyncMessage(coreSenderSide.getCore(), cmdMsg, profileURL, DESTINATION_HOST_IP, coreListenerSide.getPort(), 10000);
-	return iErr;
+	m_iErr = tml_Send_SyncMessage(coreSenderSide.getCore(), cmdMsg, profileURL, DESTINATION_HOST_IP, coreListenerSide.getPort(), 10000);
+	return m_iErr;
 }
 
 void TestingProcess::sendArbitraryCmds() {
@@ -117,8 +117,8 @@ void TestingProcess::sendArbitraryCmds() {
 	TML_INT32 indexOfWantedProfile = 0;
 	createSetOfCmds();
 	for(int i = 0; i < numberOfCmdsToSend; i++) {
-		iErr = sendArbitraryCmd(i, indexOfWantedProfile);
-		checkForSuccess();
+		m_iErr = sendArbitraryCmd(i, indexOfWantedProfile);
+		if(!checkForSuccess()) break;
 	}
 }
 
@@ -131,15 +131,15 @@ void TestingProcess::freeCmds() {
 }
 
 TML_INT32 TestingProcess::freeCmd(TML_COMMAND_HANDLE* cmd) {
-	iErr = tml_Cmd_Free(cmd);
-	return iErr;
+	m_iErr = tml_Cmd_Free(cmd);
+	return m_iErr;
 }
 
 TML_INT32 TestingProcess::createSetOfCmds() {
 	for(int i = 0; i < amountOfCmds; i++){
 		Cmds[i] = TML_HANDLE_TYPE_NULL;
-		iErr = produceCmd(&Cmds[i], cmdCodes[i]);
+		m_iErr = produceCmd(&Cmds[i], cmdCodes[i]);
 		checkForSuccess();
 	}
-	return iErr;
+	return m_iErr;
 }
