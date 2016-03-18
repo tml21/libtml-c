@@ -60,16 +60,20 @@ using namespace std;
 * @returns int : 0 if everything went okay, -1 if a failure/error occurred or the options of the user were not recognized
 */
 #ifdef LINUX
-    int main(int argc, char* argv[])
+  int main(int argc, char* argv[])
 #else //LINUX
-    int _tmain(int argc, char* argv[])
+  int _tmain(int argc, char* argv[])
 #endif
 {
-  // test connection API
-  testTmlConnections();
-
-  //testing to send messages
-  simpleTestTmlSendSyncMessage();
-
-  return 0;
+  int result = -1;
+  wcout << "TML regression test - Start..." << endl;
+  do
+  {
+    if(!testTmlConnections()) break;            // test connection API
+    if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
+    result = 0;
+  }
+  while(false);
+  wcout << "TML regression test - " << (result ? S_FINISH_FAILED : S_FINISH_SUCCESS) << endl;
+  return(result);
 }

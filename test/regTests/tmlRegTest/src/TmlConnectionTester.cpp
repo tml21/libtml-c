@@ -45,3 +45,119 @@ TmlConnectionTester::TmlConnectionTester(SIDEX_TCHAR* testProcessName)
 TmlConnectionTester::~TmlConnectionTester()
 {
 }
+
+bool TmlConnectionTester::testConnect()
+{
+  setTestSectionName(tmlrtT("testConnect"));
+  messageOutput(S_START);
+  reset(false);
+
+  m_iErr = 0;
+  if(checkForSuccess(tmlrtT("xyz")))
+  {
+  }
+
+  messageOutput(m_testOK ? FINISH_MESSAGE);
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testClose()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetAddress()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetRemoteProfiles()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testValidate()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetConnectionCount()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetConnection_Core()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetConnectionByAddress()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testSendSync()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testSendAsync()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetConnection_Cmd()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testSetOnConnect()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testSetOnDisconnect()
+{
+  reset(false);
+
+  return(m_testOK);
+}
+
+/*
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address(TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR** sAddress);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNECTION_HANDLE connectionHandle, SIDEX_VARIANT* lProfiles);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bReconnect, TML_BOOL* bConnected);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress(TML_CORE_HANDLE coreHandle, TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Get_Connection(TML_COMMAND_HANDLE cmdHandle, TML_CONNECTION_HANDLE* connectionHandle);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnConnect(TML_CORE_HANDLE coreHandle, TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnDisconnect(TML_CORE_HANDLE coreHandle, TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
+*/

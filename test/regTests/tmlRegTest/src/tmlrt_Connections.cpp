@@ -53,9 +53,23 @@ bool testTmlConnections()
 	TmlConnectionTester* conTester = new TmlConnectionTester(tmlrtT("TmlConnectionTester"));
   if(conTester)
   {
-	  //conTester->testA();
-	  //conTester->testB();
-	  //conTester->testC();
+    do
+    {
+      if(!conTester->testConnect()) break;
+      if(!conTester->testClose()) break;
+      if(!conTester->testGetAddress()) break;
+      if(!conTester->testGetRemoteProfiles()) break;
+      if(!conTester->testValidate()) break;
+      if(!conTester->testGetConnectionCount()) break;
+      if(!conTester->testGetConnection_Core()) break;
+      if(!conTester->testGetConnectionByAddress()) break;
+      if(!conTester->testSendSync()) break;
+      if(!conTester->testSendAsync()) break;
+      if(!conTester->testGetConnection_Cmd()) break;
+      if(!conTester->testSetOnConnect()) break;
+      if(!conTester->testSetOnDisconnect()) break;
+    }
+    while(false);
 
     success = conTester->isTestOK();
 

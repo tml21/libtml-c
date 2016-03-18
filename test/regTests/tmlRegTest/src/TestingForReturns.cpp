@@ -40,26 +40,42 @@
 TestingForReturns::TestingForReturns(SIDEX_TCHAR* testProcessName)
 {
   if(testProcessName && (!testProcessName[0])) testProcessName = NULL;
-  if(!testProcessName) testProcessName = tmlrtT("<unnamed>");
+  if(!testProcessName) testProcessName = S_UNNAMED;
   m_testProcessName = testProcessName;
-  m_testOK = true;
-  m_iErr   = TML_SUCCESS;
+  m_testSectionName = S_EMPTY;
+  m_testOK_Overall  = true;
+  m_testOK          = true;
+  m_iErr            = TML_SUCCESS;
 }
 
 TestingForReturns::~TestingForReturns()
 {
   m_testProcessName = NULL;
+  m_testSectionName = NULL;
 }
 
-void TestingForReturns::reset()
+void TestingForReturns::reset(bool overall)
 {
   m_testOK = true;
   m_iErr   = TML_SUCCESS;
+  if(overall) m_testOK_Overall = true;
+}
+
+void TestingForReturns::setTestSectionName(SIDEX_TCHAR* testSectionName)
+{
+  if(testSectionName && (!testSectionName[0])) testSectionName = NULL;
+  if(!testSectionName) testSectionName = S_EMPTY;
+  m_testSectionName = testSectionName;
 }
 
 SIDEX_TCHAR* TestingForReturns::getTestProcessName()
 {
   return(m_testProcessName);
+}
+
+SIDEX_TCHAR* TestingForReturns::getTestSectionName()
+{
+  return(m_testSectionName);
 }
 
 TML_INT32 TestingForReturns::getLastErrorCode()
@@ -69,19 +85,19 @@ TML_INT32 TestingForReturns::getLastErrorCode()
 
 bool TestingForReturns::isTestOK()
 {
-  return(m_testOK);
+  return(m_testOK_Overall);
 }
 
-void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withProcessName, SIDEX_TCHAR* testFunctionName)
+void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withProcessName, bool withFunctionName)
 {
-  bool hasText = withProcessName;
-  if(withProcessName) wcout << m_testProcessName;
-  if(testFunctionName)
+  bool hasText = (withProcessName && m_testProcessName);
+  if(hasText) wcout << m_testProcessName;
+  if(withFunctionName && m_testSectionName)
   {
-    if(testFunctionName[0])
+    if(m_testSectionName[0])
     {
       if(hasText) wcout << ":";
-      wcout << testFunctionName;
+      wcout << m_testSectionName;
       hasText = true;
     }
   }
@@ -100,12 +116,17 @@ void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withP
 void TestingForReturns::errorOutput(SIDEX_TCHAR* testFunctionName)
 {
   wcout << "Test failed at " << m_testProcessName;
+  if(m_testSectionName)
+  {
+    if(m_testSectionName[0]) wcout << ":" << m_testSectionName;
+  }
   if(testFunctionName)
   {
     if(testFunctionName[0]) wcout << ":" << testFunctionName;
   }
   wcout << " with ErrorCode " << m_iErr << endl;
-  m_testOK = false;
+  m_testOK         = false;
+  m_testOK_Overall = false;
 }
 
 bool TestingForReturns::checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* testFunctionName)

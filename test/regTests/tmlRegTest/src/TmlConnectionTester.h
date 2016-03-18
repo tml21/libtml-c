@@ -46,10 +46,19 @@ public:
   TmlConnectionTester(SIDEX_TCHAR* testProcessName = NULL);
   ~TmlConnectionTester();
 
-protected:
-
-private:
-
+  bool testConnect();
+  bool testClose();
+  bool testGetAddress();
+  bool testGetRemoteProfiles();
+  bool testValidate();
+  bool testGetConnectionCount();
+  bool testGetConnection_Core();
+  bool testGetConnectionByAddress();
+  bool testSendSync();
+  bool testSendAsync();
+  bool testGetConnection_Cmd();
+  bool testSetOnConnect();
+  bool testSetOnDisconnect();
 };
 
 #endif  // TML_CONNECTION_TESTER_H

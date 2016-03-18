@@ -44,20 +44,23 @@ class TestingForReturns
 { //TODO auﬂer mit namen sehr zufrieden
 protected:
   SIDEX_TCHAR* m_testProcessName;
+  SIDEX_TCHAR* m_testSectionName;
   TML_INT32    m_iErr;
-  bool         m_testOK;
+  bool         m_testOK, m_testOK_Overall;
 
 public:
   TestingForReturns(SIDEX_TCHAR* testProcessName = NULL);
   ~TestingForReturns();
 
-  void         reset();
+  void         reset(bool overall = true);
+  void         setTestSectionName(SIDEX_TCHAR* testSectionName = NULL);
 
   SIDEX_TCHAR* getTestProcessName();
+  SIDEX_TCHAR* getTestSectionName();
   TML_INT32    getLastErrorCode();
   bool         isTestOK();
 
-  void messageOutput(SIDEX_TCHAR* messageText = NULL, bool withProcessName = true, SIDEX_TCHAR* testFunctionName = NULL);
+  void messageOutput(SIDEX_TCHAR* messageText = NULL, bool withProcessName = true, bool withSectionName = true);
 
 protected:
   void errorOutput(SIDEX_TCHAR* testFunctionName = NULL);
