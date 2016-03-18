@@ -1,4 +1,4 @@
-/* 
+/*
  *  libTML:  A BEEP based Messaging Suite
  *  Copyright (C) 2016 wobe-systems GmbH
  *
@@ -16,7 +16,7 @@
  *  License along with this program; if not, write to the Free
  *  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  *  02111-1307 USA
- *  
+ *
  *  You may find a copy of the license under this software is released
  *  at COPYING file. This is LGPL software: you are welcome to develop
  *  proprietary applications using this library without any royalty or
@@ -34,26 +34,55 @@
  * Contributors:
  *    wobe-systems GmbH
  */
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
+
 #include "TestingForReturns.h"
 
-void TestingForReturns::errorOutput() {
-	//TODO only output, enough output for locating?
-	cout << "Test failed at " << errorLocationOutput << " with ErrorCode " << iErr << endl;
-	testOK = false;
+TestingForReturns::TestingForReturns(SIDEX_TCHAR* testProcessName)
+{
+  if(testProcessName && (!testProcessName[0])) testProcessName = NULL;
+  if(!testProcessName) testProcessName = tmlrtT("<unnamed>");
+  m_testProcessName = testProcessName;
+  testOK = true;
+  iErr   = TML_SUCCESS;
 }
 
-void TestingForReturns::checkForExpectedReturnCode(TML_INT32 expectedReturnCode) {
-	if(expectedReturnCode != iErr) {
-		errorOutput();
-	}
+TestingForReturns::~TestingForReturns()
+{
+  m_testProcessName = NULL;
 }
 
-void TestingForReturns::checkForSuccess() {
-	if(TML_SUCCESS != iErr) {
-		errorOutput();
-	}
+void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withProcessName, SIDEX_TCHAR* testFunctionName)
+{
+  if(withProcessName) wcout << m_testProcessName;
+  if(testFunctionName)
+  {
+    if(testFunctionName[0]) wcout << ":" << testFunctionName;
+  }
+  if(messageTextOutput)
+  {
+    if(messageTextOutput[0]) wcout << " - " << messageTextOutput;
+  }
+  wcout << endl;
+}
+
+void TestingForReturns::errorOutput(SIDEX_TCHAR* testFunctionName)
+{
+  //TODO only output, enough output for locating?
+  wcout << "Test failed at " << m_testProcessName;
+  if(testFunctionName)
+  {
+    if(testFunctionName[0]) wcout << ":" << testFunctionName;
+  }
+  wcout << " with ErrorCode " << iErr << endl;
+  testOK = false;
+}
+
+void TestingForReturns::checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* testFunctionName)
+{
+  if(expectedReturnCode != iErr) errorOutput(testFunctionName);
+}
+
+void TestingForReturns::checkForSuccess(SIDEX_TCHAR* testFunctionName)
+{
+  checkForExpectedReturnCode(TML_SUCCESS, testFunctionName);
 }

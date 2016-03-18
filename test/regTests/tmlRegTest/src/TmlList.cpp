@@ -41,16 +41,11 @@ using namespace std;
 #include "TestingForReturns.h"
 #include "TmlList.h"
 
-TmlList::TmlList() {
+TmlList::TmlList(SIDEX_TCHAR* testProcessName)
+       : TestingForReturns(testProcessName)
+{
 	sidexList = SIDEX_HANDLE_TYPE_NULL;
 	sidexList = sidex_Variant_New_List();
-	item = SIDEX_HANDLE_TYPE_NULL;
-}
-
-TmlList::TmlList(SIDEX_TCHAR* name) {
-	sidexList = SIDEX_HANDLE_TYPE_NULL;
-	sidexList = sidex_Variant_New_List();
-	errorLocationOutput = name;
 	item = SIDEX_HANDLE_TYPE_NULL;
 }
 

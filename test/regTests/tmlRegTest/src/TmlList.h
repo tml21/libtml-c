@@ -43,18 +43,20 @@ using namespace std;
 #include <tmlCore.h>
 #include "TestingForReturns.h"
 
-class TmlList : TestingForReturns {
+class TmlList : public TestingForReturns
+{
 public: 
-	TmlList();
-	TmlList(SIDEX_TCHAR* name);
-	SIDEX_INT32 size();
+	TmlList(SIDEX_TCHAR* testProcessName = NULL);
+	~TmlList();
+
+  SIDEX_INT32 size();
 	SIDEX_INT32 append(SIDEX_TCHAR* string);
 	SIDEX_INT32 append(SIDEX_BOOL boolean);
 	//SIDEX_INT32 insertString(SIDEX_TCHAR* string);
 	SIDEX_INT32 setBool(SIDEX_INT32 index, SIDEX_BOOL boolean);
 	SIDEX_TCHAR* getString(SIDEX_INT32 index);
 	SIDEX_BOOL getBool(SIDEX_INT32 index);
-	~TmlList();
+
 private:
 	SIDEX_VARIANT formatStringToSidexVariant(SIDEX_TCHAR* string);
 	SIDEX_VARIANT sidexList;

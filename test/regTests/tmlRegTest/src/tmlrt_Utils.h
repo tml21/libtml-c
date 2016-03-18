@@ -37,6 +37,17 @@
 #ifndef TMLRT_UTILS_H
 #define TMLRT_UTILS_H
 
+#ifdef LINUX
+  #include <wchar.h>
+  #include <stdbool.h>
+  #include <string.h>
+  #include <unistd.h>
+#else
+  #include <stdio.h>
+  #include <tchar.h>
+  #include <Windows.h>     //for function sleep
+#endif
+
 #include <iostream>
 #include <array>
 using namespace std;

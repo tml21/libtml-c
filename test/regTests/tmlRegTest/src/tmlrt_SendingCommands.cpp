@@ -64,12 +64,22 @@ using namespace std;
 *
 * @returns bool : false on failure of test, true on success.
 */
-void simpleTestTmlSendSyncMessage() {
-	TestingProcess simpleSendSyncMessage = TestingProcess(tmlrtT("simpleSendSyncMessage"));
-	simpleSendSyncMessage.defaultListenerInit();
-	simpleSendSyncMessage.initSenderSide();
-	simpleSendSyncMessage.sendArbitraryCmds();
-	simpleSendSyncMessage.freeCmds();
-	simpleSendSyncMessage.freeTmlCores();
+bool simpleTestTmlSendSyncMessage()
+{
+  bool success = false;
+  TestingProcess* simpleSendSyncMessage = new TestingProcess(tmlrtT("simpleSendSyncMessage"));
+  if(simpleSendSyncMessage)
+  {
+    simpleSendSyncMessage->defaultListenerInit();
+    simpleSendSyncMessage->initSenderSide();
+    simpleSendSyncMessage->sendArbitraryCmds();
+    simpleSendSyncMessage->freeCmds();
+    simpleSendSyncMessage->freeTmlCores();
 
+    success = simpleSendSyncMessage->testOK;
+
+    delete(simpleSendSyncMessage);
+    simpleSendSyncMessage = NULL;
+  }
+  return(success);
 }

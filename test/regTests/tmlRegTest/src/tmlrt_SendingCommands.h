@@ -39,14 +39,12 @@
 #define TMLRT_SENDING_COMMANDS_H
 
 
-#include <tmlCore.h>
-
 /** @defgroup Test_Sending_Commands
 * @brief Test Reference for functions in Module Sending Commands
 */
 
 //Testing a simple communication between a sender and a listener
-void simpleTestTmlSendSyncMessage();
+bool simpleTestTmlSendSyncMessage();
 
 //Various Errors are produced with tml_Send_SyncMessage
 bool testTmlSendSyncMessage();

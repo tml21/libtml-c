@@ -162,27 +162,29 @@ else (${IS64BIT} STREQUAL false)
   set(TARGETNAME_LOCAL ${TARGETNAME}64)
 endif (${IS64BIT} STREQUAL false)
 
-
 set(TARGET ${TARGETNAME_LOCAL})
 set	 (TEST_SOURCES_HEADER
-	  "TestingForReturns.h"
-	  "TestingProcess.h"
-	  "TmlCore.h"
-	  "TmlList.h"
-	  "tmlrt_SendingCommands.h"
-	  "tmlrt_Utils.h")
+  "TestingForReturns.h"
+  "TestingProcess.h"
+  "TmlConnectionTester.h"
+  "TmlCore.h"
+  "TmlList.h"
+  "tmlrt_Connections.h"
+  "tmlrt_SendingCommands.h"
+  "tmlrt_Utils.h")
 set  (TEST_SOURCES
-	  "tmlrt.cpp"
-	  "TestingForReturns.cpp"
-	  "TestingProcess.cpp"
-	  "TmlCore.cpp"
-	  "TmlList.cpp"
-	  "tmlrt_SendingCommands.cpp"
-	  "tmlrt_Utils.cpp")
-      
+  "TestingForReturns.cpp"
+  "TestingProcess.cpp"
+  "TmlConnectionTester.cpp"
+  "TmlCore.cpp"
+  "TmlList.cpp"
+  "tmlrt.cpp"
+  "tmlrt_Connections.cpp"
+  "tmlrt_SendingCommands.cpp"
+  "tmlrt_Utils.cpp")
+
 add_executable(${TARGETNAME_LOCAL} 
-	             ${TEST_SOURCES_HEADER} ${TEST_SOURCES})
-				 			 
+               ${TEST_SOURCES_HEADER} ${TEST_SOURCES})
 
 #######################################################
 ## Include- directories:
@@ -194,6 +196,5 @@ INCLUDE_DIRECTORIES (".")
 ## libraries
 INCLUDE_DIRECTORIES (${COMMON_INCLUDE_PATH})
 
-TARGET_LINK_LIBRARIES(${TARGET} ${SIDEXLIBNAME})    
-TARGET_LINK_LIBRARIES(${TARGET} ${TMLLIBNAME} )    
-  
+TARGET_LINK_LIBRARIES(${TARGET} ${SIDEXLIBNAME})
+TARGET_LINK_LIBRARIES(${TARGET} ${TMLLIBNAME} )

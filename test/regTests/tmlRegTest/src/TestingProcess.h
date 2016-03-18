@@ -49,18 +49,19 @@ using namespace std;
 
 
 
-class TestingProcess : TestingForReturns{//search for better class name?
+class TestingProcess : public TestingForReturns
+{ //search for better class name?
 public:
+	TestingProcess(SIDEX_TCHAR* testProcessName = NULL);
+
 	static const int amountOfCmds = 5;
 	void defaultListenerInit();
 	void freeTmlCores();
 	void sendArbitraryCmds();
 	void initSenderSide();
-	TestingProcess(SIDEX_TCHAR* name);
 	void freeCmds();
 
 	//static bool[amountOfCmds] cmdsReceived = {true, true, true, true, true};
-
 
 protected:
 	TML_INT32 sendArbitraryCmd(TML_INT32 cmdIndex, TML_INT32 profilIndex);
@@ -70,9 +71,8 @@ protected:
 
 private:
 	TML_INT32 createCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value);
-	bool testOK;
 	TmlCore coreSenderSide;	//as list?
-    TmlCore coreListenerSide;
+  TmlCore coreListenerSide;
 	TML_COMMAND_HANDLE cmdMessage;//  = TML_HANDLE_TYPE_NULL; //as list?
 	array<TML_COMMAND_HANDLE,amountOfCmds> Cmds;
 

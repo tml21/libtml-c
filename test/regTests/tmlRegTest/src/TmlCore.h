@@ -46,11 +46,13 @@ using namespace std;
 #include "TmlList.h"
 #include "tmlrt_Utils.h"
 
-class TmlCore : TestingForReturns {
+class TmlCore : public TestingForReturns
+{
 public:
-	TmlCore(SIDEX_TCHAR* name);
-	TmlCore();
-	TML_INT32 defaultInit();
+	TmlCore(SIDEX_TCHAR* testProcessName = NULL);
+	~TmlCore();
+
+  TML_INT32 defaultInit();
 	TML_INT32 initCore();
 	TML_INT32 addProfileToCore(SIDEX_TCHAR* profile);
 	TML_INT32 setDefaultProfile();
@@ -65,7 +67,6 @@ public:
 	SIDEX_TCHAR* getPort();
 	SIDEX_TCHAR* getIP();
 	TML_INT32 registerDefaultCmds(array<int, 5> cmdCodes);
-	~TmlCore();
 
 protected:
 	void appendProfileToList(SIDEX_TCHAR* profile);

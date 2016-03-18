@@ -35,18 +35,7 @@
  *    wobe-systems GmbH
  */
 
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
 #include "tmlrt_Utils.h"
-#include "TestingProcess.h"
-//for function sleep
-#ifndef LINUX
-  #include <Windows.h>
-#else 
-  #include <unistd.h>
-#endif
 
 
 /** @ingroup Wrapping_Sidex_TChar
@@ -80,7 +69,7 @@ void TmlSleep(int milliseconds) {
  * @param   cmdMsg  Handle on cmd
  * @param   data    Pointer on data in cmd
  */
-void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data){
-
-    cout << "received cmd" << endl;
+void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data)
+{
+  wcout << "received cmd" << endl;
 }

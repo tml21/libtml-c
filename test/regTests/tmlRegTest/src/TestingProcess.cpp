@@ -44,20 +44,19 @@ using namespace std;
 #include "TmlList.h"
 
 
+TestingProcess::TestingProcess (SIDEX_TCHAR* testProcessName)
+              : TestingForReturns(testProcessName)
+{
+	cmdCodes = COMMAND_CODES_LIST;
+}
+
 void TestingProcess::initSenderSide() {
 	iErr = coreSenderSide.initCore();
 	checkForSuccess();
 }
 
-
-TestingProcess::TestingProcess (SIDEX_TCHAR* name) {
-	errorLocationOutput = name;
-	testOK = true;
-	cmdCodes = COMMAND_CODES_LIST;
-}
-
 void TestingProcess::defaultListenerInit() {
-	coreListenerSide = TmlCore(errorLocationOutput);
+	coreListenerSide = TmlCore(m_testProcessName);
 	iErr = coreListenerSide.defaultInit();
 	checkForSuccess();
 	iErr = coreListenerSide.registerDefaultCmds(cmdCodes);

@@ -1,4 +1,4 @@
-/* 
+/*
  *  libTML:  A BEEP based Messaging Suite
  *  Copyright (C) 2016 wobe-systems GmbH
  *
@@ -16,7 +16,7 @@
  *  License along with this program; if not, write to the Free
  *  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  *  02111-1307 USA
- *  
+ *
  *  You may find a copy of the license under this software is released
  *  at COPYING file. This is LGPL software: you are welcome to develop
  *  proprietary applications using this library without any royalty or
@@ -34,25 +34,30 @@
  * Contributors:
  *    wobe-systems GmbH
  */
+
 #ifndef TESTINGFORRETURNS_H
 #define TESTINGFORRETURNS_H
 
+#include "tmlrt_Utils.h"
 
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
-
-class TestingForReturns {	//TODO auﬂer mit namen sehr zufrieden
+class TestingForReturns
+{ //TODO auﬂer mit namen sehr zufrieden
 public:
-	bool testOK;
-	TML_INT32 iErr;
-	SIDEX_TCHAR* errorLocationOutput;
-	void errorOutput();
-	void checkForExpectedReturnCode(TML_INT32 expectedReturnCode);
-	void checkForSuccess();
+  bool         testOK;
+  TML_INT32    iErr;
+
+protected:
+  SIDEX_TCHAR* m_testProcessName;
+
+public:
+  TestingForReturns(SIDEX_TCHAR* testProcessName = NULL);
+  ~TestingForReturns();
+
+  void messageOutput(SIDEX_TCHAR* messageText = NULL, bool withProcessName = true, SIDEX_TCHAR* testFunctionName = NULL);
+  void errorOutput(SIDEX_TCHAR* testFunctionName = NULL);
+
+  void checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* testFunctionName = NULL);
+  void checkForSuccess(SIDEX_TCHAR* testFunctionName = NULL);
 };
 
-
-
-#endif	//TESTINGFORRETURNS_H
+#endif  //TESTINGFORRETURNS_H

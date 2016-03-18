@@ -43,98 +43,96 @@ using namespace std;
 #include "tmlrt_Utils.h"
 #include "TmlCore.h"
 
-TmlCore::TmlCore(SIDEX_TCHAR* name) {
+TmlCore::TmlCore(SIDEX_TCHAR* testProcessName)
+       : TestingForReturns(testProcessName)
+{
 // RK: Commented because ist did not build
-//	errorLocationOutput = new char[50]();
-//	tmlrt_cat(errorLocationOutput, name);
-//	tmlrt_cat(errorLocationOutput, tmlrtT(" - TmlCore"));
+//	m_errorLocationOutput = new char[50]();
+//	tmlrt_cat(m_errorLocationOutput, name);
+//	tmlrt_cat(m_errorLocationOutput, tmlrtT(" - TmlCore"));
 	core = TML_HANDLE_TYPE_NULL;
-	profileNames = TmlList(errorLocationOutput);
+	profileNames = TmlList(m_testProcessName);
 }
 
 TmlCore::~TmlCore() {
-	//delete[] errorLocationOutput;
-}
-
-TmlCore::TmlCore () {
-	core = TML_HANDLE_TYPE_NULL;
+	//delete[] m_errorLocationOutput;
 }
 
 TML_INT32 TmlCore::defaultInit() { 
 	iErr = initCore();
-	checkForSuccess();
+	checkForSuccess(tmlrtT("initCore"));
 	iErr = setDefaultIP();
-	checkForSuccess();
+	checkForSuccess(tmlrtT("setDefaultIP"));
 	iErr = setDefaultPort();
-	checkForSuccess();
+	checkForSuccess(tmlrtT("setDefaultPort"));
 	iErr = setDefaultProfile();
-	checkForSuccess();
+	checkForSuccess(tmlrtT("setDefaultProfile"));
 	iErr = startListener();
-	checkForSuccess();
+	checkForSuccess(tmlrtT("startListener"));
 	return iErr;
 }
 
 TML_INT32 TmlCore::initCore() {
 	iErr = tml_Core_Open(&core, 0);
-	checkForSuccess();
+	checkForSuccess(tmlrtT("tml_Core_Open"));
 	return iErr;
 }
 
 TML_INT32 TmlCore::addProfileToCore(SIDEX_TCHAR* profile) {
 	appendProfileToList(profile);
 	iErr = tml_Profile_Register (core, profile);	
-	checkForSuccess();
+	checkForSuccess(tmlrtT("tml_Profile_Register"));
 	return iErr;
 }
 
 SIDEX_VARIANT TmlCore::formatToSidexString(SIDEX_TCHAR* profile) {
 	SIDEX_VARIANT formattedString = SIDEX_HANDLE_TYPE_NULL;
 	iErr = sidex_Variant_New_String(profile, &formattedString);
-	checkForSuccess();
+	checkForSuccess(tmlrtT("sidex_Variant_New_String"));
 	return formattedString;
 }
 
 void TmlCore::appendProfileToList(SIDEX_TCHAR* profile) {
 	iErr = profileNames.append(profile);
 	iErr = tml_Profile_Register(core,profile);
-	checkForSuccess();
+	checkForSuccess(tmlrtT("tml_Profile_Register"));
 }
 
 TML_INT32 TmlCore::setDefaultProfile() {
 	appendProfileToList(IO_PROFILE);
-	checkForSuccess();
+	checkForSuccess(tmlrtT("appendProfileToList"));
 	return iErr;
 }
 
 TML_INT32 TmlCore::setDefaultPort() {
 	iErr = setPort(IO_PORT);
-	checkForSuccess();
+	checkForSuccess(tmlrtT("setPort"));
 	return iErr;
 }
 
 TML_INT32 TmlCore::setPort(SIDEX_TCHAR* port) {
 	this->port = port;
 	iErr = tml_Core_Set_ListenerPort(core, port);
-	checkForSuccess();
+	checkForSuccess(tmlrtT("tml_Core_Set_ListenerPort"));
 	return iErr;
 }
 
 TML_INT32 TmlCore::setDefaultIP() {
 	ip = LISTENER_NETWORK_INTERFACE_IP;
 	iErr = tml_Core_Set_ListenerIP (core, LISTENER_NETWORK_INTERFACE_IP);
-	checkForSuccess();
+	checkForSuccess(tmlrtT("tml_Core_Set_ListenerIP"));
 	return iErr;
 }
 
 TML_INT32 TmlCore::startListener() {
 	iErr = tml_Core_Set_ListenerEnabled (core, TML_TRUE);
-	checkForSuccess();
+	checkForSuccess(tmlrtT("tml_Core_Set_ListenerEnabled"));
 	return iErr;
 }
 
 TML_INT32 TmlCore::freeTmlCore() {
 	iErr = tml_Core_Close(&core);
-	checkForSuccess();
+	checkForSuccess(tmlrtT("tml_Core_Close"));
 	return iErr;
 }
 
@@ -168,7 +166,7 @@ TML_INT32 TmlCore::registerDefaultCmds(array<int, 5> cmdCodes) {
 	for(int i = 0; i < amountOfProfiles; i++) {
 		for(int j = 0; j < amountOfCmdCodes; j++) {
 			iErr = tml_Profile_Register_Cmd(core, profileNames.getString(i), (TML_COMMAND_ID_TYPE) cmdCodes.at(j), cbgenericCmd, TML_HANDLE_TYPE_NULL);
-			checkForSuccess();
+			checkForSuccess(tmlrtT("tml_Profile_Register_Cmd"));
 		}
 	}
 	return iErr;

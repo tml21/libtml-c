@@ -1,4 +1,4 @@
-/* 
+/*
  *  libTML:  A BEEP based Messaging Suite
  *  Copyright (C) 2016 wobe-systems GmbH
  *
@@ -16,7 +16,7 @@
  *  License along with this program; if not, write to the Free
  *  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  *  02111-1307 USA
- *  
+ *
  *  You may find a copy of the license under this software is released
  *  at COPYING file. This is LGPL software: you are welcome to develop
  *  proprietary applications using this library without any royalty or
@@ -48,10 +48,10 @@
 using namespace std;
 #include <tmlCore.h>
 #include <sidex.h>
+#include "tmlrt_Utils.h"
+#include "tmlrt_Connections.h"
 #include "tmlrt_SendingCommands.h"
 //#include "tmlrt_LoadBalancing.h"
-#include "tmlrt_Utils.h"
-#include "TestingProcess.h"
 
 
 /** @brief Main function, accepts command line parameters
@@ -64,9 +64,12 @@ using namespace std;
 #else //LINUX
     int _tmain(int argc, char* argv[])
 #endif
-{	
-	//testing to send messages
-	simpleTestTmlSendSyncMessage();
+{
+  // test connection API
+  testTmlConnections();
 
-    return 0;
+  //testing to send messages
+  simpleTestTmlSendSyncMessage();
+
+  return 0;
 }
