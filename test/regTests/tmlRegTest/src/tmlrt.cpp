@@ -48,6 +48,8 @@
 using namespace std;
 #include <tmlCore.h>
 #include <sidex.h>
+#include <unicode.h>
+#include "TestParams.h"
 #include "tmlrt_Utils.h"
 #include "tmlrt_Connections.h"
 #include "tmlrt_SendingCommands.h"
@@ -66,14 +68,74 @@ using namespace std;
 #endif
 {
   int result = -1;
-  wcout << "TML regression test - Start..." << endl;
-  do
+
+  wcout << "=======================" << endl;
+  wcout << "  TML regression test  " << endl;
+  wcout << "=======================" << endl;
+  wcout << endl;
+
+  wcout << "UTF" << (8 * sizeof(SIDEX_TCHAR)) << endl;
+  wcout << endl;
+
+  SIDEX_TCHAR* pArg = NULL;
+  SIDEX_TCHAR* pBuf = NULL;
+  if(argc > 1)
   {
-    if(!testTmlConnections()) break;            // test connection API
-    if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
-    result = 0;
+    SIDEX_INT32 iLength = 0;
+    switch(sizeof(SIDEX_TCHAR))
+    {
+      case 1:
+      {
+        pArg = (SIDEX_TCHAR*)argv[1];
+        break;
+      }
+      case 2:
+      {
+        pBuf = (SIDEX_TCHAR*)UTF8toUTF16(argv[1], &iLength);
+        pArg = pBuf;
+        break;
+      }
+      case 4:
+      {
+        pBuf = (SIDEX_TCHAR*)UTF8toUTF32(argv[1], &iLength);
+        pArg = pBuf;
+        break;
+      }
+    }
   }
-  while(false);
-  wcout << "TML regression test - " << (result ? S_FINISH_FAILED : S_FINISH_SUCCESS) << endl;
+
+  TestParams = new CTestParams(pArg);
+  if(TestParams)
+  {
+    SIDEX_TCHAR* pfn = TestParams->getParamsFileName();
+    if(pfn) { wcout << "Using params file: " << pfn << endl; }
+    else    { wcout << "Running without params file!" << endl; }
+    wcout << endl;
+
+    wcout << "Tests - Start..." << endl;
+    wcout << endl;
+    do
+    {
+      if(!testTmlConnections()) break;            // test connection API
+      if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
+      result = 0;
+    }
+    while(false);
+    wcout << endl;
+    wcout << "Tests - " << (result ? S_FINISH_FAILED : S_FINISH_SUCCESS) << endl;
+    wcout << endl;
+
+    delete(TestParams);
+    TestParams = NULL;
+  }
+
+  if(pBuf)
+  {
+    delete[](pBuf);
+    pBuf = NULL;
+  }
+
+  wcout << "=======================" << endl;
+  wcout << endl;
   return(result);
 }

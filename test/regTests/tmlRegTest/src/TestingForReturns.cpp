@@ -88,21 +88,21 @@ bool TestingForReturns::isTestOK()
   return(m_testOK_Overall);
 }
 
-void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withProcessName, bool withFunctionName)
+void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withProcessName, bool withSectionName)
 {
-  bool hasText = (withProcessName && m_testProcessName);
-  if(hasText) wcout << m_testProcessName;
-  if(withFunctionName && m_testSectionName)
-  {
-    if(m_testSectionName[0])
-    {
-      if(hasText) wcout << ":";
-      wcout << m_testSectionName;
-      hasText = true;
-    }
-  }
   if(messageTextOutput)
   {
+    bool hasText = (withProcessName && m_testProcessName);
+    if(hasText) wcout << m_testProcessName;
+    if(withSectionName && m_testSectionName)
+    {
+      if(m_testSectionName[0])
+      {
+        if(hasText) wcout << ":";
+        wcout << m_testSectionName;
+        hasText = true;
+      }
+    }
     if(messageTextOutput[0])
     {
       if(hasText) wcout << " - ";
@@ -110,7 +110,7 @@ void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withP
       hasText = true;
     }
   }
-  if(hasText) wcout << endl;
+  wcout << endl;
 }
 
 void TestingForReturns::errorOutput(SIDEX_TCHAR* testFunctionName)

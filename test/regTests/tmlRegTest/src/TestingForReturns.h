@@ -52,7 +52,7 @@ public:
   TestingForReturns(SIDEX_TCHAR* testProcessName = NULL);
   ~TestingForReturns();
 
-  void         reset(bool overall = true);
+  void         reset(bool overall = false);
   void         setTestSectionName(SIDEX_TCHAR* testSectionName = NULL);
 
   SIDEX_TCHAR* getTestProcessName();

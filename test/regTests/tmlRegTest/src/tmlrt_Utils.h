@@ -111,10 +111,10 @@ const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
 #define tmlrtT(a) (char*) a
 #endif // SIDEX_UNICODE
 
-#define FINISH_MESSAGE S_FINISH_SUCCESS : S_FINISH_FAILED
+#define CHOICE_FINISH_MESSAGE(a) a ? S_FINISH_SUCCESS : S_FINISH_FAILED
 
-//Wrapper function for concatenating two strings
-SIDEX_TCHAR * tmlrt_cat( SIDEX_TCHAR * destination, const SIDEX_TCHAR * source);
+// Helper function for concatenating two strings
+SIDEX_TCHAR* tmlrt_cat(const SIDEX_TCHAR* first, const SIDEX_TCHAR* second);
 
 //cb for cmd 
 void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data);

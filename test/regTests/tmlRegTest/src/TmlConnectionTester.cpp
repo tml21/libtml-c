@@ -46,106 +46,6 @@ TmlConnectionTester::~TmlConnectionTester()
 {
 }
 
-bool TmlConnectionTester::testConnect()
-{
-  setTestSectionName(tmlrtT("testConnect"));
-  messageOutput(S_START);
-  reset(false);
-
-  m_iErr = 0;
-  if(checkForSuccess(tmlrtT("xyz")))
-  {
-  }
-
-  messageOutput(m_testOK ? FINISH_MESSAGE);
-  setTestSectionName();
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testClose()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testGetAddress()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testGetRemoteProfiles()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testValidate()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testGetConnectionCount()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testGetConnection_Core()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testGetConnectionByAddress()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testSendSync()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testSendAsync()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testGetConnection_Cmd()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testSetOnConnect()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testSetOnDisconnect()
-{
-  reset(false);
-
-  return(m_testOK);
-}
-
 /*
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle);
@@ -161,3 +61,188 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Get_Connection(TML_COMMAND_HANDLE c
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnConnect(TML_CORE_HANDLE coreHandle, TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnDisconnect(TML_CORE_HANDLE coreHandle, TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
 */
+
+bool TmlConnectionTester::testConnect()
+{
+  setTestSectionName(tmlrtT("testConnect"));
+  messageOutput(S_START);
+  reset();
+
+  m_iErr = 0;
+  if(checkForSuccess(tmlrtT("xyz")))
+  {
+  }
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testClose()
+{
+  setTestSectionName(tmlrtT("testClose"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetAddress()
+{
+  setTestSectionName(tmlrtT("testGetAddress"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetRemoteProfiles()
+{
+  setTestSectionName(tmlrtT("testGetRemoteProfiles"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testValidate()
+{
+  setTestSectionName(tmlrtT("testValidate"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetConnectionCount()
+{
+  setTestSectionName(tmlrtT("testGetConnectionCount"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetConnection_Core()
+{
+  setTestSectionName(tmlrtT("testGetConnection_Core"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetConnectionByAddress()
+{
+  setTestSectionName(tmlrtT("testGetConnectionByAddress"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testSendSync()
+{
+  setTestSectionName(tmlrtT("testSendSync"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testSendAsync()
+{
+  setTestSectionName(tmlrtT("testSendAsync"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testGetConnection_Cmd()
+{
+  setTestSectionName(tmlrtT("testGetConnection_Cmd"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testSetOnConnect()
+{
+  setTestSectionName(tmlrtT("testSetOnConnect"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testSetOnDisconnect()
+{
+  setTestSectionName(tmlrtT("testSetOnDisconnect"));
+  messageOutput(S_START);
+  reset();
+
+
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}

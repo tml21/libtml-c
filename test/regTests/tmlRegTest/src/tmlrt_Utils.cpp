@@ -85,19 +85,24 @@ SIDEX_TCHAR* OF_LIFE                        = tmlrtT("ofLife");
 SIDEX_TCHAR* DEFAULT_BOOTSTRAP				      = tmlrtT("bootstrapTemplate.sdx");
 
 /** @ingroup Wrapping_Sidex_TChar
-* @brief Wrapper function for concatenating two strings
-* @param SIDEX_TCHAR* destination : First string for concatening and the result will be returned in place
-* @param const SIDEX_TCHAR* source : Second string
-* @returns int : Returns value of either wcscat or strcat, depending on definition of SIDEX_UNICODE
+* @brief Helper function for concatenating two strings
+* @param const SIDEX_TCHAR* first : First string
+* @param const SIDEX_TCHAR* second : Second string
+* @returns SIDEX_TCHAR* : Returns concatenated string (has to be deleted after use)
 */
-SIDEX_TCHAR * tmlrt_cat( SIDEX_TCHAR * destination, const SIDEX_TCHAR * source) {
-  // RK: Commented because ist did not build
-#ifdef SIDEX_UNICODE
-//    return wcscat_s(destination, source);
-#else /// SIDEX_UNICODE
-//    return strcat(destination, source);
-#endif // SIDEX_UNICODE
-  return NULL;
+SIDEX_TCHAR* tmlrt_cat(const SIDEX_TCHAR* first, const SIDEX_TCHAR* second)
+{
+  int i, l1 = 0, l2 = 0;
+  if(first)  { i = 0; while(first[i])  { i++; l1++; } }
+  if(second) { i = 0; while(second[i]) { i++; l2++; } }
+  SIDEX_TCHAR* result = new SIDEX_TCHAR[l1 + l2 + 1];
+  if(result)
+  {
+    for(i = 0; i < l1; i++) { result[i     ] = first[i];  }
+    for(i = 0; i < l2; i++) { result[i + l1] = second[i]; }
+    result[l1 + l2] = 0;
+  }
+  return(result);
 }
 
 

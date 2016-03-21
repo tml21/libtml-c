@@ -50,31 +50,31 @@
 bool testTmlConnections()
 {
   bool success = false;
-	TmlConnectionTester* conTester = new TmlConnectionTester(tmlrtT("TmlConnectionTester"));
-  if(conTester)
+	TmlConnectionTester* tester = new TmlConnectionTester(tmlrtT("TmlConnectionTester"));
+  if(tester)
   {
     do
     {
-      if(!conTester->testConnect()) break;
-      if(!conTester->testClose()) break;
-      if(!conTester->testGetAddress()) break;
-      if(!conTester->testGetRemoteProfiles()) break;
-      if(!conTester->testValidate()) break;
-      if(!conTester->testGetConnectionCount()) break;
-      if(!conTester->testGetConnection_Core()) break;
-      if(!conTester->testGetConnectionByAddress()) break;
-      if(!conTester->testSendSync()) break;
-      if(!conTester->testSendAsync()) break;
-      if(!conTester->testGetConnection_Cmd()) break;
-      if(!conTester->testSetOnConnect()) break;
-      if(!conTester->testSetOnDisconnect()) break;
+      if(!tester->testConnect()) break;
+      if(!tester->testClose()) break;
+      if(!tester->testGetAddress()) break;
+      if(!tester->testGetRemoteProfiles()) break;
+      if(!tester->testValidate()) break;
+      if(!tester->testGetConnectionCount()) break;
+      if(!tester->testGetConnection_Core()) break;
+      if(!tester->testGetConnectionByAddress()) break;
+      if(!tester->testSendSync()) break;
+      if(!tester->testSendAsync()) break;
+      if(!tester->testGetConnection_Cmd()) break;
+      if(!tester->testSetOnConnect()) break;
+      if(!tester->testSetOnDisconnect()) break;
     }
     while(false);
 
-    success = conTester->isTestOK();
+    success = tester->isTestOK();
 
-	  delete(conTester);
-    conTester = NULL;
+	  delete(tester);
+    tester = NULL;
   }
   return(success);
 }
