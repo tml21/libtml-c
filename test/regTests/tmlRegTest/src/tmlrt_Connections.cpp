@@ -55,6 +55,8 @@ bool testTmlConnections()
   {
     do
     {
+      if(!tester->prepare()) break;
+
       if(!tester->testConnect()) break;
       if(!tester->testClose()) break;
       if(!tester->testGetAddress()) break;
@@ -71,10 +73,9 @@ bool testTmlConnections()
     }
     while(false);
 
+    tester->cleanup();
     success = tester->isTestOK();
-
-	  delete(tester);
-    tester = NULL;
+	  DELETE_OBJ(tester);
   }
   return(success);
 }

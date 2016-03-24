@@ -85,22 +85,86 @@ SIDEX_TCHAR* OF_LIFE                        = tmlrtT("ofLife");
 SIDEX_TCHAR* DEFAULT_BOOTSTRAP				      = tmlrtT("bootstrapTemplate.sdx");
 
 /** @ingroup Wrapping_Sidex_TChar
-* @brief Helper function for concatenating two strings
+* @brief Helper function for concatenating strings
 * @param const SIDEX_TCHAR* first : First string
-* @param const SIDEX_TCHAR* second : Second string
+* @param const SIDEX_TCHAR* second : Second string (optional)
+* @param const SIDEX_TCHAR* third : Third string (optional)
 * @returns SIDEX_TCHAR* : Returns concatenated string (has to be deleted after use)
 */
-SIDEX_TCHAR* tmlrt_cat(const SIDEX_TCHAR* first, const SIDEX_TCHAR* second)
+SIDEX_TCHAR* tmlrt_cat(const SIDEX_TCHAR* first, const SIDEX_TCHAR* second, const SIDEX_TCHAR* third)
 {
-  int i, l1 = 0, l2 = 0;
+  int i, l1 = 0, l2 = 0, l3 = 0;
   if(first)  { i = 0; while(first[i])  { i++; l1++; } }
   if(second) { i = 0; while(second[i]) { i++; l2++; } }
-  SIDEX_TCHAR* result = new SIDEX_TCHAR[l1 + l2 + 1];
+  if(third)  { i = 0; while(third[i])  { i++; l3++; } }
+  SIDEX_TCHAR* result = new SIDEX_TCHAR[l1 + l2 + l3 + 1];
   if(result)
   {
-    for(i = 0; i < l1; i++) { result[i     ] = first[i];  }
-    for(i = 0; i < l2; i++) { result[i + l1] = second[i]; }
-    result[l1 + l2] = 0;
+    for(i = 0; i < l1; i++) { result[i          ] = first[i];  }
+    for(i = 0; i < l2; i++) { result[i + l1     ] = second[i]; }
+    for(i = 0; i < l3; i++) { result[i + l1 + l2] = third[i];  }
+    result[l1 + l2 + l3] = 0;
+  }
+  return(result);
+}
+
+/** @ingroup Wrapping_Sidex_TChar
+* @brief Helper function for concatenating strings, with delete option
+* @param SIDEX_TCHAR* first : First string
+* @param SIDEX_TCHAR* second : Second string (optional)
+* @param SIDEX_TCHAR* third : Third string (optional)
+* @param int delStr : (optional) bit field : 0 = none, 1 = first, 2 = second, 4 = third, ... , 7 = all
+* @returns SIDEX_TCHAR* : Returns concatenated string (has to be deleted after use)
+*/
+SIDEX_TCHAR* tmlrt_cat_del(SIDEX_TCHAR* first, SIDEX_TCHAR* second, SIDEX_TCHAR* third, int delStr)
+{
+  SIDEX_TCHAR* result = tmlrt_cat(first, second, third);
+  if(delStr & 1) DELETE_STR(first);
+  if(delStr & 2) DELETE_STR(second);
+  if(delStr & 4) DELETE_STR(third);
+  return(result);
+}
+
+/** @ingroup Wrapping_Sidex_TChar
+* @brief Helper function for copying a string
+* @param const SIDEX_TCHAR* source : String to copy
+* @returns SIDEX_TCHAR* : Returns copied string (has to be deleted after use)
+*/
+SIDEX_TCHAR* tmlrt_cpy(const SIDEX_TCHAR* source)
+{
+  return(tmlrt_cat(source));
+}
+
+/** @ingroup Wrapping_Sidex_TChar
+* @brief Helper function for converting an integer into a string
+* @param int value : integer value to be converted
+* @returns SIDEX_TCHAR* : Returns a string (has to be deleted after use)
+*/
+SIDEX_TCHAR* tmlrt_itoa(int value)
+{
+  SIDEX_TCHAR* numbers = tmlrtT("0123456789-");
+  int             sign = (value < 0) ? 1 : 0;
+  if(sign > 0)   value = -value;
+  SIDEX_TCHAR*  result = NULL;
+  SIDEX_TCHAR*  buffer = new SIDEX_TCHAR[20];
+  if(buffer)
+  {
+    int n = 0;
+    do
+    {
+      buffer[n] = numbers[value % 10];
+      value /= 10;
+      n++;
+    }
+    while(value != 0);
+    result = new SIDEX_TCHAR[n + 1 + sign];
+    if(result)
+    {
+      for(int i = 0; i < n; i++) result[sign + i] = buffer[n - i - 1];
+      if(sign > 0) result[0] = numbers[10];
+      result[sign + n] = 0;
+    }
+    DELETE_STR(buffer);
   }
   return(result);
 }
@@ -108,9 +172,9 @@ SIDEX_TCHAR* tmlrt_cat(const SIDEX_TCHAR* first, const SIDEX_TCHAR* second)
 
 void TmlSleep(int milliseconds) {
 #ifdef LINUX
-    usleep(milliseconds*1000);
+  usleep(milliseconds*1000);
 #else
-	Sleep(milliseconds); 
+  Sleep(milliseconds); 
 #endif
 }
 

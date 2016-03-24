@@ -39,44 +39,37 @@
 
 CTestParams* TestParams = NULL;
 
+SIDEX_TCHAR* S_TP_TESTPARAMS      = tmlrtT("TestParams");
+SIDEX_TCHAR* S_TP_NETWORK         = tmlrtT("Network");
+SIDEX_TCHAR* S_TP_CARDS           = tmlrtT("Cards");
+SIDEX_TCHAR* S_TP_127_0_0_1       = tmlrtT("127.0.0.1");
+SIDEX_TCHAR* S_TP_FIRSTPORTNUMBER = tmlrtT("FirstPortNumber");
+
 CTestParams::CTestParams(SIDEX_TCHAR* testParamsFileName)
 {
-  bool success     = false;
-  m_ParamsFileName = testParamsFileName;
-  m_stringBuffer   = NULL;
+  m_ParamsFileName = NULL;
   m_sdxParams      = SIDEX_HANDLE_TYPE_NULL;
-  SIDEX_INT32 iErr = sidex_Create(tmlrtT("TestParams"), &m_sdxParams);
+  SIDEX_INT32 iErr = sidex_Create(S_TP_TESTPARAMS, &m_sdxParams);
   if(iErr == SIDEX_SUCCESS)
   {
-    if(m_ParamsFileName)
+    if(testParamsFileName)
     {
-      iErr = sidex_Load_Content(m_sdxParams, m_ParamsFileName);
-      success = (iErr == SIDEX_SUCCESS);
+      iErr = sidex_Load_Content(m_sdxParams, testParamsFileName);
+      if(iErr == SIDEX_SUCCESS) m_ParamsFileName = tmlrt_cpy(testParamsFileName);
     }
+    ensureDefaultParams();
+    sidex_Save_Content(m_sdxParams, tmlrtT("C:\\filledTestParams.sdx"));
   }
-  else if(hasParams())
-  {
-    sidex_Free(&m_sdxParams);
-    m_sdxParams = SIDEX_HANDLE_TYPE_NULL;
-  }
-
-  if(!success) m_ParamsFileName = NULL;
-  ensureDefaultParams();
 }
 
 CTestParams::~CTestParams()
 {
-  m_ParamsFileName = NULL;
   if(m_sdxParams != SIDEX_HANDLE_TYPE_NULL)
   {
     sidex_Free(&m_sdxParams);
     m_sdxParams = SIDEX_HANDLE_TYPE_NULL;
   }
-  if(m_stringBuffer)
-  {
-    delete[](m_stringBuffer);
-    m_stringBuffer = NULL;
-  }
+  DELETE_STR(m_ParamsFileName);
 }
 
 bool CTestParams::hasParams()
@@ -97,7 +90,7 @@ void CTestParams::ensureDefaultParams()
     if(nCards == 0)
     {
       SIDEX_VARIANT card = SIDEX_HANDLE_TYPE_NULL;
-      SIDEX_INT32   iErr = sidex_Variant_New_String(tmlrtT("127.0.0.1"), &card);
+      SIDEX_INT32   iErr = sidex_Variant_New_String(S_TP_127_0_0_1, &card);
       if(iErr == SIDEX_SUCCESS)
       {
         SIDEX_VARIANT cards = sidex_Variant_New_List();
@@ -107,7 +100,7 @@ void CTestParams::ensureDefaultParams()
           iErr = sidex_Variant_List_Append(cards, card, &pos);
           if(iErr == SIDEX_SUCCESS)
           {
-            sidex_List_Write(m_sdxParams, tmlrtT("Network"), tmlrtT("Cards"), cards);
+            sidex_List_Write(m_sdxParams, S_TP_NETWORK, S_TP_CARDS, cards);
           }
           sidex_Variant_DecRef(cards);
           cards = SIDEX_HANDLE_TYPE_NULL;
@@ -115,6 +108,11 @@ void CTestParams::ensureDefaultParams()
         sidex_Variant_DecRef(card);
         card = SIDEX_HANDLE_TYPE_NULL;
       }
+    }
+
+    if(getFirstPortNumber() == 0)
+    {
+      sidex_Integer_Write(m_sdxParams, S_TP_NETWORK, S_TP_FIRSTPORTNUMBER, DEFAULT_PORTNUMBER);
     }
   }
 }
@@ -125,7 +123,7 @@ int CTestParams::getNetworkCardCount()
   if(hasParams())
   {
     SIDEX_VARIANT cards = SIDEX_HANDLE_TYPE_NULL;
-    SIDEX_INT32 iErr = sidex_List_Read(m_sdxParams, tmlrtT("Network"), tmlrtT("Cards"), &cards);
+    SIDEX_INT32 iErr = sidex_List_Read(m_sdxParams, S_TP_NETWORK, S_TP_CARDS, &cards);
     if(iErr == SIDEX_SUCCESS)
     {
       iErr = sidex_Variant_List_Size(cards, &nCards);
@@ -138,14 +136,14 @@ int CTestParams::getNetworkCardCount()
 
 SIDEX_TCHAR* CTestParams::getNetworkCard(SIDEX_INT32 index)
 {
-  SIDEX_TCHAR* name = NULL;
+  SIDEX_TCHAR* result = NULL;
   if(hasParams())
   {
     SIDEX_INT32 nCards = getNetworkCardCount();
     if((index >= 0) && (index < nCards))
     {
       SIDEX_VARIANT cards = SIDEX_HANDLE_TYPE_NULL;
-      SIDEX_INT32 iErr = sidex_List_Read(m_sdxParams, tmlrtT("Network"), tmlrtT("Cards"), &cards);
+      SIDEX_INT32 iErr = sidex_List_Read(m_sdxParams, S_TP_NETWORK, S_TP_CARDS, &cards);
       if(iErr == SIDEX_SUCCESS)
       {
         SIDEX_VARIANT card = SIDEX_HANDLE_TYPE_NULL;
@@ -157,13 +155,7 @@ SIDEX_TCHAR* CTestParams::getNetworkCard(SIDEX_INT32 index)
           iErr = sidex_Variant_As_String(card, &pCard, &len);
           if(iErr == SIDEX_SUCCESS)
           {
-            if(m_stringBuffer) delete[](m_stringBuffer);
-            m_stringBuffer = new SIDEX_TCHAR[len + 1];
-            if(m_stringBuffer)
-            {
-              for(SIDEX_INT32 i = 0; i <= len; i++) m_stringBuffer[i] = pCard[i];
-              name = m_stringBuffer;
-            }
+            result = tmlrt_cpy(pCard);
             // pCard = borrowed reference -> do not delete!
             pCard = NULL;
           }
@@ -175,5 +167,17 @@ SIDEX_TCHAR* CTestParams::getNetworkCard(SIDEX_INT32 index)
       }
     }
   }
-  return(name);
+  return(result);
+}
+
+int CTestParams::getFirstPortNumber()
+{
+  int firstPortNumber = 0;
+  if(hasParams())
+  {
+    SIDEX_INT64 value = 0;
+    SIDEX_INT32 iErr = sidex_Integer_Read(m_sdxParams, S_TP_NETWORK, S_TP_FIRSTPORTNUMBER, &value);
+    if(iErr == SIDEX_SUCCESS) firstPortNumber = (int)value;
+  }
+  return(firstPortNumber);
 }

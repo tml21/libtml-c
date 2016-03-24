@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *  libTML:  A BEEP based Messaging Suite
  *  Copyright (C) 2016 wobe-systems GmbH
  *
@@ -34,56 +34,45 @@
  * Contributors:
  *    wobe-systems GmbH
  */
-#ifndef TESTPARAMS_H
-#define TESTPARAMS_H
 
-#ifdef LINUX
-  #include <wchar.h>
-  #include <stdbool.h>
-  #include <string.h>
-  #include <unistd.h>
-#else
-  #include <stdio.h>
-  #include <tchar.h>
-  #include <Windows.h>     //for function sleep
-#endif
+#ifndef TML_TESTER_H
+#define TML_TESTER_H
 
-#include <iostream>
-#include <array>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
-#include "tmlrt_Utils.h"
+#include "TestingForReturns.h"
 
-extern SIDEX_TCHAR* S_TP_TESTPARAMS;
-extern SIDEX_TCHAR* S_TP_NETWORK;
-extern SIDEX_TCHAR* S_TP_CARDS;
-extern SIDEX_TCHAR* S_TP_127_0_0_1;
-extern SIDEX_TCHAR* S_TP_FIRSTPORTNUMBER;
+#define MAX_CORES 9
+#define MAX_LISTENERS 9 // max. number of listeners per core
 
-#define DEFAULT_PORTNUMBER 42042
-
-class CTestParams
+class TmlTester : public TestingForReturns
 {
 protected:
-  SIDEX_HANDLE m_sdxParams;
-  SIDEX_TCHAR* m_ParamsFileName;
+  TML_CORE_HANDLE     m_core[MAX_CORES];
+  TML_LISTENER_HANDLE m_listener[MAX_CORES][MAX_LISTENERS];
 
-  void ensureDefaultParams();
+protected:
+  bool createCore(int iCore);
+  bool deleteCore(int iCore);
+  bool createListener(int iCore, int iListener, SIDEX_TCHAR* sAddress);
+  bool startListener(int iCore, int iListener);
+  bool stopListener(int iCore, int iListener);
+  bool deleteListener(int iCore, int iListener);
+
+  bool splitCoreAndListener(int& iCore, int& iListener);
+
+  virtual void _prepare() {};
+  virtual void _cleanup() {};
+
+  bool checkConnectionCount(int iCore, int nExpectedConnections, SIDEX_TCHAR* debugText = NULL);
 
 public:
-  CTestParams(SIDEX_TCHAR* testParamsFileName = NULL);
-  ~CTestParams();
+  TmlTester(SIDEX_TCHAR* testProcessName = NULL);
+  ~TmlTester();
 
-  bool         hasParams();
-  SIDEX_TCHAR* getParamsFileName();               // returned string is a borrowed reference - do not free!
+  bool prepare();
+  bool cleanup(bool silent = false);
 
-  int          getNetworkCardCount();
-  SIDEX_TCHAR* getNetworkCard(SIDEX_INT32 index); // returned string has to be freed after use
-
-  int          getFirstPortNumber();
+  TML_CORE_HANDLE     getCore(int iCore);
+  TML_LISTENER_HANDLE getListener(int iCore, int iListener);
 };
 
-extern CTestParams* TestParams;
-
-#endif //TESTPARAMS_H
+#endif  // TML_TESTER_H

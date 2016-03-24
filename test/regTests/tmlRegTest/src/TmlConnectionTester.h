@@ -38,10 +38,18 @@
 #ifndef TML_CONNECTION_TESTER_H
 #define TML_CONNECTION_TESTER_H
 
-#include "TestingForReturns.h"
+#include "TmlTester.h"
 
-class TmlConnectionTester : public TestingForReturns
+#define MAX_ADDRESSES 10
+
+class TmlConnectionTester : public TmlTester
 {
+private:
+
+protected:
+  void _prepare();
+  void _cleanup();
+
 public:
   TmlConnectionTester(SIDEX_TCHAR* testProcessName = NULL);
   ~TmlConnectionTester();

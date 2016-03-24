@@ -77,6 +77,10 @@ using namespace std;
   wcout << "UTF" << (8 * sizeof(SIDEX_TCHAR)) << endl;
   wcout << endl;
 
+  wcout << "Programm is called with " << (argc - 1) << " parameter" << ((argc > 2) ? "s." : ".") << endl;
+  for(int i = 1; i < argc; i++) { wcout << "Param" << i << " = " << argv[i] << endl; }
+  wcout << endl;
+
   SIDEX_TCHAR* pArg = NULL;
   SIDEX_TCHAR* pBuf = NULL;
   if(argc > 1)
@@ -125,15 +129,10 @@ using namespace std;
     wcout << "Tests - " << (result ? S_FINISH_FAILED : S_FINISH_SUCCESS) << endl;
     wcout << endl;
 
-    delete(TestParams);
-    TestParams = NULL;
+    DELETE_OBJ(TestParams);
   }
 
-  if(pBuf)
-  {
-    delete[](pBuf);
-    pBuf = NULL;
-  }
+  DELETE_STR(pBuf);
 
   wcout << "=======================" << endl;
   wcout << endl;

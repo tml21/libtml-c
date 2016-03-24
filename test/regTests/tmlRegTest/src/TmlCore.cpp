@@ -58,25 +58,26 @@ TmlCore::~TmlCore() {
 	//delete[] m_errorLocationOutput;
 }
 
-TML_INT32 TmlCore::defaultInit() { 
-	m_iErr = initCore();
-	if(checkForSuccess(tmlrtT("initCore")))
+TML_INT32 TmlCore::defaultInit()
+{
+  do
   {
+	  m_iErr = initCore();
+	  if(!checkForSuccess(tmlrtT("initCore"))) break;
+
     m_iErr = setDefaultIP();
-    if(checkForSuccess(tmlrtT("setDefaultIP")))
-    {
-      m_iErr = setDefaultPort();
-      if(checkForSuccess(tmlrtT("setDefaultPort")))
-      {
-        m_iErr = setDefaultProfile();
-        if(checkForSuccess(tmlrtT("setDefaultProfile")))
-        {
-          m_iErr = startListener();
-          checkForSuccess(tmlrtT("startListener"));
-        }
-      }
-    }
+    if(!checkForSuccess(tmlrtT("setDefaultIP"))) break;
+
+    m_iErr = setDefaultPort();
+    if(!checkForSuccess(tmlrtT("setDefaultPort"))) break;
+
+    m_iErr = setDefaultProfile();
+    if(!checkForSuccess(tmlrtT("setDefaultProfile"))) break;
+
+    m_iErr = startListener();
+    if(!checkForSuccess(tmlrtT("startListener"))) break;
   }
+  while(false);
 	return m_iErr;
 }
 

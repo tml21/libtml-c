@@ -63,10 +63,10 @@ public:
   void messageOutput(SIDEX_TCHAR* messageText = NULL, bool withProcessName = true, bool withSectionName = true);
 
 protected:
-  void errorOutput(SIDEX_TCHAR* testFunctionName = NULL);
+  void errorOutput(SIDEX_TCHAR* testFunctionName = NULL, bool withErrorCode = true, bool deleteName = false);
 
-  bool checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* testFunctionName = NULL);
-  bool checkForSuccess(SIDEX_TCHAR* testFunctionName = NULL);
+  bool checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* testFunctionName = NULL, bool deleteName = false);
+  bool checkForSuccess(SIDEX_TCHAR* testFunctionName = NULL, bool deleteName = false);
 };
 
 #endif  //TESTINGFORRETURNS_H

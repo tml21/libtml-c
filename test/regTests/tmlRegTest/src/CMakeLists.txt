@@ -172,7 +172,8 @@ set	 (TEST_SOURCES_HEADER
   "TmlList.h"
   "tmlrt_Connections.h"
   "tmlrt_SendingCommands.h"
-  "tmlrt_Utils.h")
+  "tmlrt_Utils.h"
+  "TmlTester.h")
 set  (TEST_SOURCES
   "TestingForReturns.cpp"
   "TestingProcess.cpp"
@@ -184,6 +185,7 @@ set  (TEST_SOURCES
   "tmlrt_Connections.cpp"
   "tmlrt_SendingCommands.cpp"
   "tmlrt_Utils.cpp"
+  "TmlTester.cpp"
   "../../../../common/src/unicode.cpp")
 
 add_executable(${TARGETNAME_LOCAL} 

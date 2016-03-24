@@ -113,7 +113,7 @@ void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withP
   wcout << endl;
 }
 
-void TestingForReturns::errorOutput(SIDEX_TCHAR* testFunctionName)
+void TestingForReturns::errorOutput(SIDEX_TCHAR* testFunctionName, bool withErrorCode, bool deleteName)
 {
   wcout << "Test failed at " << m_testProcessName;
   if(m_testSectionName)
@@ -123,20 +123,32 @@ void TestingForReturns::errorOutput(SIDEX_TCHAR* testFunctionName)
   if(testFunctionName)
   {
     if(testFunctionName[0]) wcout << ":" << testFunctionName;
+    if(deleteName) DELETE_STR(testFunctionName);
   }
-  wcout << " with ErrorCode " << m_iErr << endl;
+  if(withErrorCode) wcout << " with ErrorCode " << m_iErr;
+  wcout << endl;
   m_testOK         = false;
   m_testOK_Overall = false;
 }
 
-bool TestingForReturns::checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* testFunctionName)
+bool TestingForReturns::checkForExpectedReturnCode(TML_INT32    expectedReturnCode,
+                                                   SIDEX_TCHAR* testFunctionName,
+                                                   bool         deleteName)
 {
   bool result = (expectedReturnCode == m_iErr);
-  if(!result) errorOutput(testFunctionName);
+  if(!result)
+  {
+    errorOutput(tmlrt_cat(testFunctionName,
+                          tmlrt_cat_del(tmlrtT(" Expected was "),
+                                        tmlrt_itoa(expectedReturnCode),
+                                        tmlrtT(", but"), 2)),
+                true, true);
+  }
+  if(deleteName && testFunctionName) DELETE_STR(testFunctionName);
   return(result);
 }
 
-bool TestingForReturns::checkForSuccess(SIDEX_TCHAR* testFunctionName)
+bool TestingForReturns::checkForSuccess(SIDEX_TCHAR* testFunctionName, bool deleteName)
 {
-  return(checkForExpectedReturnCode(TML_SUCCESS, testFunctionName));
+  return(checkForExpectedReturnCode(TML_SUCCESS, testFunctionName, deleteName));
 }

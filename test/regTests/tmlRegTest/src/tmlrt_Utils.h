@@ -113,8 +113,14 @@ const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
 
 #define CHOICE_FINISH_MESSAGE(a) a ? S_FINISH_SUCCESS : S_FINISH_FAILED
 
-// Helper function for concatenating two strings
-SIDEX_TCHAR* tmlrt_cat(const SIDEX_TCHAR* first, const SIDEX_TCHAR* second);
+// Helper functions for strings
+SIDEX_TCHAR* tmlrt_cat(const SIDEX_TCHAR* first, const SIDEX_TCHAR* second = NULL, const SIDEX_TCHAR* third = NULL);
+SIDEX_TCHAR* tmlrt_cat_del(SIDEX_TCHAR* first, SIDEX_TCHAR* second = NULL, SIDEX_TCHAR* third = NULL, int delStr = 0);
+SIDEX_TCHAR* tmlrt_cpy(const SIDEX_TCHAR* source);
+SIDEX_TCHAR* tmlrt_itoa(int value);
+
+#define DELETE_STR(s) { if(s) { delete[](s); s = NULL; } }
+#define DELETE_OBJ(o) { if(o) { delete(o); o = NULL; } }
 
 //cb for cmd 
 void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data);
