@@ -2607,12 +2607,19 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bExi
     }
     else{
       wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress, &m_internalConnectionEstablishHandlerMethod, &m_internalConnectionCloseHandlerMethod, vortexConnection);
-      tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
       iRet = wrapper->getLastErr();
+      switch (iRet){
+        case TML_ERR_NET_BINDING :
+                           // The network address is not correct:
+                           delete wrapper;
+                           break;
+        case TML_SUCCESS : // No Break here
+        default:           tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
+                           *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
+                           break;
+      }
+      
     }
-  }
-  if (TML_SUCCESS == iRet){
-    *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
   }
   return iRet;
 }
