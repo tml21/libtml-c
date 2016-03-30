@@ -2142,5 +2142,18 @@ public:
      *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested network address don't exist
      */
     TML_INT32 tmlCoreWrapper_Get_ConnectionByAddress(char* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+
+
+    /**
+     * @brief    Get connection handle.
+     *
+     * @param   sHost            network host / ip.
+     * @param   sPort            port.
+     * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested network address don't exist
+     */
+    TML_INT32 tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, char* sPort, TML_CONNECTION_HANDLE* connectionHandle);
 };
 #endif  // TMLCOREWRAPPER_H
