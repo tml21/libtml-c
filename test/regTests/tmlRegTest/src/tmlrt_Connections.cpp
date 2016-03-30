@@ -60,7 +60,7 @@ bool testTmlConnections()
       if(!tester->testConnect()) break;
       if(!tester->testClose()) break;
       if(!tester->testGetAddress()) break;
-//      if(!tester->testGetRemoteProfiles()) break;
+      if(!tester->testGetRemoteProfiles()) break;
 //      if(!tester->testValidate()) break;
 //      if(!tester->testGetConnectionCount()) break;
 //      if(!tester->testGetConnection_Core()) break;
