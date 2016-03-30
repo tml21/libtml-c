@@ -745,8 +745,18 @@ int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const c
 
   TML_INT32 iRet;
   if (TML_HANDLE_TYPE_NULL == *conectionMgr){
-    // Create a new connection manage object:
-    iRet = m_tmlCoreHandle->tmlCoreWrapper_Connect(sHost, sPort, true, &connectionHandle, NULL);
+    /////////////////////////////////////////////////////////////////////////
+    // Maybe we have a connection object but it has been disconnected before:
+    iRet =  m_tmlCoreHandle->tmlCoreWrapper_Get_ConnectionByAddress((char*)sHost, (char*)sPort, &connectionHandle);
+    if (TML_SUCCESS == iRet){
+      conectionMgrObj = (tmlConnectionManageObj*) connectionHandle;
+      TML_BOOL bConnected;
+      iRet =  conectionMgrObj->validate(true, &bConnected);
+    }
+    else{
+      // Create a new connection manage object:
+      iRet = m_tmlCoreHandle->tmlCoreWrapper_Connect(sHost, sPort, true, &connectionHandle, NULL);
+    }
   }
   else{
     // Connection manage object allready exists:
@@ -1345,9 +1355,9 @@ void tmlSingleCall::DeregisterConnectionLostAndFree(tmlConnectionManageObj* conn
       iRet = m_ConnectionElementHT->getKeys(&iKeys);
       if (TML_SUCCESS == iRet){
         TML_INT64 iFoundKey = 0;
+        tmlConnectionObj* connectionObj = NULL;
         for (int i = 0; i < iSize && TML_SUCCESS == iRet && !bFound;++i){
           tmlConnectionManageObj* refConnectionMgrObj = TML_HANDLE_TYPE_NULL;
-          tmlConnectionObj* connectionObj;
           iRet = m_ConnectionElementHT->getValue(iKeys[i], (void**) &connectionObj);
           if (TML_SUCCESS == iRet){
             connectionObj->getConnectionManageObj(&refConnectionMgrObj);
@@ -1362,6 +1372,7 @@ void tmlSingleCall::DeregisterConnectionLostAndFree(tmlConnectionManageObj* conn
           //////////////////////////////////////
           // Now I can delete the list element:
           m_ConnectionElementHT->removeEntry(iFoundKey);
+          delete connectionObj;
         }
         delete (iKeys);
       }

@@ -235,14 +235,13 @@ TML_INT32 tmlConnectionManageObj::getLastErr(){
 void tmlConnectionManageObj::cleanUp(){
   if (getRef()){
     if (decRef() == 0){
+      tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
+      ////////////////////////////////////////////////////////////////////////
+      // remove registered callback:
+      log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_remove_on_close_full");
+      vortex_connection_remove_on_close_full (m_vortexConnection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
       // If I am the owner I have to close the connection:
       if (NULL != m_vortexConnection && m_bIsOwner){ 
-        tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
-        ////////////////////////////////////////////////////////////////////////
-        // remove registered callback:
-        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_remove_on_close_full");
-        vortex_connection_remove_on_close_full (m_vortexConnection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
-
         ////////////////////////////////////////////////////////////////////////
         // shutdown connection:
         log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_shutdown");
