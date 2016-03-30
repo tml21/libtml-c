@@ -907,6 +907,13 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
  */
 tmlCoreWrapper::~tmlCoreWrapper()
 {
+  ////////////////////////////////
+  // destruct the connection manager objects
+  tmlCoreWrapper_Connection_CloseAll();
+  ////////////////////////////////
+  // destruct the listener objects
+  tmlCoreWrapper_Listener_CloseAll();
+
   tmlCoreWrapper_General_Deregistration();
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -920,18 +927,11 @@ tmlCoreWrapper::~tmlCoreWrapper()
   // unregister profiles:
   unregisterAll_Registered_Profiles();
 
-  ////////////////////////////////
-  // destruct the listener objects
-  tmlCoreWrapper_Listener_CloseAll();
-
   ////////////////////////////////////////////////////////////////////////////////////////////
   // free listener / to get rid of ctx references before vortex_exit_ctx
   delete (m_CoreListener);
   m_CoreListener = NULL;
 
-  ////////////////////////////////
-  // destruct the connection manager objects
-  tmlCoreWrapper_Connection_CloseAll();
 
 
 #ifdef LINUX
@@ -2543,10 +2543,6 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDL
   TML_INT32 iRet = TML_SUCCESS;
 
   iRet = ((tmlListenerObj*)listenerHandle)->set_Enabled(bEnable);
-  if (TML_SUCCESS == iRet){
-    tmlCoreWrapper_Enable_Listener(TML_TRUE == bEnable);
-  }
-
   return iRet;
 }
 
@@ -2611,12 +2607,19 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bExi
     }
     else{
       wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress, &m_internalConnectionEstablishHandlerMethod, &m_internalConnectionCloseHandlerMethod, vortexConnection);
-      tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
       iRet = wrapper->getLastErr();
+      switch (iRet){
+        case TML_ERR_NET_BINDING :
+                           // The network address is not correct:
+                           delete wrapper;
+                           break;
+        case TML_SUCCESS : // No Break here
+        default:           tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
+                           *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
+                           break;
+      }
+      
     }
-  }
-  if (TML_SUCCESS == iRet){
-    *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
   }
   return iRet;
 }
@@ -2654,7 +2657,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
     TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
     tmlCoreWrapper_Get_Connection (i, &connection);
     if (connection){
-      tmlCoreWrapper_Connection_Close(&connection, false);
+      tmlCoreWrapper_Connection_Close(&connection, true);
     }
   }
 }
@@ -2819,5 +2822,27 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionByAddress(char* sAddress,
   if (TML_SUCCESS == iRet && !bFound){
     iRet = TML_ERR_INFORMATION_UNDEFINED;
   }
+  return iRet;
+}
+
+
+/**
+  * @brief    Get connection handle.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, char* sPort, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  int iLength = strlen(sHost) + strlen(sPort) + 2;
+
+  char* sNetAddress = new char[iLength];
+  #if defined(LINUX) || defined (MINGW_BUILD)
+    sprintf(sNetAddress, "%s:%s", sHost, sPort);
+  #else // LINUX
+    sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
+  #endif // LINUX
+
+  iRet = tmlCoreWrapper_Get_ConnectionByAddress (sNetAddress, connectionHandle);
+
+  delete[]sNetAddress;
+
   return iRet;
 }
