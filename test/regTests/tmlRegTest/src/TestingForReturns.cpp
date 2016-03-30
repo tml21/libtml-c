@@ -88,9 +88,9 @@ bool TestingForReturns::isTestOK()
   return(m_testOK_Overall);
 }
 
-void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withProcessName, bool withSectionName)
+void TestingForReturns::messageOutput(SIDEX_TCHAR* messageText, bool withProcessName, bool withSectionName, bool deleteText)
 {
-  if(messageTextOutput)
+  if(messageText)
   {
     bool hasText = (withProcessName && m_testProcessName);
     if(hasText) wcout << m_testProcessName;
@@ -103,27 +103,52 @@ void TestingForReturns::messageOutput(SIDEX_TCHAR* messageTextOutput, bool withP
         hasText = true;
       }
     }
-    if(messageTextOutput[0])
+    if(messageText[0])
     {
       if(hasText) wcout << " - ";
-      wcout << messageTextOutput;
+      wcout << messageText;
       hasText = true;
     }
+    if(deleteText) DELETE_STR(messageText);
   }
   wcout << endl;
 }
 
-void TestingForReturns::errorOutput(SIDEX_TCHAR* testFunctionName, bool withErrorCode, bool deleteName)
+void TestingForReturns::contentOutput(SIDEX_TCHAR* name, SIDEX_TCHAR* content,
+                                      bool withProcessName, bool withSectionName, bool deleteName, bool deleteContent)
+{
+  messageOutput(tmlrt_cat(name, tmlrtT(" = "), content, (deleteName ? 1 : 0) | (deleteContent ? 4 : 0)),
+                withProcessName, withSectionName, true);
+}
+
+void TestingForReturns::numberOutput(SIDEX_TCHAR* name, SIDEX_INT32 number,
+                                     bool withProcessName, bool withSectionName, bool deleteName)
+{
+  contentOutput(name, tmlrt_itoa(number), withProcessName, withSectionName, deleteName, true);
+}
+
+void TestingForReturns::indexOutput(SIDEX_TCHAR* arrayName, SIDEX_INT32 index, SIDEX_TCHAR* content,
+                                    bool withProcessName, bool withSectionName, bool deleteArrayName, bool deleteContent)
+{
+  contentOutput(tmlrt_cat(arrayName,
+                          tmlrt_cat(tmlrtT("["),
+                                    tmlrt_itoa(index),
+                                    tmlrtT("]"), 2),
+                          NULL, deleteArrayName ? 1 : 0),
+                content, withProcessName, withSectionName, true, deleteContent);
+}
+
+void TestingForReturns::errorOutput(SIDEX_TCHAR* messageText, bool withErrorCode, bool deleteText)
 {
   wcout << "Test failed at " << m_testProcessName;
   if(m_testSectionName)
   {
     if(m_testSectionName[0]) wcout << ":" << m_testSectionName;
   }
-  if(testFunctionName)
+  if(messageText)
   {
-    if(testFunctionName[0]) wcout << ":" << testFunctionName;
-    if(deleteName) DELETE_STR(testFunctionName);
+    if(messageText[0]) wcout << ":" << messageText;
+    if(deleteText) DELETE_STR(messageText);
   }
   if(withErrorCode) wcout << " with ErrorCode " << m_iErr;
   wcout << endl;
@@ -132,23 +157,38 @@ void TestingForReturns::errorOutput(SIDEX_TCHAR* testFunctionName, bool withErro
 }
 
 bool TestingForReturns::checkForExpectedReturnCode(TML_INT32    expectedReturnCode,
-                                                   SIDEX_TCHAR* testFunctionName,
-                                                   bool         deleteName)
+                                                   SIDEX_TCHAR* messageText,
+                                                   bool         deleteText)
 {
   bool result = (expectedReturnCode == m_iErr);
   if(!result)
   {
-    errorOutput(tmlrt_cat(testFunctionName,
-                          tmlrt_cat_del(tmlrtT(" Expected was "),
-                                        tmlrt_itoa(expectedReturnCode),
-                                        tmlrtT(", but"), 2)),
+    errorOutput(tmlrt_cat(messageText,
+                          tmlrt_cat(tmlrtT(" Expected was "),
+                                    tmlrt_itoa(expectedReturnCode),
+                                    tmlrtT(", but returned"), 2)),
                 true, true);
   }
-  if(deleteName && testFunctionName) DELETE_STR(testFunctionName);
+  if(deleteText && messageText) DELETE_STR(messageText);
   return(result);
 }
 
-bool TestingForReturns::checkForSuccess(SIDEX_TCHAR* testFunctionName, bool deleteName)
+bool TestingForReturns::checkForSuccess(SIDEX_TCHAR* messageText, bool deleteText)
 {
-  return(checkForExpectedReturnCode(TML_SUCCESS, testFunctionName, deleteName));
+  return(checkForExpectedReturnCode(TML_SUCCESS, messageText, deleteText));
+}
+
+bool TestingForReturns::checkForValue(SIDEX_TCHAR* name, SIDEX_INT32 desiredValue, SIDEX_INT32 actualValue, bool deleteName)
+{
+  bool result = (actualValue == desiredValue);
+  if(!result)
+  {
+    errorOutput(tmlrt_cat(tmlrt_cat(name,
+                                    tmlrtT(" expected as "),
+                                    tmlrt_itoa(desiredValue),
+                                    deleteName ? 5 : 4),
+                          tmlrtT(", but is "),
+                          tmlrt_itoa(actualValue), 5), false, true);
+  }
+  return(result);
 }

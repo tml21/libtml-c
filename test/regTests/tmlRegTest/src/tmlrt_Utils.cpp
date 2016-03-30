@@ -85,13 +85,14 @@ SIDEX_TCHAR* OF_LIFE                        = tmlrtT("ofLife");
 SIDEX_TCHAR* DEFAULT_BOOTSTRAP				      = tmlrtT("bootstrapTemplate.sdx");
 
 /** @ingroup Wrapping_Sidex_TChar
-* @brief Helper function for concatenating strings
-* @param const SIDEX_TCHAR* first : First string
-* @param const SIDEX_TCHAR* second : Second string (optional)
-* @param const SIDEX_TCHAR* third : Third string (optional)
+* @brief Helper function for concatenating strings, with delete option
+* @param SIDEX_TCHAR* first : First string
+* @param SIDEX_TCHAR* second : Second string (optional, can be NULL)
+* @param SIDEX_TCHAR* third : Third string (optional, can be NULL)
+* @param int delStr : (optional) bit field : 0 = none, 1 = first, 2 = second, 4 = third, ... , 7 = all
 * @returns SIDEX_TCHAR* : Returns concatenated string (has to be deleted after use)
 */
-SIDEX_TCHAR* tmlrt_cat(const SIDEX_TCHAR* first, const SIDEX_TCHAR* second, const SIDEX_TCHAR* third)
+SIDEX_TCHAR* tmlrt_cat(SIDEX_TCHAR* first, SIDEX_TCHAR* second, SIDEX_TCHAR* third, int delStr)
 {
   int i, l1 = 0, l2 = 0, l3 = 0;
   if(first)  { i = 0; while(first[i])  { i++; l1++; } }
@@ -105,20 +106,6 @@ SIDEX_TCHAR* tmlrt_cat(const SIDEX_TCHAR* first, const SIDEX_TCHAR* second, cons
     for(i = 0; i < l3; i++) { result[i + l1 + l2] = third[i];  }
     result[l1 + l2 + l3] = 0;
   }
-  return(result);
-}
-
-/** @ingroup Wrapping_Sidex_TChar
-* @brief Helper function for concatenating strings, with delete option
-* @param SIDEX_TCHAR* first : First string
-* @param SIDEX_TCHAR* second : Second string (optional)
-* @param SIDEX_TCHAR* third : Third string (optional)
-* @param int delStr : (optional) bit field : 0 = none, 1 = first, 2 = second, 4 = third, ... , 7 = all
-* @returns SIDEX_TCHAR* : Returns concatenated string (has to be deleted after use)
-*/
-SIDEX_TCHAR* tmlrt_cat_del(SIDEX_TCHAR* first, SIDEX_TCHAR* second, SIDEX_TCHAR* third, int delStr)
-{
-  SIDEX_TCHAR* result = tmlrt_cat(first, second, third);
   if(delStr & 1) DELETE_STR(first);
   if(delStr & 2) DELETE_STR(second);
   if(delStr & 4) DELETE_STR(third);
@@ -130,9 +117,41 @@ SIDEX_TCHAR* tmlrt_cat_del(SIDEX_TCHAR* first, SIDEX_TCHAR* second, SIDEX_TCHAR*
 * @param const SIDEX_TCHAR* source : String to copy
 * @returns SIDEX_TCHAR* : Returns copied string (has to be deleted after use)
 */
-SIDEX_TCHAR* tmlrt_cpy(const SIDEX_TCHAR* source)
+SIDEX_TCHAR* tmlrt_cpy(SIDEX_TCHAR* source)
 {
   return(tmlrt_cat(source));
+}
+
+/** @ingroup Wrapping_Sidex_TChar
+* @brief Helper function for comparing two strings
+* @param const SIDEX_TCHAR* first : First string
+* @param const SIDEX_TCHAR* second : Second string
+* @returns int : 0 = first equals second, >0 = first higher second, <0 = first lower second
+*/
+int tmlrt_cmp(SIDEX_TCHAR* first, SIDEX_TCHAR* second)
+{
+  int result = 0;
+  SIDEX_TCHAR* s1 = (SIDEX_TCHAR*)first;
+  SIDEX_TCHAR* s2 = (SIDEX_TCHAR*)second;
+  if(s1 != s2)
+  {
+         if(!s1) result = -1;
+    else if(!s2) result =  1;
+    else
+    {
+      while(s1[0] && s2[0])
+      {
+             if(s1[0] < s2[0]) result = -1;
+        else if(s1[0] > s2[0]) result =  1;
+        if(result) break;
+        s1++;
+        s2++;
+      }
+           if(s1[0]) result =  1;
+      else if(s2[0]) result = -1;
+    }
+  }
+  return(result);
 }
 
 /** @ingroup Wrapping_Sidex_TChar

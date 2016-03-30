@@ -60,13 +60,22 @@ public:
   TML_INT32    getLastErrorCode();
   bool         isTestOK();
 
-  void messageOutput(SIDEX_TCHAR* messageText = NULL, bool withProcessName = true, bool withSectionName = true);
+  void messageOutput(SIDEX_TCHAR* messageText = NULL,
+                     bool withProcessName = true, bool withSectionName = true, bool deleteText = false);
+  void contentOutput(SIDEX_TCHAR* name, SIDEX_TCHAR* content,
+                     bool withProcessName = true, bool withSectionName = true, bool deleteName = false, bool deleteContent = false);
+  void numberOutput(SIDEX_TCHAR* name, SIDEX_INT32 number,
+                     bool withProcessName = true, bool withSectionName = true, bool deleteName = false);
+  void indexOutput(SIDEX_TCHAR* arrayName, SIDEX_INT32 index, SIDEX_TCHAR* content,
+                     bool withProcessName = true, bool withSectionName = true, bool deleteArrayName = false, bool deleteContent = false);
 
 protected:
-  void errorOutput(SIDEX_TCHAR* testFunctionName = NULL, bool withErrorCode = true, bool deleteName = false);
+  void errorOutput(SIDEX_TCHAR* messageText = NULL, bool withErrorCode = true, bool deleteText = false);
 
-  bool checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* testFunctionName = NULL, bool deleteName = false);
-  bool checkForSuccess(SIDEX_TCHAR* testFunctionName = NULL, bool deleteName = false);
+  bool checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* messageText = NULL, bool deleteText = false);
+  bool checkForSuccess(SIDEX_TCHAR* messageText = NULL, bool deleteText = false);
+
+  bool checkForValue(SIDEX_TCHAR* name, SIDEX_INT32 desiredValue, SIDEX_INT32 actualValue, bool deleteName = false);
 };
 
 #endif  //TESTINGFORRETURNS_H

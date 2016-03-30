@@ -118,9 +118,9 @@ bool TmlTester::createCore(int iCore)
     if(m_core[iCore] == TML_HANDLE_TYPE_NULL)
     {
       m_iErr = tml_Core_Open(&m_core[iCore], 0);
-	    success = checkForSuccess(tmlrt_cat_del(tmlrtT("tml_Core_Open(core"),
-                                              tmlrt_itoa(iCore + 1),
-                                              tmlrtT(")"), 2), true);
+	    success = checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Open(core"),
+                                          tmlrt_itoa(iCore + 1),
+                                          tmlrtT(")"), 2), true);
     }
     else success = true;
   }
@@ -140,14 +140,14 @@ bool TmlTester::deleteCore(int iCore)
       }
 
       m_iErr = tml_Core_GeneralDeregistration(m_core[iCore]);
-	    if(!checkForSuccess(tmlrt_cat_del(tmlrtT("tml_Core_GeneralDeregistration(core"),
-                                        tmlrt_itoa(iCore + 1),
-                                        tmlrtT(")"), 2), true)) success = false;
+	    if(!checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_GeneralDeregistration(core"),
+                                    tmlrt_itoa(iCore + 1),
+                                    tmlrtT(")"), 2), true)) success = false;
 
       m_iErr = tml_Core_Close(&m_core[iCore]);
-	    if(!checkForSuccess(tmlrt_cat_del(tmlrtT("tml_Core_Close(core"),
-                                        tmlrt_itoa(iCore + 1),
-                                        tmlrtT(")"), 2), true)) success = false;
+	    if(!checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Close(core"),
+                                    tmlrt_itoa(iCore + 1),
+                                    tmlrtT(")"), 2), true)) success = false;
 
       m_core[iCore] = TML_HANDLE_TYPE_NULL;
     }
@@ -174,13 +174,13 @@ bool TmlTester::createListener(int iCore, int iListener, SIDEX_TCHAR* sAddress)
       if(m_listener[iCore][iListener] == TML_HANDLE_TYPE_NULL)
       {
         m_iErr = tml_Core_Listener_Create(m_core[iCore], sAddress, &m_listener[iCore][iListener]);
-        success = checkForSuccess(tmlrt_cat_del(tmlrtT("tml_Core_Listener_Create(core"),
-                                                tmlrt_cat_del(tmlrt_cat_del(tmlrt_itoa(iCore + 1),
-                                                                            tmlrtT(", listener"),
-                                                                            tmlrt_itoa(iListener + 1), 5),
-                                                              tmlrtT(", "),
-                                                              sAddress, 1),
-                                                tmlrtT(")"), 2), true);
+        success = checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Listener_Create(core"),
+                                            tmlrt_cat(tmlrt_cat(tmlrt_itoa(iCore + 1),
+                                                                tmlrtT(", listener"),
+                                                                tmlrt_itoa(iListener + 1), 5),
+                                                      tmlrtT(", "),
+                                                      sAddress, 1),
+                                            tmlrtT(")"), 2), true);
       }
       else success = true;
     }
@@ -196,11 +196,11 @@ bool TmlTester::startListener(int iCore, int iListener)
     if(m_listener[iCore][iListener] != TML_HANDLE_TYPE_NULL)
     {
       m_iErr = tml_Listener_Set_Enabled(m_listener[iCore][iListener], TML_TRUE);
-      success = checkForSuccess(tmlrt_cat_del(tmlrtT("tml_Listener_Set_Enabled(core"),
-                                              tmlrt_cat_del(tmlrt_itoa(iCore + 1),
-                                                            tmlrtT(", listener"),
-                                                            tmlrt_itoa(iListener + 1), 5),
-                                              tmlrtT(", true)"), 2), true);
+      success = checkForSuccess(tmlrt_cat(tmlrtT("tml_Listener_Set_Enabled(core"),
+                                          tmlrt_cat(tmlrt_itoa(iCore + 1),
+                                                    tmlrtT(", listener"),
+                                                    tmlrt_itoa(iListener + 1), 5),
+                                          tmlrtT(", true)"), 2), true);
     }
   }
   return(success);
@@ -214,11 +214,11 @@ bool TmlTester::stopListener(int iCore, int iListener)
     if(m_listener[iCore][iListener] != TML_HANDLE_TYPE_NULL)
     {
       m_iErr = tml_Listener_Set_Enabled(m_listener[iCore][iListener], TML_FALSE);
-      success = checkForSuccess(tmlrt_cat_del(tmlrtT("tml_Listener_Set_Enabled(core"),
-                                              tmlrt_cat_del(tmlrt_itoa(iCore + 1),
-                                                            tmlrtT(", listener"),
-                                                            tmlrt_itoa(iListener + 1), 5),
-                                              tmlrtT(", false)"), 2), true);
+      success = checkForSuccess(tmlrt_cat(tmlrtT("tml_Listener_Set_Enabled(core"),
+                                          tmlrt_cat(tmlrt_itoa(iCore + 1),
+                                                    tmlrtT(", listener"),
+                                                    tmlrt_itoa(iListener + 1), 5),
+                                          tmlrtT(", false)"), 2), true);
     }
   }
   return(success);
@@ -232,11 +232,11 @@ bool TmlTester::deleteListener(int iCore, int iListener)
     if(m_listener[iCore][iListener] != TML_HANDLE_TYPE_NULL)
     {
       m_iErr = tml_Listener_Close(&m_listener[iCore][iListener]);
-      success = checkForSuccess(tmlrt_cat_del(tmlrtT("tml_Listener_Close(core"),
-                                              tmlrt_cat_del(tmlrt_itoa(iCore + 1),
-                                                            tmlrtT(", listener"),
-                                                            tmlrt_itoa(iListener + 1), 5),
-                                              tmlrtT(")"), 2), true);
+      success = checkForSuccess(tmlrt_cat(tmlrtT("tml_Listener_Close(core"),
+                                          tmlrt_cat(tmlrt_itoa(iCore + 1),
+                                                    tmlrtT(", listener"),
+                                                    tmlrt_itoa(iListener + 1), 5),
+                                          tmlrtT(")"), 2), true);
       m_listener[iCore][iListener] = TML_HANDLE_TYPE_NULL;
     }
     else success = true;
@@ -255,23 +255,92 @@ bool TmlTester::checkConnectionCount(int iCore, int nExpectedConnections, SIDEX_
     {
       TML_UINT32 iCount = 0;
       m_iErr = tml_Core_Get_ConnectionCount(m_core[iCore], &iCount);
-      if(checkForSuccess(tmlrt_cat_del(tmlrtT("tml_Core_Get_ConnectionCount(Core"),
-                                       tmlrt_itoa(iCore),
-                                       tmlrtT(")"), 2), true))
+      if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Get_ConnectionCount(Core"),
+                                   tmlrt_itoa(iCore),
+                                   tmlrtT(")"), 2), true))
       {
-        success = (iCount == nExpectedConnections);
-        if(!success)
-        {
-          errorOutput(tmlrt_cat_del(tmlrt_cat_del(tmlrt_cat(debugText,
-                                                            tmlrtT(" "),
-                                                            tmlrtT("Connection count expected as ")),
-                                                  tmlrt_itoa(nExpectedConnections),
-                                                  tmlrtT(", but is "), 3),
-                                    tmlrt_itoa(iCount),
-                                    tmlrtT("!"), 3), false, true);
-        }
+        success = checkForValue(tmlrt_cat(debugText, tmlrtT(" Connection count")),
+                                nExpectedConnections, iCount, true);
       }
     }
   }
   return(success);
+}
+
+bool TmlTester::checkRemoteProfileCount(TML_CONNECTION_HANDLE hConnection, int nExpectedProfiles, SIDEX_TCHAR* debugText)
+{
+  bool success = false;
+  if(hConnection != TML_HANDLE_TYPE_NULL)
+  {
+    SIDEX_VARIANT lProfiles = SIDEX_HANDLE_TYPE_NULL;
+    m_iErr = tml_Connection_Get_RemoteProfiles(hConnection, &lProfiles);
+    if(checkForSuccess(tmlrt_cat(debugText,
+                                 debugText ? tmlrtT(" - ") : NULL,
+                                 tmlrtT("tml_Connection_Get_RemoteProfiles()")), true))
+    {
+      SIDEX_INT32 n = getSidexListCount(lProfiles, debugText);
+      success = checkForValue(tmlrt_cat(debugText, tmlrtT(" Profile count")), nExpectedProfiles, n, true);
+    }
+    if(lProfiles != SIDEX_HANDLE_TYPE_NULL)
+    {
+      sidex_Variant_DecRef(lProfiles);
+      lProfiles = SIDEX_HANDLE_TYPE_NULL;
+    }
+  }
+  return(success);
+}
+
+//------------------------------------------------------------------------------
+
+SIDEX_INT32 TmlTester::getSidexListCount(SIDEX_VARIANT vList, SIDEX_TCHAR* debugText)
+{
+  SIDEX_INT32 n = 0;
+  if(sidex_Variant_List_Check(vList) == SIDEX_TRUE)
+  {
+    m_iErr = sidex_Variant_List_Size(vList, &n);
+    checkForSuccess(tmlrt_cat(debugText,
+                              debugText ? tmlrtT(" - ") : NULL,
+                              tmlrtT("sidex_Variant_List_Size()")), true);
+  }
+  else errorOutput(tmlrt_cat(debugText,
+                             debugText ? tmlrtT(" - ") : NULL,
+                             tmlrtT("SidexVariant is not a list!")), false, true);
+  return(n);
+}
+
+SIDEX_TCHAR* TmlTester::getSidexListStringItem(SIDEX_VARIANT vList, SIDEX_INT32 index, SIDEX_TCHAR* debugText)
+{
+  SIDEX_TCHAR* s = NULL;
+  if(sidex_Variant_List_Check(vList) == SIDEX_TRUE)
+  {
+    SIDEX_VARIANT vString = SIDEX_HANDLE_TYPE_NULL;
+    m_iErr = sidex_Variant_List_Get(vList, index, &vString);
+    if(checkForSuccess(tmlrt_cat(debugText,
+                                 debugText ? tmlrtT(" - ") : NULL,
+                                 tmlrt_cat(tmlrtT("sidex_Variant_List_Get("),
+                                           tmlrt_itoa(index),
+                                           tmlrtT(")"), 2), 4), true))
+    {
+      if(sidex_Variant_String_Check(vString) == SIDEX_TRUE)
+      {
+        SIDEX_TCHAR* sBorrowed = NULL;
+        SIDEX_INT32  len       = 0;
+        m_iErr = sidex_Variant_As_String(vString, &sBorrowed, &len);
+        checkForSuccess(tmlrt_cat(debugText,
+                                  debugText ? tmlrtT(" - ") : NULL,
+                                  tmlrtT("sidex_Variant_As_String()")));
+        s = tmlrt_cpy(sBorrowed);
+        // sBorrowed is borrowed - do not free!
+      }
+      else errorOutput(tmlrt_cat(debugText,
+                                 debugText ? tmlrtT(" - ") : NULL,
+                                 tmlrt_cat(tmlrtT("Item #"),
+                                           tmlrt_itoa(index),
+                                           tmlrtT(" of SidexList is not a string!"), 2), 4), false, true);
+    }
+  }
+  else errorOutput(tmlrt_cat(debugText,
+                             debugText ? tmlrtT(" - ") : NULL,
+                             tmlrtT("SidexVariant is not a list!")), false, true);
+  return(s);
 }

@@ -121,7 +121,7 @@ using namespace std;
     do
     {
       if(!testTmlConnections()) break;            // test connection API
-      if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
+//      if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
       result = 0;
     }
     while(false);
