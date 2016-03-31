@@ -147,10 +147,12 @@ tmlNetBinding::tmlNetBinding(const char* sNetAddress)
           int iLength = portEnd - portStart;
           if (iLength >= 1){
             iErr = addPortItem(m_iBindings, &(sNetAddress[portStart]), iLength);
-            iLength = portEnd - addrStart;
-            iErr = addAddressItem(m_iBindings, &(sNetAddress[addrStart]), iLength);
+            if (0 == iErr){
+              iLength = portEnd - addrStart;
+              iErr = addAddressItem(m_iBindings, &(sNetAddress[addrStart]), iLength);
 
-            iActIndex = portEnd + 1;
+              iActIndex = portEnd + 1;
+            }
           }
           else{
             iErr = 3; // No IPV4 content
@@ -164,7 +166,6 @@ tmlNetBinding::tmlNetBinding(const char* sNetAddress)
   }
   while (0 == iErr && bContinue);
   if (0 != iErr || 0 == m_iBindings){
-    printf ("error %d occurred\n", iErr);
     m_bValid = TML_FALSE;
   }
   else{
@@ -310,52 +311,62 @@ int tmlNetBinding::addPortItem(int iBindings, const char* sPortStartAddr, int iL
 #endif
   sPort[iLength] = '\0';
 
-  SIDEX_INT32 utfLen;
-  sPort_w = (char16_t*)UTF8toUTF16(sPort, &utfLen);
-  sPort_x = UTF8toUTF32(sPort, &utfLen);
-  //printf ("Port[%d] = %s\n", iBindings, sPort);
-
-  SIDEX_VARIANT vPort;
-  SIDEX_INT32   sRet;
-
-  sRet = sidex_Variant_New_String(sPort, &vPort);
-  if (SIDEX_SUCCESS != sRet){
-    iErr = 5; // SIDEX_ERR
+  ////////////////////////////////////////////////////////
+  // Check port for plausibility:
+  int i;
+  char cset[] = "1234567890";
+  i = strspn (sPort, cset);
+  if (i != strlen (sPort)){
+    iErr = 6; // Port contains unexpected characters:
   }
   else{
-    sRet = sidex_Variant_List_Append(m_ports, vPort, &iPos);
-    if (SIDEX_SUCCESS != sRet){
-      iErr = 5; // SIDEX_ERR
-    }
-    sidex_Variant_DecRef(vPort);
-  }
+    SIDEX_INT32 utfLen;
+    sPort_w = (char16_t*)UTF8toUTF16(sPort, &utfLen);
+    sPort_x = UTF8toUTF32(sPort, &utfLen);
+    //printf ("Port[%d] = %s\n", iBindings, sPort);
 
+    SIDEX_VARIANT vPort;
+    SIDEX_INT32   sRet;
 
-  if (SIDEX_SUCCESS == sRet){
-    sRet = sidex_Variant_New_String_W(sPort_w, &vPort);
+    sRet = sidex_Variant_New_String(sPort, &vPort);
     if (SIDEX_SUCCESS != sRet){
       iErr = 5; // SIDEX_ERR
     }
     else{
-      sRet = sidex_Variant_List_Append(m_ports_w, vPort, &iPos);
+      sRet = sidex_Variant_List_Append(m_ports, vPort, &iPos);
       if (SIDEX_SUCCESS != sRet){
         iErr = 5; // SIDEX_ERR
       }
       sidex_Variant_DecRef(vPort);
     }
-  }
 
-  if (SIDEX_SUCCESS == sRet){
-    sRet = sidex_Variant_New_String_X(sPort_x, &vPort);
-    if (SIDEX_SUCCESS != sRet){
-      iErr = 5; // SIDEX_ERR
-    }
-    else{
-      sRet = sidex_Variant_List_Append(m_ports_x, vPort, &iPos);
+
+    if (SIDEX_SUCCESS == sRet){
+      sRet = sidex_Variant_New_String_W(sPort_w, &vPort);
       if (SIDEX_SUCCESS != sRet){
         iErr = 5; // SIDEX_ERR
       }
-      sidex_Variant_DecRef(vPort);
+      else{
+        sRet = sidex_Variant_List_Append(m_ports_w, vPort, &iPos);
+        if (SIDEX_SUCCESS != sRet){
+          iErr = 5; // SIDEX_ERR
+        }
+        sidex_Variant_DecRef(vPort);
+      }
+    }
+
+    if (SIDEX_SUCCESS == sRet){
+      sRet = sidex_Variant_New_String_X(sPort_x, &vPort);
+      if (SIDEX_SUCCESS != sRet){
+        iErr = 5; // SIDEX_ERR
+      }
+      else{
+        sRet = sidex_Variant_List_Append(m_ports_x, vPort, &iPos);
+        if (SIDEX_SUCCESS != sRet){
+          iErr = 5; // SIDEX_ERR
+        }
+        sidex_Variant_DecRef(vPort);
+      }
     }
   }
 

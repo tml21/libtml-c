@@ -156,7 +156,7 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
         bConnected = vortex_connection_reconnect (connection, NULL, NULL);
         if (axl_false == bConnected){
           const char* msg = vortex_connection_get_message(connection);
-          log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
+          log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
           iRet = TML_ERR_SENDER_INVALID_PARAMS;
         }
       }
@@ -199,7 +199,7 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
         if (!vortex_connection_is_ok (connection, axl_false))
         {
           const char* msg = vortex_connection_get_message(connection);
-          log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
+          log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
           iRet = TML_ERR_SENDER_INVALID_PARAMS;
         }
         else{
