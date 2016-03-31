@@ -60,6 +60,8 @@ extern SIDEX_TCHAR* S_TP_NETWORK;
 extern SIDEX_TCHAR* S_TP_CARDS;
 extern SIDEX_TCHAR* S_TP_127_0_0_1;
 extern SIDEX_TCHAR* S_TP_FIRSTPORTNUMBER;
+extern SIDEX_TCHAR* S_TP_TEST;
+extern SIDEX_TCHAR* S_TP_LOOPCOUNT;
 
 #define DEFAULT_PORTNUMBER 42042
 
@@ -69,7 +71,7 @@ protected:
   SIDEX_HANDLE m_sdxParams;
   SIDEX_TCHAR* m_ParamsFileName;
 
-  void ensureDefaultParams();
+  bool ensureDefaultParams();
 
 public:
   CTestParams(SIDEX_TCHAR* testParamsFileName = NULL);
@@ -82,6 +84,8 @@ public:
   SIDEX_TCHAR* getNetworkCard(SIDEX_INT32 index); // returned string has to be freed after use
 
   int          getFirstPortNumber();
+
+  int          getTestLoopCount();
 };
 
 extern CTestParams* TestParams;

@@ -98,10 +98,10 @@ bool TmlConnectionTester::testConnect()
       checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Connect(NoCoreHandle)"));
 
       checkConnectionCount(0, 0, tmlrtT(" (after NoCoreHandle)"));
-/*
+
       // Test with invalid connection handle parameter...
       m_iErr = tml_Core_Connect(getCore(0), sAddress1, NULL);
-      checkForExpectedReturnCode(TML_ERR_SENDER_INVALID_PARAMS, tmlrtT("tml_Core_Connect(NoConnectionHandleParameter)"));
+      checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Connect(NoConnectionHandleParameter)"));
 
       checkConnectionCount(0, 0, tmlrtT(" (after NoConnectionHandleParameter)"));
 
@@ -113,7 +113,7 @@ bool TmlConnectionTester::testConnect()
       checkConnectionCount(0, 0, tmlrtT(" (after InvalidAddress)"));
 
       hConnection1 = TML_HANDLE_TYPE_NULL;
-      m_iErr = tml_Core_Connect(getCore(0), tmlrtT("127.0.0.1:Falsch"), &hConnection1);
+      m_iErr = tml_Core_Connect(getCore(0), tmlrtT("127.0.0.1:Wrong"), &hConnection1);
       checkForExpectedReturnCode(TML_ERR_NET_BINDING, tmlrtT("tml_Core_Connect(InvalidPort)"));
 
       checkConnectionCount(0, 0, tmlrtT(" (after InvalidAddress)"));
@@ -131,7 +131,7 @@ bool TmlConnectionTester::testConnect()
         checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
         hConnection1 = TML_HANDLE_TYPE_NULL;
       }
-*/
+
       if(createListener(1, 0, sAddress1))
       {
         if(startListener(1, 0))
@@ -236,13 +236,13 @@ bool TmlConnectionTester::testClose()
       checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Close(NoConnectionHandle)"));
 
       checkConnectionCount(0, 0, tmlrtT(" (after NoConnectionHandle)"));
-/*
+
       // Test with invalid connection handle parameter...
       m_iErr = tml_Connection_Close(NULL);
       checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Close(NoConnectionHandleParameter)"));
 
       checkConnectionCount(0, 0, tmlrtT(" (after NoConnectionHandleParameter)"));
-*/
+
       if(createListener(1, 0, sAddress))
       {
         if(startListener(1, 0))
@@ -319,11 +319,11 @@ bool TmlConnectionTester::testGetAddress()
             if(checkConnectionCount(0, 1, tmlrtT(" (after connect)")))
             {
               SIDEX_TCHAR* pAddress = NULL;
-/*
+
               // Test with missing parameter...
               m_iErr = tml_Connection_Get_Address(hConnection, NULL);
-              checkForExpectedReturnCode(TML_ERR_INFORMATION_UNDEFINED, tmlrtT("tml_Connection_Get_Address(NoAddressParameter)"));
-*/
+              checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Get_Address(NoAddressParameter)"));
+
               // Test with missing connection handle...
               pAddress = NULL;
               m_iErr = tml_Connection_Get_Address(TML_HANDLE_TYPE_NULL, &pAddress);
@@ -388,13 +388,12 @@ bool TmlConnectionTester::testGetRemoteProfiles()
   int n = TestParams->getNetworkCardCount();
   if(n > 0)
   {
-    int          PortNumber = TestParams->getFirstPortNumber();
-    SIDEX_TCHAR* sAddress1   = tmlrt_cat(TestParams->getNetworkCard(0),
-                                         tmlrtT(":"),
-                                         tmlrt_itoa(PortNumber++), 5);
-    SIDEX_TCHAR* sAddress2   = tmlrt_cat(TestParams->getNetworkCard(0),
-                                         tmlrtT(":"),
-                                         tmlrt_itoa(PortNumber++), 5);
+    int          iPort     = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard     = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress1 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress2 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    DELETE_STR(sCard);
+
     if(createCore(0) && createCore(1))
     {
       if(createListener(1, 0, sAddress1))
@@ -406,8 +405,8 @@ bool TmlConnectionTester::testGetRemoteProfiles()
           if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress1, tmlrtT(")")), true))
           {
             // Test with missing parameter...
-//            m_iErr = tml_Connection_Get_RemoteProfiles(hConnection, NULL);
-//            checkForExpectedReturnCode(TML_ERR_SENDER_INVALID_PARAMS, tmlrtT("tml_Connection_Get_RemoteProfiles(NoProfilesParameter)"));
+            m_iErr = tml_Connection_Get_RemoteProfiles(hConnection1, NULL);
+            checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Get_RemoteProfiles(NoProfilesParameter)"));
 
             // Test with missing connection handle...
             SIDEX_VARIANT lProfiles = SIDEX_HANDLE_TYPE_NULL;
@@ -439,7 +438,13 @@ bool TmlConnectionTester::testGetRemoteProfiles()
 //                  checkRemoteProfileCount(hConnection2, 3, tmlrtT("Three profiles on connection2"));
 
                   // !!! workaraound !!!
-                  // Remote profile list doesn't update, if listener already started!
+                  // Remote profile list doesn't update, if already connected!
+                  m_iErr = tml_Connection_Close(&hConnection2);
+                  checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
+                  hConnection2 = TML_HANDLE_TYPE_NULL;
+                  m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
+                  checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress2, tmlrtT(")")), true);
+/*
                   stopListener(1, 1);
                   Sleep(100); // <-- Bug: won't reconnect without sleep!
                   startListener(1, 1);
@@ -447,6 +452,7 @@ bool TmlConnectionTester::testGetRemoteProfiles()
                   m_iErr = tml_Connection_Validate(hConnection2, TML_TRUE, &bConnected);
                   checkForSuccess(tmlrtT("tml_Connection_Validate(Connection2)"));
                   checkForValue(tmlrtT("tml_Connection_Validate(Connection2)"), TML_TRUE, bConnected, false);
+*/
                   // !!! workaraound !!!
 
                   // Test getting remote profiles...
@@ -553,6 +559,85 @@ bool TmlConnectionTester::testValidate()
   messageOutput(S_START);
   reset();
 
+  int n = TestParams->getNetworkCardCount();
+  if(n > 0)
+  {
+    int          iPort    = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard    = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    DELETE_STR(sCard);
+
+    if(createCore(0) && createCore(1))
+    {
+      if(createListener(1, 0, sAddress))
+      {
+        if(startListener(1, 0))
+        {
+          TML_CONNECTION_HANDLE hConnection = TML_HANDLE_TYPE_NULL;
+          TML_BOOL              bConnected  = TML_FALSE;
+
+          // Test with missing connection handle...
+          m_iErr = tml_Connection_Validate(TML_HANDLE_TYPE_NULL, TML_FALSE, &bConnected);
+          checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Validate(NoConnectionHandle)"));
+
+          // connect
+          m_iErr = tml_Core_Connect(getCore(0), sAddress, &hConnection);
+          if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress, tmlrtT(")")), true))
+          {
+            // Test with missing parameter...
+            m_iErr = tml_Connection_Validate(hConnection, TML_FALSE, NULL);
+            checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Validate(NoConnectedParameter)"));
+
+            // Test for established connection...
+            bConnected = TML_FALSE;
+            m_iErr = tml_Connection_Validate(hConnection, TML_FALSE, &bConnected);
+            checkForSuccess(tmlrtT("tml_Connection_Validate(Connection, NoReconnect, True)"));
+            checkForValue(tmlrtT("tml_Connection_Validate(Connection, NoReconnect, True)"), TML_TRUE, bConnected, false);
+
+            // Test for lost connection...
+            stopListener(1, 0);
+            Sleep(100); // wait a little bit for disconnection
+            bConnected = TML_TRUE;
+            m_iErr = tml_Connection_Validate(hConnection, TML_FALSE, &bConnected);
+            checkForSuccess(tmlrtT("tml_Connection_Validate(Connection, NoReconnect, False)"));
+            checkForValue(tmlrtT("tml_Connection_Validate(Connection, NoReconnect, False)"), TML_FALSE, bConnected, false);
+
+            // Test for reconnection...
+            startListener(1, 0);
+            bConnected = TML_FALSE;
+            m_iErr = tml_Connection_Validate(hConnection, TML_TRUE, &bConnected);
+            if(checkForSuccess(tmlrtT("tml_Connection_Validate(Connection, Connect, True)")))
+            {
+              if(checkForValue(tmlrtT("tml_Connection_Validate(Connection, Connect, True)"), TML_TRUE, bConnected, false))
+              {
+                messageOutput(tmlrtT("Test culmination reached!"));
+              }
+            }
+          }
+
+          if(hConnection != TML_HANDLE_TYPE_NULL)
+          {
+            // Close connection...
+            m_iErr = tml_Connection_Close(&hConnection);
+            checkForSuccess(tmlrtT("tml_Connection_Close(Connection)"));
+            hConnection = TML_HANDLE_TYPE_NULL;
+          } // connect 0, addr
+
+          stopListener(1, 0);
+
+        } // startListener 1, 0
+
+        deleteListener(1, 0);
+
+      } // createListener 1, 0, addr
+    } // createCore 0 and 1
+
+    deleteCore(1);
+    deleteCore(0);
+
+    DELETE_STR(sAddress);
+
+  } // network card count > 0
 
   messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
   messageOutput();
@@ -566,6 +651,95 @@ bool TmlConnectionTester::testGetConnectionCount()
   messageOutput(S_START);
   reset();
 
+  int n = TestParams->getNetworkCardCount();
+  if(n > 0)
+  {
+    int          iPort     = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard     = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress1 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress2 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    DELETE_STR(sCard);
+
+    if(createCore(0) && createCore(1))
+    {
+      // Test with missing core handle...
+      TML_UINT32 iCount = 0;
+      m_iErr = tml_Core_Get_ConnectionCount(TML_HANDLE_TYPE_NULL, &iCount);
+      checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Get_ConnectionCount(NoCoreHandle)"));
+
+      // Test with missing core handle...
+      m_iErr = tml_Core_Get_ConnectionCount(getCore(0), NULL);
+      checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Get_ConnectionCount(Core0, NoCountParameter)"));
+
+      // The initial connection count has to be 0...
+      checkConnectionCount(0, 0, tmlrtT(" (start)"));
+
+      if(createListener(1, 0, sAddress1))
+      {
+        if(startListener(1, 0))
+        {
+          // initial there has to be no connection...
+          checkConnectionCount(0, 0, tmlrtT(" (after listener start)"));
+
+          // make first connection...
+          TML_CONNECTION_HANDLE hConnection1 = TML_HANDLE_TYPE_NULL;
+          m_iErr = tml_Core_Connect(getCore(0), sAddress1, &hConnection1);
+          if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress1, tmlrtT(")")), true))
+          {
+            // The connection count has to be 1 now...
+            if(checkConnectionCount(0, 1, tmlrtT(" (after first connect)")))
+            {
+              if(createListener(1, 1, sAddress2))
+              {
+                if(startListener(1, 1))
+                {
+                  // make second connection...
+                  TML_CONNECTION_HANDLE hConnection2 = TML_HANDLE_TYPE_NULL;
+                  m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
+                  if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress2, tmlrtT(")")), true))
+                  {
+                    // The connection count has to be 2 now...
+                    if(checkConnectionCount(0, 2, tmlrtT(" (after second connect)")))
+                    {
+                      messageOutput(tmlrtT("Test culmination reached!"));
+
+                      m_iErr = tml_Connection_Close(&hConnection2);
+                      checkForSuccess(tmlrtT("tml_Connection_Close(Connection2)"));
+                      hConnection2 = TML_HANDLE_TYPE_NULL;
+                    }
+                  }
+
+                  stopListener(1, 1);
+
+                } // startListener 1, 1
+
+                deleteListener(1, 1);
+
+              } // createListener 1, 1, addr 2
+
+              m_iErr = tml_Connection_Close(&hConnection1);
+              checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
+              hConnection1 = TML_HANDLE_TYPE_NULL;
+
+            } // checkConnectionCount 0, 1
+          } // connect 0, addr 1
+
+          stopListener(1, 0);
+
+        } // startListener 1, 0
+
+        deleteListener(1, 0);
+
+      } // createListener 1, 0, addr 1
+    } // createCore 0 and 1
+
+    deleteCore(1);
+    deleteCore(0);
+
+    DELETE_STR(sAddress2);
+    DELETE_STR(sAddress1);
+
+  } // network card count > 0
 
   messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
   messageOutput();
@@ -579,6 +753,109 @@ bool TmlConnectionTester::testGetConnection_Core()
   messageOutput(S_START);
   reset();
 
+  int n = TestParams->getNetworkCardCount();
+  if(n > 0)
+  {
+    int          iPort     = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard     = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress1 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress2 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    DELETE_STR(sCard);
+
+    if(createCore(0) && createCore(1))
+    {
+      if(createListener(1, 0, sAddress1))
+      {
+        if(startListener(1, 0))
+        {
+          // make first connection...
+          TML_CONNECTION_HANDLE hConnection1 = TML_HANDLE_TYPE_NULL;
+          m_iErr = tml_Core_Connect(getCore(0), sAddress1, &hConnection1);
+          if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress1, tmlrtT(")")), true))
+          {
+            if(createListener(1, 1, sAddress2))
+            {
+              if(startListener(1, 1))
+              {
+                // make second connection...
+                TML_CONNECTION_HANDLE hConnection2 = TML_HANDLE_TYPE_NULL;
+                m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
+                if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress2, tmlrtT(")")), true))
+                {
+                  // The connection count has to be 2 now...
+                  if(checkConnectionCount(0, 2, tmlrtT(" (two connections)")))
+                  {
+                    // Test with missing core handle...
+                    TML_CONNECTION_HANDLE hConnection = TML_HANDLE_TYPE_NULL;
+                    m_iErr = tml_Core_Get_Connection(TML_HANDLE_TYPE_NULL, 0, &hConnection);
+                    checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Get_Connection(NoCoreHandle)"));
+
+                    // Test with missing connection parameter...
+                    m_iErr = tml_Core_Get_Connection(getCore(0), 0, NULL);
+                    checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Get_Connection(Core0, NoConnectionParameter)"));
+
+                    // Test with wrong index...
+                    m_iErr = tml_Core_Get_Connection(getCore(0), 99, &hConnection);
+                    checkForExpectedReturnCode(TML_ERR_INFORMATION_UNDEFINED, tmlrtT("tml_Core_Get_Connection(IndexOutOfRange)"));
+
+                    // Test the connection handles...
+                    hConnection = TML_HANDLE_TYPE_NULL;
+                    m_iErr = tml_Core_Get_Connection(getCore(0), 0, &hConnection);
+                    if(checkForSuccess(tmlrtT("tml_Core_Get_Connection(0)")))
+                    {
+                      bool bFound1 = (hConnection == hConnection1);
+                      bool bFound2 = (hConnection == hConnection2);
+                      if(bFound1 || bFound2)
+                      {
+                        hConnection = TML_HANDLE_TYPE_NULL;
+                        m_iErr = tml_Core_Get_Connection(getCore(0), 1, &hConnection);
+                        if(checkForSuccess(tmlrtT("tml_Core_Get_Connection(1)")))
+                        {
+                          if(bFound1) bFound2 = (hConnection == hConnection2);
+                          else        bFound1 = (hConnection == hConnection1);
+
+                          if(bFound1 && bFound2) messageOutput(tmlrtT("Test culmination reached!"));
+                          else errorOutput(tmlrtT("Second connection not found!"), false, false);
+                        }
+                      }
+                      else errorOutput(tmlrtT("First connection not found!"), false, false);
+                    }
+                  }
+
+                  m_iErr = tml_Connection_Close(&hConnection2);
+                  checkForSuccess(tmlrtT("tml_Connection_Close(Connection2)"));
+                  hConnection2 = TML_HANDLE_TYPE_NULL;
+                }
+
+                stopListener(1, 1);
+
+              } // startListener 1, 1
+
+              deleteListener(1, 1);
+
+            } // createListener 1, 1, addr 2
+
+            m_iErr = tml_Connection_Close(&hConnection1);
+            checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
+            hConnection1 = TML_HANDLE_TYPE_NULL;
+          } // connect 0, addr 1
+
+          stopListener(1, 0);
+
+        } // startListener 1, 0
+
+        deleteListener(1, 0);
+
+      } // createListener 1, 0, addr 1
+    } // createCore 0 and 1
+
+    deleteCore(1);
+    deleteCore(0);
+
+    DELETE_STR(sAddress2);
+    DELETE_STR(sAddress1);
+
+  } // network card count > 0
 
   messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
   messageOutput();
@@ -592,6 +869,108 @@ bool TmlConnectionTester::testGetConnectionByAddress()
   messageOutput(S_START);
   reset();
 
+  int n = TestParams->getNetworkCardCount();
+  if(n > 0)
+  {
+    int          iPort     = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard     = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress1 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress2 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    DELETE_STR(sCard);
+
+    if(createCore(0) && createCore(1))
+    {
+      if(createListener(1, 0, sAddress1))
+      {
+        if(startListener(1, 0))
+        {
+          // make first connection...
+          TML_CONNECTION_HANDLE hConnection1 = TML_HANDLE_TYPE_NULL;
+          m_iErr = tml_Core_Connect(getCore(0), sAddress1, &hConnection1);
+          if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress1, tmlrtT(")")), true))
+          {
+            if(createListener(1, 1, sAddress2))
+            {
+              if(startListener(1, 1))
+              {
+                // make second connection...
+                TML_CONNECTION_HANDLE hConnection2 = TML_HANDLE_TYPE_NULL;
+                m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
+                if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress2, tmlrtT(")")), true))
+                {
+                  // The connection count has to be 2 now...
+                  if(checkConnectionCount(0, 2, tmlrtT(" (two connections)")))
+                  {
+                    // Test with missing core handle...
+                    TML_CONNECTION_HANDLE hConnection = TML_HANDLE_TYPE_NULL;
+                    m_iErr = tml_Core_Get_ConnectionByAddress(TML_HANDLE_TYPE_NULL, sAddress1, &hConnection);
+                    checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Get_ConnectionByAddress(NoCoreHandle)"));
+
+                    // Test with missing address parameter...
+                    m_iErr = tml_Core_Get_ConnectionByAddress(getCore(0), NULL, &hConnection);
+                    checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Core_Get_ConnectionByAddress(NoAddressParameter)"));
+
+                    // Test with missing connection parameter...
+                    m_iErr = tml_Core_Get_ConnectionByAddress(getCore(0), sAddress1, NULL);
+                    checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Get_ConnectionByAddress(NoConnectionParameter)"));
+
+                    // Test with wrong address...
+                    m_iErr = tml_Core_Get_ConnectionByAddress(getCore(0), tmlrtT("This is an invalid address!"), &hConnection);
+                    checkForExpectedReturnCode(TML_ERR_INFORMATION_UNDEFINED, tmlrtT("tml_Core_Get_ConnectionByAddress(WrongAddress)"));
+
+                    // Test the connection handles...
+                    hConnection = TML_HANDLE_TYPE_NULL;
+                    m_iErr = tml_Core_Get_ConnectionByAddress(getCore(0), sAddress1, &hConnection);
+                    if(checkForSuccess(tmlrtT("tml_Core_Get_Connection(Address1)")))
+                    {
+                      if(hConnection == hConnection1)
+                      {
+                        hConnection = TML_HANDLE_TYPE_NULL;
+                        m_iErr = tml_Core_Get_ConnectionByAddress(getCore(0), sAddress2, &hConnection);
+                        if(checkForSuccess(tmlrtT("tml_Core_Get_Connection(Address2)")))
+                        {
+                          if(hConnection == hConnection2) messageOutput(tmlrtT("Test culmination reached!"));
+                          else errorOutput(tmlrtT("Connection2 not correct!"), false, false);
+                        }
+                      }
+                      else errorOutput(tmlrtT("Connection1 not correct!"), false, false);
+                    }
+                  }
+
+                  m_iErr = tml_Connection_Close(&hConnection2);
+                  checkForSuccess(tmlrtT("tml_Connection_Close(Connection2)"));
+                  hConnection2 = TML_HANDLE_TYPE_NULL;
+                }
+
+                stopListener(1, 1);
+
+              } // startListener 1, 1
+
+              deleteListener(1, 1);
+
+            } // createListener 1, 1, addr 2
+
+            m_iErr = tml_Connection_Close(&hConnection1);
+            checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
+            hConnection1 = TML_HANDLE_TYPE_NULL;
+          } // connect 0, addr 1
+
+          stopListener(1, 0);
+
+        } // startListener 1, 0
+
+        deleteListener(1, 0);
+
+      } // createListener 1, 0, addr 1
+    } // createCore 0 and 1
+
+    deleteCore(1);
+    deleteCore(0);
+
+    DELETE_STR(sAddress2);
+    DELETE_STR(sAddress1);
+
+  } // network card count > 0
 
   messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
   messageOutput();

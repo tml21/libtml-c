@@ -116,15 +116,22 @@ using namespace std;
     else    { wcout << "Running without params file!" << endl; }
     wcout << endl;
 
-    wcout << "Tests - Start..." << endl;
+    int i = 0, n = TestParams->getTestLoopCount();
+    wcout << "Tests - Start... ( " << n << " loop" << ((n > 1) ? "s )" : " )") << endl;
     wcout << endl;
     do
     {
+      wcout << "----------------------------------------" << endl;
+      wcout << "  Loop #" << i << endl;
+      wcout << "----------------------------------------" << endl;
+      wcout << endl;
       if(!testTmlConnections()) break;            // test connection API
 //      if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
-      result = 0;
+      i++;
     }
-    while(false);
+    while(i < n);
+    if(i == n) result = 0;
+
     wcout << endl;
     wcout << "Tests - " << (result ? S_FINISH_FAILED : S_FINISH_SUCCESS) << endl;
     wcout << endl;
@@ -134,7 +141,7 @@ using namespace std;
 
   DELETE_STR(pBuf);
 
-  wcout << "=======================" << endl;
+  wcout << "========================================" << endl;
   wcout << endl;
   return(result);
 }

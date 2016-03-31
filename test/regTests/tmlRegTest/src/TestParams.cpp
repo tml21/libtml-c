@@ -44,6 +44,8 @@ SIDEX_TCHAR* S_TP_NETWORK         = tmlrtT("Network");
 SIDEX_TCHAR* S_TP_CARDS           = tmlrtT("Cards");
 SIDEX_TCHAR* S_TP_127_0_0_1       = tmlrtT("127.0.0.1");
 SIDEX_TCHAR* S_TP_FIRSTPORTNUMBER = tmlrtT("FirstPortNumber");
+SIDEX_TCHAR* S_TP_TEST            = tmlrtT("Test");
+SIDEX_TCHAR* S_TP_LOOPCOUNT       = tmlrtT("LoopCount");
 
 CTestParams::CTestParams(SIDEX_TCHAR* testParamsFileName)
 {
@@ -57,8 +59,10 @@ CTestParams::CTestParams(SIDEX_TCHAR* testParamsFileName)
       iErr = sidex_Load_Content(m_sdxParams, testParamsFileName);
       if(iErr == SIDEX_SUCCESS) m_ParamsFileName = tmlrt_cpy(testParamsFileName);
     }
-    ensureDefaultParams();
-    sidex_Save_Content(m_sdxParams, tmlrtT("C:\\filledTestParams.sdx"));
+    if(!ensureDefaultParams())
+    {
+      sidex_Save_Content(m_sdxParams, tmlrtT("C:\\filledTestParams.sdx"));
+    }
   }
 }
 
@@ -82,13 +86,15 @@ SIDEX_TCHAR* CTestParams::getParamsFileName()
   return(m_ParamsFileName);
 }
 
-void CTestParams::ensureDefaultParams()
+bool CTestParams::ensureDefaultParams()
 {
+  bool result = true;
   if(hasParams())
   {
     SIDEX_INT32 nCards = getNetworkCardCount();
     if(nCards == 0)
     {
+      result = false;
       SIDEX_VARIANT card = SIDEX_HANDLE_TYPE_NULL;
       SIDEX_INT32   iErr = sidex_Variant_New_String(S_TP_127_0_0_1, &card);
       if(iErr == SIDEX_SUCCESS)
@@ -110,11 +116,19 @@ void CTestParams::ensureDefaultParams()
       }
     }
 
-    if(getFirstPortNumber() == 0)
+    if(getFirstPortNumber() <= 0)
     {
+      result = false;
       sidex_Integer_Write(m_sdxParams, S_TP_NETWORK, S_TP_FIRSTPORTNUMBER, DEFAULT_PORTNUMBER);
     }
+
+    if(getTestLoopCount() <= 0)
+    {
+      result = false;
+      sidex_Integer_Write(m_sdxParams, S_TP_TEST, S_TP_LOOPCOUNT, 1);
+    }
   }
+  return(result);
 }
 
 int CTestParams::getNetworkCardCount()
@@ -180,4 +194,16 @@ int CTestParams::getFirstPortNumber()
     if(iErr == SIDEX_SUCCESS) firstPortNumber = (int)value;
   }
   return(firstPortNumber);
+}
+
+int CTestParams::getTestLoopCount()
+{
+  int nLoops = 0;
+  if(hasParams())
+  {
+    SIDEX_INT64 value = 0;
+    SIDEX_INT32 iErr = sidex_Integer_Read(m_sdxParams, S_TP_TEST, S_TP_LOOPCOUNT, &value);
+    if(iErr == SIDEX_SUCCESS) nLoops = (int)value;
+  }
+  return(nLoops);
 }

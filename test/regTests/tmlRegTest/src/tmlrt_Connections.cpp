@@ -61,10 +61,10 @@ bool testTmlConnections()
       if(!tester->testClose()) break;
       if(!tester->testGetAddress()) break;
       if(!tester->testGetRemoteProfiles()) break;
-//      if(!tester->testValidate()) break;
-//      if(!tester->testGetConnectionCount()) break;
-//      if(!tester->testGetConnection_Core()) break;
-//      if(!tester->testGetConnectionByAddress()) break;
+      if(!tester->testValidate()) break;
+      if(!tester->testGetConnectionCount()) break;
+      if(!tester->testGetConnection_Core()) break;
+      if(!tester->testGetConnectionByAddress()) break;
 //      if(!tester->testSendSync()) break;
 //      if(!tester->testSendAsync()) break;
 //      if(!tester->testGetConnection_Cmd()) break;
