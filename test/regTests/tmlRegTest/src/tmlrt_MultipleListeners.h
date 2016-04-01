@@ -34,33 +34,39 @@
  * Contributors:
  *    wobe-systems GmbH
  */
+
+#ifndef MULTIPLELISTENERS_H
+#define MULTIPLELISTENERS_H
+
 #include <iostream>
 using namespace std;
 #include <sidex.h>
 #include <tmlCore.h>
-#include "TestingForReturns.h"
-#include "tmlrt_Utils.h"
 
-void TestingForReturns::errorOutput() {
-	wcout << "Test failed at " << m_errorLocationOutput << " with ErrorCode " << m_iErr << endl;
-	m_testOK = false;
-}
+void simpleTestTmlMultiListenerSendSyncMessage();
 
-void TestingForReturns::checkForExpectedReturnCode(TML_INT32 expectedReturnCode) {
-	if(expectedReturnCode != m_iErr) {
-		errorOutput();
-	}
-}
+void simpleTestTmlMultiListenerSendAsyncMessage();
 
-void TestingForReturns::checkForSuccess() {
-	if(TML_SUCCESS != m_iErr) {
-		errorOutput();
-	}
-}
+void testTmlMultiListenerLoadBalancingMessages();
 
-TestingForReturns::TestingForReturns() {
-	m_testOK = true;
-	m_iErr = 0;
-	m_errorLocationOutput = NULL;
-}
+void simpleTestTmlMultiListener();
 
+void testTmlCoreListenerClose();
+
+void testTmlCoreListenerGetSetEnabled();
+
+void testTmlCoreListenerCreateCloseErrorCodes();
+
+void testTmlCoreGetListenerCountErrorCodes();
+
+void testTmlCoreGetListenerErrorCodes();
+
+void testTmlListenerGetSetEnabledForErrorCodes();
+
+void testTmlMultiListenerEventMessages();
+
+void testTmlMultiListenerStreamCommunication();
+
+
+
+#endif //MULTIPLELISTENERS_H

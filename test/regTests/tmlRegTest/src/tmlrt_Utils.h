@@ -108,11 +108,14 @@ using namespace std;
   #define IO_PORT_FOUR	                (wchar_t*) L"44104"
   #define IO_PORT_FIVE					(wchar_t*) L"44105"
   #define DESTINATION_HOST_IP           (wchar_t*) L"127.0.0.1"
+  #define LISTENER_ADDRESS				(wchar_t*) L"0.0.0.0:44100"
 
   #define MEANING                       (wchar_t*) L"Meaning"
   #define OF_LIFE                       (wchar_t*) L"ofLife"
 
   #define DEFAULT_BOOTSTRAP				(wchar_t*) L"bootstrapTemplate.sdx"
+	
+
 #else // TML_UNICODE
   #define IO_PROFILE                    (char*) "http://wobe-team.com/profiles/plain_profile"
   #define IO_PROFILE_TWO                (char*) "http://wobe-team.com/profiles/simple_profile"
@@ -124,14 +127,21 @@ using namespace std;
   #define IO_PORT_FOUR	                (char*) "44104"
   #define IO_PORT_FIVE					(char*) "44105"
   #define DESTINATION_HOST_IP           (char*) "127.0.0.1"
+  #define LISTENER_ADDRESS				(char*) "0.0.0.0:44100"
 
   #define MEANING                       (char*) "Meaning"
   #define OF_LIFE                       (char*) "ofLife"
 
   #define DEFAULT_BOOTSTRAP				(char*) "bootstrapTemplate.sdx"
+
+
 #endif // TML_UNICODE
 
-const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
+const int DEFAULT_TIMEOUT = 5000;
+const int AMOUNT_OF_CMDS = 5;
+const int AMOUNT_OF_LISTENERS = 5;
+const int MAX_AMOUNT_OF_PROFILES = 5;
+const array<int, AMOUNT_OF_CMDS> COMMAND_CODES_LIST = {10,50,42,30,20};
 
 //makro for creating strings in the right format
 #ifdef SIDEX_UNICODE
@@ -140,11 +150,40 @@ const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
 #define tmlrtT(a) (char*) a
 #endif // SIDEX_UNICODE
 
+const array<SIDEX_TCHAR*, 5> LISTENERS_PORTS = { tmlrtT("4711"), tmlrtT("4712"), tmlrtT("1815"), tmlrtT("1420"), tmlrtT("1234") };
+const array<SIDEX_TCHAR*, 5> LISTENERS_ADDRESS = { tmlrtT("0.0.0.0:4711"), tmlrtT("0.0.0.0:4712"), tmlrtT("0.0.0.0:1815"), tmlrtT("0.0.0.0:1420"), tmlrtT("0.0.0.0:1234") };
+
+//transfer function for comparing
+int tmlrt_cmp(const SIDEX_TCHAR * str1, const SIDEX_TCHAR * str2);
+
 //Wrapper function for concatenating two strings
 SIDEX_TCHAR * tmlrt_cat( SIDEX_TCHAR * destination, const SIDEX_TCHAR * source);
+
+void TmlSleep(int milliseconds);
 
 //cb for cmd 
 void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data);
 
+//cb for onPeerRegister
+TML_BOOL FUNC_C_DECL onPeerCB(TML_BOOL bSubscribe, TML_CTSTR *sHost, TML_CTSTR *sPort, TML_POINTER pCBData);
+
+//cb if cmd reply was received from listener
+void FUNC_C_DECL cbGenericCmdReplyReceived(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
+
+//set the bool array to false
+void initCmdRepliesReceived();
+
+//check whether all cmds were freed
+bool allCmdsFreed();
+
+//initalize windowsmutex
+void initializeMutex();
+
+
+void lockMutex();
+
+void unlockMutex();
+
+void setCmdRepliesReceivedToTrue(int indexOfDisabledListener);
 
 #endif //TMLRT_UTILS_H

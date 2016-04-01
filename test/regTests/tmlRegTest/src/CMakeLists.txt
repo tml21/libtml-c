@@ -168,16 +168,14 @@ set	 (TEST_SOURCES_HEADER
 	  "TestingForReturns.h"
 	  "TestingProcess.h"
 	  "TmlCore.h"
-	  "TmlList.h"
-	  "tmlrt_SendingCommands.h"
+	  "tmlrt_MultipleListeners.h"
 	  "tmlrt_Utils.h")
 set  (TEST_SOURCES
 	  "tmlrt.cpp"
 	  "TestingForReturns.cpp"
 	  "TestingProcess.cpp"
 	  "TmlCore.cpp"
-	  "TmlList.cpp"
-	  "tmlrt_SendingCommands.cpp"
+	  "tmlrt_MultipleListeners.cpp"
 	  "tmlrt_Utils.cpp")
       
 add_executable(${TARGETNAME_LOCAL} 

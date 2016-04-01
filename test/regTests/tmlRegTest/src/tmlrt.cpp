@@ -48,10 +48,9 @@
 using namespace std;
 #include <tmlCore.h>
 #include <sidex.h>
-#include "tmlrt_SendingCommands.h"
-//#include "tmlrt_LoadBalancing.h"
 #include "tmlrt_Utils.h"
 #include "TestingProcess.h"
+#include "tmlrt_MultipleListeners.h"
 
 
 /** @brief Main function, accepts command line parameters
@@ -64,9 +63,23 @@ using namespace std;
 #else //LINUX
     int _tmain(int argc, char* argv[])
 #endif
-{	
-	//testing to send messages
-	simpleTestTmlSendSyncMessage();
+{
+	//init windows-mutex
+	initializeMutex();
+
+	simpleTestTmlMultiListenerSendSyncMessage();
+	simpleTestTmlMultiListenerSendAsyncMessage();
+	
+	simpleTestTmlMultiListener();
+	testTmlCoreListenerClose();
+	testTmlCoreListenerGetSetEnabled();
+	testTmlCoreGetListenerCountErrorCodes();
+	testTmlCoreGetListenerErrorCodes();
+	testTmlListenerGetSetEnabledForErrorCodes();
+	testTmlCoreListenerCreateCloseErrorCodes();
+	testTmlMultiListenerLoadBalancingMessages();
+	testTmlMultiListenerEventMessages();
 
     return 0;
+
 }

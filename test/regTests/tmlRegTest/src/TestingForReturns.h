@@ -43,16 +43,15 @@ using namespace std;
 #include <sidex.h>
 #include <tmlCore.h>
 
-class TestingForReturns {	//TODO auﬂer mit namen sehr zufrieden
+class TestingForReturns {
 public:
-	bool testOK;
-	TML_INT32 iErr;
-	SIDEX_TCHAR* errorLocationOutput;
+	TestingForReturns();
+	bool m_testOK;
+	TML_INT32 m_iErr;
+	SIDEX_TCHAR* m_errorLocationOutput;
 	void errorOutput();
 	void checkForExpectedReturnCode(TML_INT32 expectedReturnCode);
 	void checkForSuccess();
 };
-
-
 
 #endif	//TESTINGFORRETURNS_H
