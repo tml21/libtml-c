@@ -29,7 +29,7 @@
 #
 #    wobe-systems GmbH
 #    support@libtml.org
-# 
+#
 # Contributors:
 #    wobe-systems GmbH
 
@@ -70,7 +70,8 @@ set  (SIDEX_SOURCES_HEADER sidexBoolean.h
 
 set (SIDEX_COMMON_SOURCES  ${COMMON_SRC_PATH}/unicode.cpp )
                     
-set (SIDEX_SOURCES  sidex.cpp
+set (SIDEX_SOURCES  sidex.rc
+                    sidex.cpp
                     sidexBoolean.cpp
                     sidexCom.cpp
                     sidexDateTime.cpp
@@ -128,6 +129,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 ## Windows 32 bit
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
+  set_source_files_properties(sidex.rc PROPERTIES LANGUAGE RC)
+
   set(AXLLIB libaxl.lib)
   set(PREPROCESSOR_DEF -DSIDEX_EXPORTS)
   
@@ -142,6 +145,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
 ## Windows 64 bit
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
+  set_source_files_properties(sidex.rc PROPERTIES LANGUAGE RC)
+
   set(AXLLIB libaxl.lib)
   set(PREPROCESSOR_DEF -DSIDEX_EXPORTS)
   

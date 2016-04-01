@@ -42,13 +42,39 @@
 
 #define MAX_ADDRESSES 10
 
+//------------------------------------------------------------------------------
+
+class TmlConnectionTester;
+
+//------------------------------------------------------------------------------
+
+enum cbType_t { cbtOnConnect = 0, cbtOnDisconnect, cbt_TypeCount };
+SIDEX_TCHAR* cbt_Name[];
+
+struct cbData_Connection_t
+{
+  TmlConnectionTester* tester;
+  cbType_t             type;
+  int                  iCore;
+  int                  iValue;
+  SIDEX_TCHAR*         sValue;
+  bool                 bDeleteString;
+};
+
+//------------------------------------------------------------------------------
+
 class TmlConnectionTester : public TmlTester
 {
 private:
+  int  m_cbLog_Connection;
+  int  m_cbLog_Disconnection;
 
 protected:
-  void _prepare();
-  void _cleanup();
+  virtual void _prepare();
+  virtual void _cleanup();
+
+public:
+  void OnConnectionCallback(cbData_Connection_t* cbData);
 
 public:
   TmlConnectionTester(SIDEX_TCHAR* testProcessName = NULL);
@@ -62,11 +88,11 @@ public:
   bool testGetConnectionCount();
   bool testGetConnection_Core();
   bool testGetConnectionByAddress();
+  bool testSetOnConnect();
+  bool testSetOnDisconnect();
   bool testSendSync();
   bool testSendAsync();
   bool testGetConnection_Cmd();
-  bool testSetOnConnect();
-  bool testSetOnDisconnect();
 };
 
 #endif  // TML_CONNECTION_TESTER_H

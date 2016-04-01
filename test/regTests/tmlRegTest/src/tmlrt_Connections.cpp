@@ -65,11 +65,11 @@ bool testTmlConnections()
       if(!tester->testGetConnectionCount()) break;
       if(!tester->testGetConnection_Core()) break;
       if(!tester->testGetConnectionByAddress()) break;
+//      if(!tester->testSetOnConnect()) break;
+//      if(!tester->testSetOnDisconnect()) break;
 //      if(!tester->testSendSync()) break;
 //      if(!tester->testSendAsync()) break;
 //      if(!tester->testGetConnection_Cmd()) break;
-//      if(!tester->testSetOnConnect()) break;
-//      if(!tester->testSetOnDisconnect()) break;
     }
     while(false);
 

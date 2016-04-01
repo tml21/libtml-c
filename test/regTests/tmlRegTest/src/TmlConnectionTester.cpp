@@ -38,9 +38,53 @@
 #include "TmlConnectionTester.h"
 #include "TestParams.h"
 
+//------------------------------------------------------------------------------
+
+SIDEX_TCHAR* cbt_Name[] = { tmlrtT("OnConnect"), tmlrtT("OnDisconnect") };
+
+cbData_Connection_t cbData_Connection[MAX_CORES][cbt_TypeCount];
+
+//------------------------------------------------------------------------------
+
+void CallbackHandler_Connection(TML_CONNECTION_HANDLE connectionHandle, TML_POINTER pCBData)
+{
+  cbData_Connection_t* data = (cbData_Connection_t*)pCBData;
+  if(data)
+  {
+    if(data->tester)
+    {
+      data->tester->OnConnectionCallback(data);
+    }
+    else wcout << "TmlCallbackHandler_Connection: no Tester!" << endl;
+
+    if(data->bDeleteString) DELETE_STR(data->sValue);
+  }
+  else wcout << "TmlCallbackHandler_Connection: no CBData!" << endl;
+}
+
+cbData_Connection_t* prepareCallbackData_Connection(TmlConnectionTester* tester, int iCore, cbType_t type)
+{
+  cbData_Connection_t* result = NULL;
+  if((iCore >= 0) && (iCore < MAX_CORES) && (type >= 0) && (type < cbt_TypeCount))
+  {
+    result = &cbData_Connection[iCore][type];
+    result->tester        = tester;
+    result->type          = type;
+    result->iCore         = iCore;
+    result->iValue        = 0;
+    result->sValue        = NULL;
+    result->bDeleteString = false;
+  }
+  return(result);
+}
+
+//------------------------------------------------------------------------------
+
 TmlConnectionTester::TmlConnectionTester(SIDEX_TCHAR* testProcessName)
                    : TmlTester(testProcessName)
 {
+  m_cbLog_Connection    = 0;
+  m_cbLog_Disconnection = 0;
 }
 
 TmlConnectionTester::~TmlConnectionTester()
@@ -112,6 +156,7 @@ bool TmlConnectionTester::testConnect()
 
       checkConnectionCount(0, 0, tmlrtT(" (after InvalidAddress)"));
 
+      // Test with invalid port...
       hConnection1 = TML_HANDLE_TYPE_NULL;
       m_iErr = tml_Core_Connect(getCore(0), tmlrtT("127.0.0.1:Wrong"), &hConnection1);
       checkForExpectedReturnCode(TML_ERR_NET_BINDING, tmlrtT("tml_Core_Connect(InvalidPort)"));
@@ -978,6 +1023,268 @@ bool TmlConnectionTester::testGetConnectionByAddress()
   return(m_testOK);
 }
 
+void TmlConnectionTester::OnConnectionCallback(cbData_Connection_t* cbData)
+{
+  if(cbData)
+  {
+    switch(cbData->type)
+    {
+      case cbtOnConnect:    m_cbLog_Connection    |= cbData->iValue;
+      case cbtOnDisconnect: m_cbLog_Disconnection |= cbData->iValue;
+    }
+
+    wcout << "TmlCallbackHandler_Connection: Callback " << cbt_Name[cbData->type] << " (ID = " << cbData->iValue << ") ";
+    if(cbData->sValue) wcout << cbData->sValue;
+    wcout << endl;
+  }
+}
+
+bool TmlConnectionTester::testSetOnConnect()
+{
+  setTestSectionName(tmlrtT("testSetOnConnect"));
+  messageOutput(S_START);
+  reset();
+
+  int n = TestParams->getNetworkCardCount();
+  if(n > 0)
+  {
+    int          iPort     = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard     = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress1 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress2 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    DELETE_STR(sCard);
+
+    cbData_Connection_t* pData1 = prepareCallbackData_Connection(this, 0, cbtOnConnect);
+    cbData_Connection_t* pData2 = prepareCallbackData_Connection(this, 1, cbtOnConnect);
+
+    if(pData1 && pData2 && createCore(0) && createCore(1))
+    {
+      // Test with invalid core handle...
+      m_iErr = tml_Core_Set_OnConnect(TML_HANDLE_TYPE_NULL, &CallbackHandler_Connection, pData1);
+      checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Set_OnConnect(NoCoreHandle)"));
+
+
+      m_iErr = tml_Profile_Register(getCore(1), IO_PROFILE);
+      if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), IO_PROFILE, tmlrtT(")")), true))
+      {
+        if(createListener(1, 0, sAddress1))
+        {
+          if(startListener(1, 0))
+          {
+            if(createListener(1, 1, sAddress2))
+            {
+              if(startListener(1, 1))
+              {
+                // Register OnConnection callbacks...
+                m_iErr = tml_Core_Set_OnConnect(getCore(0), &CallbackHandler_Connection, pData1);
+                if(checkForSuccess(tmlrtT("tml_Core_Set_OnConnect(Core0, CB, Data1)")))
+                {
+                  m_iErr = tml_Core_Set_OnConnect(getCore(1), &CallbackHandler_Connection, pData2);
+                  if(checkForSuccess(tmlrtT("tml_Core_Set_OnConnect(Core1, CB, Data2)")))
+                  {
+                    m_cbLog_Connection = 0;
+
+                    pData1->iValue = 1; pData1->sValue = tmlrtT("Data1");
+                    pData2->iValue = 2; pData2->sValue = tmlrtT("Data2");
+
+                    // Test with two connections...
+                    TML_CONNECTION_HANDLE hConnection1 = TML_HANDLE_TYPE_NULL;
+                    m_iErr = tml_Core_Connect(getCore(0), sAddress1, &hConnection1);
+                    if(checkForSuccess(tmlrtT("tml_Core_Connect(Core0, Address1)")))
+                    {
+                      TML_CONNECTION_HANDLE hConnection2 = TML_HANDLE_TYPE_NULL;
+                      m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
+                      if(checkForSuccess(tmlrtT("tml_Core_Connect(Core0, Address2)")))
+                      {
+                        // send a command to get receiver triggered...
+                        TML_COMMAND_HANDLE hCommand = TML_HANDLE_TYPE_NULL;
+                        m_iErr = tml_Cmd_Create(&hCommand);
+                        checkForSuccess(tmlrtT("tml_Cmd_Create()"));
+                        tml_Connection_SendSync(hConnection1, IO_PROFILE, hCommand, 2000);
+                        checkForSuccess(tmlrt_cat(tmlrtT("tml_Connection_SendSync(Connection1, "), IO_PROFILE, tmlrtT(")")), true);
+                        tml_Cmd_Free(&hCommand);
+                        checkForSuccess(tmlrtT("tml_Cmd_Free()"));
+                        hCommand = TML_HANDLE_TYPE_NULL;
+
+                        // Wait a little bit to get callbacks fired...
+                        Sleep(500);
+                        if(checkForValue(tmlrtT("Received callback log"), 3, m_cbLog_Connection, false))
+                        {
+                          messageOutput(tmlrtT("Test culmination reached!"));
+                        }
+
+                        // Close connection 2...
+                        m_iErr = tml_Connection_Close(&hConnection2);
+                        checkForSuccess(tmlrtT("tml_Connection_Close(Connection2)"));
+                      }
+                      // Close connection 1...
+                      m_iErr = tml_Connection_Close(&hConnection1);
+                      checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
+                    }
+
+                    // Unregister callbacks...
+                    m_iErr = tml_Core_Set_OnConnect(getCore(1), NULL, NULL);
+                    checkForSuccess(tmlrtT("tml_Core_Set_OnConnect(Core1, NULL, NULL)"));
+                  }
+                  m_iErr = tml_Core_Set_OnConnect(getCore(0), NULL, NULL);
+                  checkForSuccess(tmlrtT("tml_Core_Set_OnConnect(Core0, NULL, NULL)"));
+                }
+
+                stopListener(1, 1);
+
+              } // startListener 1, 1
+
+              deleteListener(1, 1);
+
+            } // createListener 1, 1, addr 2
+
+            stopListener(1, 0);
+
+          } // startListener 1, 0
+
+          deleteListener(1, 0);
+
+        } // createListener 1, 0, addr 1
+      } // register profile on core 0
+    } // createCore 0 and 1
+
+    deleteCore(1);
+    deleteCore(0);
+
+    DELETE_STR(sAddress2);
+    DELETE_STR(sAddress1);
+
+  } // network card count > 0
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+bool TmlConnectionTester::testSetOnDisconnect()
+{
+  setTestSectionName(tmlrtT("testSetOnDisconnect"));
+  messageOutput(S_START);
+  reset();
+
+  int n = TestParams->getNetworkCardCount();
+  if(n > 0)
+  {
+    int          iPort     = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard     = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress1 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress2 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort++), 4);
+    DELETE_STR(sCard);
+
+    cbData_Connection_t* pData1 = prepareCallbackData_Connection(this, 0, cbtOnDisconnect);
+    cbData_Connection_t* pData2 = prepareCallbackData_Connection(this, 1, cbtOnDisconnect);
+
+    if(pData1 && pData2 && createCore(0) && createCore(1))
+    {
+      // Test with invalid core handle...
+      m_iErr = tml_Core_Set_OnDisconnect(TML_HANDLE_TYPE_NULL, &CallbackHandler_Connection, pData1);
+      checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Set_OnDisconnect(NoCoreHandle)"));
+
+
+      m_iErr = tml_Profile_Register(getCore(1), IO_PROFILE);
+      if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), IO_PROFILE, tmlrtT(")")), true))
+      {
+        if(createListener(1, 0, sAddress1))
+        {
+          if(startListener(1, 0))
+          {
+            if(createListener(1, 1, sAddress2))
+            {
+              if(startListener(1, 1))
+              {
+                // Register OnDisconnection callbacks...
+                m_iErr = tml_Core_Set_OnDisconnect(getCore(0), &CallbackHandler_Connection, pData1);
+                if(checkForSuccess(tmlrtT("tml_Core_Set_OnDisconnect(Core0, CB, Data1)")))
+                {
+                  m_iErr = tml_Core_Set_OnDisconnect(getCore(1), &CallbackHandler_Connection, pData2);
+                  if(checkForSuccess(tmlrtT("tml_Core_Set_OnDisconnect(Core1, CB, Data2)")))
+                  {
+                    m_cbLog_Disconnection = 0;
+
+                    pData1->iValue = 1; pData1->sValue = tmlrtT("Data1");
+                    pData2->iValue = 2; pData2->sValue = tmlrtT("Data2");
+
+                    // Test with two connections...
+                    TML_CONNECTION_HANDLE hConnection1 = TML_HANDLE_TYPE_NULL;
+                    m_iErr = tml_Core_Connect(getCore(0), sAddress1, &hConnection1);
+                    if(checkForSuccess(tmlrtT("tml_Core_Connect(Core0, Address1)")))
+                    {
+                      TML_CONNECTION_HANDLE hConnection2 = TML_HANDLE_TYPE_NULL;
+                      m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
+                      if(checkForSuccess(tmlrtT("tml_Core_Connect(Core0, Address2)")))
+                      {
+                        // send a command to get receiver triggered...
+                        TML_COMMAND_HANDLE hCommand = TML_HANDLE_TYPE_NULL;
+                        m_iErr = tml_Cmd_Create(&hCommand);
+                        checkForSuccess(tmlrtT("tml_Cmd_Create()"));
+                        tml_Connection_SendSync(hConnection1, IO_PROFILE, hCommand, 2000);
+                        checkForSuccess(tmlrt_cat(tmlrtT("tml_Connection_SendSync(Connection1, "), IO_PROFILE, tmlrtT(")")), true);
+                        tml_Cmd_Free(&hCommand);
+                        checkForSuccess(tmlrtT("tml_Cmd_Free()"));
+                        hCommand = TML_HANDLE_TYPE_NULL;
+
+                        // Close connection 2...
+                        m_iErr = tml_Connection_Close(&hConnection2);
+                        checkForSuccess(tmlrtT("tml_Connection_Close(Connection2)"));
+                      }
+                      // Close connection 1...
+                      m_iErr = tml_Connection_Close(&hConnection1);
+                      checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
+
+                      // Wait a little bit to get callbacks fired...
+                      Sleep(500);
+                      if(checkForValue(tmlrtT("Received callback log"), 3, m_cbLog_Disconnection, false))
+                      {
+                        messageOutput(tmlrtT("Test culmination reached!"));
+                      }
+                    }
+
+                    // Unregister callbacks...
+                    m_iErr = tml_Core_Set_OnDisconnect(getCore(1), NULL, NULL);
+                    checkForSuccess(tmlrtT("tml_Core_Set_OnDisconnect(Core1, NULL, NULL)"));
+                  }
+                  m_iErr = tml_Core_Set_OnDisconnect(getCore(0), NULL, NULL);
+                  checkForSuccess(tmlrtT("tml_Core_Set_OnDisconnect(Core0, NULL, NULL)"));
+                }
+
+                stopListener(1, 1);
+
+              } // startListener 1, 1
+
+              deleteListener(1, 1);
+
+            } // createListener 1, 1, addr 2
+
+            stopListener(1, 0);
+
+          } // startListener 1, 0
+
+          deleteListener(1, 0);
+
+        } // createListener 1, 0, addr 1
+      } // register profile on core 0
+    } // createCore 0 and 1
+
+    deleteCore(1);
+    deleteCore(0);
+
+    DELETE_STR(sAddress2);
+    DELETE_STR(sAddress1);
+
+  } // network card count > 0
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
 bool TmlConnectionTester::testSendSync()
 {
   setTestSectionName(tmlrtT("testSendSync"));
@@ -1007,32 +1314,6 @@ bool TmlConnectionTester::testSendAsync()
 bool TmlConnectionTester::testGetConnection_Cmd()
 {
   setTestSectionName(tmlrtT("testGetConnection_Cmd"));
-  messageOutput(S_START);
-  reset();
-
-
-  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
-  messageOutput();
-  setTestSectionName();
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testSetOnConnect()
-{
-  setTestSectionName(tmlrtT("testSetOnConnect"));
-  messageOutput(S_START);
-  reset();
-
-
-  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
-  messageOutput();
-  setTestSectionName();
-  return(m_testOK);
-}
-
-bool TmlConnectionTester::testSetOnDisconnect()
-{
-  setTestSectionName(tmlrtT("testSetOnDisconnect"));
   messageOutput(S_START);
   reset();
 
