@@ -2129,7 +2129,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_StatusReply(TML_COMMAND_
  * @ingroup tmlCallbacks
  * @brief   Register command ready handler.
  *
- * The command ready handler is called if an asynchronous command receives its final reply or if an error occurred.
+ * The command ready handler is called if a command receives its final reply or if an error occurred.
  *
  * @param   tmlhandle  TML command handle (TML_COMMAND_HANDLE)
  * @param   pCBFunc    handler function or NULL (deregistration of previously registered handler)
@@ -2137,7 +2137,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_StatusReply(TML_COMMAND_
  *
  * @returns  TML_SUCCESS in case of success
  *
- * @see tml_Send_AsyncMessage(), tml_Bal_Send_AsyncMessage(), TML_ON_COMMAND_READY_CB_FUNC(), tml_Cmd_Registered_CommandReady()
+ * @see tml_Send_AsyncMessage(), tml_Connection_SendAsync(), tml_Bal_Send_AsyncMessage(), TML_ON_COMMAND_READY_CB_FUNC(), tml_Cmd_Registered_CommandReady()
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_CommandReady(TML_COMMAND_HANDLE tmlhandle, TML_ON_COMMAND_READY_CB_FUNC pCBFunc, TML_POINTER pCBData);
 
@@ -3474,6 +3474,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreH
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_INFORMATION_UNDEFINED  a listener for the requested network binding address don't exist
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress(TML_CORE_HANDLE coreHandle, TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
@@ -3677,6 +3678,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE cor
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INFORMATION_UNDEFINED  a connection for the requested network address don't exist<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress(TML_CORE_HANDLE coreHandle, TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
