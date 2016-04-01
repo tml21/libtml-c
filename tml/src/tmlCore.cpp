@@ -6037,7 +6037,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress(TML_CORE_HAN
  * wchar_t* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_X(TML_CORE_HANDLE coreHandle, wchar_t* sAddress, TML_LISTENER_HANDLE* listenerHandle){
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   TML_INT32 iLengthUtf8;
 
   char* utf8Address = UTF32toUTF8((wchar_t*)sAddress, &iLengthUtf8);
@@ -6056,7 +6056,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_X(TML_CORE_H
  * char16_t* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_W(TML_CORE_HANDLE coreHandle, char16_t* sAddress, TML_LISTENER_HANDLE* listenerHandle){
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   TML_INT32 iLengthUtf8;
 
   char* utf8Address = UTF16toUTF8((wchar_t*)sAddress, &iLengthUtf8);
@@ -6407,7 +6407,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNE
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bReconnect, TML_BOOL* bConnected){
   TML_INT32 iRet = TML_SUCCESS;
 
-  *bConnected = TML_FALSE;
   if (TML_HANDLE_TYPE_NULL == connectionHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
@@ -6417,6 +6416,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HAND
     }
     else{
       try{
+        *bConnected = TML_FALSE;
         TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
         if (TML_HANDLE_TYPE_NULL == coreHandle){
           iRet = TML_ERR_MISSING_OBJ;
@@ -6501,7 +6501,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress(TML_CORE_H
  * wchar_t* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_X(TML_CORE_HANDLE coreHandle, wchar_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   TML_INT32 iLengthUtf8;
 
   char* utf8Address = UTF32toUTF8((wchar_t*)sAddress, &iLengthUtf8);
@@ -6520,7 +6520,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_X(TML_CORE
  * char16_t* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_W(TML_CORE_HANDLE coreHandle, char16_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   TML_INT32 iLengthUtf8;
 
   char* utf8Address = UTF16toUTF8((wchar_t*)sAddress, &iLengthUtf8);
