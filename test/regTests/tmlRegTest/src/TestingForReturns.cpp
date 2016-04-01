@@ -42,7 +42,7 @@ using namespace std;
 #include "tmlrt_Utils.h"
 
 void TestingForReturns::errorOutput() {
-	tmlrt_cout << "Test failed at " << m_errorLocationOutput << " with ErrorCode " << m_iErr << endl;
+	wcout << "Test failed at " << m_errorLocationOutput << " with ErrorCode " << m_iErr << endl;
 	m_testOK = false;
 }
 
@@ -61,6 +61,6 @@ void TestingForReturns::checkForSuccess() {
 TestingForReturns::TestingForReturns() {
 	m_testOK = true;
 	m_iErr = 0;
-	m_errorLocationOutput = tmlrtT("");
+	m_errorLocationOutput = NULL;
 }
 

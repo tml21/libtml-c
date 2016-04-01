@@ -168,7 +168,6 @@ set	 (TEST_SOURCES_HEADER
 	  "TestingForReturns.h"
 	  "TestingProcess.h"
 	  "TmlCore.h"
-	  "TmlList.h"
 	  "tmlrt_MultipleListeners.h"
 	  "tmlrt_Utils.h")
 set  (TEST_SOURCES
@@ -176,7 +175,6 @@ set  (TEST_SOURCES
 	  "TestingForReturns.cpp"
 	  "TestingProcess.cpp"
 	  "TmlCore.cpp"
-	  "TmlList.cpp"
 	  "tmlrt_MultipleListeners.cpp"
 	  "tmlrt_Utils.cpp")
       

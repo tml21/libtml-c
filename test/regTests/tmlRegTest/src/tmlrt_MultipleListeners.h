@@ -45,6 +45,10 @@ using namespace std;
 
 void simpleTestTmlMultiListenerSendSyncMessage();
 
+void simpleTestTmlMultiListenerSendAsyncMessage();
+
+void testTmlMultiListenerLoadBalancingMessages();
+
 void simpleTestTmlMultiListener();
 
 void testTmlCoreListenerClose();
@@ -58,6 +62,10 @@ void testTmlCoreGetListenerCountErrorCodes();
 void testTmlCoreGetListenerErrorCodes();
 
 void testTmlListenerGetSetEnabledForErrorCodes();
+
+void testTmlMultiListenerEventMessages();
+
+void testTmlMultiListenerStreamCommunication();
 
 
 

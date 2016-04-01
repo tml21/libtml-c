@@ -50,17 +50,65 @@ using namespace std;
 * 
 * A TestingProcess is started and the Listener- and SenderSides are initialized. 
 * The ListenerSide has five Listeners listening to different Ports with one Profile.
-* Then five Commands are initialzed and send to the different Ports. Afterwards the Commands
+* Then five Commands are initialized and send to the different Ports. Afterwards the Commands
 * and TMLCores are freed.
 */
 void simpleTestTmlMultiListenerSendSyncMessage() {
-	TestingProcess MultiListenerSendSyncMessage = TestingProcess(tmlrtT("MultiListenerSendSyncMessage"));
-	MultiListenerSendSyncMessage.defaultListenerInit();
-	MultiListenerSendSyncMessage.initSenderSide();
+	TestingProcess multiListenerSendSyncMessage = TestingProcess(tmlrtT("MultiListenerSendSyncMessage"));
+	multiListenerSendSyncMessage.defaultListenerInit();
+	multiListenerSendSyncMessage.initSenderSide();
 
-	MultiListenerSendSyncMessage.sendArbitraryCmds();
-	MultiListenerSendSyncMessage.freeCmds();
-	MultiListenerSendSyncMessage.freeTmlCores();
+	multiListenerSendSyncMessage.sendArbitraryCmds(true);
+	multiListenerSendSyncMessage.freeCmds();
+	multiListenerSendSyncMessage.freeTmlCores();
+}
+
+/** @ingroup Test_Multiple_Listeners
+* @brief Testing a simple async communication between a sender and listeners
+*
+* A TestingProcess is started and the Listener- and SenderSides are initialized.
+* The ListenerSide has five Listeners listening to different Ports with one Profile.
+* Then five Commands are initialized and send asynchronously to the different Ports. Afterwards the Commands
+* and TMLCores are freed.
+*/
+void simpleTestTmlMultiListenerSendAsyncMessage() {
+	TestingProcess multiListenerSendAsyncMessage = TestingProcess(tmlrtT("multiListenerSendAsyncMessage"));
+	multiListenerSendAsyncMessage.defaultListenerInit();
+	multiListenerSendAsyncMessage.initSenderSide();
+
+	multiListenerSendAsyncMessage.sendArbitraryCmds(false);
+
+	multiListenerSendAsyncMessage.waitForAsyncReplies();
+	multiListenerSendAsyncMessage.freeTmlCores();
+}
+
+/** @ingroup Test_Multiple_Listeners
+* @brief Testing a simple Loadbalanced communication between a sender and listeners
+*
+* A TestingProcess is started and the Listener- and SenderSides are initialized.
+* The ListenerSide has five Listeners listening to different Ports with one Profile.
+* Then some listeners are subscribed as loadbalanced listeners and some subscribe themselves
+* as laodbalanced listeners. Afterwards five commands are created and send to the profile,
+* some are send synchronously, some asynchronously.
+* The commands and TMLCores are freed afterwards.
+*/
+void testTmlMultiListenerLoadBalancingMessages() {
+	TestingProcess multiListenerLoadBalancingMessages = TestingProcess(tmlrtT("multiListenerLoadBalancingMessages"));
+	multiListenerLoadBalancingMessages.defaultListenerInit();
+	multiListenerLoadBalancingMessages.initSenderSide();
+
+	bool loadbalancing = true;
+	bool synchronous = true;
+	//mixed Subscribing and SubscriptionRequests
+	multiListenerLoadBalancingMessages.subscribeListenersForLoadBalancingOrEvents(loadbalancing);
+
+	//send cmds
+	multiListenerLoadBalancingMessages.sendArbitraryLoadBalancedCmds(!synchronous);
+	multiListenerLoadBalancingMessages.sendArbitraryLoadBalancedCmds(synchronous);
+
+	multiListenerLoadBalancingMessages.freeCmds();
+	multiListenerLoadBalancingMessages.waitForAsyncReplies();
+	multiListenerLoadBalancingMessages.freeTmlCores();
 }
 
 /** @ingroup Test_Multiple_Listeners
@@ -99,6 +147,7 @@ void testTmlCoreListenerClose() {
 	testListenerClose.initSenderSide();
 
 	testListenerClose.checkForDecreasedListenersAfterOneIsClosed();
+	//here lies a race condition, just happens on linux
 	testListenerClose.freeTmlCores();
 }
 
@@ -109,16 +158,36 @@ void testTmlCoreListenerClose() {
 * The ListenerSide has five Listeners listening to different Ports with one Profile.
 * Then a Listener of the ListenerSide is disabled and it is checked, if it
 * really is disabled. Also it is checked whether the amount of Listeners changed, because it should not.
+* Then async and sync cmds are send, expecting errors. Afterwards the listener is enabled again and 
+* sync and async cmds are send.
 * Afterwards the TMLCores of both Sides are freed.
 */
 void testTmlCoreListenerGetSetEnabled() {
+	TML_BOOL enable = TML_FALSE;
 	TestingProcess testListenerGetSetEnabled = TestingProcess(tmlrtT("testListenerGetSetEnabled"));
 	testListenerGetSetEnabled.defaultListenerInit();
 	testListenerGetSetEnabled.initSenderSide();
 
-	testListenerGetSetEnabled.disableListener(3);
+	//disable a listener
+	testListenerGetSetEnabled.disEnableListener(3, enable);
 	testListenerGetSetEnabled.checkIfListenerDisabled(3);
+
 	testListenerGetSetEnabled.checkListenerCount(5);
+	//send async and sync cmds
+	testListenerGetSetEnabled.checkAsyncSyncMessagesForErrors(3);
+	testListenerGetSetEnabled.freeCmds();
+	testListenerGetSetEnabled.waitForAsyncReplies();
+	//enable listener again
+	enable = TML_TRUE;
+	testListenerGetSetEnabled.disEnableListener(3, enable);
+
+	//send another sync and async cmd
+	bool synchronous = true;
+	testListenerGetSetEnabled.sendArbitraryCmds(!synchronous);
+	testListenerGetSetEnabled.sendArbitraryCmds(synchronous);
+	testListenerGetSetEnabled.freeCmds();
+	
+	testListenerGetSetEnabled.waitForAsyncReplies();
 	testListenerGetSetEnabled.freeTmlCores();
 }
 
@@ -147,6 +216,11 @@ void testTmlCoreListenerCreateCloseErrorCodes() {
 	apiReturns = tml_Core_Listener_Create(NULL, address, &listenerHandle);
 	testListenerCreateClose.m_iErr = apiReturns;
 	testListenerCreateClose.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	tmlCore = testListenerCreateClose.m_coreListenerSide;
+	apiReturns = tml_Core_Listener_Create(tmlCore->getCore(), tmlrtT("21"), &listenerHandle);
+	testListenerCreateClose.m_iErr = apiReturns;
+	testListenerCreateClose.checkForExpectedReturnCode(TML_ERR_NET_BINDING);
 
 	apiReturns = tml_Listener_Close(&listenerHandle);
 	testListenerCreateClose.m_iErr = apiReturns;
@@ -239,9 +313,6 @@ void testTmlCoreGetListenerErrorCodes() {
 	testCoreGetListener.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
 	tmlCore = testCoreGetListener.m_coreSenderSide;
-	apiReturns = tml_Core_Get_Listener(tmlCore->getCore(), NULL, &listenerHandle);
-	testCoreGetListener.m_iErr = apiReturns;
-	testCoreGetListener.checkForExpectedReturnCode(TML_ERR_INFORMATION_UNDEFINED);
 
 	apiReturns = tml_Core_Get_Listener(tmlCore->getCore(), indexOutOfBounds, &listenerHandle);
 	testCoreGetListener.m_iErr = apiReturns;
@@ -259,7 +330,6 @@ void testTmlCoreGetListenerErrorCodes() {
 * whether it returns the expected error code. The same is done with tml_Listener_Get_Enabled.
 * Afterwards the TMLCores of both Sides are freed.
 */
-//check whether tml_Listener_Set_Enabled and Get_Enabled return expected error codes
 void testTmlListenerGetSetEnabledForErrorCodes() {
 	TML_INT32 apiReturns = 0;
 	TML_BOOL listenerEnabled = true;
@@ -277,4 +347,28 @@ void testTmlListenerGetSetEnabledForErrorCodes() {
 	testListenerGetListener.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
 	testListenerGetListener.freeTmlCores();
+}
+
+/** @ingroup Test_Multiple_Listeners
+* @brief Testing a simple Event communication.
+*
+* A TestingProcess is started and the Listener- and SenderSides are initialized.
+* The ListenerSide has five Listeners listening to different Ports with one Profile.
+* Then the listeners are subscribed for all cmd-events. This is followed by sending all cmds
+* as events.
+* Afterwards the TMLCores of both Sides are freed.
+*/
+void testTmlMultiListenerEventMessages() {
+	bool loadbalancing = false;
+	TestingProcess multiListenerEventMessages = TestingProcess(tmlrtT("multiListenerEventMessages"));
+	multiListenerEventMessages.defaultListenerInit();
+	multiListenerEventMessages.initSenderSide();
+
+	//mixed Subscribing and SubscriptionRequests
+	multiListenerEventMessages.subscribeListenersForLoadBalancingOrEvents(loadbalancing);	
+	multiListenerEventMessages.sendEventMessages();
+
+	TmlSleep(5000);	//important to let the listeners catch up their queue, otherwise error 45
+	multiListenerEventMessages.freeCmds();
+	multiListenerEventMessages.freeTmlCores();
 }

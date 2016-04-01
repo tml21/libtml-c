@@ -63,15 +63,23 @@ using namespace std;
 #else //LINUX
     int _tmain(int argc, char* argv[])
 #endif
-{	
-	simpleTestTmlMultiListenerSendSyncMessage();	
+{
+	//init windows-mutex
+	initializeMutex();
+
+	simpleTestTmlMultiListenerSendSyncMessage();
+	simpleTestTmlMultiListenerSendAsyncMessage();
+	
 	simpleTestTmlMultiListener();
 	testTmlCoreListenerClose();
 	testTmlCoreListenerGetSetEnabled();
-	testTmlCoreListenerCreateCloseErrorCodes();
 	testTmlCoreGetListenerCountErrorCodes();
 	testTmlCoreGetListenerErrorCodes();
 	testTmlListenerGetSetEnabledForErrorCodes();
+	testTmlCoreListenerCreateCloseErrorCodes();
+	testTmlMultiListenerLoadBalancingMessages();
+	testTmlMultiListenerEventMessages();
 
     return 0;
+
 }
