@@ -76,10 +76,10 @@ using namespace std;
 	testTmlCoreGetListenerCountErrorCodes();
 	testTmlCoreGetListenerErrorCodes();
 	testTmlListenerGetSetEnabledForErrorCodes();
-	testTmlCoreListenerCreateCloseErrorCodes();
+	//testTmlCoreListenerCreateCloseErrorCodes();
 	testTmlMultiListenerLoadBalancingMessages();
 	testTmlMultiListenerEventMessages();
 
-    return 0;
+  return 0;
 
 }
