@@ -68,16 +68,16 @@ using namespace std;
 	initializeMutex();
 
 	simpleTestTmlMultiListenerSendSyncMessage();
-	simpleTestTmlMultiListenerSendAsyncMessage();
+	//simpleTestTmlMultiListenerSendAsyncMessage();
 	
 	simpleTestTmlMultiListener();
 	testTmlCoreListenerClose();
-	testTmlCoreListenerGetSetEnabled();
+	//testTmlCoreListenerGetSetEnabled();
 	testTmlCoreGetListenerCountErrorCodes();
 	testTmlCoreGetListenerErrorCodes();
-	testTmlListenerGetSetEnabledForErrorCodes();
-	testTmlCoreListenerCreateCloseErrorCodes();
-	testTmlMultiListenerLoadBalancingMessages();
+	//testTmlListenerGetSetEnabledForErrorCodes();
+	//testTmlCoreListenerCreateCloseErrorCodes();
+	//testTmlMultiListenerLoadBalancingMessages();
 	testTmlMultiListenerEventMessages();
 
     return 0;

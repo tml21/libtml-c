@@ -213,7 +213,7 @@ void testTmlCoreListenerCreateCloseErrorCodes() {
 	testListenerCreateClose.defaultListenerInit();
 	testListenerCreateClose.initSenderSide();
 
-	apiReturns = tml_Core_Listener_Create(NULL, address, &listenerHandle);
+	apiReturns = tml_Core_Listener_Create(TML_HANDLE_TYPE_NULL, address, &listenerHandle);
 	testListenerCreateClose.m_iErr = apiReturns;
 	testListenerCreateClose.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
@@ -254,7 +254,7 @@ void testTmlListenerGetAddressErrorCodes() {
 	testListenerGetAddress.initSenderSide();
 	testListenerGetAddress.defaultListenerInit();
 
-	apiReturns = tml_Listener_Get_Address(NULL, &address);
+	apiReturns = tml_Listener_Get_Address(TML_HANDLE_TYPE_NULL, &address);
 	testListenerGetAddress.m_iErr = apiReturns;
 	testListenerGetAddress.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
@@ -278,7 +278,7 @@ void testTmlCoreGetListenerCountErrorCodes() {
 	testCoreGetListenerCount.initSenderSide();
 	testCoreGetListenerCount.defaultListenerInit();
 
-	apiReturns = tml_Core_Get_ListenerCount(NULL, &count);
+	apiReturns = tml_Core_Get_ListenerCount(TML_HANDLE_TYPE_NULL, &count);
 	testCoreGetListenerCount.m_iErr = apiReturns;
 	testCoreGetListenerCount.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
@@ -308,7 +308,7 @@ void testTmlCoreGetListenerErrorCodes() {
 	testCoreGetListener.defaultListenerInit();
 	testCoreGetListener.initSenderSide();
 
-	apiReturns = tml_Core_Get_Listener(NULL, indexOfListenerHandle, &listenerHandle);
+	apiReturns = tml_Core_Get_Listener(TML_HANDLE_TYPE_NULL, indexOfListenerHandle, &listenerHandle);
 	testCoreGetListener.m_iErr = apiReturns;
 	testCoreGetListener.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
@@ -338,11 +338,11 @@ void testTmlListenerGetSetEnabledForErrorCodes() {
 	testListenerGetListener.defaultListenerInit();
 	testListenerGetListener.initSenderSide();
 
-	apiReturns = tml_Listener_Set_Enabled(NULL, listenerEnabled);
+	apiReturns = tml_Listener_Set_Enabled(TML_HANDLE_TYPE_NULL, listenerEnabled);
 	testListenerGetListener.m_iErr = apiReturns;
 	testListenerGetListener.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
-	apiReturns = tml_Listener_Get_Enabled(NULL, &listenerEnabled);
+	apiReturns = tml_Listener_Get_Enabled(TML_HANDLE_TYPE_NULL, &listenerEnabled);
 	testListenerGetListener.m_iErr = apiReturns;
 	testListenerGetListener.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
