@@ -68,6 +68,9 @@ protected:
   SIDEX_INT32  getSidexListCount(SIDEX_VARIANT vList, SIDEX_TCHAR* debugText = NULL);
   SIDEX_TCHAR* getSidexListStringItem(SIDEX_VARIANT vList, SIDEX_INT32 index, SIDEX_TCHAR* debugText = NULL); // delete after use!
 
+  bool         setCommandInt(TML_COMMAND_HANDLE hCommand, SIDEX_TCHAR* group, SIDEX_TCHAR* key, TML_INT32 iValue);
+  TML_INT32    getCommandInt(TML_COMMAND_HANDLE hCommand, SIDEX_TCHAR* group, SIDEX_TCHAR* key, TML_INT32 iDefault = 0);
+
 public:
   TmlTester(SIDEX_TCHAR* testProcessName = NULL);
   ~TmlTester();

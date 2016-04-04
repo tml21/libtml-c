@@ -42,6 +42,8 @@ SIDEX_TCHAR* S_UNNAMED                      = tmlrtT("<unnamed>");
 SIDEX_TCHAR* S_START                        = tmlrtT("Start...");
 SIDEX_TCHAR* S_FINISH_SUCCESS               = tmlrtT("Finish. (Success)");
 SIDEX_TCHAR* S_FINISH_FAILED                = tmlrtT("Finish. (Failed)");
+SIDEX_TCHAR* S_GROUP_TEST                   = tmlrtT("Test");
+SIDEX_TCHAR* S_KEY_INDEX                    = tmlrtT("Index");
 
 SIDEX_TCHAR* DOCUMENT                       = tmlrtT("Document");
 SIDEX_TCHAR* wDOCUMENT                      = tmlrtT("Doc<ument");

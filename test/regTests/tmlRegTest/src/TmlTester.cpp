@@ -344,3 +344,43 @@ SIDEX_TCHAR* TmlTester::getSidexListStringItem(SIDEX_VARIANT vList, SIDEX_INT32 
                              tmlrtT("SidexVariant is not a list!")), false, true);
   return(s);
 }
+
+//------------------------------------------------------------------------------
+
+bool TmlTester::setCommandInt(TML_COMMAND_HANDLE hCommand, SIDEX_TCHAR* group, SIDEX_TCHAR* key, TML_INT32 iValue)
+{
+  bool success = false;
+  SIDEX_HANDLE hSdx = SIDEX_HANDLE_TYPE_NULL;
+  m_iErr = tml_Cmd_Acquire_Sidex_Handle(hCommand, &hSdx);
+  if(checkForSuccess(tmlrtT("setCommandInt::tml_Cmd_Acquire_Sidex_Handle()")))
+  {
+    m_iErr = sidex_Integer_Write(hSdx, group, key, iValue);
+    success = checkForSuccess(tmlrtT("setCommandInt::sidex_Integer_Write()"));
+
+    m_iErr = tml_Cmd_Release_Sidex_Handle(hCommand);
+    checkForSuccess(tmlrtT("setCommandInt::tml_Cmd_Release_Sidex_Handle()"));
+  }
+  return(success);
+}
+
+TML_INT32 TmlTester::getCommandInt(TML_COMMAND_HANDLE hCommand, SIDEX_TCHAR* group, SIDEX_TCHAR* key, TML_INT32 iDefault)
+{
+  TML_INT32 iValue = iDefault;
+  SIDEX_HANDLE hSdx = SIDEX_HANDLE_TYPE_NULL;
+  m_iErr = tml_Cmd_Acquire_Sidex_Handle(hCommand, &hSdx);
+  if(checkForSuccess(tmlrtT("getCommandInt::tml_Cmd_Acquire_Sidex_Handle()")))
+  {
+    SIDEX_INT64 lValue = 0;
+    m_iErr = sidex_Integer_Read(hSdx, group, key, &lValue);
+    if(m_iErr != SIDEX_ERR_NOCONTENT)
+    {
+      if(checkForSuccess(tmlrtT("getCommandInt::sidex_Integer_Read()")))
+      {
+        iValue = (TML_INT32)lValue;
+      }
+    }
+    m_iErr = tml_Cmd_Release_Sidex_Handle(hCommand);
+    checkForSuccess(tmlrtT("getCommandInt::tml_Cmd_Release_Sidex_Handle()"));
+  }
+  return(iValue);
+}

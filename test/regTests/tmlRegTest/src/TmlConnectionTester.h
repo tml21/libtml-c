@@ -48,10 +48,15 @@ class TmlConnectionTester;
 
 //------------------------------------------------------------------------------
 
-enum cbType_t { cbtOnConnect = 0, cbtOnDisconnect, cbt_TypeCount };
+enum cbType_t
+{
+  cbtOnConnect = 0, cbtOnDisconnect,
+  cbtOnCommand,
+  cbt_TypeCount // type count in enum
+};
 SIDEX_TCHAR* cbt_Name[];
 
-struct cbData_Connection_t
+struct cbData_t
 {
   TmlConnectionTester* tester;
   cbType_t             type;
@@ -68,13 +73,15 @@ class TmlConnectionTester : public TmlTester
 private:
   int  m_cbLog_Connection;
   int  m_cbLog_Disconnection;
+  int  m_cbLog_Command;
 
 protected:
   virtual void _prepare();
   virtual void _cleanup();
 
 public:
-  void OnConnectionCallback(cbData_Connection_t* cbData);
+  void OnConnectionCallback(TML_CONNECTION_HANDLE hConnection, cbData_t* cbData);
+  void OnCommandCallback(TML_COMMAND_HANDLE hCommand, cbData_t* cbData);
 
 public:
   TmlConnectionTester(SIDEX_TCHAR* testProcessName = NULL);

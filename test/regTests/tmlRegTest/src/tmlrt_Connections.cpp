@@ -57,16 +57,16 @@ bool testTmlConnections()
     {
       if(!tester->prepare()) break;
 
-      if(!tester->testConnect()) break;
-      if(!tester->testClose()) break;
-      if(!tester->testGetAddress()) break;
-      if(!tester->testGetRemoteProfiles()) break;
-      if(!tester->testValidate()) break;
-      if(!tester->testGetConnectionCount()) break;
-      if(!tester->testGetConnection_Core()) break;
-      if(!tester->testGetConnectionByAddress()) break;
-//      if(!tester->testSetOnConnect()) break;
-//      if(!tester->testSetOnDisconnect()) break;
+//      if(!tester->testConnect()) break;
+//      if(!tester->testClose()) break;
+//      if(!tester->testGetAddress()) break;
+//      if(!tester->testGetRemoteProfiles()) break;
+//      if(!tester->testValidate()) break;
+//      if(!tester->testGetConnectionCount()) break;
+//      if(!tester->testGetConnection_Core()) break;
+//      if(!tester->testGetConnectionByAddress()) break;
+      if(!tester->testSetOnConnect()) break;
+      if(!tester->testSetOnDisconnect()) break;
 //      if(!tester->testSendSync()) break;
 //      if(!tester->testSendAsync()) break;
 //      if(!tester->testGetConnection_Cmd()) break;
