@@ -100,13 +100,19 @@ extern SIDEX_TCHAR* S_IO_PORT_THREE;
 extern SIDEX_TCHAR* S_IO_PORT_FOUR;
 extern SIDEX_TCHAR* S_IO_PORT_FIVE;
 extern SIDEX_TCHAR* S_DESTINATION_HOST_IP;
+  #define LISTENER_ADDRESS				(wchar_t*) L"0.0.0.0:44100"
 
 extern SIDEX_TCHAR* S_MEANING;
 extern SIDEX_TCHAR* S_OF_LIFE;
 
 extern SIDEX_TCHAR* S_DEFAULT_BOOTSTRAP;
+  #define LISTENER_ADDRESS				(char*) "0.0.0.0:44100"
 
-const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
+const int DEFAULT_TIMEOUT = 5000;
+const int AMOUNT_OF_CMDS = 5;
+const int AMOUNT_OF_LISTENERS = 5;
+const int MAX_AMOUNT_OF_PROFILES = 5;
+const array<int, AMOUNT_OF_CMDS> COMMAND_CODES_LIST = {10,50,42,30,20};
 
 //makro for creating strings in the right format
 #ifdef SIDEX_UNICODE
@@ -116,6 +122,9 @@ const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
 #endif // SIDEX_UNICODE
 
 #define CHOICE_FINISH_MESSAGE(a) a ? S_FINISH_SUCCESS : S_FINISH_FAILED
+const array<SIDEX_TCHAR*, 5> LISTENERS_PORTS = { tmlrtT("4711"), tmlrtT("4712"), tmlrtT("1815"), tmlrtT("1420"), tmlrtT("1234") };
+const array<SIDEX_TCHAR*, 5> LISTENERS_ADDRESS = { tmlrtT("0.0.0.0:4711"), tmlrtT("0.0.0.0:4712"), tmlrtT("0.0.0.0:1815"), tmlrtT("0.0.0.0:1420"), tmlrtT("0.0.0.0:1234") };
+
 
 // Helper functions for strings
 SIDEX_TCHAR* tmlrt_cat(SIDEX_TCHAR* first, SIDEX_TCHAR* second = NULL, SIDEX_TCHAR* third = NULL, int delStr = 0);
@@ -126,12 +135,35 @@ SIDEX_TCHAR* tmlrt_itoa(int value);
 #define DELETE_STR(s) { if(s) { delete[](s); s = NULL; } }
 #define DELETE_OBJ(o) { if(o) { delete(o);   o = NULL; } }
 
+void TmlSleep(int milliseconds);
+
 //cb for cmd 
 void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data);
 
+//cb for onPeerRegister
+TML_BOOL FUNC_C_DECL onPeerCB(TML_BOOL bSubscribe, TML_CTSTR *sHost, TML_CTSTR *sPort, TML_POINTER pCBData);
 bool initGlobalMutex();
 bool enterGlobalMutex();
 void leaveGlobalMutex();
 void deleteGlobalMutex();
+
+//cb if cmd reply was received from listener
+void FUNC_C_DECL cbGenericCmdReplyReceived(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
+
+//set the bool array to false
+void initCmdRepliesReceived();
+
+//check whether all cmds were freed
+bool allCmdsFreed();
+
+//initalize windowsmutex
+void initializeMutex();
+
+
+void lockMutex();
+
+void unlockMutex();
+
+void setCmdRepliesReceivedToTrue(int indexOfDisabledListener);
 
 #endif //TMLRT_UTILS_H

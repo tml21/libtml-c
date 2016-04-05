@@ -34,52 +34,39 @@
  * Contributors:
  *    wobe-systems GmbH
  */
-#ifndef TESTTMLCORE_H
-#define TESTTMLCORE_H
 
-#include "tmlrt_Utils.h"
-#include "TestingForReturns.h"
+#ifndef MULTIPLELISTENERS_H
+#define MULTIPLELISTENERS_H
 
-class TmlCore : public TestingForReturns
-{
-public:
-	TmlCore(SIDEX_TCHAR* testProcessName = NULL);
-	TmlCore();
-	~TmlCore();
+#include <iostream>
+using namespace std;
+#include <sidex.h>
+#include <tmlCore.h>
 
-	array<TML_LISTENER_HANDLE, AMOUNT_OF_LISTENERS> m_listenerHandles;
+void simpleTestTmlMultiListenerSendSyncMessage();
 
-	array<SIDEX_TCHAR*, MAX_AMOUNT_OF_PROFILES> getProfileNames();
-	TML_CORE_HANDLE getCore();
-	SIDEX_TCHAR* getPort();
-	SIDEX_TCHAR* getIP();
+void simpleTestTmlMultiListenerSendAsyncMessage();
 
-	TML_INT32 defaultInit(bool listenerSide);
-	TML_INT32 initCore();
-	TML_INT32 addProfileToCore(SIDEX_TCHAR* profile);
-	TML_INT32 setDefaultProfile();
-	TML_INT32 setDefaultPort();
-	TML_INT32 setPort(SIDEX_TCHAR* port);
-	TML_INT32 setDefaultIP();
-	TML_INT32 startListeners(bool listenerSide);
-	TML_INT32 freeTmlCore();
-	TML_INT32 registerDefaultCmds(array<int, AMOUNT_OF_CMDS> cmdCodes);
-	bool isInitialized();	
-	TML_INT32 initListeners(bool listenerSide);
-	
-protected:
-	TML_CORE_HANDLE m_core;
-	int amountOfProfiles;
-	array<SIDEX_TCHAR*, AMOUNT_OF_LISTENERS> m_listenerAddresses;
-	array<SIDEX_TCHAR*, MAX_AMOUNT_OF_PROFILES> m_profileNames;
-	SIDEX_TCHAR* m_ip;
-	SIDEX_TCHAR* m_port;
-	void initArrays();
+void testTmlMultiListenerLoadBalancingMessages();
 
-	void appendProfileToList(SIDEX_TCHAR* profile);
-	SIDEX_VARIANT formatToSidexString(SIDEX_TCHAR* profile);
-	void setErrorLocationOutput(SIDEX_TCHAR* outputInCaseOfError);
+void simpleTestTmlMultiListener();
 
-};
+void testTmlCoreListenerClose();
 
-#endif	//TESTTMLCORE_H
+void testTmlCoreListenerGetSetEnabled();
+
+void testTmlCoreListenerCreateCloseErrorCodes();
+
+void testTmlCoreGetListenerCountErrorCodes();
+
+void testTmlCoreGetListenerErrorCodes();
+
+void testTmlListenerGetSetEnabledForErrorCodes();
+
+void testTmlMultiListenerEventMessages();
+
+void testTmlMultiListenerStreamCommunication();
+
+
+
+#endif //MULTIPLELISTENERS_H

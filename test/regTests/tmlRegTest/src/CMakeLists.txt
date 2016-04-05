@@ -201,6 +201,7 @@ set	 (TEST_SOURCES_HEADER
   "TmlCore.h"
   "TmlList.h"
   "tmlrt_Connections.h"
+  "tmlrt_MultipleListeners.h"
   "tmlrt_SendingCommands.h"
   "tmlrt_Utils.h"
   "TmlTester.h")
@@ -213,6 +214,7 @@ set  (TEST_SOURCES
   "TmlList.cpp"
   "tmlrt.cpp"
   "tmlrt_Connections.cpp"
+  "tmlrt_MultipleListeners.cpp"
   "tmlrt_SendingCommands.cpp"
   "tmlrt_Utils.cpp"
   "TmlTester.cpp"

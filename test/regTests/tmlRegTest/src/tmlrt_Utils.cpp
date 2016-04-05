@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *  libTML:  A BEEP based Messaging Suite
  *  Copyright (C) 2016 wobe-systems GmbH
  *
@@ -37,6 +37,16 @@
 
 #include "tmlrt_Utils.h"
 
+bool linux = true;
+
+#ifndef LINUX
+  CRITICAL_SECTION notifyRepliesRecieved;
+  static bool cmdRepliesReceived[5] = { { false } };
+#else 
+  pthread_mutex_t mutexRepliesRecieved = PTHREAD_MUTEX_INITIALIZER;
+  static bool cmdRepliesReceived[5] = { false };
+#endif
+
 SIDEX_TCHAR* S_EMPTY                          = tmlrtT("");
 SIDEX_TCHAR* S_UNNAMED                        = tmlrtT("<unnamed>");
 SIDEX_TCHAR* S_START                          = tmlrtT("Start...");
@@ -50,18 +60,18 @@ SIDEX_TCHAR* S_wDOCUMENT                      = tmlrtT("Doc<ument");
 SIDEX_TCHAR* S_DOCUMENT2                      = tmlrtT("AnotherDocument");
 SIDEX_TCHAR* S_GROUP                          = tmlrtT("group");
 SIDEX_TCHAR* S_KEY                            = tmlrtT("key");
-SIDEX_TCHAR* S_GROUP2                         = tmlrtT("hällöWörld");
-SIDEX_TCHAR* S_KEY2                           = tmlrtT("良い一日");
-SIDEX_TCHAR* S_GROUP3                         = tmlrtT("góðurdagur");
-SIDEX_TCHAR* S_KEY3                           = tmlrtT("গ্রুপ");
-SIDEX_TCHAR* S_GROUP4                         = tmlrtT("समूह");
-SIDEX_TCHAR* S_KEY4                           = tmlrtT("ກຸ່ມ");
+SIDEX_TCHAR* S_GROUP2                         = tmlrtT("h�ll�W�rld");
+SIDEX_TCHAR* S_KEY2                           = tmlrtT("????");
+SIDEX_TCHAR* S_GROUP3                         = tmlrtT("g��urdagur");
+SIDEX_TCHAR* S_KEY3                           = tmlrtT("?????");
+SIDEX_TCHAR* S_GROUP4                         = tmlrtT("????");
+SIDEX_TCHAR* S_KEY4                           = tmlrtT("????");
 SIDEX_TCHAR* S_wGROUP                         = tmlrtT("group&");
 SIDEX_TCHAR* S_wKEY                           = tmlrtT("key]]>");
 SIDEX_TCHAR* S_A_S_VAL                        = tmlrtT("systems");
 SIDEX_TCHAR* S_B_S_VAL                        = tmlrtT("team");
 SIDEX_TCHAR* S_COLUMN                         = tmlrtT("name");
-SIDEX_TCHAR* S_COLUMN2                        = tmlrtT("góðurdagur");
+SIDEX_TCHAR* S_COLUMN2                        = tmlrtT("g��urdagur");
 SIDEX_TCHAR* S_MINDATE                        = tmlrtT("0001-01-01 00:00:00:000");
 SIDEX_TCHAR* S_MAXDATE                        = tmlrtT("9999-12-31 23:59:59:999");
 SIDEX_TCHAR* S_wDATE                          = tmlrtT("0000-00-00 24:00:58:999");
@@ -122,6 +132,14 @@ void deleteGlobalMutex()
     vortex_mutex_destroy(&g_mutex_handle);
     g_mutex_valid = false;
   }
+}
+
+
+
+void initializeMutex() {
+  #ifndef LINUX
+	InitializeCriticalSection(&notifyRepliesRecieved);	//only windows
+  #endif
 }
 
 /** @ingroup Wrapping_Sidex_TChar
@@ -238,12 +256,92 @@ void TmlSleep(int milliseconds) {
 }
 
 
-//cb function
-/** @brief Callback method invoked in case of incoming CMD- Code 20
+/** @ingroup 
+ * @brief Callback method invoked in case of incoming CMD- Code.
  * @param   cmdMsg  Handle on cmd
  * @param   data    Pointer on data in cmd
  */
-void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data)
-{
-  wcout << "received cmd" << endl;
+void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data){
+	TML_INT32 iErr = 0;
+	TML_INT64 value = 0;
+	SIDEX_HANDLE sHandle = SIDEX_HANDLE_TYPE_NULL;
+
+	iErr = tml_Cmd_Acquire_Sidex_Handle(cmdMsg, &sHandle);
+	if (TML_SUCCESS == iErr)
+		sidex_Integer_Read(sHandle, GROUP, KEY, &value);
+	if (TML_SUCCESS == iErr)
+		iErr = tml_Cmd_Release_Sidex_Handle(cmdMsg);
+
+	TmlSleep(value * 10);
+	wcout << "received cmd " << value << endl;
+}
+
+TML_BOOL FUNC_C_DECL onPeerCB(TML_BOOL bSubscribe, TML_CTSTR *sHost, TML_CTSTR *sPort, TML_POINTER pCBData) {
+	wcout << "on Peer" << endl;
+	return true;
+}
+
+void FUNC_C_DECL cbGenericCmdReplyReceived(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData) {
+	TML_INT32 iErr = 0;
+	TML_INT64 value = 0;
+	SIDEX_HANDLE sHandle = SIDEX_HANDLE_TYPE_NULL;
+	int index = 0;
+
+	iErr = tml_Cmd_Acquire_Sidex_Handle(tmlhandle, &sHandle);
+	if (TML_SUCCESS == iErr)
+		sidex_Integer_Read(sHandle, GROUP, KEY, &value);
+	if (TML_SUCCESS == iErr)
+		iErr = tml_Cmd_Release_Sidex_Handle(tmlhandle);
+
+	iErr = tml_Cmd_Free(&tmlhandle);
+
+	if (TML_SUCCESS != iErr) {
+		wcout << "Test failed at async callback cmd reply received function with " << iErr << endl;
+	}
+	index = (value / 10) - 1;
+	lockMutex();
+	cmdRepliesReceived[index] = true;
+	unlockMutex();
+	wcout << "received async cmd callback" << endl;
+}
+
+void initCmdRepliesReceived() {
+	lockMutex();
+	for (int i = 0; i < AMOUNT_OF_CMDS; i++) {
+		cmdRepliesReceived[i] = false;
+	}
+	unlockMutex();
+}
+
+bool allCmdsFreed() {
+	bool returnValue = true;
+	lockMutex();
+	for (int i = 0; i < AMOUNT_OF_CMDS; i++) {
+		returnValue = returnValue && cmdRepliesReceived[i];
+	}
+	unlockMutex();
+	return returnValue;
+}
+
+void lockMutex() {
+#ifndef LINUX	//Windows
+	EnterCriticalSection(&notifyRepliesRecieved);
+#else	//Linux
+	pthread_mutex_lock(&mutexRepliesRecieved);
+#endif
+}
+
+void unlockMutex() {
+#ifndef LINUX	//Windows
+	LeaveCriticalSection(&notifyRepliesRecieved);
+#else	//Linux
+	pthread_mutex_unlock(&mutexRepliesRecieved);
+#endif
+}
+
+
+void setCmdRepliesReceivedToTrue(int indexOfDisabledListener) {
+	lockMutex();
+	cmdRepliesReceived[indexOfDisabledListener] = true;
+	unlockMutex();
 }

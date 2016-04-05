@@ -45,41 +45,48 @@ using namespace std;
 #include <tmlCore.h>
 #include "TestingForReturns.h"
 #include "TmlCore.h"
-#include "TmlList.h"
 
 
 
-class TestingProcess : public TestingForReturns
-{ //search for better class name?
+class TestingProcess : public TestingForReturns{
 public:
 	TestingProcess(SIDEX_TCHAR* testProcessName = NULL);
+	~TestingProcess();
 
-	static const int amountOfCmds = 5;
+	TmlCore* m_coreSenderSide;
+	TmlCore* m_coreListenerSide;
+
 	void defaultListenerInit();
 	void freeTmlCores();
-	void sendArbitraryCmds();
+	void sendArbitraryCmds(bool synchronous);
 	void initSenderSide();
 	void freeCmds();
-
-	//static bool[amountOfCmds] cmdsReceived = {true, true, true, true, true};
+	void checkListenerCount(int count);
+	void checkListenerAdresses();
+	void checkForDecreasedListenersAfterOneIsClosed();
+	void disEnableListener(int indexOfListener, TML_BOOL enable);
+	void checkIfListenerDisabled(int indexOfListener);
+	void subscribeListenersForLoadBalancingOrEvents(bool loadbalancing);
+	void sendArbitraryLoadBalancedCmds(bool synchronous);
+	void sendEventMessages();
+	void checkAsyncSyncMessagesForErrors(int indexOfDisabledListener);
+	void checkSendMessageForErrors(TML_INT32 errorCode, bool synchronous, int timeout);
+	void checkSendMessageForUNICODEError(bool synchronous);
+	void waitForAsyncReplies();
 
 protected:
-	TML_INT32 sendArbitraryCmd(TML_INT32 cmdIndex, TML_INT32 profilIndex);
-	TML_INT32 produceCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value);
+	TML_INT32 sendArbitraryCmd(TML_INT32 cmdIndex, TML_INT32 profilIndex, bool synchronous, int timeout);
+	TML_INT32 produceCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value, bool synchronous);
 	TML_INT32 freeCmd(TML_COMMAND_HANDLE* cmd);
-	TML_INT32 createSetOfCmds();
+	TML_INT32 createSetOfCmds(bool synchronous);
+	TML_INT32 sendArbitraryLoadBalancedCmd(TML_INT32 cmdIndex, TML_INT32 profileIndex, bool synchronous);
 
 private:
-	TML_INT32 createCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value);
-	TmlCore coreSenderSide;	//as list?
-  TmlCore coreListenerSide;
-	TML_COMMAND_HANDLE cmdMessage;//  = TML_HANDLE_TYPE_NULL; //as list?
-	array<TML_COMMAND_HANDLE,amountOfCmds> Cmds;
+	TML_INT32 createCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value, bool synchronous);
+	array<TML_COMMAND_HANDLE,AMOUNT_OF_CMDS> m_Cmds;
 
 	//array of cmd-codes
-	array<int, amountOfCmds> cmdCodes;
+	array<int, AMOUNT_OF_CMDS> m_cmdCodes;
 };
-
-
 
 #endif	//TESTING_PROCESS_H
