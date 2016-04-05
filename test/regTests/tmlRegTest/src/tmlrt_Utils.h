@@ -37,6 +37,7 @@
 #ifndef TMLRT_UTILS_H
 #define TMLRT_UTILS_H
 
+#include <vortex.h>
 #ifdef LINUX
   #include <wchar.h>
   #include <stdbool.h>
@@ -48,6 +49,7 @@
   #include <Windows.h>     //for function sleep
 #endif
 
+#include <unicode.h>
 #include <iostream>
 #include <array>
 using namespace std;
@@ -63,46 +65,46 @@ extern SIDEX_TCHAR* S_FINISH_FAILED;
 extern SIDEX_TCHAR* S_GROUP_TEST;
 extern SIDEX_TCHAR* S_KEY_INDEX;
 
-extern SIDEX_TCHAR* DOCUMENT;
-extern SIDEX_TCHAR* wDOCUMENT;
-extern SIDEX_TCHAR* DOCUMENT2;
-extern SIDEX_TCHAR* GROUP;
-extern SIDEX_TCHAR* KEY;
-extern SIDEX_TCHAR* GROUP2;
-extern SIDEX_TCHAR* KEY2;
-extern SIDEX_TCHAR* GROUP3;
-extern SIDEX_TCHAR* KEY3;
-extern SIDEX_TCHAR* GROUP4;
-extern SIDEX_TCHAR* KEY4;
-extern SIDEX_TCHAR* wGROUP;
-extern SIDEX_TCHAR* wKEY;
-extern SIDEX_TCHAR* A_S_VAL;
-extern SIDEX_TCHAR* B_S_VAL;
-extern SIDEX_TCHAR* COLUMN;
-extern SIDEX_TCHAR* COLUMN2;
-extern SIDEX_TCHAR* MINDATE;
-extern SIDEX_TCHAR* MAXDATE;
-extern SIDEX_TCHAR* wDATE;
-extern SIDEX_TCHAR* uDATE;
-extern SIDEX_TCHAR* HANDLEKEY;
-extern SIDEX_TCHAR* FLOATKEY;
-extern SIDEX_TCHAR* minStr;
+extern SIDEX_TCHAR* S_DOCUMENT;
+extern SIDEX_TCHAR* S_wDOCUMENT;
+extern SIDEX_TCHAR* S_DOCUMENT2;
+extern SIDEX_TCHAR* S_GROUP;
+extern SIDEX_TCHAR* S_KEY;
+extern SIDEX_TCHAR* S_GROUP2;
+extern SIDEX_TCHAR* S_KEY2;
+extern SIDEX_TCHAR* S_GROUP3;
+extern SIDEX_TCHAR* S_KEY3;
+extern SIDEX_TCHAR* S_GROUP4;
+extern SIDEX_TCHAR* S_KEY4;
+extern SIDEX_TCHAR* S_wGROUP;
+extern SIDEX_TCHAR* S_wKEY;
+extern SIDEX_TCHAR* S_A_S_VAL;
+extern SIDEX_TCHAR* S_B_S_VAL;
+extern SIDEX_TCHAR* S_COLUMN;
+extern SIDEX_TCHAR* S_COLUMN2;
+extern SIDEX_TCHAR* S_MINDATE;
+extern SIDEX_TCHAR* S_MAXDATE;
+extern SIDEX_TCHAR* S_wDATE;
+extern SIDEX_TCHAR* S_uDATE;
+extern SIDEX_TCHAR* S_HANDLEKEY;
+extern SIDEX_TCHAR* S_FLOATKEY;
+extern SIDEX_TCHAR* S_minStr;
 
-extern SIDEX_TCHAR* IO_PROFILE;
-extern SIDEX_TCHAR* IO_PROFILE_TWO;
-extern SIDEX_TCHAR* IO_PROFILE_THREE;
-extern SIDEX_TCHAR* LISTENER_NETWORK_INTERFACE_IP;
-extern SIDEX_TCHAR* IO_PORT;
-extern SIDEX_TCHAR* IO_PORT_TWO;
-extern SIDEX_TCHAR* IO_PORT_THREE;
-extern SIDEX_TCHAR* IO_PORT_FOUR;
-extern SIDEX_TCHAR* IO_PORT_FIVE;
-extern SIDEX_TCHAR* DESTINATION_HOST_IP;
+extern SIDEX_TCHAR* S_IO_PROFILE;
+extern SIDEX_TCHAR* S_IO_PROFILE_TWO;
+extern SIDEX_TCHAR* S_IO_PROFILE_THREE;
+extern SIDEX_TCHAR* S_LISTENER_NETWORK_INTERFACE_IP;
+extern SIDEX_TCHAR* S_IO_PORT;
+extern SIDEX_TCHAR* S_IO_PORT_TWO;
+extern SIDEX_TCHAR* S_IO_PORT_THREE;
+extern SIDEX_TCHAR* S_IO_PORT_FOUR;
+extern SIDEX_TCHAR* S_IO_PORT_FIVE;
+extern SIDEX_TCHAR* S_DESTINATION_HOST_IP;
 
-extern SIDEX_TCHAR* MEANING;
-extern SIDEX_TCHAR* OF_LIFE;
+extern SIDEX_TCHAR* S_MEANING;
+extern SIDEX_TCHAR* S_OF_LIFE;
 
-extern SIDEX_TCHAR* DEFAULT_BOOTSTRAP;
+extern SIDEX_TCHAR* S_DEFAULT_BOOTSTRAP;
 
 const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
 
@@ -126,5 +128,10 @@ SIDEX_TCHAR* tmlrt_itoa(int value);
 
 //cb for cmd 
 void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data);
+
+bool initGlobalMutex();
+bool enterGlobalMutex();
+void leaveGlobalMutex();
+void deleteGlobalMutex();
 
 #endif //TMLRT_UTILS_H

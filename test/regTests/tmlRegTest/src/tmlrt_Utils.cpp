@@ -37,54 +37,92 @@
 
 #include "tmlrt_Utils.h"
 
-SIDEX_TCHAR* S_EMPTY                        = tmlrtT("");
-SIDEX_TCHAR* S_UNNAMED                      = tmlrtT("<unnamed>");
-SIDEX_TCHAR* S_START                        = tmlrtT("Start...");
-SIDEX_TCHAR* S_FINISH_SUCCESS               = tmlrtT("Finish. (Success)");
-SIDEX_TCHAR* S_FINISH_FAILED                = tmlrtT("Finish. (Failed)");
-SIDEX_TCHAR* S_GROUP_TEST                   = tmlrtT("Test");
-SIDEX_TCHAR* S_KEY_INDEX                    = tmlrtT("Index");
+SIDEX_TCHAR* S_EMPTY                          = tmlrtT("");
+SIDEX_TCHAR* S_UNNAMED                        = tmlrtT("<unnamed>");
+SIDEX_TCHAR* S_START                          = tmlrtT("Start...");
+SIDEX_TCHAR* S_FINISH_SUCCESS                 = tmlrtT("Finish. (Success)");
+SIDEX_TCHAR* S_FINISH_FAILED                  = tmlrtT("Finish. (Failed)");
+SIDEX_TCHAR* S_GROUP_TEST                     = tmlrtT("Test");
+SIDEX_TCHAR* S_KEY_INDEX                      = tmlrtT("Index");
 
-SIDEX_TCHAR* DOCUMENT                       = tmlrtT("Document");
-SIDEX_TCHAR* wDOCUMENT                      = tmlrtT("Doc<ument");
-SIDEX_TCHAR* DOCUMENT2                      = tmlrtT("AnotherDocument");
-SIDEX_TCHAR* GROUP                          = tmlrtT("group");
-SIDEX_TCHAR* KEY                            = tmlrtT("key");
-SIDEX_TCHAR* GROUP2                         = tmlrtT("hällöWörld");
-SIDEX_TCHAR* KEY2                           = tmlrtT("良い一日");
-SIDEX_TCHAR* GROUP3                         = tmlrtT("góðurdagur");
-SIDEX_TCHAR* KEY3                           = tmlrtT("গ্রুপ");
-SIDEX_TCHAR* GROUP4                         = tmlrtT("समूह");
-SIDEX_TCHAR* KEY4                           = tmlrtT("ກຸ່ມ");
-SIDEX_TCHAR* wGROUP                         = tmlrtT("group&");
-SIDEX_TCHAR* wKEY                           = tmlrtT("key]]>");
-SIDEX_TCHAR* A_S_VAL                        = tmlrtT("systems");
-SIDEX_TCHAR* B_S_VAL                        = tmlrtT("team");
-SIDEX_TCHAR* COLUMN                         = tmlrtT("name");
-SIDEX_TCHAR* COLUMN2                        = tmlrtT("góðurdagur");
-SIDEX_TCHAR* MINDATE                        = tmlrtT("0001-01-01 00:00:00:000");
-SIDEX_TCHAR* MAXDATE                        = tmlrtT("9999-12-31 23:59:59:999");
-SIDEX_TCHAR* wDATE                          = tmlrtT("0000-00-00 24:00:58:999");
-SIDEX_TCHAR* uDATE                          = tmlrtT("0000-00-00 12:48:11:810");
-SIDEX_TCHAR* HANDLEKEY                      = tmlrtT("handleKey");
-SIDEX_TCHAR* FLOATKEY                       = tmlrtT("floatKey");
-SIDEX_TCHAR* minStr                         = tmlrtT(" ");
+SIDEX_TCHAR* S_DOCUMENT                       = tmlrtT("Document");
+SIDEX_TCHAR* S_wDOCUMENT                      = tmlrtT("Doc<ument");
+SIDEX_TCHAR* S_DOCUMENT2                      = tmlrtT("AnotherDocument");
+SIDEX_TCHAR* S_GROUP                          = tmlrtT("group");
+SIDEX_TCHAR* S_KEY                            = tmlrtT("key");
+SIDEX_TCHAR* S_GROUP2                         = tmlrtT("hällöWörld");
+SIDEX_TCHAR* S_KEY2                           = tmlrtT("良い一日");
+SIDEX_TCHAR* S_GROUP3                         = tmlrtT("góðurdagur");
+SIDEX_TCHAR* S_KEY3                           = tmlrtT("গ্রুপ");
+SIDEX_TCHAR* S_GROUP4                         = tmlrtT("समूह");
+SIDEX_TCHAR* S_KEY4                           = tmlrtT("ກຸ່ມ");
+SIDEX_TCHAR* S_wGROUP                         = tmlrtT("group&");
+SIDEX_TCHAR* S_wKEY                           = tmlrtT("key]]>");
+SIDEX_TCHAR* S_A_S_VAL                        = tmlrtT("systems");
+SIDEX_TCHAR* S_B_S_VAL                        = tmlrtT("team");
+SIDEX_TCHAR* S_COLUMN                         = tmlrtT("name");
+SIDEX_TCHAR* S_COLUMN2                        = tmlrtT("góðurdagur");
+SIDEX_TCHAR* S_MINDATE                        = tmlrtT("0001-01-01 00:00:00:000");
+SIDEX_TCHAR* S_MAXDATE                        = tmlrtT("9999-12-31 23:59:59:999");
+SIDEX_TCHAR* S_wDATE                          = tmlrtT("0000-00-00 24:00:58:999");
+SIDEX_TCHAR* S_uDATE                          = tmlrtT("0000-00-00 12:48:11:810");
+SIDEX_TCHAR* S_HANDLEKEY                      = tmlrtT("handleKey");
+SIDEX_TCHAR* S_FLOATKEY                       = tmlrtT("floatKey");
+SIDEX_TCHAR* S_minStr                         = tmlrtT(" ");
 
-SIDEX_TCHAR* IO_PROFILE                     = tmlrtT("http://wobe-team.com/profiles/plain_profile");
-SIDEX_TCHAR* IO_PROFILE_TWO				          = tmlrtT("http://wobe-team.com/profiles/simple_profile");
-SIDEX_TCHAR* IO_PROFILE_THREE				        = tmlrtT("http://wobe-team.com/profiles/basic_profile");
-SIDEX_TCHAR* LISTENER_NETWORK_INTERFACE_IP  = tmlrtT("0.0.0.0");
-SIDEX_TCHAR* IO_PORT                        = tmlrtT("44100");
-SIDEX_TCHAR* IO_PORT_TWO                    = tmlrtT("44102");
-SIDEX_TCHAR* IO_PORT_THREE                  = tmlrtT("44103");
-SIDEX_TCHAR* IO_PORT_FOUR	                  = tmlrtT("44104");
-SIDEX_TCHAR* IO_PORT_FIVE					          = tmlrtT("44105");
-SIDEX_TCHAR* DESTINATION_HOST_IP            = tmlrtT("127.0.0.1");
+SIDEX_TCHAR* S_IO_PROFILE                     = tmlrtT("http://wobe-team.com/profiles/plain_profile");
+SIDEX_TCHAR* S_IO_PROFILE_TWO				          = tmlrtT("http://wobe-team.com/profiles/simple_profile");
+SIDEX_TCHAR* S_IO_PROFILE_THREE				        = tmlrtT("http://wobe-team.com/profiles/basic_profile");
+SIDEX_TCHAR* S_LISTENER_NETWORK_INTERFACE_IP  = tmlrtT("0.0.0.0");
+SIDEX_TCHAR* S_IO_PORT                        = tmlrtT("44100");
+SIDEX_TCHAR* S_IO_PORT_TWO                    = tmlrtT("44102");
+SIDEX_TCHAR* S_IO_PORT_THREE                  = tmlrtT("44103");
+SIDEX_TCHAR* S_IO_PORT_FOUR	                  = tmlrtT("44104");
+SIDEX_TCHAR* S_IO_PORT_FIVE					          = tmlrtT("44105");
+SIDEX_TCHAR* S_DESTINATION_HOST_IP            = tmlrtT("127.0.0.1");
 
-SIDEX_TCHAR* MEANING                        = tmlrtT("Meaning");
-SIDEX_TCHAR* OF_LIFE                        = tmlrtT("ofLife");
+SIDEX_TCHAR* S_MEANING                        = tmlrtT("Meaning");
+SIDEX_TCHAR* S_OF_LIFE                        = tmlrtT("ofLife");
 
-SIDEX_TCHAR* DEFAULT_BOOTSTRAP				      = tmlrtT("bootstrapTemplate.sdx");
+SIDEX_TCHAR* S_DEFAULT_BOOTSTRAP				      = tmlrtT("bootstrapTemplate.sdx");
+
+VortexMutex g_mutex_handle;
+bool        g_mutex_valid = false;
+
+bool initGlobalMutex()
+{
+  if(!g_mutex_valid)
+  {
+    g_mutex_valid = (vortex_mutex_create(&g_mutex_handle) == axl_true);
+    if(!g_mutex_valid) { wcout << "Failed: initGlobalMutex - vortex_mutex_create()" << endl; }
+  }
+  return(g_mutex_valid);
+}
+
+bool enterGlobalMutex()
+{
+  bool success = false;
+  if(initGlobalMutex())
+  {
+    vortex_mutex_lock(&g_mutex_handle);
+    success = true;
+  }
+  return(success);
+}
+
+void leaveGlobalMutex()
+{
+  if(g_mutex_valid) vortex_mutex_unlock(&g_mutex_handle);
+}
+
+void deleteGlobalMutex()
+{
+  if(g_mutex_valid)
+  {
+    vortex_mutex_destroy(&g_mutex_handle);
+    g_mutex_valid = false;
+  }
+}
 
 /** @ingroup Wrapping_Sidex_TChar
 * @brief Helper function for concatenating strings, with delete option

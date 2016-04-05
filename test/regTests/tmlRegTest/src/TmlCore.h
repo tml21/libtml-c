@@ -37,14 +37,9 @@
 #ifndef TESTTMLCORE_H
 #define TESTTMLCORE_H
 
-
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
+#include "tmlrt_Utils.h"
 #include "TestingForReturns.h"
 #include "TmlList.h"
-#include "tmlrt_Utils.h"
 
 class TmlCore : public TestingForReturns
 {

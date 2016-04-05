@@ -37,22 +37,6 @@
 #ifndef TESTPARAMS_H
 #define TESTPARAMS_H
 
-#ifdef LINUX
-  #include <wchar.h>
-  #include <stdbool.h>
-  #include <string.h>
-  #include <unistd.h>
-#else
-  #include <stdio.h>
-  #include <tchar.h>
-  #include <Windows.h>     //for function sleep
-#endif
-
-#include <iostream>
-#include <array>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
 #include "tmlrt_Utils.h"
 
 extern SIDEX_TCHAR* S_TP_TESTPARAMS;

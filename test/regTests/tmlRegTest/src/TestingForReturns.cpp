@@ -90,28 +90,32 @@ bool TestingForReturns::isTestOK()
 
 void TestingForReturns::messageOutput(SIDEX_TCHAR* messageText, bool withProcessName, bool withSectionName, bool deleteText)
 {
-  if(messageText)
+  if(enterGlobalMutex())
   {
-    bool hasText = (withProcessName && m_testProcessName);
-    if(hasText) wcout << m_testProcessName;
-    if(withSectionName && m_testSectionName)
+    if(messageText)
     {
-      if(m_testSectionName[0])
+      bool hasText = (withProcessName && m_testProcessName);
+      if(hasText) wcout << m_testProcessName;
+      if(withSectionName && m_testSectionName)
       {
-        if(hasText) wcout << ":";
-        wcout << m_testSectionName;
+        if(m_testSectionName[0])
+        {
+          if(hasText) wcout << ":";
+          wcout << m_testSectionName;
+          hasText = true;
+        }
+      }
+      if(messageText[0])
+      {
+        if(hasText) wcout << " - ";
+        wcout << messageText;
         hasText = true;
       }
+      if(deleteText) DELETE_STR(messageText);
     }
-    if(messageText[0])
-    {
-      if(hasText) wcout << " - ";
-      wcout << messageText;
-      hasText = true;
-    }
-    if(deleteText) DELETE_STR(messageText);
+    wcout << endl;
+    leaveGlobalMutex();
   }
-  wcout << endl;
 }
 
 void TestingForReturns::contentOutput(SIDEX_TCHAR* name, SIDEX_TCHAR* content,
@@ -140,18 +144,22 @@ void TestingForReturns::indexOutput(SIDEX_TCHAR* arrayName, SIDEX_INT32 index, S
 
 void TestingForReturns::errorOutput(SIDEX_TCHAR* messageText, bool withErrorCode, bool deleteText)
 {
-  wcout << "Test failed at " << m_testProcessName;
-  if(m_testSectionName)
+  if(enterGlobalMutex())
   {
-    if(m_testSectionName[0]) wcout << ":" << m_testSectionName;
+    wcout << "Test failed at " << m_testProcessName;
+    if(m_testSectionName)
+    {
+      if(m_testSectionName[0]) wcout << ":" << m_testSectionName;
+    }
+    if(messageText)
+    {
+      if(messageText[0]) wcout << ":" << messageText;
+      if(deleteText) DELETE_STR(messageText);
+    }
+    if(withErrorCode) wcout << " with ErrorCode " << m_iErr;
+    wcout << endl;
+    leaveGlobalMutex();
   }
-  if(messageText)
-  {
-    if(messageText[0]) wcout << ":" << messageText;
-    if(deleteText) DELETE_STR(messageText);
-  }
-  if(withErrorCode) wcout << " with ErrorCode " << m_iErr;
-  wcout << endl;
   m_testOK         = false;
   m_testOK_Overall = false;
 }

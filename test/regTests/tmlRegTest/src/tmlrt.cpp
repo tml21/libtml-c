@@ -35,26 +35,11 @@
  *    wobe-systems GmbH
  */
 
-#ifdef LINUX
-  #include <wchar.h>
-  #include <stdbool.h>
-  #include <string.h>
-#else
-  #include <stdio.h>
-  #include <tchar.h>
-  #include <string.h>
-#endif
-#include <iostream>
-using namespace std;
-#include <tmlCore.h>
-#include <sidex.h>
-#include <unicode.h>
-#include "TestParams.h"
 #include "tmlrt_Utils.h"
+#include "TestParams.h"
 #include "tmlrt_Connections.h"
 #include "tmlrt_SendingCommands.h"
 //#include "tmlrt_LoadBalancing.h"
-
 
 /** @brief Main function, accepts command line parameters
 * @param int argc : contains amount of arguments in argv
@@ -111,6 +96,7 @@ using namespace std;
   TestParams = new CTestParams(pArg);
   if(TestParams)
   {
+    initGlobalMutex();
     SIDEX_TCHAR* pfn = TestParams->getParamsFileName();
     if(pfn) { wcout << "Using params file: " << pfn << endl; }
     else    { wcout << "Running without params file!" << endl; }
@@ -137,6 +123,7 @@ using namespace std;
     wcout << endl;
 
     DELETE_OBJ(TestParams);
+    deleteGlobalMutex();
   }
 
   DELETE_STR(pBuf);

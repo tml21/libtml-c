@@ -35,25 +35,8 @@
  *    wobe-systems GmbH
  */
 
-#ifdef LINUX
-  #include <wchar.h>
-  #include <stdbool.h>
-  #include <string.h>
-  #include <unistd.h>
-#else
-  #include <stdio.h>
-  #include <tchar.h>
-  #include <Windows.h>     //for function sleep
-#endif
-
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
 #include "tmlrt_Utils.h"
 #include "TestingProcess.h"
-
-
 
 /** @ingroup Test_Sending_Commands
 * @brief Testing a simple communication between a sender and a listener

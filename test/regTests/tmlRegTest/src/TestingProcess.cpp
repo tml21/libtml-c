@@ -83,7 +83,7 @@ TML_INT32 TestingProcess::produceCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value) {
     if (TML_SUCCESS == m_iErr)
         m_iErr = tml_Cmd_Acquire_Sidex_Handle(*cmd, &sHandle);
     if (TML_SUCCESS == m_iErr)
-        sidex_Integer_Write(sHandle, GROUP, KEY, value);
+        sidex_Integer_Write(sHandle, S_GROUP, S_KEY, value);
     if (TML_SUCCESS == m_iErr)
         m_iErr = tml_Cmd_Release_Sidex_Handle(*cmd);
 
@@ -108,7 +108,7 @@ TML_INT32 TestingProcess::sendArbitraryCmd(TML_INT32 cmdIndex, TML_INT32 profile
 	TmlList listOfProfilenames = coreListenerSide.getProfileNames();
 	SIDEX_TCHAR* profileURL = listOfProfilenames.getString(profileIndex);
 
-	m_iErr = tml_Send_SyncMessage(coreSenderSide.getCore(), cmdMsg, profileURL, DESTINATION_HOST_IP, coreListenerSide.getPort(), 10000);
+	m_iErr = tml_Send_SyncMessage(coreSenderSide.getCore(), cmdMsg, profileURL, S_DESTINATION_HOST_IP, coreListenerSide.getPort(), 10000);
 	return m_iErr;
 }
 

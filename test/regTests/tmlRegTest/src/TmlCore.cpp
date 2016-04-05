@@ -34,13 +34,10 @@
  * Contributors:
  *    wobe-systems GmbH
  */
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
+
+#include "tmlrt_Utils.h"
 #include "TestingForReturns.h"
 #include "TmlList.h"
-#include "tmlrt_Utils.h"
 #include "TmlCore.h"
 
 TmlCore::TmlCore(SIDEX_TCHAR* testProcessName)
@@ -111,13 +108,13 @@ void TmlCore::appendProfileToList(SIDEX_TCHAR* profile) {
 }
 
 TML_INT32 TmlCore::setDefaultProfile() {
-	appendProfileToList(IO_PROFILE);
+	appendProfileToList(S_IO_PROFILE);
 	checkForSuccess(tmlrtT("appendProfileToList"));
 	return m_iErr;
 }
 
 TML_INT32 TmlCore::setDefaultPort() {
-	m_iErr = setPort(IO_PORT);
+	m_iErr = setPort(S_IO_PORT);
 	checkForSuccess(tmlrtT("setPort"));
 	return m_iErr;
 }
@@ -130,8 +127,8 @@ TML_INT32 TmlCore::setPort(SIDEX_TCHAR* port) {
 }
 
 TML_INT32 TmlCore::setDefaultIP() {
-	ip = LISTENER_NETWORK_INTERFACE_IP;
-	m_iErr = tml_Core_Set_ListenerIP (core, LISTENER_NETWORK_INTERFACE_IP);
+	ip = S_LISTENER_NETWORK_INTERFACE_IP;
+	m_iErr = tml_Core_Set_ListenerIP (core, S_LISTENER_NETWORK_INTERFACE_IP);
 	checkForSuccess(tmlrtT("tml_Core_Set_ListenerIP"));
 	return m_iErr;
 }

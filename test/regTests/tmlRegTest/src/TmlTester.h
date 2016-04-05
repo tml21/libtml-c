@@ -40,14 +40,16 @@
 
 #include "TestingForReturns.h"
 
-#define MAX_CORES 9
+#define MAX_CORES     9
 #define MAX_LISTENERS 9 // max. number of listeners per core
+#define MAX_MUTEXES   4
 
 class TmlTester : public TestingForReturns
 {
 protected:
   TML_CORE_HANDLE     m_core[MAX_CORES];
   TML_LISTENER_HANDLE m_listener[MAX_CORES][MAX_LISTENERS];
+  VortexMutex         m_mutex[MAX_MUTEXES];
 
 protected:
   bool createCore(int iCore);
@@ -70,6 +72,9 @@ protected:
 
   bool         setCommandInt(TML_COMMAND_HANDLE hCommand, SIDEX_TCHAR* group, SIDEX_TCHAR* key, TML_INT32 iValue);
   TML_INT32    getCommandInt(TML_COMMAND_HANDLE hCommand, SIDEX_TCHAR* group, SIDEX_TCHAR* key, TML_INT32 iDefault = 0);
+
+  bool         enterMutex(int iMutex);
+  bool         leaveMutex(int iMutex);
 
 public:
   TmlTester(SIDEX_TCHAR* testProcessName = NULL);

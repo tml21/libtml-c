@@ -35,15 +35,21 @@
 set(COMMON_INCLUDE_PATH ../../../../common/src)
 set(SIDEX_INCLUDE_PATH ../../../../sidex/src)
 set(TML_INCLUDE_PATH ../../../../tml/src)
+set(AXL_INCLUDE_DIR ../../${AXLINCLUDE})
+set(VORTEX_INCLUDE_DIR ../../${VORTEXINCLUDE})
 
-set(TARGETNAME tmlRegTest)  
+set(TARGETNAME tmlRegTest)
+
 #######################################################
 ## Windows 32 bit / MinGW build
+#######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
   ADD_DEFINITIONS("-DSIDEX_UNICODE -DTML_UNICODE -DMINGW_BUILD")
   ADD_DEFINITIONS("-std=c++0x")
   ADD_DEFINITIONS("-fpermissive")
   set(IS64BIT false)
+  set(AXLLIB libaxl.lib)
+  set(VORTEXLIB libvortex-1.1.lib)
 
   ADD_DEFINITIONS ("-m32")
   set(CMAKE_CXX_FLAGS "-m32")
@@ -51,11 +57,14 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
 
 #######################################################
 ## Windows 64 bit / MinGW build
+#######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
   ADD_DEFINITIONS("-DSIDEX_UNICODE -DTML_UNICODE -DMINGW_BUILD")
   ADD_DEFINITIONS("-std=c++0x")
   ADD_DEFINITIONS("-fpermissive")
   set(IS64BIT true)
+  set(AXLLIB libaxl.lib)
+  set(VORTEXLIB libvortex-1.1.lib)
 
   ADD_DEFINITIONS ("-m64")
   set(CMAKE_CXX_FLAGS "-m64")
@@ -67,6 +76,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
   ADD_DEFINITIONS("-DSIDEX_UNICODE -DTML_UNICODE")
   set(IS64BIT false)
+  set(AXLLIB libaxl.lib)
+  set(VORTEXLIB libvortex-1.1.lib)
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
 
 #######################################################
@@ -75,11 +86,17 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
   ADD_DEFINITIONS("-DSIDEX_UNICODE -DTML_UNICODE")
   set(IS64BIT true)
+  set(AXLLIB libaxl.lib)
+  set(VORTEXLIB libvortex-1.1.lib)
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
+
 #######################################################
 ## LINUX 32 bit
+#######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(IS64BIT false)
+  set(AXLLIB libaxl.so)
+  set(VORTEXLIB libvortex-1.1.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS("-m32")
@@ -92,6 +109,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(IS64BIT true)
+  set(AXLLIB libaxl.so)
+  set(VORTEXLIB libvortex-1.1.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS("-m64")
@@ -104,6 +123,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
   set(IS64BIT false)
+  set(AXLLIB libaxl.so)
+  set(VORTEXLIB libvortex-1.1.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS("-m32")
@@ -116,6 +137,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
   set(IS64BIT true)
+  set(AXLLIB libaxl.so)
+  set(VORTEXLIB libvortex-1.1.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS("-m64")
@@ -128,6 +151,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
   set(IS64BIT false)
+  set(AXLLIB libaxl.0.dylib)
+  set(VORTEXLIB libvortex-1.1.dylib)
 
   ADD_DEFINITIONS ("-std=c++11")
   ADD_DEFINITIONS("-arch i386")
@@ -140,6 +165,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
   set(IS64BIT true)
+  set(AXLLIB libaxl.0.dylib)
+  set(VORTEXLIB libvortex-1.1.dylib)
 
   ADD_DEFINITIONS ("-std=c++11")
   ADD_DEFINITIONS("-arch x86_64")
@@ -149,8 +176,11 @@ endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
 
 #######################################################
 ## LINUX ARM32
+#######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(IS64BIT false)
+  set(AXLLIB libaxl.so)
+  set(VORTEXLIB libvortex-1.1.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   ADD_DEFINITIONS("-DLINUX -DSIDEX_UNICODE -DTML_UNICODE" -DGCC4)
@@ -193,6 +223,14 @@ add_executable(${TARGETNAME_LOCAL}
 
 #######################################################
 ## Include- directories:
+if (AXL_INCLUDE_DIR)
+  INCLUDE_DIRECTORIES (${AXL_INCLUDE_DIR})
+endif()
+if (VORTEX_INCLUDE_DIR)
+  INCLUDE_DIRECTORIES (${VORTEX_INCLUDE_DIR})
+endif()
+INCLUDE_DIRECTORIES (${AXLINCLUDE})
+INCLUDE_DIRECTORIES (${VORTEXINCLUDE})
 INCLUDE_DIRECTORIES (${SIDEX_INCLUDE_PATH})
 INCLUDE_DIRECTORIES (${TML_INCLUDE_PATH})
 INCLUDE_DIRECTORIES (".")
@@ -202,4 +240,6 @@ INCLUDE_DIRECTORIES (".")
 INCLUDE_DIRECTORIES (${COMMON_INCLUDE_PATH})
 
 TARGET_LINK_LIBRARIES(${TARGET} ${SIDEXLIBNAME})
-TARGET_LINK_LIBRARIES(${TARGET} ${TMLLIBNAME} )
+TARGET_LINK_LIBRARIES(${TARGET} ${TMLLIBNAME})
+TARGET_LINK_LIBRARIES(${TARGET} ${AXLLIB})
+TARGET_LINK_LIBRARIES(${TARGET} ${VORTEXLIB})

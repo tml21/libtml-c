@@ -80,7 +80,7 @@ protected:
   virtual void _cleanup();
 
 public:
-  void OnConnectionCallback(TML_CONNECTION_HANDLE hConnection, cbData_t* cbData);
+  void OnDisConnectionCallback(TML_CONNECTION_HANDLE hConnection, cbData_t* cbData);
   void OnCommandCallback(TML_COMMAND_HANDLE hCommand, cbData_t* cbData);
 
 public:

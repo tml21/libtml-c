@@ -40,6 +40,14 @@
 TmlTester::TmlTester(SIDEX_TCHAR* testProcessName)
          : TestingForReturns(testProcessName)
 {
+  for(int iMutex = 0; iMutex < MAX_MUTEXES; iMutex++)
+  {
+    if(!vortex_mutex_create(&m_mutex[iMutex]))
+    {
+      errorOutput(tmlrtT("TmlTester - vortex_mutex_create()"), false, false);
+    }
+  }
+
   for(int iCore = 0; iCore < MAX_CORES; iCore++)
   {
     m_core[iCore] = TML_HANDLE_TYPE_NULL;
@@ -54,6 +62,35 @@ TmlTester::TmlTester(SIDEX_TCHAR* testProcessName)
 TmlTester::~TmlTester()
 {
   cleanup(true);
+
+  for(int iMutex = 0; iMutex < MAX_MUTEXES; iMutex++)
+  {
+    vortex_mutex_destroy(&m_mutex[iMutex]);
+  }
+}
+
+//------------------------------------------------------------------------------
+
+bool TmlTester::enterMutex(int iMutex)
+{
+  bool result = false;
+  if((iMutex >= 0) && (iMutex < MAX_MUTEXES))
+  {
+    vortex_mutex_lock(&m_mutex[iMutex]);
+    result = true;
+  }
+  return(result);
+}
+
+bool TmlTester::leaveMutex(int iMutex)
+{
+  bool result = false;
+  if((iMutex >= 0) && (iMutex < MAX_MUTEXES))
+  {
+    vortex_mutex_unlock(&m_mutex[iMutex]);
+    result = true;
+  }
+  return(result);
 }
 
 //------------------------------------------------------------------------------
