@@ -38,6 +38,7 @@
 #include "tmlrt_Utils.h"
 #include "TestParams.h"
 #include "tmlrt_Connections.h"
+#include "tmlrt_SendingCommands.h"
 #include "tmlrt_MultipleListeners.h"
 
 /** @brief Main function, accepts command line parameters
@@ -112,6 +113,7 @@
       wcout << endl;
       if(!testTmlConnections()) break;            // test connection API
       if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
+
       simpleTestTmlMultiListenerSendSyncMessage();
       simpleTestTmlMultiListenerSendAsyncMessage();
       simpleTestTmlMultiListener();

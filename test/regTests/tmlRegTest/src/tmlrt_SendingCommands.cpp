@@ -35,7 +35,7 @@
  *    wobe-systems GmbH
  */
 
-#include "tmlrt_Utils.h"
+#include "tmlrt_SendingCommands.h"
 #include "TestingProcess.h"
 
 /** @ingroup Test_Sending_Commands

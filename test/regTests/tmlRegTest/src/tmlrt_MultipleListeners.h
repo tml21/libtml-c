@@ -38,10 +38,7 @@
 #ifndef MULTIPLELISTENERS_H
 #define MULTIPLELISTENERS_H
 
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
+#include "tmlrt_Utils.h"
 
 void simpleTestTmlMultiListenerSendSyncMessage();
 

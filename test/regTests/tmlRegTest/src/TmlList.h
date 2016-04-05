@@ -37,10 +37,6 @@
 #ifndef TMLLIST_H
 #define TMLLIST_H
 
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
 #include "TestingForReturns.h"
 
 class TmlList : public TestingForReturns

@@ -38,7 +38,6 @@
 #ifndef TMLRT_SENDING_COMMANDS_H
 #define TMLRT_SENDING_COMMANDS_H
 
-
 /** @defgroup Test_Sending_Commands
 * @brief Test Reference for functions in Module Sending Commands
 */
@@ -54,6 +53,5 @@ bool simpleTestTmlSendAsyncMessage();
 
 //Various Errors are produced with tml_Send_AsyncMessage
 bool testTmlSendAsyncMessage();
-
 
 #endif  //TMLRT_SENDING_COMMANDS_H
