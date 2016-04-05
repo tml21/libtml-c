@@ -45,8 +45,10 @@ class TestingForReturns
 protected:
   SIDEX_TCHAR* m_testProcessName;
   SIDEX_TCHAR* m_testSectionName;
-  TML_INT32    m_iErr;
   bool         m_testOK, m_testOK_Overall;
+
+public:
+  TML_INT32    m_iErr;
 
 public:
   TestingForReturns(SIDEX_TCHAR* testProcessName = NULL);
@@ -72,9 +74,9 @@ public:
 protected:
   void errorOutput(SIDEX_TCHAR* messageText = NULL, bool withErrorCode = true, bool deleteText = false);
 
+public:
   bool checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* messageText = NULL, bool deleteText = false);
   bool checkForSuccess(SIDEX_TCHAR* messageText = NULL, bool deleteText = false);
-
   bool checkForValue(SIDEX_TCHAR* name, SIDEX_INT32 desiredValue, SIDEX_INT32 actualValue, bool deleteName = false);
 };
 

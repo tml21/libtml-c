@@ -63,7 +63,7 @@ bool simpleTestTmlSendSyncMessage()
       simpleSendSyncMessage->initSenderSide();
       if(!simpleSendSyncMessage->isTestOK()) break;
 
-      simpleSendSyncMessage->sendArbitraryCmds();
+      simpleSendSyncMessage->sendArbitraryCmds(true);
       if(!simpleSendSyncMessage->isTestOK()) break;
 
       simpleSendSyncMessage->freeCmds();

@@ -45,7 +45,6 @@ TmlCore::TmlCore(SIDEX_TCHAR* testProcessName)
 	m_core = TML_HANDLE_TYPE_NULL;
 
 	m_listenerAddresses = LISTENERS_ADDRESS;
-	setErrorLocationOutput(name);
 	m_ip = NULL;
 	m_port = NULL;
 	amountOfProfiles = 0;
@@ -54,9 +53,6 @@ TmlCore::TmlCore(SIDEX_TCHAR* testProcessName)
 
 
 TmlCore::~TmlCore() {
-	if(NULL != m_errorLocationOutput) {
-		delete[] m_errorLocationOutput;
-	}
 }
 
 TML_INT32 TmlCore::defaultInit(bool listenerSide) { 
@@ -98,13 +94,13 @@ void TmlCore::appendProfileToList(SIDEX_TCHAR* profile) {
 }
 
 TML_INT32 TmlCore::setDefaultProfile() {
-	addProfileToCore(IO_PROFILE);
+	addProfileToCore(S_IO_PROFILE);
 	checkForSuccess();
 	return m_iErr;
 }
 
 TML_INT32 TmlCore::setDefaultPort() {
-	m_iErr = setPort(IO_PORT);
+	m_iErr = setPort(S_IO_PORT);
 	checkForSuccess();
 	return m_iErr;
 }
@@ -117,8 +113,8 @@ TML_INT32 TmlCore::setPort(SIDEX_TCHAR* port) {
 }
 
 TML_INT32 TmlCore::setDefaultIP() {
-	m_ip = LISTENER_NETWORK_INTERFACE_IP;
-	m_iErr = tml_Core_Set_ListenerIP (m_core, LISTENER_NETWORK_INTERFACE_IP);
+	m_ip = S_LISTENER_NETWORK_INTERFACE_IP;
+	m_iErr = tml_Core_Set_ListenerIP (m_core, S_LISTENER_NETWORK_INTERFACE_IP);
 	checkForSuccess();
 	return m_iErr;
 }
@@ -177,19 +173,8 @@ TML_INT32 TmlCore::registerDefaultCmds(array<int, AMOUNT_OF_CMDS> cmdCodes) {
 			m_iErr = tml_Profile_Register_Cmd(m_core, nameFromProfiles, (TML_COMMAND_ID_TYPE) cmdCodes.at(j), cbgenericCmd, TML_HANDLE_TYPE_NULL);
 			checkForSuccess();
 		}
-    if(stopTest) break;
 	}
 	return m_iErr;
-}
-
-void TmlCore::setErrorLocationOutput(SIDEX_TCHAR* outputInCaseOfError) {
-#if defined SIDEX_UNICODE || defined TML_UNICODE
-	m_errorLocationOutput = new wchar_t[50]();
-#else
-	m_errorLocationOutput = new char[50]();
-#endif
-	tmlrt_cat(m_errorLocationOutput, outputInCaseOfError);
-	tmlrt_cat(m_errorLocationOutput, tmlrtT(" - TmlCore"));
 }
 
 TML_INT32 TmlCore::initListeners(bool listenerSide) {
@@ -200,7 +185,7 @@ TML_INT32 TmlCore::initListeners(bool listenerSide) {
 		}
 	}
 	else {
-		m_iErr = tml_Core_Listener_Create(m_core, LISTENER_ADDRESS, &m_listenerHandles[0]);
+		m_iErr = tml_Core_Listener_Create(m_core, S_LISTENER_ADDRESS, &m_listenerHandles[0]);
 		checkForSuccess();
 	}
 	return m_iErr;

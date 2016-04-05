@@ -100,13 +100,12 @@ extern SIDEX_TCHAR* S_IO_PORT_THREE;
 extern SIDEX_TCHAR* S_IO_PORT_FOUR;
 extern SIDEX_TCHAR* S_IO_PORT_FIVE;
 extern SIDEX_TCHAR* S_DESTINATION_HOST_IP;
-  #define LISTENER_ADDRESS				(wchar_t*) L"0.0.0.0:44100"
+extern SIDEX_TCHAR* S_LISTENER_ADDRESS;
 
 extern SIDEX_TCHAR* S_MEANING;
 extern SIDEX_TCHAR* S_OF_LIFE;
 
 extern SIDEX_TCHAR* S_DEFAULT_BOOTSTRAP;
-  #define LISTENER_ADDRESS				(char*) "0.0.0.0:44100"
 
 const int DEFAULT_TIMEOUT = 5000;
 const int AMOUNT_OF_CMDS = 5;
@@ -124,7 +123,6 @@ const array<int, AMOUNT_OF_CMDS> COMMAND_CODES_LIST = {10,50,42,30,20};
 #define CHOICE_FINISH_MESSAGE(a) a ? S_FINISH_SUCCESS : S_FINISH_FAILED
 const array<SIDEX_TCHAR*, 5> LISTENERS_PORTS = { tmlrtT("4711"), tmlrtT("4712"), tmlrtT("1815"), tmlrtT("1420"), tmlrtT("1234") };
 const array<SIDEX_TCHAR*, 5> LISTENERS_ADDRESS = { tmlrtT("0.0.0.0:4711"), tmlrtT("0.0.0.0:4712"), tmlrtT("0.0.0.0:1815"), tmlrtT("0.0.0.0:1420"), tmlrtT("0.0.0.0:1234") };
-
 
 // Helper functions for strings
 SIDEX_TCHAR* tmlrt_cat(SIDEX_TCHAR* first, SIDEX_TCHAR* second = NULL, SIDEX_TCHAR* third = NULL, int delStr = 0);
@@ -155,14 +153,6 @@ void initCmdRepliesReceived();
 
 //check whether all cmds were freed
 bool allCmdsFreed();
-
-//initalize windowsmutex
-void initializeMutex();
-
-
-void lockMutex();
-
-void unlockMutex();
 
 void setCmdRepliesReceivedToTrue(int indexOfDisabledListener);
 

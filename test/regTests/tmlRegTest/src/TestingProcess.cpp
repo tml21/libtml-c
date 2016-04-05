@@ -47,10 +47,9 @@ using namespace std;
 TestingProcess::TestingProcess (SIDEX_TCHAR* testProcessName)
 	:TestingForReturns(testProcessName), m_coreListenerSide(), m_coreSenderSide()
 {
-	m_errorLocationOutput = name;
 	m_cmdCodes = COMMAND_CODES_LIST;
-	m_coreListenerSide = new TmlCore(m_errorLocationOutput);
-	m_coreSenderSide = new TmlCore(m_errorLocationOutput);
+	m_coreListenerSide = new TmlCore(testProcessName);
+	m_coreSenderSide = new TmlCore(testProcessName);
 }
 
 TestingProcess::~TestingProcess () {
@@ -96,7 +95,7 @@ TML_INT32 TestingProcess::produceCmd(TML_COMMAND_HANDLE* cmd, TML_INT32 value, b
     if (TML_SUCCESS == m_iErr)
         m_iErr = tml_Cmd_Acquire_Sidex_Handle(*cmd, &sHandle);
     if (TML_SUCCESS == m_iErr)
-        sidex_Integer_Write(sHandle, GROUP, KEY, value);
+        sidex_Integer_Write(sHandle, S_GROUP, S_KEY, value);
     if (TML_SUCCESS == m_iErr)
         m_iErr = tml_Cmd_Release_Sidex_Handle(*cmd);
 
@@ -130,10 +129,10 @@ TML_INT32 TestingProcess::sendArbitraryCmd(TML_INT32 cmdIndex, TML_INT32 profile
 	SIDEX_TCHAR* profileURL = listOfProfiles[profileIndex];
 	SIDEX_TCHAR* listenerPort = LISTENERS_PORTS[cmdIndex];
 	if (synchronous) {
-		m_iErr = tml_Send_SyncMessage(m_coreSenderSide->getCore(), cmdMsg, profileURL, DESTINATION_HOST_IP, listenerPort, timeout);
+		m_iErr = tml_Send_SyncMessage(m_coreSenderSide->getCore(), cmdMsg, profileURL, S_DESTINATION_HOST_IP, listenerPort, timeout);
 	}
 	else {
-		m_iErr = tml_Send_AsyncMessage(m_coreSenderSide->getCore(), cmdMsg, profileURL, DESTINATION_HOST_IP, listenerPort, timeout);
+		m_iErr = tml_Send_AsyncMessage(m_coreSenderSide->getCore(), cmdMsg, profileURL, S_DESTINATION_HOST_IP, listenerPort, timeout);
 	}
 	return m_iErr;
 }
@@ -250,7 +249,7 @@ void TestingProcess::sendArbitraryLoadBalancedCmds(bool synchronous) {
 void TestingProcess::subscribeListenersForLoadBalancingOrEvents(bool loadbalancing) {
 	TML_HANDLE_TYPE senderCore = m_coreSenderSide->getCore();
 	TML_HANDLE_TYPE listenerCore = m_coreListenerSide->getCore();
-	SIDEX_TCHAR* destinationIP = DESTINATION_HOST_IP;
+	SIDEX_TCHAR* destinationIP = S_DESTINATION_HOST_IP;
 	const int sizeOfProfilesArray = MAX_AMOUNT_OF_PROFILES;
 	array<SIDEX_TCHAR*, sizeOfProfilesArray> listOfProfiles = m_coreListenerSide->getProfileNames();
 	array<SIDEX_TCHAR*, 5> listenersPorts = LISTENERS_PORTS;
@@ -273,11 +272,11 @@ void TestingProcess::subscribeListenersForLoadBalancingOrEvents(bool loadbalanci
 	for (listenersIndex; listenersIndex < 5; listenersIndex++) {
 		if (loadbalancing) {
 			m_iErr = tml_Bal_Send_SubscriptionRequest(listenerCore, listOfProfiles[profilesIndex],
-				destinationIP, listenersPorts[listenersIndex], destinationIP, IO_PORT, DEFAULT_TIMEOUT);
+				destinationIP, listenersPorts[listenersIndex], destinationIP, S_IO_PORT, DEFAULT_TIMEOUT);
 		}
 		else {
 			m_iErr = tml_Evt_Send_SubscriptionRequest(listenerCore, listOfProfiles[profilesIndex],
-				destinationIP, listenersPorts[listenersIndex], destinationIP, IO_PORT, DEFAULT_TIMEOUT);
+				destinationIP, listenersPorts[listenersIndex], destinationIP, S_IO_PORT, DEFAULT_TIMEOUT);
 		}
 		
 		checkForSuccess();
@@ -339,10 +338,10 @@ void TestingProcess::checkSendMessageForUNICODEError(bool synchronous) {
 	array<SIDEX_TCHAR*, sizeOfProfilesArray> listOfProfiles = m_coreListenerSide->getProfileNames();
 	SIDEX_TCHAR* profileURL = listOfProfiles[profileIndex];
 	if (synchronous) {
-		m_iErr = tml_Send_SyncMessage(m_coreSenderSide->getCore(), cmdMsg, profileURL, DESTINATION_HOST_IP, NULL, DEFAULT_TIMEOUT);
+		m_iErr = tml_Send_SyncMessage(m_coreSenderSide->getCore(), cmdMsg, profileURL, S_DESTINATION_HOST_IP, NULL, DEFAULT_TIMEOUT);
 	}
 	else {
-		m_iErr = tml_Send_AsyncMessage(m_coreSenderSide->getCore(), cmdMsg, profileURL, DESTINATION_HOST_IP, NULL, DEFAULT_TIMEOUT);
+		m_iErr = tml_Send_AsyncMessage(m_coreSenderSide->getCore(), cmdMsg, profileURL, S_DESTINATION_HOST_IP, NULL, DEFAULT_TIMEOUT);
 	}
 	checkForExpectedReturnCode(TML_ERR_UNICODE);
 #endif

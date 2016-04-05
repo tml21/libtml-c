@@ -81,20 +81,21 @@ SIDEX_TCHAR* S_FLOATKEY                       = tmlrtT("floatKey");
 SIDEX_TCHAR* S_minStr                         = tmlrtT(" ");
 
 SIDEX_TCHAR* S_IO_PROFILE                     = tmlrtT("http://wobe-team.com/profiles/plain_profile");
-SIDEX_TCHAR* S_IO_PROFILE_TWO				          = tmlrtT("http://wobe-team.com/profiles/simple_profile");
-SIDEX_TCHAR* S_IO_PROFILE_THREE				        = tmlrtT("http://wobe-team.com/profiles/basic_profile");
+SIDEX_TCHAR* S_IO_PROFILE_TWO                 = tmlrtT("http://wobe-team.com/profiles/simple_profile");
+SIDEX_TCHAR* S_IO_PROFILE_THREE               = tmlrtT("http://wobe-team.com/profiles/basic_profile");
 SIDEX_TCHAR* S_LISTENER_NETWORK_INTERFACE_IP  = tmlrtT("0.0.0.0");
 SIDEX_TCHAR* S_IO_PORT                        = tmlrtT("44100");
 SIDEX_TCHAR* S_IO_PORT_TWO                    = tmlrtT("44102");
 SIDEX_TCHAR* S_IO_PORT_THREE                  = tmlrtT("44103");
-SIDEX_TCHAR* S_IO_PORT_FOUR	                  = tmlrtT("44104");
-SIDEX_TCHAR* S_IO_PORT_FIVE					          = tmlrtT("44105");
+SIDEX_TCHAR* S_IO_PORT_FOUR                   = tmlrtT("44104");
+SIDEX_TCHAR* S_IO_PORT_FIVE                   = tmlrtT("44105");
 SIDEX_TCHAR* S_DESTINATION_HOST_IP            = tmlrtT("127.0.0.1");
+SIDEX_TCHAR* S_LISTENER_ADDRESS               = tmlrtT("0.0.0.0:44100");
 
 SIDEX_TCHAR* S_MEANING                        = tmlrtT("Meaning");
 SIDEX_TCHAR* S_OF_LIFE                        = tmlrtT("ofLife");
 
-SIDEX_TCHAR* S_DEFAULT_BOOTSTRAP				      = tmlrtT("bootstrapTemplate.sdx");
+SIDEX_TCHAR* S_DEFAULT_BOOTSTRAP              = tmlrtT("bootstrapTemplate.sdx");
 
 VortexMutex g_mutex_handle;
 bool        g_mutex_valid = false;
@@ -132,14 +133,6 @@ void deleteGlobalMutex()
     vortex_mutex_destroy(&g_mutex_handle);
     g_mutex_valid = false;
   }
-}
-
-
-
-void initializeMutex() {
-  #ifndef LINUX
-	InitializeCriticalSection(&notifyRepliesRecieved);	//only windows
-  #endif
 }
 
 /** @ingroup Wrapping_Sidex_TChar
@@ -268,7 +261,7 @@ void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data){
 
 	iErr = tml_Cmd_Acquire_Sidex_Handle(cmdMsg, &sHandle);
 	if (TML_SUCCESS == iErr)
-		sidex_Integer_Read(sHandle, GROUP, KEY, &value);
+		sidex_Integer_Read(sHandle, S_GROUP, S_KEY, &value);
 	if (TML_SUCCESS == iErr)
 		iErr = tml_Cmd_Release_Sidex_Handle(cmdMsg);
 
@@ -289,7 +282,7 @@ void FUNC_C_DECL cbGenericCmdReplyReceived(TML_COMMAND_HANDLE tmlhandle, TML_POI
 
 	iErr = tml_Cmd_Acquire_Sidex_Handle(tmlhandle, &sHandle);
 	if (TML_SUCCESS == iErr)
-		sidex_Integer_Read(sHandle, GROUP, KEY, &value);
+		sidex_Integer_Read(sHandle, S_GROUP, S_KEY, &value);
 	if (TML_SUCCESS == iErr)
 		iErr = tml_Cmd_Release_Sidex_Handle(tmlhandle);
 
@@ -299,49 +292,32 @@ void FUNC_C_DECL cbGenericCmdReplyReceived(TML_COMMAND_HANDLE tmlhandle, TML_POI
 		wcout << "Test failed at async callback cmd reply received function with " << iErr << endl;
 	}
 	index = (value / 10) - 1;
-	lockMutex();
+	enterGlobalMutex();
 	cmdRepliesReceived[index] = true;
-	unlockMutex();
+	leaveGlobalMutex();
 	wcout << "received async cmd callback" << endl;
 }
 
 void initCmdRepliesReceived() {
-	lockMutex();
+	enterGlobalMutex();
 	for (int i = 0; i < AMOUNT_OF_CMDS; i++) {
 		cmdRepliesReceived[i] = false;
 	}
-	unlockMutex();
+	leaveGlobalMutex();
 }
 
 bool allCmdsFreed() {
 	bool returnValue = true;
-	lockMutex();
+	enterGlobalMutex();
 	for (int i = 0; i < AMOUNT_OF_CMDS; i++) {
 		returnValue = returnValue && cmdRepliesReceived[i];
 	}
-	unlockMutex();
+	leaveGlobalMutex();
 	return returnValue;
 }
 
-void lockMutex() {
-#ifndef LINUX	//Windows
-	EnterCriticalSection(&notifyRepliesRecieved);
-#else	//Linux
-	pthread_mutex_lock(&mutexRepliesRecieved);
-#endif
-}
-
-void unlockMutex() {
-#ifndef LINUX	//Windows
-	LeaveCriticalSection(&notifyRepliesRecieved);
-#else	//Linux
-	pthread_mutex_unlock(&mutexRepliesRecieved);
-#endif
-}
-
-
 void setCmdRepliesReceivedToTrue(int indexOfDisabledListener) {
-	lockMutex();
+	enterGlobalMutex();
 	cmdRepliesReceived[indexOfDisabledListener] = true;
-	unlockMutex();
+	leaveGlobalMutex();
 }

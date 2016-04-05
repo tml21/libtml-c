@@ -111,18 +111,18 @@
       wcout << "----------------------------------------" << endl;
       wcout << endl;
       if(!testTmlConnections()) break;            // test connection API
-//      if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
-//      simpleTestTmlMultiListenerSendSyncMessage();
-//      simpleTestTmlMultiListenerSendAsyncMessage();
-//      simpleTestTmlMultiListener();
-//      testTmlCoreListenerClose();
-//      testTmlCoreListenerGetSetEnabled();
-//      testTmlCoreGetListenerCountErrorCodes();
-//      testTmlCoreGetListenerErrorCodes();
-//      testTmlListenerGetSetEnabledForErrorCodes();
-//  //    testTmlCoreListenerCreateCloseErrorCodes();
-//      testTmlMultiListenerLoadBalancingMessages();
-//      testTmlMultiListenerEventMessages();
+      if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
+      simpleTestTmlMultiListenerSendSyncMessage();
+      simpleTestTmlMultiListenerSendAsyncMessage();
+      simpleTestTmlMultiListener();
+      testTmlCoreListenerClose();
+      testTmlCoreListenerGetSetEnabled();
+      testTmlCoreGetListenerCountErrorCodes();
+      testTmlCoreGetListenerErrorCodes();
+      testTmlListenerGetSetEnabledForErrorCodes();
+//      testTmlCoreListenerCreateCloseErrorCodes();
+      testTmlMultiListenerLoadBalancingMessages();
+      testTmlMultiListenerEventMessages();
       i++;
     }
     while(i < n);

@@ -44,7 +44,6 @@ class TmlCore : public TestingForReturns
 {
 public:
 	TmlCore(SIDEX_TCHAR* testProcessName = NULL);
-	TmlCore();
 	~TmlCore();
 
 	array<TML_LISTENER_HANDLE, AMOUNT_OF_LISTENERS> m_listenerHandles;
@@ -78,8 +77,6 @@ protected:
 
 	void appendProfileToList(SIDEX_TCHAR* profile);
 	SIDEX_VARIANT formatToSidexString(SIDEX_TCHAR* profile);
-	void setErrorLocationOutput(SIDEX_TCHAR* outputInCaseOfError);
-
 };
 
 #endif	//TESTTMLCORE_H
