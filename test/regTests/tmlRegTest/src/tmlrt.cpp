@@ -38,7 +38,6 @@
 #include "tmlrt_Utils.h"
 #include "TestParams.h"
 #include "tmlrt_Connections.h"
-#include "tmlrt_SendingCommands.h"
 #include "tmlrt_MultipleListeners.h"
 
 /** @brief Main function, accepts command line parameters
@@ -111,20 +110,10 @@
       wcout << "  Loop #" << i << endl;
       wcout << "----------------------------------------" << endl;
       wcout << endl;
-      if(!testTmlConnections()) break;            // test connection API
-      if(!simpleTestTmlSendSyncMessage()) break;  // testing to send messages
 
-      simpleTestTmlMultiListenerSendSyncMessage();
-      simpleTestTmlMultiListenerSendAsyncMessage();
-      simpleTestTmlMultiListener();
-      testTmlCoreListenerClose();
-      testTmlCoreListenerGetSetEnabled();
-      testTmlCoreGetListenerCountErrorCodes();
-      testTmlCoreGetListenerErrorCodes();
-      testTmlListenerGetSetEnabledForErrorCodes();
-//      testTmlCoreListenerCreateCloseErrorCodes();
-      testTmlMultiListenerLoadBalancingMessages();
-      testTmlMultiListenerEventMessages();
+      if(!testTmlConnections()) break;            // test the connection API
+      if(!testTmlMultiListeners()) break;         // test the multi listener API
+
       i++;
     }
     while(i < n);
