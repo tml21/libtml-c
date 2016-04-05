@@ -368,8 +368,8 @@ void TestingProcess::waitForAsyncReplies() {
 
 	while (!allCmdsFreed()) {
 		diffTimer = time(NULL);	
-		if (50 < difftime(diffTimer, timer)) {	
-			//this function waits already more than xx seconds
+		if (10 < difftime(diffTimer, timer)) {	
+			//this function waits already for more than 10 seconds
 			return;
 		}
 		TmlSleep(50);
