@@ -38,10 +38,11 @@
 #ifndef TESTING_PROCESS_H
 #define TESTING_PROCESS_H
 
-#include "TestingForReturns.h"
+#include "TmlTester.h"
 #include "TmlCore.h"
 
-class TestingProcess : public TestingForReturns{
+class TestingProcess : public TmlTester
+{
 public:
 	TestingProcess(SIDEX_TCHAR* testProcessName = NULL);
 	~TestingProcess();

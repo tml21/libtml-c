@@ -34,18 +34,13 @@
  * Contributors:
  *    wobe-systems GmbH
  */
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
-#include "TmlCore.h"
-#include "TestingForReturns.h"
+
 #include "TestingProcess.h"
+#include "TmlCore.h"
 #include <time.h>
 
-
-TestingProcess::TestingProcess (SIDEX_TCHAR* testProcessName)
-	:TestingForReturns(testProcessName), m_coreListenerSide(), m_coreSenderSide()
+TestingProcess::TestingProcess(SIDEX_TCHAR* testProcessName)
+              : TmlTester(testProcessName), m_coreListenerSide(), m_coreSenderSide()
 {
 	m_cmdCodes = COMMAND_CODES_LIST;
 	m_coreListenerSide = new TmlCore(testProcessName);
@@ -368,8 +363,8 @@ void TestingProcess::waitForAsyncReplies() {
 
 	while (!allCmdsFreed()) {
 		diffTimer = time(NULL);	
-		if (50 < difftime(diffTimer, timer)) {	
-			//this function waits already more than xx seconds
+		if (10 < difftime(diffTimer, timer)) {	
+			//this function waits already for more than 10 seconds
 			return;
 		}
 		TmlSleep(50);
