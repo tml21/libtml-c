@@ -156,7 +156,7 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
         bConnected = vortex_connection_reconnect (connection, NULL, NULL);
         if (axl_false == bConnected){
           const char* msg = vortex_connection_get_message(connection);
-          log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
+          log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
           iRet = TML_ERR_SENDER_INVALID_PARAMS;
         }
       }
@@ -199,7 +199,7 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
         if (!vortex_connection_is_ok (connection, axl_false))
         {
           const char* msg = vortex_connection_get_message(connection);
-          log->log ("tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
+          log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
           iRet = TML_ERR_SENDER_INVALID_PARAMS;
         }
         else{
@@ -233,16 +233,15 @@ TML_INT32 tmlConnectionManageObj::getLastErr(){
  * @brief    Cleans up refCounter dependent allocations.
  */
 void tmlConnectionManageObj::cleanUp(){
-  if (getRef())
+  if (getRef()){
     if (decRef() == 0){
+      tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
+      ////////////////////////////////////////////////////////////////////////
+      // remove registered callback:
+      log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_remove_on_close_full");
+      vortex_connection_remove_on_close_full (m_vortexConnection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
       // If I am the owner I have to close the connection:
       if (NULL != m_vortexConnection && m_bIsOwner){ 
-        tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
-        ////////////////////////////////////////////////////////////////////////
-        // remove registered callback:
-        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_remove_on_close_full");
-        vortex_connection_remove_on_close_full (m_vortexConnection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
-
         ////////////////////////////////////////////////////////////////////////
         // shutdown connection:
         log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_shutdown");
@@ -256,6 +255,7 @@ void tmlConnectionManageObj::cleanUp(){
       }
       delete m_binding;
     }
+  }
 }
 
 
@@ -504,7 +504,6 @@ bool tmlConnectionManageObj::SignalConnectionClose(void* connection)
   if (!m_bIsOwner){
     ((tmlCoreWrapper*)m_coreHandle)->tmlCoreWrapper_Delete_ConnectionItem((TML_CONNECTION_HANDLE) this);
   }
-
   return true;
 }
 

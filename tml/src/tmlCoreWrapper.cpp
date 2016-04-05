@@ -245,7 +245,7 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   ////////////////////////////////
   // TMLCoreListener:
-  m_CoreListener = new TMLCoreListener((TML_CORE_HANDLE)this, m_log, m_ctx, m_pHandler);
+  m_CoreListener = new TMLCoreListener((TML_CORE_HANDLE)this, m_log, m_ctx, m_pHandler, &m_ListenerCallback);
   ////////////////////////////////
   // Dispatcher hash table:
   m_dispatcherHashTable = NULL;
@@ -907,6 +907,13 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
  */
 tmlCoreWrapper::~tmlCoreWrapper()
 {
+  ////////////////////////////////
+  // destruct the connection manager objects
+  tmlCoreWrapper_Connection_CloseAll();
+  ////////////////////////////////
+  // destruct the listener objects
+  tmlCoreWrapper_Listener_CloseAll();
+
   tmlCoreWrapper_General_Deregistration();
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -920,22 +927,11 @@ tmlCoreWrapper::~tmlCoreWrapper()
   // unregister profiles:
   unregisterAll_Registered_Profiles();
 
-  ////////////////////////////////
-  // destruct the listener objects
-  tmlCoreWrapper_Listener_CloseAll();
-
   ////////////////////////////////////////////////////////////////////////////////////////////
   // free listener / to get rid of ctx references before vortex_exit_ctx
   delete (m_CoreListener);
   m_CoreListener = NULL;
 
-  ////////////////////////////////
-  // destruct the connection manager objects
-  tmlCoreWrapper_Connection_CloseAll();
-
-
-  sidex_Variant_DecRef(m_connectionMgrObjs);
-  sidex_Variant_DecRef(m_listenerObjs);
 
 
 #ifdef LINUX
@@ -946,10 +942,19 @@ tmlCoreWrapper::~tmlCoreWrapper()
   #endif // OSX
 #else // LINUX
 #endif // LINUX
-  // now call to exit
+  // now call to exit and wait until it is finished:
   m_log->log (TML_LOG_VORTEX_CMD, "tmlCoreWrapper", "~tmlCoreWrapper", "Vortex CMD", "vortex_exit_ctx");
-  vortex_exit_ctx (m_ctx, axl_true);
+  vortex_exit_ctx (m_ctx, axl_false);
+  axl_bool bExit = axl_false;
+  do{
+    SleepForMilliSeconds(50);
+    m_log->log (TML_LOG_VORTEX_CMD, "tmlCoreWrapper", "~tmlCoreWrapper", "Vortex CMD", "vortex_is_exiting");
+    bExit = vortex_is_exiting(m_ctx);
+  }while (!bExit);
+  vortex_ctx_free(m_ctx);
 
+  sidex_Variant_DecRef(m_connectionMgrObjs);
+  sidex_Variant_DecRef(m_listenerObjs);
 
 ///////////////////////////////////////
 // To debug m_ctx ref counting:
@@ -999,6 +1004,25 @@ vortex_ctx_unref (&m_ctx);
 
 
 /**
+ * @brief  helper method / sleep for millisecond
+*/
+void tmlCoreWrapper::SleepForMilliSeconds(DWORD mSecs){
+#ifdef LINUX // LINUX
+  ///////////////////////////////////////////////////////////////////////////
+  // Delay for one millisecond:
+  timespec delay;
+  delay.tv_sec = 0;
+  delay.tv_nsec = 1000000 * mSecs;  // 1 milli sec * mSecs
+  // sleep for delay time
+  nanosleep(&delay, NULL);
+  return;
+#else // LINUX
+  Sleep (mSecs);
+#endif // LINUX
+}
+
+
+/**
  * @brief   Set the callback method for thread creation.
  */
 int tmlCoreWrapper::tmlCoreWrapper_Thread_Set_OnCreate(void *pCBCreate){
@@ -1040,9 +1064,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Register_Profile(const char* profile){
         m_dispatcherHashTable->setValue(profileCopy, pDispatcher);
         ////////////////////////////////////////////////////////////
         // Profile registration at the listener:
-        if (m_bListnerIsEnabled){
-          m_CoreListener->TMLCoreListener_RegisterProfile(profileCopy, (TML_CORE_HANDLE)this);
-        }
+        m_CoreListener->TMLCoreListener_RegisterProfile(profileCopy);
       }
     }
   }
@@ -1504,7 +1526,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Enable_Listener(bool bEnable){
       m_CoreListener->setLogFileIndex(m_iLogFileIndex);
       //////////////////////
       // Start the listener:
-      iRet = m_CoreListener->TMLCoreListener_Start(m_sListenerIP, m_sListenerPort, &resPort, &m_ListenerCallback);
+      iRet = m_CoreListener->TMLCoreListener_Start(m_sListenerIP, m_sListenerPort, &resPort);
 
       if (TML_SUCCESS == iRet){
         //////////////////////////////////////////////////////////////
@@ -1520,7 +1542,7 @@ int tmlCoreWrapper::tmlCoreWrapper_Enable_Listener(bool bEnable){
           int iRet = m_dispatcherHashTable->getKeys(&retProfiles);
           if (TML_SUCCESS == iRet && NULL != retProfiles){
             for (int i = 0;i < iSize; ++i){
-              m_CoreListener->TMLCoreListener_RegisterProfile(retProfiles[i], (TML_CORE_HANDLE)this);
+              m_CoreListener->TMLCoreListener_RegisterProfile(retProfiles[i]);
               delete (retProfiles[i]);
             }
             delete retProfiles;
@@ -2360,11 +2382,14 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, T
   }
   if (!bFound){
     wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, m_ctx, sAddress);
-    tmlCoreWrapper_Add_ListenerItem((TML_LISTENER_HANDLE) wrapper);
+    iRet = tmlCoreWrapper_Add_ListenerItem((TML_LISTENER_HANDLE) wrapper);
+    if (TML_SUCCESS == iRet){
+      *listenerHandle = (TML_LISTENER_HANDLE) wrapper;
+    }
   }
-
-  *listenerHandle = (TML_LISTENER_HANDLE) wrapper;
-
+  else{
+    iRet = TML_ERR_LISTENER_ALREADY_EXISTS;
+  }
   return iRet;
 }
 
@@ -2393,7 +2418,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Listener_CloseAll(){
 
   TML_UINT32 iCount = 0;
   tmlCoreWrapper_Get_ListenerCount(&iCount);
-  for (TML_UINT32 i = 0; i < iCount; ++i){
+  for (TML_INT32 i = iCount-1; i >= 0; --i){
     TML_LISTENER_HANDLE listener = TML_HANDLE_TYPE_NULL;
     tmlCoreWrapper_Get_Listener (i, &listener);
     if (listener){
@@ -2487,16 +2512,37 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LIST
 
 
 /**
+  * @brief    Get listener's handle from a TML core.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ListenerByAddress(char* sAddress, TML_LISTENER_HANDLE* listenerHandle){
+  int iRet  = TML_SUCCESS;
+  TML_UINT32 iCount = 0;
+  iRet = tmlCoreWrapper_Get_ListenerCount(&iCount);
+  bool bFound = false;
+  for (TML_UINT32 i = 0; i < iCount && !bFound && TML_SUCCESS == iRet; ++i){
+    TML_LISTENER_HANDLE tmpListener = TML_HANDLE_TYPE_NULL;
+    iRet = tmlCoreWrapper_Get_Listener (i, &tmpListener);
+    if (TML_SUCCESS == iRet){
+      if (((tmlListenerObj*)tmpListener)->isEqual(sAddress)){
+        bFound = true;
+        *listenerHandle = tmpListener;
+      }
+    }
+  }
+  if (TML_SUCCESS == iRet && !bFound){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
+  return iRet;
+}
+
+
+/**
   * @brief    Enable/disable a listener. 
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable){
   TML_INT32 iRet = TML_SUCCESS;
 
   iRet = ((tmlListenerObj*)listenerHandle)->set_Enabled(bEnable);
-  if (TML_SUCCESS == iRet){
-    tmlCoreWrapper_Enable_Listener(TML_TRUE == bEnable);
-  }
-
   return iRet;
 }
 
@@ -2512,7 +2558,7 @@ TML_BOOL tmlCoreWrapper::tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE
 /**
   * @brief   Create a new connection.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bExistingFail, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
   TML_INT32 iRet = TML_SUCCESS;
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
@@ -2523,7 +2569,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* 
     sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
   #endif // LINUX
 
-  iRet = tmlCoreWrapper_Connect (sNetAddress, bUseExisting, connectionHandle, vortexConnection);
+  iRet = tmlCoreWrapper_Connect (sNetAddress, bExistingFail, connectionHandle, vortexConnection);
 
   delete[]sNetAddress;
 
@@ -2534,17 +2580,17 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sHost, const char* 
 /**
   * @brief   Create a new connection.
   */
-TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUseExisting, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bExistingFail, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection){
   TML_INT32 iRet = TML_SUCCESS;
   tmlConnectionManageObj* wrapper = TML_HANDLE_TYPE_NULL;
 
   TML_UINT32 iCount = 0;
   bool bFound = false;
-  if (bUseExisting){
-    tmlCoreWrapper_Get_ConnectionCount(&iCount);
-    for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
-      TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
-      tmlCoreWrapper_Get_Connection (i, &connection);
+  iRet = tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  for (TML_UINT32 i = 0; i < iCount && !bFound && TML_SUCCESS == iRet; ++i){
+    TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+    iRet = tmlCoreWrapper_Get_Connection (i, &connection);
+    if (TML_SUCCESS == iRet){
       if (connection){
         wrapper = (tmlConnectionManageObj*)connection;
         if (wrapper->isEqual(sAddress)){
@@ -2553,14 +2599,29 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bUse
       }
     }
   }
-  if (!bFound){
-    wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress, &m_internalConnectionEstablishHandlerMethod, &m_internalConnectionCloseHandlerMethod, vortexConnection);
-    tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
+  if (TML_SUCCESS == iRet){
+    if (bFound){
+      if (bExistingFail){
+        iRet = TML_ERR_CONNECTION_ALREADY_EXISTS;
+      }
+    }
+    else{
+      wrapper = new tmlConnectionManageObj((TML_CORE_HANDLE)this, sAddress, &m_internalConnectionEstablishHandlerMethod, &m_internalConnectionCloseHandlerMethod, vortexConnection);
+      iRet = wrapper->getLastErr();
+      switch (iRet){
+        case TML_ERR_NET_BINDING :
+                           // The network address is not correct:
+                           delete wrapper;
+                           break;
+        case TML_SUCCESS : // No Break here
+        default:           tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
+                           *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
+                           break;
+      }
+      
+    }
   }
-
-  *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
-
-  return iRet = wrapper->getLastErr();
+  return iRet;
 }
 
 
@@ -2592,11 +2653,11 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
 
   TML_UINT32 iCount = 0;
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
-  for (TML_UINT32 i = 0; i < iCount; ++i){
+  for (TML_INT32 i = iCount-1; i >= 0; --i){
     TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
     tmlCoreWrapper_Get_Connection (i, &connection);
     if (connection){
-      tmlCoreWrapper_Connection_Close(&connection, false);
+      tmlCoreWrapper_Connection_Close(&connection, true);
     }
   }
 }
@@ -2677,7 +2738,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CO
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
   int  iRet = TML_SUCCESS;
-  iRet = m_sender->sender_SendAsyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, true);
+  iRet = m_sender->sender_SendAsyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, false);
   return iRet;
 }
 
@@ -2735,6 +2796,53 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Set_OnDisconnect(TML_ON_DISCONNECT_CB_F
   int iRet  = TML_SUCCESS;;
   m_pOnDisconnectCallback = pCBFunc;
   m_pOnDisconnectData = pCBData;
+
+  return iRet;
+}
+
+
+/**
+  * @brief    Get connection handle.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionByAddress(char* sAddress, TML_CONNECTION_HANDLE* connectionHandle){
+  int iRet  = TML_SUCCESS;
+  TML_UINT32 iCount = 0;
+  iRet = tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  bool bFound = false;
+  for (TML_UINT32 i = 0; i < iCount && !bFound && TML_SUCCESS == iRet; ++i){
+    TML_CONNECTION_HANDLE tmpConnection = TML_HANDLE_TYPE_NULL;
+    iRet = tmlCoreWrapper_Get_Connection (i, &tmpConnection);
+    if (TML_SUCCESS == iRet){
+      if (((tmlConnectionManageObj*)tmpConnection)->isEqual(sAddress)){
+        bFound = true;
+        *connectionHandle = tmpConnection;
+      }
+    }
+  }
+  if (TML_SUCCESS == iRet && !bFound){
+    iRet = TML_ERR_INFORMATION_UNDEFINED;
+  }
+  return iRet;
+}
+
+
+/**
+  * @brief    Get connection handle.
+  */
+TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, char* sPort, TML_CONNECTION_HANDLE* connectionHandle){
+  TML_INT32 iRet = TML_SUCCESS;
+  int iLength = strlen(sHost) + strlen(sPort) + 2;
+
+  char* sNetAddress = new char[iLength];
+  #if defined(LINUX) || defined (MINGW_BUILD)
+    sprintf(sNetAddress, "%s:%s", sHost, sPort);
+  #else // LINUX
+    sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
+  #endif // LINUX
+
+  iRet = tmlCoreWrapper_Get_ConnectionByAddress (sNetAddress, connectionHandle);
+
+  delete[]sNetAddress;
 
   return iRet;
 }
