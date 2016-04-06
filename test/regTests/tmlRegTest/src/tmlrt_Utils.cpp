@@ -60,9 +60,9 @@ SIDEX_TCHAR* S_wDOCUMENT                      = tmlrtT("Doc<ument");
 SIDEX_TCHAR* S_DOCUMENT2                      = tmlrtT("AnotherDocument");
 SIDEX_TCHAR* S_GROUP                          = tmlrtT("group");
 SIDEX_TCHAR* S_KEY                            = tmlrtT("key");
-SIDEX_TCHAR* S_GROUP2                         = tmlrtT("hällöWörld");
+SIDEX_TCHAR* S_GROUP2                         = tmlrtT("h\u00E4ll\u00F6W\u00F6rld");
 SIDEX_TCHAR* S_KEY2                           = tmlrtT("????");
-SIDEX_TCHAR* S_GROUP3                         = tmlrtT("góðurdagur");
+SIDEX_TCHAR* S_GROUP3                         = tmlrtT("g\u00F3\u00F0urdagur");
 SIDEX_TCHAR* S_KEY3                           = tmlrtT("?????");
 SIDEX_TCHAR* S_GROUP4                         = tmlrtT("????");
 SIDEX_TCHAR* S_KEY4                           = tmlrtT("????");
@@ -71,7 +71,7 @@ SIDEX_TCHAR* S_wKEY                           = tmlrtT("key]]>");
 SIDEX_TCHAR* S_A_S_VAL                        = tmlrtT("systems");
 SIDEX_TCHAR* S_B_S_VAL                        = tmlrtT("team");
 SIDEX_TCHAR* S_COLUMN                         = tmlrtT("name");
-SIDEX_TCHAR* S_COLUMN2                        = tmlrtT("góðurdagur");
+SIDEX_TCHAR* S_COLUMN2                        = tmlrtT("g\u00F3\u00F0urdagur");
 SIDEX_TCHAR* S_MINDATE                        = tmlrtT("0001-01-01 00:00:00:000");
 SIDEX_TCHAR* S_MAXDATE                        = tmlrtT("9999-12-31 23:59:59:999");
 SIDEX_TCHAR* S_wDATE                          = tmlrtT("0000-00-00 24:00:58:999");
@@ -265,7 +265,7 @@ void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data){
 	if (TML_SUCCESS == iErr)
 		iErr = tml_Cmd_Release_Sidex_Handle(cmdMsg);
 
-	TmlSleep(value * 10);
+	TmlSleep((int)value * 10);
 	wcout << "received cmd " << value << endl;
 }
 
@@ -291,7 +291,7 @@ void FUNC_C_DECL cbGenericCmdReplyReceived(TML_COMMAND_HANDLE tmlhandle, TML_POI
 	if (TML_SUCCESS != iErr) {
 		wcout << "Test failed at async callback cmd reply received function with " << iErr << endl;
 	}
-	index = (value / 10) - 1;
+	index = (int)(value / 10) - 1;
 	enterGlobalMutex();
 	cmdRepliesReceived[index] = true;
 	leaveGlobalMutex();
