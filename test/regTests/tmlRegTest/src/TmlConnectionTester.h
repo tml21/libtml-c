@@ -54,7 +54,7 @@ enum cbType_t
   cbtOnCommand,
   cbt_TypeCount // type count in enum
 };
-SIDEX_TCHAR* cbt_Name[];
+extern SIDEX_TCHAR* cbt_Name[];
 
 struct cbData_t
 {
