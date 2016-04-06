@@ -531,7 +531,7 @@ bool TmlConnectionTester::testGetRemoteProfiles()
                   checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress2, tmlrtT(")")), true);
 /*
                   stopListener(1, 1);
-                  Sleep(100); // <-- Bug: won't reconnect without sleep!
+                  TmlSleep(100);  // <-- Bug: won't reconnect without sleep!
                   startListener(1, 1);
                   TML_BOOL bConnected = TML_FALSE;
                   m_iErr = tml_Connection_Validate(hConnection2, TML_TRUE, &bConnected);
@@ -683,7 +683,7 @@ bool TmlConnectionTester::testValidate()
 
             // Test for lost connection...
             stopListener(1, 0);
-            Sleep(100); // wait a little bit for disconnection
+            TmlSleep(100);  // wait a little bit for disconnection
             bConnected = TML_TRUE;
             m_iErr = tml_Connection_Validate(hConnection, TML_FALSE, &bConnected);
             checkForSuccess(tmlrtT("tml_Connection_Validate(Connection, NoReconnect, False)"));
@@ -1159,7 +1159,7 @@ bool TmlConnectionTester::testSetOnConnect()
                   for(int i = 0; i < 1000; i += msWait)
                   {
                     if(m_cbLog_Connection == 3) break;
-                    Sleep(msWait);
+                    TmlSleep(msWait);
                   }
                   if(checkForValue(tmlrtT("Received callback log"), 3, m_cbLog_Connection, false))
                   {
@@ -1272,7 +1272,7 @@ bool TmlConnectionTester::testSetOnDisconnect()
                   for(int i = 0; i < 1000; i += msWait)
                   {
                     if(m_cbLog_Disconnection == 3) break;
-                    Sleep(msWait);
+                    TmlSleep(msWait);
                   }
                   if(checkForValue(tmlrtT("Received callback log"), 3, m_cbLog_Disconnection, false))
                   {
@@ -1608,7 +1608,7 @@ bool TmlConnectionTester::testSendAsync()
                 for(int i = 0; i < 1000; i += msWait)
                 {
                   if(m_cbLog_Command == 15) break;
-                  Sleep(msWait);
+                  TmlSleep(msWait);
                 }
 
                 if(checkForValue(tmlrtT("Received commands log"), 15, m_cbLog_Command, false))
