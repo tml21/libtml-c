@@ -30,10 +30,11 @@
 # Contributors:
 #    wobe-systems GmbH
 
-set(CMAKE_VERBOSE_MAKEFILE on)
+#set(CMAKE_VERBOSE_MAKEFILE on)
 
 #######################################################
 ## Common src path
+#######################################################
 set(COMMON_INCLUDE_PATH ../../../../common/src)
 set(SIDEX_INCLUDE_PATH ../../../../sidex/src)
 set(TML_INCLUDE_PATH ../../../../tml/src)
@@ -188,6 +189,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   ADD_DEFINITIONS("-DLINUX -DSIDEX_UNICODE -DTML_UNICODE" -DGCC4)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
+#######################################################
+
 if (${IS64BIT} STREQUAL false)
   set(TARGETNAME_LOCAL  ${TARGETNAME})
 else (${IS64BIT} STREQUAL false)
@@ -225,6 +228,7 @@ add_executable(${TARGETNAME_LOCAL}
 
 #######################################################
 ## Include- directories:
+#######################################################
 if (AXL_INCLUDE_PATH2)
   INCLUDE_DIRECTORIES (${AXL_INCLUDE_PATH2})
 endif()
@@ -236,11 +240,11 @@ INCLUDE_DIRECTORIES (${VORTEXINCLUDE})
 INCLUDE_DIRECTORIES (${SIDEX_INCLUDE_PATH})
 INCLUDE_DIRECTORIES (${TML_INCLUDE_PATH})
 INCLUDE_DIRECTORIES (".")
+INCLUDE_DIRECTORIES (${COMMON_INCLUDE_PATH})
 
 #######################################################
 ## libraries
-INCLUDE_DIRECTORIES (${COMMON_INCLUDE_PATH})
-
+#######################################################
 TARGET_LINK_LIBRARIES(${TARGET} ${SIDEXLIBNAME})
 TARGET_LINK_LIBRARIES(${TARGET} ${TMLLIBNAME})
 TARGET_LINK_LIBRARIES(${TARGET} ${AXLLIB})

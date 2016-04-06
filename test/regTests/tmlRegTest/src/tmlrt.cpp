@@ -58,6 +58,7 @@
   wcout << "=======================" << endl;
   wcout << endl;
 
+  wcout << (8 * sizeof(int)) << "bit" << endl;
   wcout << "UTF" << (8 * sizeof(SIDEX_TCHAR)) << endl;
   wcout << endl;
 
