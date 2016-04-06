@@ -30,6 +30,8 @@
 # Contributors:
 #    wobe-systems GmbH
 
+set(CMAKE_VERBOSE_MAKEFILE on)
+
 #######################################################
 ## Common src path
 set(COMMON_INCLUDE_PATH ../../../../common/src)
