@@ -66,7 +66,6 @@ public:
   bool testTmlListenerGetSetEnabledForErrorCodes();
   bool testTmlListenerGetAddressErrorCodes();
   bool testTmlMultiListenerEventMessages();
-  bool testTmlMultiListenerStreamCommunication();
 };
 
 #endif  // TML_MULTIPLELISTENERS_TESTER_H

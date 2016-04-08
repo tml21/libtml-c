@@ -536,18 +536,3 @@ bool TmlMultipleListenersTester::testTmlMultiListenerEventMessages()
   setTestSectionName();
   return(m_testOK);
 }
-
-//------------------------------------------------------------------------------
-
-bool TmlMultipleListenersTester::testTmlMultiListenerStreamCommunication()
-{
-  setTestSectionName(tmlrtT("testTmlMultiListenerStreamCommunication"));
-  messageOutput(S_START);
-  reset();
-
-
-  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
-  messageOutput();
-  setTestSectionName();
-  return(m_testOK);
-}

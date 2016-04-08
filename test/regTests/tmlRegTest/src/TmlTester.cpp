@@ -384,6 +384,24 @@ SIDEX_TCHAR* TmlTester::getSidexListStringItem(SIDEX_VARIANT vList, SIDEX_INT32 
 
 //------------------------------------------------------------------------------
 
+bool TmlTester::setCommandID(TML_COMMAND_HANDLE hCommand, TML_COMMAND_ID_TYPE cmdID)
+{
+  m_iErr = tml_Cmd_Header_SetCommand(hCommand, cmdID);
+  return(checkForSuccess(tmlrt_cat(tmlrtT("tml_Cmd_Header_SetCommand(ID = "),
+                                   tmlrt_itoa(cmdID),
+                                   tmlrtT(")"), 2), true));
+}
+
+TML_COMMAND_ID_TYPE TmlTester::getCommandID(TML_COMMAND_HANDLE hCommand, TML_COMMAND_ID_TYPE iDefault)
+{
+  TML_COMMAND_ID_TYPE cmdID = iDefault;
+  m_iErr = tml_Cmd_Header_GetCommand(hCommand, &cmdID);
+  checkForSuccess(tmlrtT("tml_Cmd_Header_GetCommand()"));
+  return(cmdID);
+}
+
+//------------------------------------------------------------------------------
+
 bool TmlTester::setCommandInt(TML_COMMAND_HANDLE hCommand, SIDEX_TCHAR* group, SIDEX_TCHAR* key, TML_INT32 iValue)
 {
   bool success = false;
