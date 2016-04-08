@@ -652,6 +652,7 @@ void tmlSingleCall::RemoveMarkedSenderOutOfConnectionList(bool bLockCritical)
               ////////////////////////////////////////
               // Wait until pending cmd is finished:
               sender->TMLCoreSender_WaitForPendingAsyncCmd();
+              ////////////////////////////////////////
               // free memory:
               delete (sender);
               //////////////////////////////////////
