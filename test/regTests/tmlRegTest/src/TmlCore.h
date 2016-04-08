@@ -37,18 +37,12 @@
 #ifndef TESTTMLCORE_H
 #define TESTTMLCORE_H
 
-
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
 #include "TestingForReturns.h"
-#include "tmlrt_Utils.h"
 
-class TmlCore : TestingForReturns {
+class TmlCore : public TestingForReturns
+{
 public:
-	TmlCore(SIDEX_TCHAR* name);
-	TmlCore();
+	TmlCore(SIDEX_TCHAR* testProcessName = NULL);
 	~TmlCore();
 
 	array<TML_LISTENER_HANDLE, AMOUNT_OF_LISTENERS> m_listenerHandles;
@@ -82,8 +76,6 @@ protected:
 
 	void appendProfileToList(SIDEX_TCHAR* profile);
 	SIDEX_VARIANT formatToSidexString(SIDEX_TCHAR* profile);
-	void setErrorLocationOutput(SIDEX_TCHAR* outputInCaseOfError);
-
 };
 
 #endif	//TESTTMLCORE_H

@@ -34,23 +34,17 @@
  * Contributors:
  *    wobe-systems GmbH
  */
+
 #ifndef TESTING_PROCESS_H
 #define TESTING_PROCESS_H
 
-#include <iostream>
-#include <list>
-#include <array>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
-#include "TestingForReturns.h"
+#include "TmlTester.h"
 #include "TmlCore.h"
 
-
-
-class TestingProcess : public TestingForReturns{
+class TestingProcess : public TmlTester
+{
 public:
-	TestingProcess(SIDEX_TCHAR* name);
+	TestingProcess(SIDEX_TCHAR* testProcessName = NULL);
 	~TestingProcess();
 
 	TmlCore* m_coreSenderSide;

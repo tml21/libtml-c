@@ -38,35 +38,8 @@
 #ifndef MULTIPLELISTENERS_H
 #define MULTIPLELISTENERS_H
 
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
+#include "tmlrt_Utils.h"
 
-void simpleTestTmlMultiListenerSendSyncMessage();
-
-void simpleTestTmlMultiListenerSendAsyncMessage();
-
-void testTmlMultiListenerLoadBalancingMessages();
-
-void simpleTestTmlMultiListener();
-
-void testTmlCoreListenerClose();
-
-void testTmlCoreListenerGetSetEnabled();
-
-void testTmlCoreListenerCreateCloseErrorCodes();
-
-void testTmlCoreGetListenerCountErrorCodes();
-
-void testTmlCoreGetListenerErrorCodes();
-
-void testTmlListenerGetSetEnabledForErrorCodes();
-
-void testTmlMultiListenerEventMessages();
-
-void testTmlMultiListenerStreamCommunication();
-
-
+bool testTmlMultiListeners();
 
 #endif //MULTIPLELISTENERS_H
