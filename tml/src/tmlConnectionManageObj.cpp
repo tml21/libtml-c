@@ -81,7 +81,7 @@ void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
           iRet = sidex_Variant_As_Integer(connectionItem, &iVal);
           if (SIDEX_SUCCESS == iRet){
             if (((VortexConnection*) iVal) == connection){
-              SIDEX_VARIANT conMgrItem = NULL;
+              SIDEX_VARIANT conMgrItem = SIDEX_HANDLE_TYPE_NULL;
               iRet = sidex_Variant_Dict_Get(dictItem, "ConMgr", &conMgrItem);
               if (SIDEX_SUCCESS == iRet){
                 iRet = sidex_Variant_As_Integer(conMgrItem, &iVal);
