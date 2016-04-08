@@ -69,41 +69,88 @@ cbData_t* prepareCallbackData(TmlConnectionTester* tester, int iCore, cbType_t t
 
 void CallbackHandler_DisConnection(TML_CONNECTION_HANDLE hConnection, TML_POINTER pCBData)
 {
-  if(enterGlobalMutex())
+  cbData_t* data = (cbData_t*)pCBData;
+  if(data)
   {
-    cbData_t* data = (cbData_t*)pCBData;
-    if(data)
+    if(data->tester)
     {
-      if(data->tester)
-      {
-        data->tester->OnDisConnectionCallback(hConnection, data);
-      }
-      else wcout << "CallbackHandler_DisConnection: no Tester!" << endl;
-
-      if(data->bDeleteString) DELETE_STR(data->sValue);
+      data->tester->OnDisConnectionCallback(hConnection, data);
     }
-    else wcout << "CallbackHandler_DisConnection: no CB-Data!" << endl;
-    leaveGlobalMutex();
+    else
+    {
+      if(enterGlobalMutex())
+      {
+        wcout << "CallbackHandler_DisConnection: no Tester!" << endl;
+        leaveGlobalMutex();
+      }
+    }
+    if(data->bDeleteString) DELETE_STR(data->sValue);
+  }
+  else
+  {
+    if(enterGlobalMutex())
+    {
+      wcout << "CallbackHandler_DisConnection: no CB-Data!" << endl;
+      leaveGlobalMutex();
+    }
   }
 }
 
 void CallbackHandler_Command(TML_COMMAND_HANDLE hCommand, TML_POINTER pCBData)
 {
-  if(enterGlobalMutex())
+  cbData_t* data = (cbData_t*)pCBData;
+  if(data)
   {
-    cbData_t* data = (cbData_t*)pCBData;
-    if(data)
+    if(data->tester)
     {
-      if(data->tester)
-      {
-        data->tester->OnCommandCallback(hCommand, data);
-      }
-      else wcout << "CallbackHandler_Command: no Tester!" << endl;
-
-      if(data->bDeleteString) DELETE_STR(data->sValue);
+      data->tester->OnCommandCallback(hCommand, data);
     }
-    else wcout << "CallbackHandler_Command: no CB-Data!" << endl;
-    leaveGlobalMutex();
+    else
+    {
+      if(enterGlobalMutex())
+      {
+        wcout << "CallbackHandler_Command: no Tester!" << endl;
+        leaveGlobalMutex();
+      }
+    }
+    if(data->bDeleteString) DELETE_STR(data->sValue);
+  }
+  else
+  {
+    if(enterGlobalMutex())
+    {
+      wcout << "CallbackHandler_Command: no CB-Data!" << endl;
+      leaveGlobalMutex();
+    }
+  }
+}
+
+void CallbackHandler_CommandConnection(TML_COMMAND_HANDLE hCommand, TML_POINTER pCBData)
+{
+  cbData_t* data = (cbData_t*)pCBData;
+  if(data)
+  {
+    if(data->tester)
+    {
+      data->tester->OnCommandConnectionCallback(hCommand, data);
+    }
+    else
+    {
+      if(enterGlobalMutex())
+      {
+        wcout << "CallbackHandler_CommandConnection: no Tester!" << endl;
+        leaveGlobalMutex();
+      }
+    }
+    if(data->bDeleteString) DELETE_STR(data->sValue);
+  }
+  else
+  {
+    if(enterGlobalMutex())
+    {
+      wcout << "CallbackHandler_CommandConnection: no CB-Data!" << endl;
+      leaveGlobalMutex();
+    }
   }
 }
 
@@ -1146,8 +1193,7 @@ bool TmlConnectionTester::testSetOnConnect()
                   TML_COMMAND_HANDLE hCommand = TML_HANDLE_TYPE_NULL;
                   m_iErr = tml_Cmd_Create(&hCommand);
                   checkForSuccess(tmlrtT("tml_Cmd_Create()"));
-                  m_iErr = tml_Cmd_Header_SetCommand(hCommand, 1234);
-                  checkForSuccess(tmlrtT("tml_Cmd_Header_SetCommand(Command, 1234)"));
+                  setCommandID(hCommand, 1234);
                   m_iErr = tml_Connection_SendSync(hConnection, S_IO_PROFILE, hCommand, 2000);
                   checkForSuccess(tmlrt_cat(tmlrtT("tml_Connection_SendSync(Connection, "), S_IO_PROFILE, tmlrtT(")")), true);
                   m_iErr = tml_Cmd_Free(&hCommand);
@@ -1255,8 +1301,7 @@ bool TmlConnectionTester::testSetOnDisconnect()
                   TML_COMMAND_HANDLE hCommand = TML_HANDLE_TYPE_NULL;
                   m_iErr = tml_Cmd_Create(&hCommand);
                   checkForSuccess(tmlrtT("tml_Cmd_Create()"));
-                  m_iErr = tml_Cmd_Header_SetCommand(hCommand, 1234);
-                  checkForSuccess(tmlrtT("tml_Cmd_Header_SetCommand(Command, 1234)"));
+                  setCommandID(hCommand, 1234);
                   m_iErr = tml_Connection_SendSync(hConnection, S_IO_PROFILE, hCommand, 2000);
                   checkForSuccess(tmlrt_cat(tmlrtT("tml_Connection_SendSync(Connection, "), S_IO_PROFILE, tmlrtT(")")), true);
                   m_iErr = tml_Cmd_Free(&hCommand);
@@ -1367,8 +1412,7 @@ bool TmlConnectionTester::testSendSync()
             TML_COMMAND_HANDLE hCmdDummy = TML_HANDLE_TYPE_NULL;
             m_iErr = tml_Cmd_Create(&hCmdDummy);
             checkForSuccess(tmlrtT("tml_Cmd_Create(DummyCommand)"));
-            m_iErr = tml_Cmd_Header_SetCommand(hCmdDummy, 1234);
-            checkForSuccess(tmlrtT("tml_Cmd_Header_SetCommand(DummyCommand, 1234)"));
+            setCommandID(hCmdDummy, 1234);
 
             // Test with invalid connection handle...
             m_iErr = tml_Connection_SendSync(TML_HANDLE_TYPE_NULL, S_IO_PROFILE, hCmdDummy, 2000);
@@ -1419,15 +1463,12 @@ bool TmlConnectionTester::testSendSync()
                                                tmlrt_itoa(iCommand),
                                                tmlrtT(")"), 2), true))
                   {
-                    m_iErr = tml_Cmd_Header_SetCommand(hCommand, 1234);
-                    if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Cmd_Header_SetCommand(Command"),
-                                                 tmlrt_itoa(iCommand),
-                                                 tmlrtT(", 1234)"), 2), true))
+                    if(setCommandID(hCommand, 1234))
                     {
                       if(setCommandInt(hCommand, S_GROUP_TEST, S_KEY_INDEX, iCommand))
                       {
                         m_iErr = tml_Connection_SendSync(hConnection, S_IO_PROFILE, hCommand, 2000);
-                        if(!checkForSuccess(tmlrt_cat(tmlrtT("tml_Connection_SendSync(Command"),
+                        if(!checkForSuccess(tmlrt_cat(tmlrtT("tml_Connection_SendSync(Connection, Command"),
                                                       tmlrt_itoa(iCommand),
                                                       tmlrtT(")"), 2), true)) bStop = true;
                       }
@@ -1522,8 +1563,7 @@ bool TmlConnectionTester::testSendAsync()
             TML_COMMAND_HANDLE hCmdDummy = TML_HANDLE_TYPE_NULL;
             m_iErr = tml_Cmd_Create(&hCmdDummy);
             checkForSuccess(tmlrtT("tml_Cmd_Create(DummyCommand)"));
-            m_iErr = tml_Cmd_Header_SetCommand(hCmdDummy, 1234);
-            checkForSuccess(tmlrtT("tml_Cmd_Header_SetCommand(DummyCommand, 1234)"));
+            setCommandID(hCmdDummy, 1234);
 
             // Test with invalid connection handle...
             m_iErr = tml_Connection_SendAsync(TML_HANDLE_TYPE_NULL, S_IO_PROFILE, hCmdDummy, 2000);
@@ -1579,15 +1619,12 @@ bool TmlConnectionTester::testSendAsync()
                                                  tmlrt_itoa(iCommand),
                                                  tmlrtT(")"), 2), true))
                     {
-                      m_iErr = tml_Cmd_Header_SetCommand(hCommand, 1234);
-                      if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Cmd_Header_SetCommand(Command"),
-                                                   tmlrt_itoa(iCommand),
-                                                   tmlrtT(", 1234)"), 2), true))
+                      if(setCommandID(hCommand, 1234))
                       {
                         if(setCommandInt(hCommand, S_GROUP_TEST, S_KEY_INDEX, iCommand))
                         {
                           m_iErr = tml_Connection_SendAsync(hConnection, S_IO_PROFILE, hCommand, 2000);
-                          if(!checkForSuccess(tmlrt_cat(tmlrtT("tml_Connection_SendAsync(Command"),
+                          if(!checkForSuccess(tmlrt_cat(tmlrtT("tml_Connection_SendAsync(Connection, Command"),
                                                         tmlrt_itoa(iCommand),
                                                         tmlrtT(")"), 2), true)) bStop = true;
                         }
@@ -1654,12 +1691,136 @@ bool TmlConnectionTester::testSendAsync()
 
 //------------------------------------------------------------------------------
 
+void TmlConnectionTester::OnCommandConnectionCallback(TML_COMMAND_HANDLE hCommand, cbData_t* cbData)
+{
+  if(cbData)
+  {
+    SIDEX_INT32 id = cbData->iValue;
+
+    switch(cbData->type)
+    {
+      case cbtOnCommand:
+      {
+        id = getCommandInt(hCommand, S_GROUP_TEST, S_KEY_INDEX, 0);
+        m_cbLog_Command |= id;
+        break;
+      }
+    }
+
+    if(enterGlobalMutex())
+    {
+      wcout << "OnCommandConnectionCallback: Callback " << cbt_Name[cbData->type] << " (ID = " << id << ") ";
+      if(cbData->sValue) wcout << cbData->sValue;
+      wcout << endl;
+      leaveGlobalMutex();
+    }
+  }
+}
+
 bool TmlConnectionTester::testGetConnection_Cmd()
 {
   setTestSectionName(tmlrtT("testGetConnection_Cmd"));
   messageOutput(S_START);
   reset();
 
+  int n = TestParams->getNetworkCardCount();
+  if(n > 0)
+  {
+    SIDEX_TCHAR* sAddress = tmlrt_cat(TestParams->getNetworkCard(0),
+                                      tmlrtT(":"),
+                                      tmlrt_itoa(TestParams->getFirstPortNumber()), 5);
+    cbData_t* pData = prepareCallbackData(this, 1, cbtOnCommand);
+    if(pData && createCore(0) && createCore(1))
+    {
+      if(createListener(1, 0, sAddress))
+      {
+        if(startListener(1, 0))
+        {
+          m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE);
+          if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), S_IO_PROFILE, tmlrtT(")")), true))
+          {
+            m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, 1234, &CallbackHandler_CommandConnection, pData);
+            if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register_Cmd(Core1, "), S_IO_PROFILE, tmlrtT(", 1234)")), true))
+            {
+              TML_CONNECTION_HANDLE hConnection1 = TML_HANDLE_TYPE_NULL;
+              m_iErr = tml_Core_Connect(getCore(0), sAddress, &hConnection1);
+              if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect(Core0, "), sAddress, tmlrtT(", Connection1)")), true))
+              {
+                TML_CONNECTION_HANDLE hConnection2 = TML_HANDLE_TYPE_NULL;
+
+                TML_COMMAND_HANDLE hCmdDummy = TML_HANDLE_TYPE_NULL;
+                m_iErr = tml_Cmd_Create(&hCmdDummy);
+                checkForSuccess(tmlrtT("tml_Cmd_Create(DummyCommand)"));
+                setCommandID(hCmdDummy, 1234);
+
+                // Test with invalid command handle...
+                m_iErr = tml_Cmd_Get_Connection(TML_HANDLE_TYPE_NULL, &hConnection2);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Cmd_Get_Connection(NoCommandHandle)"));
+
+                // Test without connection parameter...
+                m_iErr = tml_Cmd_Get_Connection(hCmdDummy, NULL);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Cmd_Get_Connection(NoConnectionParameter)"));
+
+                m_iErr = tml_Cmd_Free(&hCmdDummy);
+                checkForSuccess(tmlrtT("tml_Cmd_Free(DummyCommand)"));
+                hCmdDummy = TML_HANDLE_TYPE_NULL;
+            
+                // Test sending sync commands...
+                m_cbLog_Command = 0;
+
+                // send a command to trigger the test...
+                TML_COMMAND_HANDLE hCommand = TML_HANDLE_TYPE_NULL;
+                m_iErr = tml_Cmd_Create(&hCommand);
+                if(checkForSuccess(tmlrtT("tml_Cmd_Create(Command)")))
+                {
+                  if(setCommandID(hCommand, 1234))
+                  {
+                    if(setCommandInt(hCommand, S_GROUP_TEST, S_KEY_INDEX, 1))
+                    {
+                      m_iErr = tml_Connection_SendSync(hConnection1, S_IO_PROFILE, hCommand, 2000);
+                      checkForSuccess(tmlrtT("tml_Connection_SendSync(Connection1)"));
+                    }
+                  }
+
+                  // it was a sync call - we can delete the command now...
+                  m_iErr = tml_Cmd_Free(&hCommand);
+                  checkForSuccess(tmlrtT("tml_Cmd_Free(Command)"));
+                  hCommand = TML_HANDLE_TYPE_NULL;
+                }
+
+                if(checkForValue(tmlrtT("Received commands log"), 3, m_cbLog_Command, false))
+                {
+                  messageOutput(tmlrtT("Test culmination reached!"));
+                }
+
+                // Close connection...
+                m_iErr = tml_Connection_Close(&hConnection1);
+                checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
+              } // connect 0, addr 1
+
+              hConnection1 = TML_HANDLE_TYPE_NULL;
+            }
+
+            // unregister commands...
+            m_iErr = tml_Profile_Unregister(getCore(1), S_IO_PROFILE);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Unregister(Core1, "), S_IO_PROFILE, tmlrtT(")")), true);
+
+          } // register profile, core 1
+          stopListener(1, 0);
+
+        } // startListener 1, 0
+
+        deleteListener(1, 0);
+
+      } // createListener 1, 0, addr 1
+    } // createCore 0 and 1
+
+    deleteCore(1);
+    deleteCore(0);
+
+    DELETE_STR(sAddress);
+
+  } // network card count > 0
 
   messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
   messageOutput();

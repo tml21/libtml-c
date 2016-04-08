@@ -82,6 +82,7 @@ protected:
 public:
   void OnDisConnectionCallback(TML_CONNECTION_HANDLE hConnection, cbData_t* cbData);
   void OnCommandCallback(TML_COMMAND_HANDLE hCommand, cbData_t* cbData);
+  void OnCommandConnectionCallback(TML_COMMAND_HANDLE hCommand, cbData_t* cbData);
 
 public:
   TmlConnectionTester(SIDEX_TCHAR* testProcessName = NULL);
