@@ -40,10 +40,8 @@
 bool linux = true;
 
 #ifndef LINUX
-  CRITICAL_SECTION notifyRepliesRecieved;
   static bool cmdRepliesReceived[5] = { { false } };
-#else 
-  pthread_mutex_t mutexRepliesRecieved = PTHREAD_MUTEX_INITIALIZER;
+#else
   static bool cmdRepliesReceived[5] = { false };
 #endif
 
