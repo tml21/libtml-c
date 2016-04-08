@@ -177,6 +177,9 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
   // list containing the connection manager objects
   m_connectionMgrObjs = sidex_Variant_New_List();
   ////////////////////////////////
+  // list containing the connection manager objects
+  m_registeredCloseObjs = sidex_Variant_New_List();
+  ////////////////////////////////
   // The debug log handler
   m_log = new tmlLogHandler();
   ////////////////////////////////
@@ -186,6 +189,10 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   
   m_csObj = new tmlCriticalSectionObj();
+  ////////////////////////////////
+  // mutex to protect m_registeredCloseObjs
+  m_csCloseHandling = new tmlCriticalSectionObj();
+
   //m_ctx = ctx;
   ///////////////////////////////////////////////////////////////////
   // The Vortex ececution context will be created in the DllMain now
@@ -860,13 +867,22 @@ tmlCoreWrapper::tmlCoreWrapper(int iLogValue,
  */
 void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
 {
+  tmlCoreWrapper_Connection_Deregister_ConnnectionLost();
   m_sender->DeregisterConnectionLost();
   ////////////////////////////////////////////////////////////////
   // Disable the listener:
   tmlCoreWrapper_Enable_Listener(false);
+  ////////////////////////////////
+  // destruct the connection manager objects
+  tmlCoreWrapper_Connection_CloseAll();
+  ////////////////////////////////
+  // destruct the listener objects
+  tmlCoreWrapper_Listener_CloseAll();
 
   ////////////////////////////////////////////////////////////////
   // Unregister all dispatch callback methods:
+  unregisterAll_Registered_Profiles();
+  /* This das been done in unregisterAll_Registered_Profiles:
   TML_INT32 iSize = 0;
   TML_INT32 iRet = tmlCoreWrapper_Get_Registered_Profiles_Size(&iSize);
 
@@ -890,6 +906,7 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
       sidex_Variant_DecRef(registeredProfiles);
     }
   }
+  */
   // Finish with unregister all dispatch callback methods
   ////////////////////////////////////////////////////////////////
 
@@ -907,6 +924,7 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
  */
 tmlCoreWrapper::~tmlCoreWrapper()
 {
+  tmlCoreWrapper_Connection_Deregister_ConnnectionLost();
   ////////////////////////////////
   // destruct the connection manager objects
   tmlCoreWrapper_Connection_CloseAll();
@@ -955,6 +973,8 @@ tmlCoreWrapper::~tmlCoreWrapper()
 
   sidex_Variant_DecRef(m_connectionMgrObjs);
   sidex_Variant_DecRef(m_listenerObjs);
+  sidex_Variant_DecRef(m_registeredCloseObjs);
+
 
 ///////////////////////////////////////
 // To debug m_ctx ref counting:
@@ -1000,6 +1020,7 @@ vortex_ctx_unref (&m_ctx);
   ////////////////////////////////
   // Critical section object
   delete (m_csObj);
+  delete (m_csCloseHandling);
 }
 
 
@@ -2332,6 +2353,14 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
 
 
 /**
+ * @brief    returns mutex protecting m_registeredCloseObjs
+ */
+tmlCriticalSectionObj* tmlCoreWrapper::getCsCloseHandling(){
+  return m_csCloseHandling;
+}
+
+
+/**
  */
 int tmlCoreWrapper::getLogFileIndex(){
   return m_iLogFileIndex;
@@ -2662,6 +2691,22 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
   }
 }
 
+
+/**
+  * @brief     Deregister connectionLost callback
+  */
+void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  for (TML_INT32 i = iCount-1; i >= 0; --i){
+    TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Connection (i, &connection);
+    if (connection){
+      ((tmlConnectionManageObj*)connection)->deregisterConnnectionLost();
+    }
+  }
+}
      
 /**
   * @brief    Delete a TML connection handle from the connection list
@@ -2845,4 +2890,12 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, ch
   delete[]sNetAddress;
 
   return iRet;
+}
+
+
+/**
+  * @brief    Get registered connection close list.
+  */
+SIDEX_VARIANT tmlCoreWrapper::Get_ConnectionCloseList(){
+  return m_registeredCloseObjs;
 }
