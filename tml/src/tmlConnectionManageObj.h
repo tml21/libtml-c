@@ -177,6 +177,11 @@ public:
 
 
     /**
+     * @brief Returns the connection close handler
+     */
+    void* getConnectionCloseHandler();
+
+    /**
      * @brief Get the TML core handle.
      */
     TML_CORE_HANDLE getCoreHandle();
@@ -387,6 +392,18 @@ public:
      * @param   setOnDisconnectFullCB reference to callback method
      */
     void setOnDisconnectFull(void* setOnDisconnectFullCB);
+
+
+    /**
+     * @brief     register connectionLost callback
+     */
+    void registerConnnectionLost(VortexConnection* connection);
+
+
+    /**
+     * @brief     Deregister connectionLost callback
+     */
+    void deregisterConnnectionLost();
 };
 
 #endif // TMLCONNECTIONMANAGEOBJ_H

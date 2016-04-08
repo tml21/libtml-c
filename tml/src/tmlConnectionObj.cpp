@@ -79,9 +79,6 @@ tmlConnectionObj::~tmlConnectionObj()
   m_sPort = NULL;
   m_channel = NULL;
   m_channelPool = NULL;
-  if (NULL != m_sender){
-    delete m_sender;
-  }
   m_sender = NULL;
   m_connectionMgr = NULL;
   delete m_callbackData;
