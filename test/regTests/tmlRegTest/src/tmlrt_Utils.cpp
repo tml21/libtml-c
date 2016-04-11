@@ -264,11 +264,19 @@ void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data){
 		iErr = tml_Cmd_Release_Sidex_Handle(cmdMsg);
 
 	TmlSleep((int)value * 10);
-	wcout << "received cmd " << value << endl;
+  if(enterGlobalMutex())
+  {
+	  wcout << "received cmd " << value << endl;
+    leaveGlobalMutex();
+  }
 }
 
 TML_BOOL FUNC_C_DECL onPeerCB(TML_BOOL bSubscribe, TML_CTSTR *sHost, TML_CTSTR *sPort, TML_POINTER pCBData) {
-	wcout << "on Peer" << endl;
+  if(enterGlobalMutex())
+  {
+	  wcout << "on Peer" << endl;
+    leaveGlobalMutex();
+  }
 	return true;
 }
 
@@ -287,13 +295,17 @@ void FUNC_C_DECL cbGenericCmdReplyReceived(TML_COMMAND_HANDLE tmlhandle, TML_POI
 	iErr = tml_Cmd_Free(&tmlhandle);
 
 	if (TML_SUCCESS != iErr) {
-		wcout << "Test failed at async callback cmd reply received function with " << iErr << endl;
+    if(enterGlobalMutex())
+    {
+		  wcout << "Test failed at async callback cmd reply received function with " << iErr << endl;
+      leaveGlobalMutex();
+    }
 	}
 	index = (int)(value / 10) - 1;
 	enterGlobalMutex();
 	cmdRepliesReceived[index] = true;
-	leaveGlobalMutex();
 	wcout << "received async cmd callback" << endl;
+	leaveGlobalMutex();
 }
 
 void initCmdRepliesReceived() {
