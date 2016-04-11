@@ -69,7 +69,7 @@ bool testTmlConnections()
       if(!tester->testSetOnDisconnect()) break;
       if(!tester->testSendSync()) break;
       if(!tester->testSendAsync()) break;
-//      if(!tester->testGetConnection_Cmd()) break;
+      if(!tester->testGetConnection_Cmd()) break;
     }
     while(false);
 

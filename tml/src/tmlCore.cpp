@@ -6610,7 +6610,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_W(TML_CONNECTION_H
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+  if ((TML_HANDLE_TYPE_NULL == connectionHandle) || (TML_HANDLE_TYPE_NULL == tmlhandle)){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -6688,7 +6688,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_W(TML_CONNECTION_HA
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+  if ((TML_HANDLE_TYPE_NULL == connectionHandle) || (TML_HANDLE_TYPE_NULL == tmlhandle)){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{

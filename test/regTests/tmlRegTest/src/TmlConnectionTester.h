@@ -51,9 +51,10 @@ class TmlConnectionTester;
 enum cbType_t
 {
   cbtOnConnect = 0, cbtOnDisconnect,
-  cbtOnCommand,
+  cbtOnCommand, cbtOnCmdConnectionCommand,
   cbt_TypeCount // type count in enum
 };
+// Note: keep cbType_t and cbt_Name in sync! (same item count)
 extern SIDEX_TCHAR* cbt_Name[];
 
 struct cbData_t
