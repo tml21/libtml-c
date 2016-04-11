@@ -192,6 +192,9 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
   ////////////////////////////////
   // mutex to protect m_registeredCloseObjs
   m_csCloseHandling = new tmlCriticalSectionObj();
+  ////////////////////////////////
+  // mutex to protect tmlSingleCall::getConnection
+  m_csGetConnection = new tmlCriticalSectionObj();
 
   //m_ctx = ctx;
   ///////////////////////////////////////////////////////////////////
@@ -1021,6 +1024,7 @@ vortex_ctx_unref (&m_ctx);
   // Critical section object
   delete (m_csObj);
   delete (m_csCloseHandling);
+  delete (m_csGetConnection);
 }
 
 
@@ -2357,6 +2361,14 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
  */
 tmlCriticalSectionObj* tmlCoreWrapper::getCsCloseHandling(){
   return m_csCloseHandling;
+}
+
+
+/**
+ * @brief    returns mutex protecting tmlSingleCall::getConnection
+ */
+tmlCriticalSectionObj* tmlCoreWrapper::getCsGetConnection(){
+  return m_csGetConnection;
 }
 
 

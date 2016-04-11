@@ -75,14 +75,14 @@ void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
       iRet = sidex_Variant_List_Get(list, i, &dictItem);
       SIDEX_VARIANT connectionItem;
       if (SIDEX_SUCCESS == iRet){
-        iRet = sidex_Variant_Dict_Get(dictItem, "VortexConnection", &connectionItem);
+        iRet = sidex_Variant_Dict_Get(dictItem, (char*)"VortexConnection", &connectionItem);
         SIDEX_INT64 iVal;
         if (SIDEX_SUCCESS == iRet){
           iRet = sidex_Variant_As_Integer(connectionItem, &iVal);
           if (SIDEX_SUCCESS == iRet){
             if (((VortexConnection*) iVal) == connection){
               SIDEX_VARIANT conMgrItem = SIDEX_HANDLE_TYPE_NULL;
-              iRet = sidex_Variant_Dict_Get(dictItem, "ConMgr", &conMgrItem);
+              iRet = sidex_Variant_Dict_Get(dictItem, (char*)"ConMgr", &conMgrItem);
               if (SIDEX_SUCCESS == iRet){
                 iRet = sidex_Variant_As_Integer(conMgrItem, &iVal);
                 if (SIDEX_SUCCESS == iRet){
@@ -584,7 +584,7 @@ void tmlConnectionManageObj::deregisterConnnectionLost(){
       iRet = sidex_Variant_List_Get(list, i, &dictItem);
       SIDEX_VARIANT connectionItem;
       if (SIDEX_SUCCESS == iRet){
-        iRet = sidex_Variant_Dict_Get(dictItem, "VortexConnection", &connectionItem);
+        iRet = sidex_Variant_Dict_Get(dictItem, (char*)"VortexConnection", &connectionItem);
         SIDEX_INT64 iVal;
         if (SIDEX_SUCCESS == iRet){
           iRet = sidex_Variant_As_Integer(connectionItem, &iVal);
@@ -630,7 +630,7 @@ void tmlConnectionManageObj::registerConnnectionLost(VortexConnection* connectio
       iRet = sidex_Variant_List_Get(list, i, &dictItem);
       SIDEX_VARIANT connectionItem;
       if (SIDEX_SUCCESS == iRet){
-        iRet = sidex_Variant_Dict_Get(dictItem, "VortexConnection", &connectionItem);
+        iRet = sidex_Variant_Dict_Get(dictItem, (char*)"VortexConnection", &connectionItem);
         SIDEX_INT64 iVal;
         if (SIDEX_SUCCESS == iRet){
           iRet = sidex_Variant_As_Integer(connectionItem, &iVal);
@@ -649,10 +649,10 @@ void tmlConnectionManageObj::registerConnnectionLost(VortexConnection* connectio
     SIDEX_VARIANT dict = sidex_Variant_New_Dict();
     iVal = (SIDEX_INT64) connection;
     SIDEX_VARIANT connectionItem = sidex_Variant_New_Integer(iVal);
-    sidex_Variant_Dict_Set(dict, "VortexConnection", connectionItem);
+    sidex_Variant_Dict_Set(dict, (char*)"VortexConnection", connectionItem);
     iVal = (SIDEX_INT64) this;
     SIDEX_VARIANT conMgrItem = sidex_Variant_New_Integer(iVal);
-    sidex_Variant_Dict_Set(dict, "ConMgr", conMgrItem);
+    sidex_Variant_Dict_Set(dict, (char*)"ConMgr", conMgrItem);
     SIDEX_INT32 iPos;
     sidex_Variant_List_Append(list, dict, &iPos);
     sidex_Variant_DecRef(conMgrItem);

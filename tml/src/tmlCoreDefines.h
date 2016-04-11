@@ -242,6 +242,7 @@ struct AsyncHandlingThreadData{
   VortexMutex*        timerTerminationMutex;
   bool                bStopTimerThread;                 // Flag indicates to stop the timer thread
   TMLThreadDef*       threadInfo;                       // Threadinfo refering the thread to stop
+  bool                bFree;
 };
 
 

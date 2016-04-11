@@ -328,7 +328,7 @@ private:
     /**
      * @brief  Datastructure contains the parameter for the tmlCoreSender's AsyncHandlingThreadMethod
      */
-    AsyncHandlingThreadData m_AsyncHandlingThreadData;
+//    AsyncHandlingThreadData m_AsyncHandlingThreadData;
     //int                m_iPayloadFrameSize;                 // actual received frame size
     //char*              m_cPayload;                          // actual received frame payload
     tmlMultiAsyncMsg*    m_multiAsyncMsg;

@@ -62,6 +62,11 @@ private:
     SIDEX_VARIANT          m_registeredCloseObjs;
 
     /**
+     * @brief    Reference to mutex necessary for tmlSingleCall::getConnection
+     */
+    tmlCriticalSectionObj* m_csGetConnection;
+
+    /**
      * @brief    Reference to mutex necessary for m_registeredCloseObjs
      */
     tmlCriticalSectionObj* m_csCloseHandling;
@@ -1844,6 +1849,12 @@ public:
      * @brief    returns mutex protecting m_registeredCloseObjs
      */
     tmlCriticalSectionObj* getCsCloseHandling();
+
+
+    /**
+     * @brief    returns mutex protecting tmlSingleCall::getConnection
+     */
+    tmlCriticalSectionObj* getCsGetConnection();
 
 
     /**

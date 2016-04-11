@@ -29,7 +29,7 @@
 #
 #    wobe-systems GmbH
 #    support@libtml.org
-#
+#  
 # Contributors:
 #    wobe-systems GmbH
 
@@ -60,6 +60,8 @@ set (CPACK_PACKAGE_VERSION_PATCH "${TML_MICRO_VERSION}")
 set (PLATFORM_FOUND false)
 set (CORE_TARGET_NAME tmlcore)
 set (TEST_TARGET_NAME libTmlTest)
+set (RTTEST_TARGET_NAME sidexRegTest)
+set (TMLRTTEST_TARGET_NAME tmlRegTest)
 
 
 set (CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /usr)
@@ -113,10 +115,11 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
   set(IS64BIT false)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\axl")
-  set(VORTEXINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\vortex")
+  set(AXLINCLUDE "../../../Komponenten/AXL/${AXLVER}/src")
+  set(VORTEXINCLUDE "../../../Komponenten/Vortex/${VORTEXVER}/src")
 
-  LINK_DIRECTORIES("C:\\Program Files (x86)\\VortexW32\\lib")
+  LINK_DIRECTORIES("../Komponenten/AXL/${AXLVER}/Release")
+  LINK_DIRECTORIES("../Komponenten/Vortex/${VORTEXVER}/Release")
   
   include (CPack)
   
@@ -134,10 +137,11 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
   set(IS64BIT true)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE "C:\\Program Files\\VortexW64\\include\\axl")
-  set(VORTEXINCLUDE "C:\\Program Files\\VortexW64\\include\\vortex")
+  set(AXLINCLUDE "../../../Komponenten/AXL/${AXLVER}/src")
+  set(VORTEXINCLUDE "../../../Komponenten/Vortex/${VORTEXVER}/src")
 
-  LINK_DIRECTORIES("C:\\Program Files\\VortexW64\\lib")
+  LINK_DIRECTORIES("../Komponenten/AXL/${AXLVER}/x64/Release")
+  LINK_DIRECTORIES("../Komponenten/Vortex/${VORTEXVER}/x64/Release")
   
   include (CPack)
 
@@ -155,11 +159,11 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(IS64BIT false)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE /usr/local/include/axl)
-  set(VORTEXINCLUDE /usr/local/include/vortex1.1)
-  
-  LINK_DIRECTORIES(/usr/local/lib)
-  LINK_DIRECTORIES(/usr/local/lib)
+  set(AXLINCLUDE "../../../Komponenten/AXL/${AXLVER}/Debian/include")
+  set(VORTEXINCLUDE "../../../Komponenten/Vortex/${VORTEXVER}/Debian/include")
+
+  LINK_DIRECTORIES("../Komponenten/AXL/${AXLVER}/Debian/i386/lib")
+  LINK_DIRECTORIES("../Komponenten/Vortex/${VORTEXVER}/Debian/i386/lib")
   
   set(CPACK_SET_DESTDIR ON)
   set (CPACK_RESOURCE_FILE_LICENSE ../COPYING)
@@ -180,11 +184,12 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(IS64BIT true)
   set(BUILD_TEST true)
 
-  set(AXLINCLUDE /usr/local/include/axl)
-  set(VORTEXINCLUDE /usr/local/include/vortex1.1)
   
-  LINK_DIRECTORIES(/usr/local/lib)
-  LINK_DIRECTORIES(/usr/local/lib)
+  set(AXLINCLUDE "../../../Komponenten/AXL/${AXLVER}/Debian/include")
+  set(VORTEXINCLUDE "../../../Komponenten/Vortex/${VORTEXVER}/Debian/include")
+
+  LINK_DIRECTORIES("../Komponenten/AXL/${AXLVER}/Debian/amd64/lib")
+  LINK_DIRECTORIES("../Komponenten/Vortex/${VORTEXVER}/Debian/amd64/lib")
   
   set(CPACK_SET_DESTDIR ON)
   set (CPACK_RESOURCE_FILE_LICENSE ../COPYING)
@@ -205,11 +210,12 @@ if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
   set(IS64BIT false)
   set(BUILD_TEST true)
 
-  set(AXLINCLUDE /usr/local/include/axl)
-  set(VORTEXINCLUDE /usr/local/include/vortex1.1)
-  
-  LINK_DIRECTORIES(/usr/local/lib)
-  LINK_DIRECTORIES(/usr/local/lib)
+  set(AXLINCLUDE "../../../Komponenten/AXL/${AXLVER}/freeBSD/include")
+  set(VORTEXINCLUDE "../../../Komponenten/Vortex/${VORTEXVER}/freeBSD/include")
+
+  LINK_DIRECTORIES("../Komponenten/AXL/${AXLVER}/freeBSD/i386/lib")
+  LINK_DIRECTORIES("../Komponenten/Vortex/${VORTEXVER}/freeBSD/i386/lib")
+  LINK_DIRECTORIES("../Komponenten/libiconv/libiconv-1.14/freeBSD/i386/lib")
   
   set(CPACK_SET_DESTDIR ON)
   set (CPACK_RESOURCE_FILE_LICENSE ../COPYING)
@@ -230,11 +236,12 @@ if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
   set(IS64BIT true)
   set(BUILD_TEST true)
 
-  set(AXLINCLUDE /usr/local/include/axl)
-  set(VORTEXINCLUDE /usr/local/include/vortex1.1)
-  
-  LINK_DIRECTORIES(/usr/local/lib)
-  LINK_DIRECTORIES(/usr/local/lib)
+  set(AXLINCLUDE "../../../Komponenten/AXL/${AXLVER}/freeBSD/include")
+  set(VORTEXINCLUDE "../../../Komponenten/Vortex/${VORTEXVER}/freeBSD/include")
+
+  LINK_DIRECTORIES("../Komponenten/AXL/${AXLVER}/freeBSD/amd64/lib")
+  LINK_DIRECTORIES("../Komponenten/Vortex/${VORTEXVER}/freeBSD/amd64/lib")
+  LINK_DIRECTORIES("../Komponenten/libiconv/libiconv-1.14/freeBSD/amd64/lib")
   
   set(CPACK_SET_DESTDIR ON)
   set (CPACK_RESOURCE_FILE_LICENSE ../COPYING)
@@ -255,11 +262,12 @@ if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
   set(IS64BIT false)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE /usr/local/include/axl)
-  set(VORTEXINCLUDE /usr/local/include/vortex1.1)
-  
-  LINK_DIRECTORIES(/usr/local/lib)
-  LINK_DIRECTORIES(/usr/local/lib)
+  set(AXLINCLUDE "../../../Komponenten/AXL/${AXLVER}/OS-X/include")
+  set(VORTEXINCLUDE "../../../Komponenten/Vortex/${VORTEXVER}/OS-X/include")
+
+  LINK_DIRECTORIES("../Komponenten/AXL/${AXLVER}/OS-X/i386/lib")
+  LINK_DIRECTORIES("../Komponenten/Vortex/${VORTEXVER}/OS-X/i386/lib")
+
   
   set(CPACK_SET_DESTDIR ON)
   set (CPACK_RESOURCE_FILE_LICENSE ../COPYING)
@@ -280,12 +288,12 @@ if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
   set(IS64BIT true)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE /usr/local/include/axl)
-  set(VORTEXINCLUDE /usr/local/include/vortex1.1)
-  
-  LINK_DIRECTORIES(/usr/local/lib)
-  LINK_DIRECTORIES(/usr/local/lib)
-  
+  set(AXLINCLUDE "../../../Komponenten/AXL/${AXLVER}/OS-X/include")
+  set(VORTEXINCLUDE "../../../Komponenten/Vortex/${VORTEXVER}/OS-X/include")
+
+  LINK_DIRECTORIES("../Komponenten/AXL/${AXLVER}/OS-X/x86_64/lib")
+  LINK_DIRECTORIES("../Komponenten/Vortex/${VORTEXVER}/OS-X/x86_64/lib")
+
   set(CPACK_SET_DESTDIR ON)
   set (CPACK_RESOURCE_FILE_LICENSE ../COPYING)
   
@@ -332,11 +340,11 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(IS64BIT false)
   set(BUILD_TEST true)
   
-  set(AXLINCLUDE /usr/local/include/axl)
-  set(VORTEXINCLUDE /usr/local/include/vortex1.1)
-  
-  LINK_DIRECTORIES(/usr/local/lib)
-  LINK_DIRECTORIES(/usr/local/lib)
+  set(AXLINCLUDE "../../../Komponenten/AXL/${AXLVER}/Debian/include")
+  set(VORTEXINCLUDE "../../../Komponenten/Vortex/${VORTEXVER}/Debian/include")
+
+  LINK_DIRECTORIES("../Komponenten/AXL/${AXLVER}/Debian/armhf/lib")
+  LINK_DIRECTORIES("../Komponenten/Vortex/${VORTEXVER}/Debian/armhf/lib")
   
   set(CPACK_SET_DESTDIR ON)
   set (CPACK_RESOURCE_FILE_LICENSE ../COPYING)
@@ -355,35 +363,6 @@ if (${PLATFORM_FOUND} STREQUAL true)
   PROJECT( tml )
   
   #######################################################
-  ## Try to find AXL install path automatically:
-  find_library(AXL_LIB_PATH NAMES axl)
-  if (AXL_LIB_PATH AND EXISTS "${AXL_LIB_PATH}")
-    get_filename_component(AXL_LIB_PATH ${AXL_LIB_PATH} DIRECTORY)
-  endif()
-  find_path(AXL_INCLUDE_DIR axl/axl.h)
-  if (AXL_INCLUDE_DIR AND EXISTS "${AXL_INCLUDE_DIR}/axl/axl.h")
-    set(AXL_INCLUDE_DIR ${AXL_INCLUDE_DIR}/axl)
-  endif()
-  message("-- ---------------------------------------------------------------")
-  message("-- Automatic path detection:")
-  message(STATUS "AXL_LIB_PATH:       " ${AXL_LIB_PATH})
-  message(STATUS "AXL_INCLUDE_DIR:    " ${AXL_INCLUDE_DIR})
-  ## Try to find VORTEX install path automatically:
-  find_library(VORTEX_LIB_PATH vortex-1.1)
-  if (VORTEX_LIB_PATH AND EXISTS "${VORTEX_LIB_PATH}")
-    get_filename_component(VORTEX_LIB_PATH ${VORTEX_LIB_PATH} DIRECTORY)
-  endif()
-  find_path(VORTEX_INCLUDE_DIR vortex-1.1/vortex.h)
-  if (VORTEX_INCLUDE_DIR AND EXISTS "${VORTEX_INCLUDE_DIR}/vortex-1.1/vortex.h")
-    set(VORTEX_INCLUDE_DIR ${VORTEX_INCLUDE_DIR}/vortex-1.1)
-  endif()
-  message(STATUS "VORTEX_LIB_PATH:    " ${VORTEX_LIB_PATH})
-  message(STATUS "VORTEX_INCLUDE_DIR: " ${VORTEX_INCLUDE_DIR})
-  message("-- If NOTFOUND- you have to set include/library directories manual")
-  message("-- ---------------------------------------------------------------")
-  #######################################################
-
-  #######################################################
   ## Source and destination directories:
   ADD_SUBDIRECTORY( sidex/src ${PROJECT}/sidex)
   ADD_SUBDIRECTORY( tml/src ${PROJECT}/tml)
@@ -394,15 +373,27 @@ if (${PLATFORM_FOUND} STREQUAL true)
     if (${IS64BIT} STREQUAL false)
       set(CORE_TARGET_NAME_LOCAL  ${CORE_TARGET_NAME}${TML_API_VERSION})
       set(TEST_TARGET_NAME_LOCAL ${TEST_TARGET_NAME})
+      set(RTTEST_TARGET_NAME_LOCAL ${RTTEST_TARGET_NAME})
+  	  set(TMLRTTEST_TARGET_NAME_LOCAL ${TMLRTTEST_TARGET_NAME})
     endif (${IS64BIT} STREQUAL false)
     if (${IS64BIT} STREQUAL true)
       set(CORE_TARGET_NAME_LOCAL ${CORE_TARGET_NAME}${TML_API_VERSION}_64)
       set(TEST_TARGET_NAME_LOCAL ${TEST_TARGET_NAME}64)
+      set(RTTEST_TARGET_NAME_LOCAL ${RTTEST_TARGET_NAME}64)
+      set(TMLRTTEST_TARGET_NAME_LOCAL ${TMLRTTEST_TARGET_NAME}64)
     endif (${IS64BIT} STREQUAL true)
     
     
     ADD_SUBDIRECTORY( test/src ${PROJECT}/test)
-    add_dependencies(${TEST_TARGET_NAME_LOCAL} ${CORE_TARGET_NAME_LOCAL})  
+    add_dependencies(${TEST_TARGET_NAME_LOCAL} ${CORE_TARGET_NAME_LOCAL})
+    cmake_policy(SET CMP0046 OLD)
+
+    ADD_SUBDIRECTORY( test/regTests/sidexRegTest/src ${PROJECT}/regTests/sidexRegTest)
+    add_dependencies(${RTTEST_TARGET_NAME_LOCAL} ${CORE_TARGET_NAME_LOCAL}) 
+    cmake_policy(SET CMP0046 OLD)
+
+    ADD_SUBDIRECTORY( test/regTests/tmlRegTest/src ${PROJECT}/regTests/tmlRegTest)
+    add_dependencies(${TMLRTTEST_TARGET_NAME_LOCAL} ${CORE_TARGET_NAME_LOCAL}) 
     cmake_policy(SET CMP0046 OLD)
   endif (${BUILD_TEST} STREQUAL true)
 else (${PLATFORM_FOUND} STREQUAL true)

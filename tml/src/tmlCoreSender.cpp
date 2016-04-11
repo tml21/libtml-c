@@ -680,35 +680,15 @@ void AsyncHandlingThreadMethod (LPVOID pParam)
   TMLThreadDef threadInfo;
   threadInfo.bThreadStarted = false;
 
+  bool bLock = true;
+  intern_mutex_lock (pThreadData->mutexCriticalSection, pThreadData->pLog, "AsyncHandlingThreadMethod");
+
   pThreadData->pLog->log (TML_LOG_CORE_IO, "TMLCoreSender", "AsyncHandlingThreadMethod", "Start", "");
 
   ////////////////////////////////
   // The channelPool :
   VortexChannelPool* channelPoolAttr = NULL;
   pThreadData->connectionObj->getChannelPool(&channelPoolAttr);
-  if (NULL == channelPoolAttr){
-    //////////////////////////////////////////////
-    // The first time allocation of a thread pool:
-    tmlConnectionManageObj* connectionMgr;
-    VortexConnection* connectionAttr = NULL;
-    pThreadData->connectionObj->getConnectionManageObj(&connectionMgr);
-    if (NULL != connectionMgr){
-      connectionAttr = connectionMgr->getVortexConnection();
-    }
-    char* profile = NULL;
-    pThreadData->connectionObj->getProfile(&profile);
-    if (NULL != connectionAttr && NULL != profile){
-      ////////////////////////////////////////
-      // now create  a new channel pool:
-      pThreadData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreSender", "AsyncHandlingThreadMethod", "Vortex CMD", "vortex_channel_pool_new");
-      // Thread- generation log
-      channelPoolAttr = vortex_channel_pool_new(connectionAttr, profile, 1, NULL, NULL, NULL, NULL, NULL, NULL);
-      // Thread- generation log
-      ////////////////////////////////////////////////////////////////////////////
-      // And now it's time to set the channelPool attribute in the connectionObj:
-      pThreadData->connectionObj->setChannelPool(channelPoolAttr);
-    }
-  }
 
   ////////////////////////////////
   // The channel :
@@ -796,6 +776,8 @@ void AsyncHandlingThreadMethod (LPVOID pParam)
             iRet = TML_ERR_SENDER_COMMUNICATION;
           }
           else{
+            bLock = false;
+            intern_mutex_unlock (pThreadData->mutexCriticalSection, pThreadData->pLog, "AsyncHandlingThreadMethod");
             /* Start timer now */
             // Timeout is INFINITE at initialization time:
             iRet = StartTimerThread(pThreadData->timerThreadData, pThreadData->eventHandler, pThreadData->senderSyncEventArray, INFINITE, pThreadData->pLog, &threadInfo);
@@ -1004,6 +986,15 @@ void AsyncHandlingThreadMethod (LPVOID pParam)
   globalCallback(pThreadData->asyncCmdCallbackHandlerMethod,  pThreadData);
 
   pThreadData->pLog->log (TML_LOG_CORE_IO, "TMLCoreSender", "AsyncHandlingThreadMethod", "End", "");
+
+  if (bLock){
+    intern_mutex_unlock (pThreadData->mutexCriticalSection, pThreadData->pLog, "AsyncHandlingThreadMethod");
+  }
+
+  if (pThreadData->bFree){
+    delete pThreadData;
+  }
+
 }
 
 
@@ -2035,25 +2026,29 @@ int TMLCoreSender::TMLCoreSender_SendMessage(tmlConnectionObj* pConnectionObj, T
           // the object to return:
           callbackData->tmlhandle = tmlhandle;
           // fill m_AsyncHandlingThreadData and call AsyncHandlingThreadMethod:
-          m_AsyncHandlingThreadData.pLog = m_log;
-          m_AsyncHandlingThreadData.senderSyncEventArray = m_senderSyncEventArray;
-          m_AsyncHandlingThreadData.dwTimeoutValue = iTimeout;
-          m_AsyncHandlingThreadData.timerThreadData = &m_timerThreadData;
-          m_AsyncHandlingThreadData.tmlhandle = tmlhandle;
-          m_AsyncHandlingThreadData.mutexCriticalSection = &m_mutexCriticalSection;
-          m_AsyncHandlingThreadData.connectionObj = pConnectionObj;
-          m_AsyncHandlingThreadData.asyncCmdCallbackHandlerMethod = &m_internalAsyncCmdCallbackHandlerMethod;
-          m_AsyncHandlingThreadData.eventHandler = m_eventHandler;
-          m_AsyncHandlingThreadData.multiAsyncMsg = m_multiAsyncMsg;
-          m_AsyncHandlingThreadData.timerTerminationMutex = &m_mutexTimerThreadSync;
+          AsyncHandlingThreadData* m_AsyncHandlingThreadData = new AsyncHandlingThreadData();
+
+          m_AsyncHandlingThreadData->pLog = m_log;
+          m_AsyncHandlingThreadData->senderSyncEventArray = m_senderSyncEventArray;
+          m_AsyncHandlingThreadData->dwTimeoutValue = iTimeout;
+          m_AsyncHandlingThreadData->timerThreadData = &m_timerThreadData;
+          m_AsyncHandlingThreadData->tmlhandle = tmlhandle;
+          m_AsyncHandlingThreadData->mutexCriticalSection = &m_mutexCriticalSection;
+          m_AsyncHandlingThreadData->connectionObj = pConnectionObj;
+          m_AsyncHandlingThreadData->asyncCmdCallbackHandlerMethod = &m_internalAsyncCmdCallbackHandlerMethod;
+          m_AsyncHandlingThreadData->eventHandler = m_eventHandler;
+          m_AsyncHandlingThreadData->multiAsyncMsg = m_multiAsyncMsg;
+          m_AsyncHandlingThreadData->timerTerminationMutex = &m_mutexTimerThreadSync;
+          m_AsyncHandlingThreadData->bFree = false;
           ////////////////////////////////////////////
           // there is an active async command processing:
           SetAsyncCmdProcessing(true);
           ////////////////////////////////////////////
           // AsyncHandlingThreadMethod as method:
-          AsyncHandlingThreadMethod(&m_AsyncHandlingThreadData);
+          AsyncHandlingThreadMethod(m_AsyncHandlingThreadData);
           // Return value:
-          iRet = m_AsyncHandlingThreadData.iRet;
+          iRet = m_AsyncHandlingThreadData->iRet;
+          delete m_AsyncHandlingThreadData;
         }
       }
       else{
@@ -2145,17 +2140,20 @@ int TMLCoreSender::TMLCoreSender_SendAsyncMessage(tmlConnectionObj* pConnectionO
           // the object to return:
           callbackData->tmlhandle = tmlhandle;
           // fill m_AsyncHandlingThreadData and call AsyncHandlingThreadMethod:
-          m_AsyncHandlingThreadData.pLog = m_log;
-          m_AsyncHandlingThreadData.senderSyncEventArray = m_senderSyncEventArray;
-          m_AsyncHandlingThreadData.dwTimeoutValue = iTimeout;
-          m_AsyncHandlingThreadData.timerThreadData = &m_timerThreadData;
-          m_AsyncHandlingThreadData.tmlhandle = tmlhandle;
-          m_AsyncHandlingThreadData.mutexCriticalSection = &m_mutexCriticalSection;
-          m_AsyncHandlingThreadData.connectionObj = pConnectionObj;
-          m_AsyncHandlingThreadData.asyncCmdCallbackHandlerMethod = &m_internalAsyncCmdCallbackHandlerMethod;
-          m_AsyncHandlingThreadData.eventHandler = m_eventHandler;
-          m_AsyncHandlingThreadData.multiAsyncMsg = m_multiAsyncMsg;
-          m_AsyncHandlingThreadData.timerTerminationMutex = &m_mutexTimerThreadSync;
+          AsyncHandlingThreadData* m_AsyncHandlingThreadData = new AsyncHandlingThreadData();
+
+          m_AsyncHandlingThreadData->pLog = m_log;
+          m_AsyncHandlingThreadData->senderSyncEventArray = m_senderSyncEventArray;
+          m_AsyncHandlingThreadData->dwTimeoutValue = iTimeout;
+          m_AsyncHandlingThreadData->timerThreadData = &m_timerThreadData;
+          m_AsyncHandlingThreadData->tmlhandle = tmlhandle;
+          m_AsyncHandlingThreadData->mutexCriticalSection = &m_mutexCriticalSection;
+          m_AsyncHandlingThreadData->connectionObj = pConnectionObj;
+          m_AsyncHandlingThreadData->asyncCmdCallbackHandlerMethod = &m_internalAsyncCmdCallbackHandlerMethod;
+          m_AsyncHandlingThreadData->eventHandler = m_eventHandler;
+          m_AsyncHandlingThreadData->multiAsyncMsg = m_multiAsyncMsg;
+          m_AsyncHandlingThreadData->timerTerminationMutex = &m_mutexTimerThreadSync;
+          m_AsyncHandlingThreadData->bFree = true;
           ////////////////////////////////////////////
           // there is an active async command processing:
           SetAsyncCmdProcessing(true);
@@ -2163,7 +2161,7 @@ int TMLCoreSender::TMLCoreSender_SendAsyncMessage(tmlConnectionObj* pConnectionO
           // AsyncHandlingThreadMethod as thread:
           ////////////////////////////////////////////////
           // Use the one and only thread that life's once:
-          iRet = RestartAsyncHandlingThread(&m_AsyncHandlingData, &m_asyncHandlingEventArray, &m_AsyncHandlingThreadData, m_log);
+          iRet = RestartAsyncHandlingThread(&m_AsyncHandlingData, &m_asyncHandlingEventArray, m_AsyncHandlingThreadData, m_log);
         }
       }
       else{

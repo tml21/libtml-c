@@ -743,8 +743,12 @@ int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const c
 {
   tmlConnectionManageObj* conectionMgrObj = TML_HANDLE_TYPE_NULL;
   TML_CONNECTION_HANDLE connectionHandle;
-
   TML_INT32 iRet;
+
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  m_tmlCoreHandle->getCsGetConnection()->tmlCriticalSectionEnter("tmlSingleCall::GetConnection");
+
   if (TML_HANDLE_TYPE_NULL == *conectionMgr){
     /////////////////////////////////////////////////////////////////////////
     // Maybe we have a connection object but it has been disconnected before:
@@ -820,6 +824,9 @@ int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const c
     }
   }
   *conectionMgr = conectionMgrObj;
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  m_tmlCoreHandle->getCsGetConnection()->tmlCriticalSectionLeave("tmlSingleCall::GetConnection");
   return iRet;
 }
 
@@ -1002,6 +1009,29 @@ int tmlSingleCall::GetConnectionElement(const char* profile, const char* sHost, 
     // Possible new logging value:
     iRet = coreSenderAttr->TMLCoreSender_Set_Logging_Value(m_iLogValue);
 
+    
+    connectionObj->getChannelPool(&channelPool);
+    if (NULL == channelPool){
+      //////////////////////////////////////////////
+      // The first time allocation of a thread pool:
+      tmlConnectionManageObj* connectionMgr;
+      VortexConnection* connectionAttr = NULL;
+      connectionObj->getConnectionManageObj(&connectionMgr);
+      if (NULL != connectionMgr){
+        connectionAttr = connectionMgr->getVortexConnection();
+      }
+      if (NULL != connectionAttr && NULL != profile){
+        ////////////////////////////////////////
+        // now create  a new channel pool:
+        m_log->log (TML_LOG_VORTEX_CMD, "TMLSingleCall", "GetConnectionElement", "Vortex CMD", "vortex_channel_pool_new");
+        // Thread- generation log
+        channelPool = vortex_channel_pool_new(connectionAttr, profile, 1, NULL, NULL, NULL, NULL, NULL, NULL);
+        // Thread- generation log
+        ////////////////////////////////////////////////////////////////////////////
+        // And now it's time to set the channelPool attribute in the connectionObj:
+        connectionObj->setChannelPool(channelPool);
+      }
+    }
     *pConnectionObj = connectionObj;
   }
   return iRet;
