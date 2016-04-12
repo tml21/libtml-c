@@ -885,31 +885,6 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
   ////////////////////////////////////////////////////////////////
   // Unregister all dispatch callback methods:
   unregisterAll_Registered_Profiles();
-  /* This das been done in unregisterAll_Registered_Profiles:
-  TML_INT32 iSize = 0;
-  TML_INT32 iRet = tmlCoreWrapper_Get_Registered_Profiles_Size(&iSize);
-
-  SIDEX_VARIANT registeredProfiles = SIDEX_HANDLE_TYPE_NULL;
-  iRet = tmlCoreWrapper_Get_Registered_Profiles(&registeredProfiles);
-
-  if (TML_SUCCESS == iRet){
-    for (int k = 0; k < iSize; ++k){
-      SIDEX_VARIANT vSingleKey;
-      iRet = sidex_Variant_List_Get(registeredProfiles, k, &vSingleKey);
-      if (SIDEX_SUCCESS == iRet){
-        SIDEX_INT32 iLength;
-        char* sSingleKey;
-        iRet = sidex_Variant_As_String(vSingleKey, &sSingleKey, &iLength);
-        if (SIDEX_SUCCESS == iRet){
-          iRet = tmlCoreWrapper_Unregister_Profile (sSingleKey);
-        }
-      }
-    }
-    if (SIDEX_HANDLE_TYPE_NULL != registeredProfiles){
-      sidex_Variant_DecRef(registeredProfiles);
-    }
-  }
-  */
   // Finish with unregister all dispatch callback methods
   ////////////////////////////////////////////////////////////////
 
@@ -2680,7 +2655,6 @@ TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE
   tmlCoreWrapper_Delete_ConnectionItem(*connectionHandle);
 
   // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
-  delete (tmlConnectionManageObj*)*connectionHandle;
   *connectionHandle = TML_HANDLE_TYPE_NULL;
 
   return iRet;
@@ -2734,6 +2708,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
     if (connectionHandle == tmpConnection){
       bFound = true;
       sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
+      delete (tmlConnectionManageObj*)tmpConnection;
     }
   }
 }
