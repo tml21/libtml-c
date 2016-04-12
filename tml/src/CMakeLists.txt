@@ -29,7 +29,7 @@
 #
 #    wobe-systems GmbH
 #    support@libtml.org
-#  
+#
 # Contributors:
 #    wobe-systems GmbH
 
@@ -73,12 +73,12 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlEventData.h
                       tmlEventDataQueue.h
                       tmlEventHandler.h
-                      tmlListenerObj.h
                       tmlGlobalCallback.h
+                      tmlListenerObj.h
                       tmlLogHandler.h
                       tmlMultiAsyncMsg.h
-                      tmlObjWrapper.h
                       tmlNetBinding.h
+                      tmlObjWrapper.h
                       tmlProfileHandler.h
                       tmlReceiverStream.h
                       tmlSenderStream.h
@@ -89,8 +89,7 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
 set (TML_COMMON_SOURCES ${COMMON_SRC_PATH}/systemBase.cpp
                       ${COMMON_SRC_PATH}/unicode.cpp )        
                                     
-set (TML_SOURCES      tmlCore.rc
-                      tmlCollectCall.cpp
+set (TML_SOURCES      tmlCollectCall.cpp
                       tmlCollectCallDestinationObj.cpp
                       tmlCollectCallDestinationObjHandler.cpp
                       tmlConnectionManageObj.cpp
@@ -167,8 +166,6 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 ## Windows 32 bit
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
-  set_source_files_properties(tmlCore.rc PROPERTIES LANGUAGE RC)
-
   set(AXLLIB libaxl.lib)
   set(VORTEXLIB libvortex-1.1.lib)
   
@@ -185,8 +182,6 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
 ## Windows / 64 bit
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
-  set_source_files_properties(tmlCore.rc PROPERTIES LANGUAGE RC)
-
   set(AXLLIB libaxl.lib)
   set(VORTEXLIB libvortex-1.1.lib)
 
