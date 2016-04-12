@@ -252,8 +252,8 @@ void TestingProcess::subscribeListenersForLoadBalancingOrEvents(bool loadbalanci
 	array<SIDEX_TCHAR*, 5> listenersPorts = LISTENERS_PORTS;
 	int profilesIndex = 0;
 	//the first two Listeners are subscribed
-	int listenersIndex = 0;
-	for (listenersIndex; listenersIndex < 2; listenersIndex++) {
+
+  for (int listenersIndex = 0; listenersIndex < 2; listenersIndex++) {
 		if (loadbalancing) {
 			m_iErr = tml_Bal_Subscribe_MessageDestination(senderCore, listOfProfiles[profilesIndex],
 				destinationIP, listenersPorts[listenersIndex]);
@@ -266,7 +266,7 @@ void TestingProcess::subscribeListenersForLoadBalancingOrEvents(bool loadbalanci
 		checkForSuccess();
 	}
 	//the three remaining Listeners subscribe themselves
-	for (listenersIndex; listenersIndex < 5; listenersIndex++) {
+	for (int listenersIndex = 0; listenersIndex < 5; listenersIndex++) {
 		if (loadbalancing) {
 			m_iErr = tml_Bal_Send_SubscriptionRequest(listenerCore, listOfProfiles[profilesIndex],
 				destinationIP, listenersPorts[listenersIndex], destinationIP, S_IO_PORT, DEFAULT_TIMEOUT);

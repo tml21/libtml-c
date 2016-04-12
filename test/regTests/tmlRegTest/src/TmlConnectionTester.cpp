@@ -1104,6 +1104,7 @@ void TmlConnectionTester::OnDisConnectionCallback(TML_CONNECTION_HANDLE hConnect
     {
       case cbtOnConnect:    m_cbLog_Connection    |= id; break;
       case cbtOnDisconnect: m_cbLog_Disconnection |= id; break;
+      default: break;
     }
   }
 }
@@ -1339,6 +1340,7 @@ void TmlConnectionTester::OnCommandCallback(TML_COMMAND_HANDLE hCommand, cbData_
         m_cbLog_Command |= id;
         break;
       }
+      default: break;
     }
   }
 }
@@ -1702,6 +1704,7 @@ void TmlConnectionTester::OnCommandConnectionCallback(TML_COMMAND_HANDLE hComman
         m_cbLog_Command |= id;
         break;
       }
+      default: break;
     }
   }
 }
