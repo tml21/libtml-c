@@ -95,7 +95,6 @@ bool TmlMultipleListenersTester::simpleTestTmlMultiListenerSendSyncMessage()
 	
   sendArbitraryCmds(true);
 	
-  freeCmds();
 	freeTmlCores();
 
   messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
@@ -124,9 +123,9 @@ bool TmlMultipleListenersTester::simpleTestTmlMultiListenerSendAsyncMessage()
 	initSenderSide();
 
   sendArbitraryCmds(false);
-	
+
   waitForAsyncReplies();
-	freeTmlCores();
+  freeTmlCores();
 
   messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
   messageOutput();
@@ -267,7 +266,6 @@ bool TmlMultipleListenersTester::testTmlCoreListenerGetSetEnabled()
 
   //send async and sync cmds
 	checkAsyncSyncMessagesForErrors(3);
-	freeCmds();
 	waitForAsyncReplies();
 
   //enable listener again
@@ -278,8 +276,7 @@ bool TmlMultipleListenersTester::testTmlCoreListenerGetSetEnabled()
 	bool synchronous = true;
 	sendArbitraryCmds(!synchronous);
 	sendArbitraryCmds(synchronous);
-	freeCmds();
-	
+
 	waitForAsyncReplies();
 	freeTmlCores();
 

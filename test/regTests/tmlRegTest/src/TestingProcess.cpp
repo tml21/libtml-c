@@ -128,6 +128,7 @@ TML_INT32 TestingProcess::sendArbitraryCmd(TML_INT32 cmdIndex, TML_INT32 profile
 	}
 	else {
 		m_iErr = tml_Send_AsyncMessage(m_coreSenderSide->getCore(), cmdMsg, profileURL, S_DESTINATION_HOST_IP, listenerPort, timeout);
+    if(m_iErr != TML_SUCCESS) tml_Cmd_Free(&m_Cmds[cmdIndex]);
 	}
 	return m_iErr;
 }
@@ -141,6 +142,7 @@ void TestingProcess::sendArbitraryCmds(bool synchronous) {
 		m_iErr = sendArbitraryCmd(i, indexOfWantedProfile, synchronous, DEFAULT_TIMEOUT);
 		checkForSuccess();
 	}
+  if(synchronous) freeCmds();
 }
 
 
@@ -311,9 +313,9 @@ void TestingProcess::checkAsyncSyncMessagesForErrors(int indexOfDisabledListener
 				checkForSuccess();
 			}	
 		}
-		synchronous = true;
+    if(synchronous) freeCmds();
+		synchronous = !synchronous;
 	}
-	
 }
 
 void TestingProcess::checkSendMessageForErrors(TML_INT32 errorCode, bool synchronous, int timeout) {

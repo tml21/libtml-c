@@ -37,6 +37,15 @@
 #ifndef TMLRT_UTILS_H
 #define TMLRT_UTILS_H
 
+#if defined(_MEM_LEAK_CHECK_) && defined(_DEBUG)
+  // enable memory leak detection...
+  #ifndef _CRTDBG_MAP_ALLOC
+    #define _CRTDBG_MAP_ALLOC
+  #endif
+  #include <stdlib.h>
+  #include <crtdbg.h>
+#endif
+
 #include <vortex.h>
 #ifdef LINUX
   #include <wchar.h>

@@ -111,17 +111,20 @@ void TestingForReturns::messageOutput(SIDEX_TCHAR* messageText, bool withProcess
         wcout << messageText;
         hasText = true;
       }
-      if(deleteText) DELETE_STR(messageText);
     }
     wcout << endl;
     leaveGlobalMutex();
   }
+  if(deleteText && messageText) DELETE_STR(messageText);
 }
 
 void TestingForReturns::contentOutput(SIDEX_TCHAR* name, SIDEX_TCHAR* content,
                                       bool withProcessName, bool withSectionName, bool deleteName, bool deleteContent)
 {
-  messageOutput(tmlrt_cat(name, tmlrtT(" = "), content, (deleteName ? 1 : 0) | (deleteContent ? 4 : 0)),
+  messageOutput(tmlrt_cat(name,
+                          tmlrtT(" = "),
+                          content,
+                          (deleteName ? 1 : 0) | (deleteContent ? 4 : 0)),
                 withProcessName, withSectionName, true);
 }
 
@@ -138,7 +141,7 @@ void TestingForReturns::indexOutput(SIDEX_TCHAR* arrayName, SIDEX_INT32 index, S
                           tmlrt_cat(tmlrtT("["),
                                     tmlrt_itoa(index),
                                     tmlrtT("]"), 2),
-                          NULL, deleteArrayName ? 1 : 0),
+                          NULL, deleteArrayName ? 3 : 2),
                 content, withProcessName, withSectionName, true, deleteContent);
 }
 
@@ -154,12 +157,12 @@ void TestingForReturns::errorOutput(SIDEX_TCHAR* messageText, bool withErrorCode
     if(messageText)
     {
       if(messageText[0]) wcout << ":" << messageText;
-      if(deleteText) DELETE_STR(messageText);
     }
     if(withErrorCode) wcout << " with ErrorCode " << m_iErr;
     wcout << endl;
     leaveGlobalMutex();
   }
+  if(deleteText && messageText) DELETE_STR(messageText);
   m_testOK         = false;
   m_testOK_Overall = false;
 }
@@ -174,7 +177,8 @@ bool TestingForReturns::checkForExpectedReturnCode(TML_INT32    expectedReturnCo
     errorOutput(tmlrt_cat(messageText,
                           tmlrt_cat(tmlrtT(" Expected was "),
                                     tmlrt_itoa(expectedReturnCode),
-                                    tmlrtT(", but returned"), 2)),
+                                    tmlrtT(", but returned"), 2),
+                          NULL, 2),
                 true, true);
   }
   if(deleteText && messageText) DELETE_STR(messageText);
@@ -193,10 +197,10 @@ bool TestingForReturns::checkForValue(SIDEX_TCHAR* name, SIDEX_INT32 desiredValu
   {
     errorOutput(tmlrt_cat(tmlrt_cat(name,
                                     tmlrtT(" expected as "),
-                                    tmlrt_itoa(desiredValue),
-                                    deleteName ? 5 : 4),
+                                    tmlrt_itoa(desiredValue), 4),
                           tmlrtT(", but is "),
                           tmlrt_itoa(actualValue), 5), false, true);
   }
+  if(deleteName && name) DELETE_STR(name);
   return(result);
 }

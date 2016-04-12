@@ -1069,10 +1069,6 @@ TMLCoreSender::~TMLCoreSender()
     // Free the reference to a structure to handle connection close of a server:
     delete (m_closeCallbackData);
 
-    ////////////////////////////////////////////////////////////////////////////
-    // Free event handler
-    delete (m_eventHandler);
-
     if (NULL != m_ctx){
       ////////////////////////////////////////////////////////////////////////////
       // Destroy the mutex that protect critial section about communication data:
@@ -1099,6 +1095,11 @@ TMLCoreSender::~TMLCoreSender()
       delete (m_multiAsyncMsg);
     m_bValidInitialized = false;
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Free event handler
+  if (NULL != m_eventHandler)
+    delete (m_eventHandler);
 }
 
 
