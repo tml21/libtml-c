@@ -2653,8 +2653,6 @@ TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE
 
   // Delete a TML connection handle from the connection list:
   tmlCoreWrapper_Delete_ConnectionItem(*connectionHandle);
-
-  // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
   *connectionHandle = TML_HANDLE_TYPE_NULL;
 
   return iRet;
@@ -2708,6 +2706,7 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
     if (connectionHandle == tmpConnection){
       bFound = true;
       sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
+      // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
       delete (tmlConnectionManageObj*)tmpConnection;
     }
   }
