@@ -365,7 +365,7 @@ SIDEX_TCHAR* TmlTester::getSidexListStringItem(SIDEX_VARIANT vList, SIDEX_INT32 
         m_iErr = sidex_Variant_As_String(vString, &sBorrowed, &len);
         checkForSuccess(tmlrt_cat(debugText,
                                   debugText ? tmlrtT(" - ") : NULL,
-                                  tmlrtT("sidex_Variant_As_String()")));
+                                  tmlrtT("sidex_Variant_As_String()")), true);
         s = tmlrt_cpy(sBorrowed);
         // sBorrowed is borrowed - do not free!
       }

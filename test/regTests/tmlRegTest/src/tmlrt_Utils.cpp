@@ -304,7 +304,7 @@ void FUNC_C_DECL cbGenericCmdReplyReceived(TML_COMMAND_HANDLE tmlhandle, TML_POI
 	index = (int)(value / 10) - 1;
 	enterGlobalMutex();
 	cmdRepliesReceived[index] = true;
-	wcout << "received async cmd callback" << endl;
+	wcout << "received async cmd reply callback" << endl;
 	leaveGlobalMutex();
 }
 

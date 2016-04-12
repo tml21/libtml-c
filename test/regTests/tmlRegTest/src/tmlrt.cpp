@@ -58,6 +58,17 @@
   wcout << "=======================" << endl;
   wcout << endl;
 
+  #if defined(_MEM_LEAK_CHECK_) && defined(_DEBUG)
+    // enable memory leak report at program exit...
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+    wcout << "Memory leak detection is enabled!" << endl;
+    wcout << endl;
+
+    // just for debugging: set memory allocation break point
+    //_CrtSetBreakAlloc(-1);  // <- pass here the {xxx} value from the leak report
+  #endif
+
   wcout << (8 * sizeof(int)) << "bit" << endl;
   wcout << "UTF" << (8 * sizeof(SIDEX_TCHAR)) << endl;
   wcout << endl;

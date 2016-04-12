@@ -225,7 +225,7 @@ int tmlNetBinding::addHostItem(int iBindings, const char* sHostStartAddr, int iL
   int iErr = 0;
   SIDEX_INT32 iPos = 0;
 
-  char*     sHost   = new char     [iLength+1];
+  char* sHost = new char[iLength+1];
 
 #if defined (LINUX) || defined (MINGW_BUILD)
   strncpy(sHost, sHostStartAddr, iLength);
@@ -236,7 +236,7 @@ int tmlNetBinding::addHostItem(int iBindings, const char* sHostStartAddr, int iL
 
   SIDEX_INT32 utfLen;
   char16_t* sHost_w = (char16_t*)UTF8toUTF16(sHost, &utfLen);
-  wchar_t* sHost_x = UTF8toUTF32(sHost, &utfLen);
+  wchar_t*  sHost_x = UTF8toUTF32(sHost, &utfLen);
 
   //printf ("Host[%d] = %s\n", iBindings, sHost);
 
@@ -298,7 +298,7 @@ int tmlNetBinding::addPortItem(int iBindings, const char* sPortStartAddr, int iL
   int iErr = 0;
   SIDEX_INT32 iPos = 0;
 
-  char*     sPort   = new char     [iLength+1];
+  char*     sPort   = new char[iLength+1];
   char16_t* sPort_w = NULL;
   wchar_t*  sPort_x = NULL;
 
@@ -385,7 +385,7 @@ int tmlNetBinding::addAddressItem(int iBindings, const char* sAddrStartAddr, int
   int iErr = 0;
   SIDEX_INT32 iPos = 0;
 
-  char*     sAddress   = new char     [iLength+1];
+  char* sAddress = new char[iLength+1];
 
 #if defined (LINUX) || defined (MINGW_BUILD)
   strncpy(sAddress, sAddrStartAddr, iLength);
@@ -396,7 +396,7 @@ int tmlNetBinding::addAddressItem(int iBindings, const char* sAddrStartAddr, int
 
   SIDEX_INT32 utfLen;
   char16_t* sAddress_w = (char16_t*)UTF8toUTF16(sAddress, &utfLen);
-  wchar_t* sAddress_x = UTF8toUTF32(sAddress, &utfLen);
+  wchar_t*  sAddress_x = UTF8toUTF32(sAddress, &utfLen);
   //printf ("Address[%d] = %s\n", iBindings, sAddress);
 
   SIDEX_VARIANT vAddress;
