@@ -108,7 +108,8 @@ tmlEventHandler::~tmlEventHandler(){
   }
 #endif // USE_POSIX
 #endif // LINUX
-  delete m_hashTable;
+  // TODO: deletion here causes a segmentation fault on Linux
+  //delete m_hashTable;
 }
 
 
