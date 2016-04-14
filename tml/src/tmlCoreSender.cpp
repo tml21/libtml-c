@@ -991,10 +991,6 @@ void AsyncHandlingThreadMethod (LPVOID pParam)
     intern_mutex_unlock (pThreadData->mutexCriticalSection, pThreadData->pLog, "AsyncHandlingThreadMethod");
   }
 
-  if (pThreadData->bFree){
-    delete pThreadData;
-  }
-
 }
 
 
@@ -2027,29 +2023,25 @@ int TMLCoreSender::TMLCoreSender_SendMessage(tmlConnectionObj* pConnectionObj, T
           // the object to return:
           callbackData->tmlhandle = tmlhandle;
           // fill m_AsyncHandlingThreadData and call AsyncHandlingThreadMethod:
-          AsyncHandlingThreadData* m_AsyncHandlingThreadData = new AsyncHandlingThreadData();
-
-          m_AsyncHandlingThreadData->pLog = m_log;
-          m_AsyncHandlingThreadData->senderSyncEventArray = m_senderSyncEventArray;
-          m_AsyncHandlingThreadData->dwTimeoutValue = iTimeout;
-          m_AsyncHandlingThreadData->timerThreadData = &m_timerThreadData;
-          m_AsyncHandlingThreadData->tmlhandle = tmlhandle;
-          m_AsyncHandlingThreadData->mutexCriticalSection = &m_mutexCriticalSection;
-          m_AsyncHandlingThreadData->connectionObj = pConnectionObj;
-          m_AsyncHandlingThreadData->asyncCmdCallbackHandlerMethod = &m_internalAsyncCmdCallbackHandlerMethod;
-          m_AsyncHandlingThreadData->eventHandler = m_eventHandler;
-          m_AsyncHandlingThreadData->multiAsyncMsg = m_multiAsyncMsg;
-          m_AsyncHandlingThreadData->timerTerminationMutex = &m_mutexTimerThreadSync;
-          m_AsyncHandlingThreadData->bFree = false;
+          m_AsyncHandlingThreadData.pLog = m_log;
+          m_AsyncHandlingThreadData.senderSyncEventArray = m_senderSyncEventArray;
+          m_AsyncHandlingThreadData.dwTimeoutValue = iTimeout;
+          m_AsyncHandlingThreadData.timerThreadData = &m_timerThreadData;
+          m_AsyncHandlingThreadData.tmlhandle = tmlhandle;
+          m_AsyncHandlingThreadData.mutexCriticalSection = &m_mutexCriticalSection;
+          m_AsyncHandlingThreadData.connectionObj = pConnectionObj;
+          m_AsyncHandlingThreadData.asyncCmdCallbackHandlerMethod = &m_internalAsyncCmdCallbackHandlerMethod;
+          m_AsyncHandlingThreadData.eventHandler = m_eventHandler;
+          m_AsyncHandlingThreadData.multiAsyncMsg = m_multiAsyncMsg;
+          m_AsyncHandlingThreadData.timerTerminationMutex = &m_mutexTimerThreadSync;
           ////////////////////////////////////////////
           // there is an active async command processing:
           SetAsyncCmdProcessing(true);
           ////////////////////////////////////////////
           // AsyncHandlingThreadMethod as method:
-          AsyncHandlingThreadMethod(m_AsyncHandlingThreadData);
+          AsyncHandlingThreadMethod(&m_AsyncHandlingThreadData);
           // Return value:
-          iRet = m_AsyncHandlingThreadData->iRet;
-          delete m_AsyncHandlingThreadData;
+          iRet = m_AsyncHandlingThreadData.iRet;
         }
       }
       else{
@@ -2141,20 +2133,17 @@ int TMLCoreSender::TMLCoreSender_SendAsyncMessage(tmlConnectionObj* pConnectionO
           // the object to return:
           callbackData->tmlhandle = tmlhandle;
           // fill m_AsyncHandlingThreadData and call AsyncHandlingThreadMethod:
-          AsyncHandlingThreadData* m_AsyncHandlingThreadData = new AsyncHandlingThreadData();
-
-          m_AsyncHandlingThreadData->pLog = m_log;
-          m_AsyncHandlingThreadData->senderSyncEventArray = m_senderSyncEventArray;
-          m_AsyncHandlingThreadData->dwTimeoutValue = iTimeout;
-          m_AsyncHandlingThreadData->timerThreadData = &m_timerThreadData;
-          m_AsyncHandlingThreadData->tmlhandle = tmlhandle;
-          m_AsyncHandlingThreadData->mutexCriticalSection = &m_mutexCriticalSection;
-          m_AsyncHandlingThreadData->connectionObj = pConnectionObj;
-          m_AsyncHandlingThreadData->asyncCmdCallbackHandlerMethod = &m_internalAsyncCmdCallbackHandlerMethod;
-          m_AsyncHandlingThreadData->eventHandler = m_eventHandler;
-          m_AsyncHandlingThreadData->multiAsyncMsg = m_multiAsyncMsg;
-          m_AsyncHandlingThreadData->timerTerminationMutex = &m_mutexTimerThreadSync;
-          m_AsyncHandlingThreadData->bFree = true;
+          m_AsyncHandlingThreadData.pLog = m_log;
+          m_AsyncHandlingThreadData.senderSyncEventArray = m_senderSyncEventArray;
+          m_AsyncHandlingThreadData.dwTimeoutValue = iTimeout;
+          m_AsyncHandlingThreadData.timerThreadData = &m_timerThreadData;
+          m_AsyncHandlingThreadData.tmlhandle = tmlhandle;
+          m_AsyncHandlingThreadData.mutexCriticalSection = &m_mutexCriticalSection;
+          m_AsyncHandlingThreadData.connectionObj = pConnectionObj;
+          m_AsyncHandlingThreadData.asyncCmdCallbackHandlerMethod = &m_internalAsyncCmdCallbackHandlerMethod;
+          m_AsyncHandlingThreadData.eventHandler = m_eventHandler;
+          m_AsyncHandlingThreadData.multiAsyncMsg = m_multiAsyncMsg;
+          m_AsyncHandlingThreadData.timerTerminationMutex = &m_mutexTimerThreadSync;
           ////////////////////////////////////////////
           // there is an active async command processing:
           SetAsyncCmdProcessing(true);
@@ -2162,7 +2151,7 @@ int TMLCoreSender::TMLCoreSender_SendAsyncMessage(tmlConnectionObj* pConnectionO
           // AsyncHandlingThreadMethod as thread:
           ////////////////////////////////////////////////
           // Use the one and only thread that life's once:
-          iRet = RestartAsyncHandlingThread(&m_AsyncHandlingData, &m_asyncHandlingEventArray, m_AsyncHandlingThreadData, m_log);
+          iRet = RestartAsyncHandlingThread(&m_AsyncHandlingData, &m_asyncHandlingEventArray, &m_AsyncHandlingThreadData, m_log);
         }
       }
       else{
