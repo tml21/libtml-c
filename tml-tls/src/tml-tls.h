@@ -77,6 +77,7 @@
 #endif // _MSC_VER > 1000
 
 #include "globalDefines.h"
+#include "tmlStdTypes.h"
 
 #ifndef DOXYGEN_GENERATION
 #ifdef LINUX
@@ -115,6 +116,11 @@ extern "C" {
  * @param    iVersion reference to api version
  */
 TLS_CORE_API void DLL_CALL_CONV tml_tls_Get_Version(int* iVersion);
+
+/**
+ * @brief    Accept tls negotiation
+ */
+TLS_CORE_API TML_BOOL DLL_CALL_CONV tml_tls_accept_negotiation(TML_CORE_HANDLE coreHandle);
 
 #ifdef __cplusplus
 }// extern "C"

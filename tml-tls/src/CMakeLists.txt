@@ -37,17 +37,24 @@
 ## Common src path
 set(COMMON_INCLUDE_PATH ../../common/src)
 set(COMMON_SRC_PATH ../../common/src)
+set(TMLINCLUDE ../../tml/src)
 set(SIDEXINCLUDE ../../sidex/src)
 
 #######################################################
 ## Source & Header
 
-set  (TLS_INSTALL_SOURCES_HEADER tml-tls.h)
+set  (TLS_COMMON_SOURCES_HEADER ${COMMON_SRC_PATH}/tmlCoreWrapperBase.h )
+
+set  (TLS_INSTALL_SOURCES_HEADER tml-tls.h )
                       
                    
+set (TLS_COMMON_SOURCES ${COMMON_SRC_PATH}/tmlCoreWrapperBase.cpp )
+
 set (TLS_SOURCES      tml-tls.cpp)
 
+source_group("CommonHeaderfiles" FILES ${TLS_COMMON_SOURCES_HEADER})
 source_group("InstallHeaderfiles" FILES ${TLS_INSTALL_SOURCES_HEADER})
+source_group("CommonSourcefiles" FILES ${TLS_COMMON_SOURCES})
 source_group("Sourcefiles" FILES ${TLS_SOURCES})
 
 #######################################################
@@ -304,7 +311,7 @@ endif (${IS64BIT} STREQUAL true)
 
 #######################################################
 ## The target is a shared library 
-ADD_LIBRARY( ${TLSLIBNAME_LOCAL} SHARED ${TLS_INSTALL_SOURCES_HEADER} ${TLS_SOURCES})
+ADD_LIBRARY( ${TLSLIBNAME_LOCAL} SHARED ${TLS_INSTALL_SOURCES_HEADER} ${TLS_COMMON_SOURCES} ${TLS_SOURCES} ${TLS_COMMON_SOURCES_HEADER})
 
 #######################################################
 ## On MinGW build target prefix don't have to be lib:
@@ -330,6 +337,7 @@ INCLUDE_DIRECTORIES (${ICONVINCLUDE})
 INCLUDE_DIRECTORIES (${VORTEXINCLUDE})
 INCLUDE_DIRECTORIES (${VORTEX-TLS-INCLUDE})
 INCLUDE_DIRECTORIES (${SIDEXINCLUDE})
+INCLUDE_DIRECTORIES (${TMLINCLUDE})
 INCLUDE_DIRECTORIES (${COMMON_INCLUDE_PATH})
 INCLUDE_DIRECTORIES ( . )
 
@@ -343,6 +351,7 @@ TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${AXLLIB} )
 TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${VORTEXLIB} )    
 TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${VORTEX-TLS-LIB} )    
 TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${SIDEXLIBNAME} )    
+TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${TMLLIBNAME} )    
 
 #######################################################
 ## ICONV library in case of OSX
