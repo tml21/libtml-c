@@ -115,9 +115,12 @@ extern "C" {
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  *
- * @returns TML_TRUE if the current core instance could accept incoming TLS connections, otherwise TML_FALSE is returned. 
+ * poaram   bAccept TML_TRUE if the current core instance could accept incoming TLS connections, otherwise TML_FALSE is returned. 
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid core handle
  */
-TLS_CORE_API TML_BOOL DLL_CALL_CONV tml_tls_accept_negotiation(TML_CORE_HANDLE coreHandle);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HANDLE coreHandle, TML_BOOL* bAccept);
 
 
 /**
@@ -125,10 +128,12 @@ TLS_CORE_API TML_BOOL DLL_CALL_CONV tml_tls_accept_negotiation(TML_CORE_HANDLE c
  * @brief    Start tls negotiation for the requested connection
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   bEncrypted       reference to encryption status.TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE
  *
- * @returns TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE is returned. 
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid connection handle
  */
-TLS_CORE_API TML_BOOL  DLL_CALL_CONV tml_tls_start_negotiation (TML_CONNECTION_HANDLE connectionHandle);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL* bEncrypted);
 
 
 
