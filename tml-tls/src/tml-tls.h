@@ -111,16 +111,26 @@ extern "C" {
 
 /**
  * @ingroup  coreGeneral
- * @brief    Returns library version.
+ * @brief    Accept tls negotiation on listener side
  *
- * @param    iVersion reference to api version
- */
-TLS_CORE_API void DLL_CALL_CONV tml_tls_Get_Version(int* iVersion);
-
-/**
- * @brief    Accept tls negotiation
+ * @param   coreHandle TML core handle (TML_CORE_HANDLE)
+ *
+ * @returns TML_TRUE if the current core instance could accept incoming TLS connections, otherwise TML_FALSE is returned. 
  */
 TLS_CORE_API TML_BOOL DLL_CALL_CONV tml_tls_accept_negotiation(TML_CORE_HANDLE coreHandle);
+
+
+/**
+ * @ingroup  coreGeneral
+ * @brief    Start tls negotiation for the requested connection
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ *
+ * @returns TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE is returned. 
+ */
+TLS_CORE_API TML_BOOL  DLL_CALL_CONV tml_tls_start_negotiation (TML_CONNECTION_HANDLE connectionHandle);
+
+
 
 #ifdef __cplusplus
 }// extern "C"

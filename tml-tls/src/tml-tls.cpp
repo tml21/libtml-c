@@ -44,11 +44,8 @@
   */
 
 #include "tmlCoreWrapperBase.h"
+#include "tmlConnectionManageObjBase.h"
 #include "tml-tls.h"
-#ifdef LINUX
-#else // LINUX
-#include "windows.h"
-#endif // LINUX
 #include <vortex_tls.h>
 
 // return axl_true if we agree to accept the TLS negotiation
@@ -82,29 +79,22 @@ char * private_key_file_location (VortexConnection* connection,
   return vortex_support_find_data_file (ctx, "test-private-key.pem"); 
 }
 
-/**
- * @brief    Returns library version.
- */
-TLS_CORE_API void DLL_CALL_CONV tml_tls_Get_Version(int* iVersion){
-  *iVersion = 4711;
-}
-
 
 /**
  * @brief    Accept tls negotiation
  */
 TLS_CORE_API TML_BOOL DLL_CALL_CONV tml_tls_accept_negotiation(TML_CORE_HANDLE coreHandle){
   TML_BOOL bRet = TML_FALSE;
-  VortexCtx* m_ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
+  VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
 
-  if (! vortex_tls_init (m_ctx)) {
+  if (! vortex_tls_init (ctx)) {
     printf ("Unable to activate TLS, Vortex is not prepared\n");
     // TODO: fehler bekannt geben.
   }
   else{
-    vortex_support_add_search_path (m_ctx, "C:\\ssl");    // activate TLS profile support using defaults
+    vortex_support_add_search_path (ctx, "C:\\ssl");    // activate TLS profile support using defaults
 
-    if (! vortex_tls_accept_negotiation (m_ctx,     // context to configure
+    if (! vortex_tls_accept_negotiation    (ctx,     // context to configure
                                            check_and_accept_tls_request,    // accept all TLS request received
                                            certificate_file_location,    // use default certificate file
                                            private_key_file_location)){  // use default private key file
@@ -116,6 +106,55 @@ TLS_CORE_API TML_BOOL DLL_CALL_CONV tml_tls_accept_negotiation(TML_CORE_HANDLE c
   }
   return bRet;
 }
+
+
+TML_BOOL tml_tls_start_negotiation (TML_CONNECTION_HANDLE connectionHandle) 
+{
+  TML_CORE_HANDLE  coreHandle = ((tmlConnectionManageObjBase*) connectionHandle)->getCoreHandle();
+  VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
+  VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+  VortexConnection* retValue = connection;
+  TML_BOOL bEncrypted = TML_FALSE;
+
+  // initialize and check if current vortex library supports TLS
+
+  if (! vortex_tls_init (ctx)) {
+      printf ("Unable to activate TLS, Vortex is not prepared\n");
+  }
+  else{
+    // start the TLS profile negotiation process
+    VortexStatus status;
+    char* status_message;
+    VortexConnection* tls_connection = vortex_tls_start_negotiation_sync (connection, NULL, 
+                                  &status, &status_message);
+    switch (status) {
+    case VortexOk:
+        printf ("TLS negotiation OK! over the new connection %ld\n",
+                  vortex_connection_get_id (connection));
+        // use the new connection reference provided by this function.
+        retValue = tls_connection;
+        bEncrypted = TML_TRUE;
+        break;
+    case VortexError: 
+        printf ("TLS negotiation have failed, message: %s\n",
+                  status_message);
+        // ok, TLS process have failed but, do we have a connection
+        // still working?
+        if (vortex_connection_is_ok (tls_connection, axl_false)) {
+          // well we don't have TLS activated but the connection still works
+          retValue = tls_connection;
+        } 
+        else{
+          // Negotiation fail:
+          retValue = NULL;
+        }
+        break;
+    }
+  }
+  ((tmlConnectionManageObjBase*) connectionHandle)->setVortexConnection(retValue);
+  return bEncrypted;
+}
+
 
 
 #ifdef LINUX
