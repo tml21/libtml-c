@@ -53,43 +53,85 @@
 axl_bool      check_and_accept_tls_request (VortexConnection* connection, 
                                                        const char* serverName)
 {
-    // perform some special operations against the serverName
-    // value or the received connection, return axl_false to deny the 
-    // TLS request, or axl_true to allow it.
-    
-    return axl_true;  
+  // perform some special operations against the serverName
+  // value or the received connection, return axl_false to deny the 
+  // TLS request, or axl_true to allow it.
+
+  axl_bool bRet = axl_true;
+
+  if (NULL != m_pAcceptCB){
+    TML_BOOL bRetVal = ((TML_BOOL(FUNC_C_DECL *)(const char*))m_pAcceptCB)(serverName);
+    if (TML_FALSE == bRetVal){
+      bRet = axl_false;
+    }
+    else{
+      bRet = axl_true;
+    }
+  }
+  return bRet;  
 }
 
-char * certificate_file_location (VortexConnection* connection, 
+char* certificate_file_location (VortexConnection* connection, 
                                                        const char* serverName)
 {
 	VortexCtx* ctx = vortex_connection_get_ctx (connection);
   // perform some special operation to choose which 
   // certificate file to be used, then return it:
-   
-  return vortex_support_find_data_file (ctx, "test-certificate.pem"); 
+  char* fileLocation = NULL; 
+  char* pathname;
+  if (NULL != m_pCertReqCB){
+    fileLocation = ((char*(FUNC_C_DECL *)(const char*))m_pCertReqCB)(serverName);
+  }
+  if (NULL != fileLocation){
+    pathname = axl_strdup (fileLocation);
+  }
+  else{
+    pathname = axl_strdup ("");
+  }
+  return pathname;  
 }
 
-char * private_key_file_location (VortexConnection* connection, 
+char* private_key_file_location (VortexConnection* connection, 
                                                        const char* serverName)
 {
 	VortexCtx* ctx = vortex_connection_get_ctx (connection);
   // perform some special operation to choose which 
   // private key file to be used, then return it:
    
-  return vortex_support_find_data_file (ctx, "test-private-key.pem"); 
+  char* fileLocation = NULL; 
+  char* pathname;
+  if (NULL != m_pAcceptCB){
+    fileLocation = ((char*(FUNC_C_DECL *)(const char*))m_pPrivateKeyReqCB)(serverName);
+  }
+  if (NULL != fileLocation){
+    pathname = axl_strdup (fileLocation);
+  }
+  else{
+    pathname = axl_strdup ("");
+  }
+  return pathname;  
 }
 
 
 /**
  * @brief    Accept tls negotiation on listener side
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HANDLE coreHandle, TML_BOOL* bAccept){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HANDLE coreHandle, 
+                                                                     TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC pAcceptCB,
+                                                                     TML_ON_CERTIFICATE_FILE_LOCATION_CB_FUNC pCertReqCB,
+                                                                     TML_ON_CERTIFICATE_PRIVATE_KEY_LOCATION_CB_FUNC pPrivateKeyReqCB,
+                                                                     TML_BOOL* bAccept){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bRet = TML_FALSE;
 
   if (TML_HANDLE_TYPE_NULL != coreHandle){
     iRet = TML_SUCCESS;
+
+
+    m_pAcceptCB        = pAcceptCB;
+    m_pCertReqCB       = pCertReqCB;
+    m_pPrivateKeyReqCB = pPrivateKeyReqCB;
+
     VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
 
     if (! vortex_tls_init (ctx)) {
@@ -99,9 +141,9 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HA
       vortex_support_add_search_path (ctx, "C:\\ssl");    // activate TLS profile support using defaults
 
       if (! vortex_tls_accept_negotiation    (ctx,     // context to configure
-                                             check_and_accept_tls_request,    // accept all TLS request received
-                                             certificate_file_location,    // use default certificate file
-                                             private_key_file_location)){  // use default private key file
+                                             (NULL != pAcceptCB) ? check_and_accept_tls_request : NULL,        // accept all TLS request received
+                                             (NULL != pCertReqCB) ? certificate_file_location : NULL,          // use default certificate file
+                                             (NULL != pPrivateKeyReqCB) ? private_key_file_location : NULL)){  // use default private key file
         printf ("Cannot accept incoming TLS connections\n");
       }
       else{
@@ -170,7 +212,6 @@ TLS_CORE_API TML_INT32 tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HAND
   *bEncrypted = bEncryptedVal;
   return iRet;
 }
-
 
 
 #ifdef LINUX

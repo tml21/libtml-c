@@ -108,6 +108,39 @@ extern "C" {
 // @endcond
 **/
 
+void* m_pAcceptCB = NULL;
+void* m_pCertReqCB = NULL;
+void* m_pPrivateKeyReqCB = NULL;
+
+/**
+ * @brief   Callback function to accept TLS requests.
+
+ * @param   serverName  server name
+ *
+ * @returns TML_TRUE if TLS request is accepted
+ */
+typedef  TML_BOOL (*TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC)(const char* serverName);
+
+
+/**
+ * @brief   Callback function to get TLS private key file location.
+
+ * @param   serverName  server name
+ *
+ * @returns pathname of private key file
+ */
+typedef  char* (*TML_ON_CERTIFICATE_PRIVATE_KEY_LOCATION_CB_FUNC)(const char* serverName);
+
+
+/**
+ * @brief   Callback function to get TLS certificate file location.
+
+ * @param   serverName  server name
+ *
+ * @returns pathname of certificate file
+ */
+typedef  char* (*TML_ON_CERTIFICATE_FILE_LOCATION_CB_FUNC)(const char* serverName);
+
 
 /**
  * @ingroup  coreGeneral
@@ -115,12 +148,16 @@ extern "C" {
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  *
- * poaram   bAccept TML_TRUE if the current core instance could accept incoming TLS connections, otherwise TML_FALSE is returned. 
+ * param    bAccept TML_TRUE if the current core instance could accept incoming TLS connections, otherwise TML_FALSE is returned. 
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HANDLE coreHandle, TML_BOOL* bAccept);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HANDLE coreHandle, 
+                                                                     TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC pAcceptCB, 
+                                                                     TML_ON_CERTIFICATE_FILE_LOCATION_CB_FUNC pCertReqCB,
+                                                                     TML_ON_CERTIFICATE_PRIVATE_KEY_LOCATION_CB_FUNC pPrivateKeyReqCB,
+                                                                     TML_BOOL* bAccept);
 
 
 /**
