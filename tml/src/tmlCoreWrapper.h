@@ -49,8 +49,9 @@
 #include "tmlCollectCall.h"
 #include "tmlCriticalSectionObj.h"
 #include "tmlProfileHandler.h"
+#include "tmlCoreWrapperBase.h"
 
-class  tmlCoreWrapper
+class  tmlCoreWrapper : public tmlCoreWrapperBase
 {
 
 private:
@@ -97,11 +98,6 @@ private:
      * @brief    handler for a command / message to multiple registered Vortex destinations
      */
     tmlCollectCall* m_sender;
-
-    /**
-     * @brief    reference to vortex execution context
-     */
-    VortexCtx* m_ctx;
 
     /**
      * @brief    The debug log handler
@@ -385,14 +381,6 @@ public:
      * @brief    Destructor.
      */
     ~tmlCoreWrapper();
-
-
-    /**
-     * @brief    Get the Vortex execution context
-     *
-     * @returns the Vortex execution context
-     */
-    VortexCtx* getVortexCtx();
 
 
     /**

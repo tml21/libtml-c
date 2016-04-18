@@ -65,16 +65,16 @@ axl_bool listenerObj_connection_accept_handler (VortexConnection * conn, axlPoin
 /**
  * @brief    Constructor.
  */
-tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sNetAddress)
+tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle,const char* sNetAddress)
 {
-  initListenerObj(coreHandle, ctx, sNetAddress);
+  initListenerObj(coreHandle, sNetAddress);
 }
 
 
 /**
  * @brief    Constructor.
  */
-tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sHost, const char* sPort)
+tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort)
 {
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
@@ -85,7 +85,7 @@ tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const
     sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
   #endif // LINUX
 
-  initListenerObj(coreHandle, ctx, sNetAddress);
+  initListenerObj(coreHandle, sNetAddress);
 
   delete[]sNetAddress;
 }
@@ -104,12 +104,13 @@ tmlListenerObj::~tmlListenerObj()
 /**
   * @brief    init the object
   */
-void tmlListenerObj::initListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sNetAddress){
-  m_ctx = ctx;
+void tmlListenerObj::initListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress){
+
+  m_coreHandle = coreHandle;
+  m_ctx = ((tmlCoreWrapper*)m_coreHandle)->getVortexCtx();
 
   m_bListnerIsEnabled = TML_FALSE;
 
-  m_coreHandle = coreHandle;
 
   m_vortexConnection = NULL;
 

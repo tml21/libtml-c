@@ -306,14 +306,6 @@ void* tmlConnectionManageObj::getConnectionCloseHandler(){
 
 
 /**
- * @brief Get the TML core handle.
- */
-TML_CORE_HANDLE tmlConnectionManageObj::getCoreHandle(){
-  return m_coreHandle;
-}
-
-
-/**
  * @brief Get the network hostname / IP of the connection binding.
  */
 TML_INT32 tmlConnectionManageObj::getHost(char** sHost){
@@ -497,14 +489,6 @@ TML_INT32 tmlConnectionManageObj::validate(TML_BOOL bReconnect, TML_BOOL* bConne
   }
   *bConnected = iStatus;
   return iRet;
-}
-
-
-/**
-  * @brief   Get Vortex connection 
-  */
-VortexConnection* tmlConnectionManageObj::getVortexConnection(){
-  return m_vortexConnection;
 }
 
 

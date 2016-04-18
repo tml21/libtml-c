@@ -46,6 +46,7 @@ set  (TML_COMMON_SOURCES_HEADER
                     ${COMMON_SRC_PATH}/logValues.h 
                     ${COMMON_SRC_PATH}/stdIntTypes.h 
                     ${COMMON_SRC_PATH}/systemBase.h 
+                    ${COMMON_SRC_PATH}/tmlConnectionManageObjBase.h
                     ${COMMON_SRC_PATH}/tmlCoreWrapperBase.h
                     ${COMMON_SRC_PATH}/unicode.h )
 
@@ -88,6 +89,7 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlUniversalHashTable.h )
                       
 set (TML_COMMON_SOURCES ${COMMON_SRC_PATH}/systemBase.cpp
+                      ${COMMON_SRC_PATH}/tmlConnectionManageObjBase.cpp
                       ${COMMON_SRC_PATH}/tmlCoreWrapperBase.cpp
                       ${COMMON_SRC_PATH}/unicode.cpp )        
                                     

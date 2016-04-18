@@ -135,15 +135,6 @@ int tmlCoreWrapper::tmlCoreWrapper_SendReply (TML_COMMAND_HANDLE tmlhandle, int 
 
 
 /**
- * @brief    Get the Vortex execution context
- */
-VortexCtx* tmlCoreWrapper::getVortexCtx(){
-  return m_ctx;
-}
-
-
-
-/**
   * @brief    Get the loghandler
   */
 tmlLogHandler* tmlCoreWrapper::getLogHandler(){
@@ -2397,7 +2388,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, T
     }
   }
   if (!bFound){
-    wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, m_ctx, sAddress);
+    wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, sAddress);
     iRet = tmlCoreWrapper_Add_ListenerItem((TML_LISTENER_HANDLE) wrapper);
     if (TML_SUCCESS == iRet){
       *listenerHandle = (TML_LISTENER_HANDLE) wrapper;
