@@ -62,6 +62,15 @@ protected:
      */
     VortexConnection* m_vortexConnection;
 
+    /**
+     * @brief    TLS encryption status
+     */
+    TML_BOOL m_bEncrypted;
+
+    /**
+     * @brief    TLS encryption status message
+     */
+    SIDEX_VARIANT m_tlsStatusMsg;
 
 public:
 	  /* methods */
@@ -100,6 +109,54 @@ public:
      * @param   connection Reference to VortexConnection / NULL if invalid
      */
     void setVortexConnection(VortexConnection* connection);
+
+
+    /**
+      * @brief   Get the connection TLS encryption status
+      *
+     * @returns TML_TRUE if encryption is on, otherwise TML_FALSE
+      */
+    TML_BOOL isEncrpyted();
+
+
+    /**
+      * @brief   Set the connection TLS status message
+      *
+      * @param   statusMsg the message to remember
+      */
+    void setTlsStatusMsg(char* statusMsg);
+
+
+    /**
+      * @brief   Get the connection TLS status message
+      *
+     * @returns the connection TLS status message. It  reference and has not to be freed or modified.
+      */
+    SIDEX_INT32 getTlsStatusMsg_A(char** statusMsg);
+
+
+    /**
+      * @brief   Get the connection TLS status message
+      *
+     * @returns the connection TLS status message. It  reference and has not to be freed or modified.
+      */
+    SIDEX_INT32 getTlsStatusMsg_X(wchar_t** statusMsg);
+
+
+    /**
+      * @brief   Get the connection TLS status message
+      *
+     * @returns the connection TLS status message. It  reference and has not to be freed or modified.
+      */
+    SIDEX_INT32 getTlsStatusMsg_W(char16_t** statusMsg);
+
+
+    /**
+      * @brief   Set the connection TLS encryption status
+      *
+      * @param   bEncrypted TML_TRUE if encryption is on, otherwise TML_FALSE
+      */
+    void setEncrypted(TML_BOOL bEncrypted);
 };
 
 #endif // TMLCONNECTIONMANAGEOBJ_H

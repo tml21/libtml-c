@@ -38,7 +38,7 @@
 #include "tmlConnectionManageObjBase.h"
 #include "tmlCoreWrapper.h"
 #include "tmlCore.h"
-
+#include "sidex.h"
 
 /**
  * @brief    Constructor.
@@ -48,6 +48,7 @@ tmlConnectionManageObjBase::tmlConnectionManageObjBase()
 {
   m_coreHandle = NULL;
   m_vortexConnection = NULL;
+  m_bEncrypted = TML_FALSE;
 }
 
 /**
@@ -82,3 +83,57 @@ void tmlConnectionManageObjBase::setVortexConnection(VortexConnection* connectio
 }
 
 
+/**
+  * @brief   Get the connection TLS encryption status
+  */
+TML_BOOL tmlConnectionManageObjBase::isEncrpyted(){
+  return m_bEncrypted;
+}
+
+
+/**
+  * @brief   Set the connection TLS encryption status
+  */
+void tmlConnectionManageObjBase::setEncrypted(TML_BOOL bEncrypted){
+  m_bEncrypted = bEncrypted;
+}
+
+
+/**
+  * @brief   Set the connection TLS status message
+  */
+void tmlConnectionManageObjBase::setTlsStatusMsg(char* statusMsg){
+  if (SIDEX_HANDLE_TYPE_NULL != m_tlsStatusMsg){
+    sidex_Variant_DecRef(m_tlsStatusMsg);
+  }
+  SIDEX_VARIANT msg;
+  sidex_Variant_New_String(statusMsg, &msg);
+  m_tlsStatusMsg = msg;
+}
+
+
+/**
+  * @brief   Get the connection TLS status message
+  */
+SIDEX_INT32 tmlConnectionManageObjBase::getTlsStatusMsg_A(char** statusMsg){
+  SIDEX_INT32 iLength;
+  return sidex_Variant_As_String_A(m_tlsStatusMsg, statusMsg, &iLength);
+}
+
+
+/**
+  * @brief   Get the connection TLS status message
+  */
+SIDEX_INT32 tmlConnectionManageObjBase::getTlsStatusMsg_X(wchar_t** statusMsg){
+  SIDEX_INT32 iLength;
+  return sidex_Variant_As_String_X(m_tlsStatusMsg, statusMsg, &iLength);
+}
+
+
+/**
+  * @brief   Get the connection TLS status message
+  */
+SIDEX_INT32 tmlConnectionManageObjBase::getTlsStatusMsg_W(char16_t** statusMsg){
+  SIDEX_INT32 iLength;
+  return sidex_Variant_As_String_W(m_tlsStatusMsg, statusMsg, &iLength);
+}

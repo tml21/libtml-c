@@ -147,6 +147,8 @@ tmlConnectionManageObj::~tmlConnectionManageObj()
 void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection)
 {
   m_iErr = TML_SUCCESS;
+  m_tlsStatusMsg = SIDEX_HANDLE_TYPE_NULL;
+  m_bEncrypted = TML_FALSE;
   m_coreHandle = coreHandle;
   m_onConnectCallback    = pOnConnectCallback;       // The callback method to call in case of connection
   m_onDisconnectCallback = pOnDisconnectCallback;    // The callback method to call in case of disconnection
@@ -292,6 +294,9 @@ void tmlConnectionManageObj::cleanUp(){
         m_vortexConnection = NULL;
       }
       delete m_binding;
+      if (SIDEX_HANDLE_TYPE_NULL != m_tlsStatusMsg){
+        sidex_Variant_DecRef(m_tlsStatusMsg);
+      }
     }
   }
 }

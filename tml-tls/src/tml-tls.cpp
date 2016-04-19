@@ -47,6 +47,7 @@
 #include "tmlConnectionManageObjBase.h"
 #include "tml-tls.h"
 #include "tmlerrors.h"
+#include "sidex.h"
 #include <vortex_tls.h>
 
 // return axl_true if we agree to accept the TLS negotiation
@@ -182,10 +183,15 @@ TLS_CORE_API TML_INT32 tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HAND
       char* status_message;
       VortexConnection* tls_connection = vortex_tls_start_negotiation_sync (connection, NULL, 
                                     &status, &status_message);
+
+      ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg(status_message);
+
       switch (status) {
       case VortexOk:
           printf ("TLS negotiation OK! over the new connection %ld\n",
-                    vortex_connection_get_id (connection));
+                    vortex_connection_get_id (tls_connection));
+          printf ("TLS negotiation message: %s\n",
+                    status_message);
           // use the new connection reference provided by this function.
           retValue = tls_connection;
           bEncryptedVal = TML_TRUE;
@@ -213,6 +219,71 @@ TLS_CORE_API TML_INT32 tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HAND
   return iRet;
 }
 
+
+/**
+ * @brief    Is encrption enabled for the requested connection
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL* bEncrypted){
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+  TML_BOOL bEncryptedVal = TML_FALSE;
+
+  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+    iRet = TML_SUCCESS;
+    *bEncrypted = ((tmlConnectionManageObjBase*) connectionHandle)->isEncrpyted();
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Get the encrption status message
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage (TML_CONNECTION_HANDLE connectionHandle, SIDEX_CTSTR** statusMsg);
+/**
+ * char* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage_A (TML_CONNECTION_HANDLE connectionHandle, char** statusMsg){
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+  TML_BOOL bEncryptedVal = TML_FALSE;
+
+  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+    iRet = ((tmlConnectionManageObjBase*) connectionHandle)->getTlsStatusMsg_A(statusMsg);
+    if(TML_SUCCESS != iRet){
+      iRet = TML_ERR_INFORMATION_UNDEFINED;
+    }
+  }
+  return iRet;
+};
+/**
+ * wchar_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage_X (TML_CONNECTION_HANDLE connectionHandle, wchar_t** statusMsg){
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+  TML_BOOL bEncryptedVal = TML_FALSE;
+
+  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+    iRet = ((tmlConnectionManageObjBase*) connectionHandle)->getTlsStatusMsg_X(statusMsg);
+    if(TML_SUCCESS != iRet){
+      iRet = TML_ERR_INFORMATION_UNDEFINED;
+    }
+  }
+  return iRet;
+};
+/**
+ * char16_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage_W (TML_CONNECTION_HANDLE connectionHandle, char16_t** statusMsg){
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+  TML_BOOL bEncryptedVal = TML_FALSE;
+
+  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+    iRet = ((tmlConnectionManageObjBase*) connectionHandle)->getTlsStatusMsg_W(statusMsg);
+    if(TML_SUCCESS != iRet){
+      iRet = TML_ERR_INFORMATION_UNDEFINED;
+    }
+  }
+  return iRet;
+};
 
 #ifdef LINUX
 void __attribute__ ((constructor)) my_load(void);

@@ -173,6 +173,47 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HA
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL* bEncrypted);
 
 
+/**
+ * @ingroup  coreGeneral
+ * @brief    Is encrption enabled for the requested connection
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   bEncrypted       reference to encryption status.TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid connection handle
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL* bEncrypted);
+
+
+/**
+ * @ingroup  coreGeneral
+ * @brief    Get the encrption status message
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   statusMsg        reference to string containing encryption status message.<br>
+ *                           This is a borrowed reference and has not to be freed or modified.
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_INFORMATION_UNDEFINED if no status message exists<br>
+ *          TML_ERR_MISSING_OBJ invalid connection handle
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage (TML_CONNECTION_HANDLE connectionHandle, SIDEX_CTSTR** statusMsg);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage_X (TML_CONNECTION_HANDLE connectionHandle, wchar_t** statusMsg);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage_W (TML_CONNECTION_HANDLE connectionHandle, char16_t** statusMsg);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage_A (TML_CONNECTION_HANDLE connectionHandle, char** statusMsg);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Tls_Connection_Encryption_Get_StatusMessage tml_Tls_Connection_Encryption_Get_StatusMessage_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Tls_Connection_Encryption_Get_StatusMessage  tml_Tls_Connection_Encryption_Get_StatusMessage_W
+    #else
+      #define tml_Tls_Connection_Encryption_Get_StatusMessage  tml_Tls_Connection_Encryption_Get_StatusMessage_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
 
 #ifdef __cplusplus
 }// extern "C"
