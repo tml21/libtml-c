@@ -115,31 +115,31 @@ void* m_pPrivateKeyReqCB = NULL;
 /**
  * @brief   Callback function to accept TLS requests.
 
- * @param   serverName  server name
+ * @param   serverName SIDEX_VARIANT containing the server name
  *
  * @returns TML_TRUE if TLS request is accepted
  */
-typedef  TML_BOOL (*TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC)(const char* serverName);
+typedef  TML_BOOL (*TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC)(SIDEX_VARIANT vServerName);
 
 
 /**
  * @brief   Callback function to get TLS private key file location.
 
- * @param   serverName  server name
+ * @param   serverName SIDEX_VARIANT containing the server name
  *
- * @returns pathname of private key file
+ * @returns pathname of private key file as content of a SIDEX string Variant. It has to be freed by the caller.
  */
-typedef  char* (*TML_ON_CERTIFICATE_PRIVATE_KEY_LOCATION_CB_FUNC)(const char* serverName);
+typedef  SIDEX_VARIANT (*TML_ON_CERTIFICATE_PRIVATE_KEY_LOCATION_CB_FUNC)(SIDEX_VARIANT vServerName);
 
 
 /**
  * @brief   Callback function to get TLS certificate file location.
 
- * @param   serverName  server name
+ * @param   serverName SIDEX_VARIANT containing the server name
  *
- * @returns pathname of certificate file
+ * @returns pathname of certificate file as content of a SIDEX string Variant. It has to be freed by the caller.
  */
-typedef  char* (*TML_ON_CERTIFICATE_FILE_LOCATION_CB_FUNC)(const char* serverName);
+typedef  SIDEX_VARIANT (*TML_ON_CERTIFICATE_FILE_LOCATION_CB_FUNC)(SIDEX_VARIANT vServerName);
 
 
 /**

@@ -61,7 +61,10 @@ axl_bool      check_and_accept_tls_request (VortexConnection* connection,
   axl_bool bRet = axl_true;
 
   if (NULL != m_pAcceptCB){
-    TML_BOOL bRetVal = ((TML_BOOL(FUNC_C_DECL *)(const char*))m_pAcceptCB)(serverName);
+    SIDEX_VARIANT vServerName;
+    sidex_Variant_New_String((char*)serverName, &vServerName);
+    TML_BOOL bRetVal = ((TML_BOOL(FUNC_C_DECL *)(SIDEX_VARIANT))m_pAcceptCB)(vServerName);
+    sidex_Variant_DecRef(vServerName);
     if (TML_FALSE == bRetVal){
       bRet = axl_false;
     }
@@ -79,15 +82,24 @@ char* certificate_file_location (VortexConnection* connection,
   // perform some special operation to choose which 
   // certificate file to be used, then return it:
   char* fileLocation = NULL; 
-  char* pathname;
+  char* pathname = NULL;
+  SIDEX_INT32 iLength;
+  SIDEX_VARIANT vFileLocation = SIDEX_HANDLE_TYPE_NULL;
   if (NULL != m_pCertReqCB){
-    fileLocation = ((char*(FUNC_C_DECL *)(const char*))m_pCertReqCB)(serverName);
+    SIDEX_VARIANT vServerName;
+    sidex_Variant_New_String((char*)serverName, &vServerName);
+    vFileLocation = ((SIDEX_VARIANT(FUNC_C_DECL *)(SIDEX_VARIANT))m_pCertReqCB)(vServerName);
+    sidex_Variant_DecRef(vServerName);
   }
-  if (NULL != fileLocation){
-    pathname = axl_strdup (fileLocation);
-  }
-  else{
-    pathname = axl_strdup ("");
+  if (SIDEX_HANDLE_TYPE_NULL != vFileLocation){
+    sidex_Variant_As_String(vFileLocation, &fileLocation, &iLength);
+    if (NULL != fileLocation && iLength){
+      pathname = axl_strdup (fileLocation);
+    }
+    else{
+      pathname = axl_strdup ("");
+    }
+    sidex_Variant_DecRef(vFileLocation);
   }
   return pathname;  
 }
@@ -100,15 +112,24 @@ char* private_key_file_location (VortexConnection* connection,
   // private key file to be used, then return it:
    
   char* fileLocation = NULL; 
-  char* pathname;
+  char* pathname = NULL;
+  SIDEX_INT32 iLength;
+  SIDEX_VARIANT vFileLocation = SIDEX_HANDLE_TYPE_NULL;
   if (NULL != m_pAcceptCB){
-    fileLocation = ((char*(FUNC_C_DECL *)(const char*))m_pPrivateKeyReqCB)(serverName);
+    SIDEX_VARIANT vServerName;
+    sidex_Variant_New_String((char*)serverName, &vServerName);
+    vFileLocation = ((SIDEX_VARIANT(FUNC_C_DECL *)(SIDEX_VARIANT))m_pPrivateKeyReqCB)(vServerName);
+    sidex_Variant_DecRef(vServerName);
   }
-  if (NULL != fileLocation){
-    pathname = axl_strdup (fileLocation);
-  }
-  else{
-    pathname = axl_strdup ("");
+  if (SIDEX_HANDLE_TYPE_NULL != vFileLocation){
+    sidex_Variant_As_String(vFileLocation, &fileLocation, &iLength);
+    if (NULL != fileLocation && iLength){
+      pathname = axl_strdup (fileLocation);
+    }
+    else{
+      pathname = axl_strdup ("");
+    }
+    sidex_Variant_DecRef(vFileLocation);
   }
   return pathname;  
 }
