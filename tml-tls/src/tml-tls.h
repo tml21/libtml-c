@@ -103,6 +103,21 @@ extern "C" {
 // @endcond
 **/
 
+  /** 
+ * @ingroup tlsGeneral
+ * @brief Digest method provided.
+ */
+typedef enum {
+	/** 
+	 * @brief Allows to especify the DIGEST method SHA-1.
+	 */
+	TML_TLS_SHA1 = 1,
+	/** 
+	 * @brief Allows to especify the DIGEST method MD5.
+	 */
+	TML_TLS_MD5 = 2,
+} TmlTlsDigestMethod;
+
 
 /**
  * @ingroup tlsGeneral
@@ -175,6 +190,19 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Start_Negotiation (TML_C
 
 /**
  * @ingroup tlsGeneral
+ * @brief   Allows to verify peer certificate after successfully establish TLS session. 
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   bVerifyOk        reference to verification result.TML_TRUE if certificate verification status is ok, otherwise TML_FALSE 
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid connection handle
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_VerifyCert (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL* bVerifyOk);
+
+
+/**
+ * @ingroup tlsGeneral
  * @brief   Is encrption enabled for the requested connection
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
@@ -219,18 +247,19 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
  * @ingroup tlsGeneral
  * @brief   Allows to create a digest from the provided string
  *
- * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   string	         The string to digest
- * @param   sDigest          reference to string with the hash value that represents the string provided
+ * @param   method           This is the digest method to use.
+ * @param   sDigest          reference to string with the hash value that represents the string provided.<br>
+ *                           Must be deallocated using the data type API sidex_Free_ReadString().
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INFORMATION_UNDEFINED if no status message exists<br>
  *          TML_ERR_MISSING_OBJ invalid connection handle
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (SIDEX_CTSTR* string, SIDEX_CTSTR** sDigest);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, wchar_t** sDigest);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, char16_t** sDigest);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, char** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (SIDEX_CTSTR* string, TmlTlsDigestMethod method, SIDEX_CTSTR** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlTlsDigestMethod method, wchar_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, TmlTlsDigestMethod method, char16_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsDigestMethod method, char** sDigest);
 #if !defined (DOXYGEN_GENERATION)
   #ifdef TML_UNICODE
     #define tml_Tls_Get_Digest tml_Tls_Get_Digest_X
@@ -249,16 +278,18 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, char** 
  * @brief   Allows to return the certificate digest from the remote peer given TLS session is activated (this is also called the certificate fingerprint)
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
- * @param   sDigest          reference to string representing a newly allocated fingerprint or NULL if it fails. If NULL is returned there is a TLS error (certificate not provided) or the system is out of memory.
+ * @param   method           This is the digest method to use.
+ * @param   sDigest          reference to string representing a newly allocated fingerprint or NULL if it fails. If NULL is returned there is a TLS error (certificate not provided) or the system is out of memory.<br>
+ *                           Must be deallocated using the data type API sidex_Free_ReadString().
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INFORMATION_UNDEFINED if no status message exists<br>
  *          TML_ERR_MISSING_OBJ invalid connection handle
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_CONNECTION_HANDLE connectionHandle, SIDEX_CTSTR** sDigest);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, wchar_t** sDigest);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, char16_t** sDigest);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, char** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, SIDEX_CTSTR** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, wchar_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char16_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char** sDigest);
 #if !defined (DOXYGEN_GENERATION)
   #ifdef TML_UNICODE
     #define tml_Tls_Connection_Get_PeerSSLDigest tml_Tls_Connection_Get_PeerSSLDigest_X

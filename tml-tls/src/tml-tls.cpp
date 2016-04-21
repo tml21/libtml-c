@@ -258,6 +258,25 @@ TLS_CORE_API TML_INT32 tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HAND
 
 
 /**
+ * @brief    Allows to verify peer certificate after successfully establish TLS session. 
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_VerifyCert (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL* bVerifyOk) 
+{
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+  axl_bool bVerified = axl_false;
+
+  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+    iRet = TML_SUCCESS;
+    VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+    bVerified = vortex_tls_verify_cert(connection);
+  }
+
+  *bVerifyOk = (axl_true == bVerified);
+  return iRet;
+}
+
+
+/**
  * @brief    Is encrption enabled for the requested connection
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL* bEncrypted){
@@ -326,14 +345,14 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
 /**
  * @brief    Allows to create a digest from the provided string
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (SIDEX_CTSTR* string, SIDEX_CTSTR** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (SIDEX_CTSTR* string, TmlTlsDigestMethod method, SIDEX_CTSTR** sDigest);
 /**
  * char* API
 **/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, char** sDigest){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsDigestMethod method, char** sDigest){
   TML_INT32 iRet = TML_SUCCESS;
 
-  char* sAxlRet = vortex_tls_get_digest (VORTEX_SHA1, string); 
+  char* sAxlRet = vortex_tls_get_digest ((VortexDigestMethod)method, string); 
 
   int iLength = strlen(sAxlRet);
   char* sRet = new char[iLength+1];
@@ -352,7 +371,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, char** 
 /**
  * wchar_t* API
 **/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, wchar_t** sDigest){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlTlsDigestMethod method, wchar_t** sDigest){
   TML_INT32 iRet = TML_SUCCESS;
 
   TML_INT32 iLengthUtf8;
@@ -360,7 +379,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, wcha
   try{
     char* utf8Str = UTF32toUTF8((wchar_t*)string, &iLengthUtf8);
     if (NULL != utf8Str){
-      char* sRet = vortex_tls_get_digest (VORTEX_SHA1, utf8Str); 
+      char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
       wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
       if (NULL != utf32Str){
         *sDigest = utf32Str;
@@ -380,7 +399,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, wcha
 /**
  * char16_t* API
 **/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, char16_t** sDigest){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, TmlTlsDigestMethod method, char16_t** sDigest){
   TML_INT32 iRet = TML_SUCCESS;
 
   TML_INT32 iLengthUtf8;
@@ -388,7 +407,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, cha
   try{
     char* utf8Str = UTF16toUTF8((wchar_t*)string, &iLengthUtf8);
     if (NULL != utf8Str){
-      char* sRet = vortex_tls_get_digest (VORTEX_SHA1, utf8Str); 
+      char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
       char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
       if (NULL != utf16Str){
         *sDigest = utf16Str;
@@ -412,18 +431,18 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, cha
 /**
  * @brief    Allows to create a digest from the provided string
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_CONNECTION_HANDLE connectionHandle, SIDEX_CTSTR* string, SIDEX_CTSTR** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, SIDEX_CTSTR** sDigest);
 /**
  * char* API
 **/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, char** sDigest){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char** sDigest){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
   if (TML_HANDLE_TYPE_NULL != connectionHandle){
     iRet = TML_SUCCESS;
     VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
 
-    char* sAxlRet = vortex_tls_get_peer_ssl_digest (connection, VORTEX_SHA1); 
+    char* sAxlRet = vortex_tls_get_peer_ssl_digest (connection, (VortexDigestMethod)method); 
 
 
     int iLength = strlen(sAxlRet);
@@ -444,7 +463,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML
 /**
  * wchar_t* API
 **/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, wchar_t** sDigest){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, wchar_t** sDigest){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
   if (TML_HANDLE_TYPE_NULL != connectionHandle){
@@ -454,7 +473,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML
     try{
       VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
 
-      char* sRet = vortex_tls_get_peer_ssl_digest (connection, VORTEX_SHA1); 
+      char* sRet = vortex_tls_get_peer_ssl_digest (connection, (VortexDigestMethod)method); 
       wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
       if (NULL != utf32Str){
         *sDigest = utf32Str;
@@ -473,7 +492,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML
 /**
  * char16_t* API
 **/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, char16_t** sDigest){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char16_t** sDigest){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
   if (TML_HANDLE_TYPE_NULL != connectionHandle){
@@ -483,7 +502,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML
     try{
       VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
 
-      char* sRet = vortex_tls_get_peer_ssl_digest (connection, VORTEX_SHA1); 
+      char* sRet = vortex_tls_get_peer_ssl_digest (connection, (VortexDigestMethod)method); 
       char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
       if (NULL != utf16Str){
         *sDigest = utf16Str;
