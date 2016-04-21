@@ -49,6 +49,7 @@
 #include "tmlerrors.h"
 #include "sidex.h"
 #include <vortex_tls.h>
+#include "unicode.h"
 
 // return axl_true if we agree to accept the TLS negotiation
 axl_bool      check_and_accept_tls_request (VortexConnection* connection, 
@@ -136,7 +137,7 @@ char* private_key_file_location (VortexConnection* connection,
 
 
 /**
- * @brief    Accept tls negotiation on listener side
+ * @brief   Allows to configure if the provided tml core will accept TLS incoming connections
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HANDLE coreHandle, 
                                                                      TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC pAcceptCB,
@@ -196,7 +197,7 @@ TLS_CORE_API TML_INT32 tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HAND
     // initialize and check if current vortex library supports TLS
 
     if (! vortex_tls_init (ctx)) {
-        printf ("Unable to activate TLS, Vortex is not prepared\n");
+      ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg("Unable to activate TLS, Vortex is not prepared");
     }
     else{
       // start the TLS profile negotiation process
@@ -236,6 +237,10 @@ TLS_CORE_API TML_INT32 tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HAND
     ((tmlConnectionManageObjBase*) connectionHandle)->setVortexConnection(retValue);
     ((tmlConnectionManageObjBase*) connectionHandle)->setEncrypted(bEncryptedVal);
   }
+  else{
+    ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg("Invalid TML_CONNECTION_HANDLE");
+  }
+
   *bEncrypted = bEncryptedVal;
   return iRet;
 }
@@ -305,6 +310,186 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
   }
   return iRet;
 };
+
+
+/**
+ * @brief    Allows to create a digest from the provided string
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (SIDEX_CTSTR* string, SIDEX_CTSTR** sDigest);
+/**
+ * char* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, char** sDigest){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  TML_INT32 iLengthUtf32;
+  char* sAxlRet = vortex_tls_get_digest (VORTEX_SHA1, string); 
+
+  int iLength = strlen(sAxlRet);
+  char* sRet = new char[iLength+1];
+
+#if defined (LINUX) || defined (MINGW_BUILD)
+  strncpy(sRet, sAxlRet, iLength);
+#else
+  strncpy_s(sRet, iLength+1, sAxlRet, iLength);
+#endif
+  sRet[iLength] = '\0';
+
+  *sDigest = sRet;
+  axl_free(sAxlRet);
+  return iRet;
+};
+/**
+ * wchar_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, wchar_t** sDigest){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  TML_INT32 iLengthUtf8;
+  TML_INT32 iLengthUtf32;
+  try{
+    char* utf8Str = UTF32toUTF8((wchar_t*)string, &iLengthUtf8);
+    if (NULL != utf8Str){
+      char* sRet = vortex_tls_get_digest (VORTEX_SHA1, utf8Str); 
+      wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
+      if (NULL != utf32Str){
+        *sDigest = utf32Str;
+      }
+      else{
+        iRet = TML_ERR_UNICODE;
+      }
+      delete[] utf8Str;
+      axl_free(sRet);
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+};
+/**
+ * char16_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, char16_t** sDigest){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  TML_INT32 iLengthUtf8;
+  TML_INT32 iLengthUtf16;
+  try{
+    char* utf8Str = UTF16toUTF8((wchar_t*)string, &iLengthUtf8);
+    if (NULL != utf8Str){
+      char* sRet = vortex_tls_get_digest (VORTEX_SHA1, utf8Str); 
+      char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
+      if (NULL != utf16Str){
+        *sDigest = utf16Str;
+      }
+      else{
+        iRet = TML_ERR_UNICODE;
+      }
+      delete[] utf8Str;
+      axl_free(sRet);
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+};
+
+
+
+
+/**
+ * @brief    Allows to create a digest from the provided string
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_CONNECTION_HANDLE connectionHandle, SIDEX_CTSTR* string, SIDEX_CTSTR** sDigest);
+/**
+ * char* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, char** sDigest){
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+
+  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+    iRet = TML_SUCCESS;
+    VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+
+    char* sAxlRet = vortex_tls_get_peer_ssl_digest (connection, VORTEX_SHA1); 
+
+
+    int iLength = strlen(sAxlRet);
+    char* sRet = new char[iLength+1];
+
+  #if defined (LINUX) || defined (MINGW_BUILD)
+    strncpy(sRet, sAxlRet, iLength);
+  #else
+    strncpy_s(sRet, iLength+1, sAxlRet, iLength);
+  #endif
+    sRet[iLength] = '\0';
+
+    *sDigest = sRet;
+    axl_free(sAxlRet);
+  }
+  return iRet;
+};
+/**
+ * wchar_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, wchar_t** sDigest){
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+
+  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+    iRet = TML_SUCCESS;
+
+    TML_INT32 iLengthUtf32;
+    try{
+      VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+
+      char* sRet = vortex_tls_get_peer_ssl_digest (connection, VORTEX_SHA1); 
+      wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
+      if (NULL != utf32Str){
+        *sDigest = utf32Str;
+      }
+      else{
+        iRet = TML_ERR_UNICODE;
+      }
+      axl_free(sRet);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+};
+/**
+ * char16_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, char16_t** sDigest){
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+
+  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+    iRet = TML_SUCCESS;
+
+    TML_INT32 iLengthUtf16;
+    try{
+      VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+
+      char* sRet = vortex_tls_get_peer_ssl_digest (connection, VORTEX_SHA1); 
+      char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
+      if (NULL != utf16Str){
+        *sDigest = utf16Str;
+      }
+      else{
+        iRet = TML_ERR_UNICODE;
+      }
+      axl_free(sRet);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+};
+
 
 #ifdef LINUX
 void __attribute__ ((constructor)) my_load(void);

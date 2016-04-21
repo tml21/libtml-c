@@ -49,15 +49,16 @@
   * @brief Declarations and dll import file for the TML-TLS C API.
   */
 
-/** @defgroup coreAPI TML API
-  * @brief TML-TLS API reference
+/** @defgroup tlsAPI TML TLS API
+  * @brief TML TLS API reference
   */
   
 
-/** @defgroup coreGeneral General
-	* @ingroup coreAPI
-  * @brief General library functions
+/** @defgroup tlsGeneral TML TLS API functions
+	* @ingroup tlsAPI
+  * @brief TML TLS library functions
   */
+
 #ifndef TMLTLS_H
 #define TMLTLS_H
 
@@ -65,12 +66,6 @@
 // SUPRESS as API description via doxygen:
 //-----------------------------------------
 // @cond INTERNAL
-
-/** @defgroup tmladvanced TMLCore expert use
-	* @ingroup coreAPI
-  * @brief Internal developer API calls.<br><br>
-  * @note For develop use only / we recommend not to use this API calls as a standard user.
-  */
 
 #if _MSC_VER > 1000
 #pragma once
@@ -113,8 +108,8 @@ void* m_pCertReqCB = NULL;
 void* m_pPrivateKeyReqCB = NULL;
 
 /**
+ * @ingroup tlsGeneral
  * @brief   Callback function to accept TLS requests.
-
  * @param   serverName SIDEX_VARIANT containing the server name
  *
  * @returns TML_TRUE if TLS request is accepted
@@ -123,8 +118,8 @@ typedef  TML_BOOL (*TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC)(SIDEX_VARIANT vServerName
 
 
 /**
+ * @ingroup tlsGeneral
  * @brief   Callback function to get TLS private key file location.
-
  * @param   serverName SIDEX_VARIANT containing the server name
  *
  * @returns pathname of private key file as content of a SIDEX string Variant. It has to be freed by the caller.
@@ -133,8 +128,8 @@ typedef  SIDEX_VARIANT (*TML_ON_CERTIFICATE_PRIVATE_KEY_LOCATION_CB_FUNC)(SIDEX_
 
 
 /**
+ * @ingroup tlsGeneral
  * @brief   Callback function to get TLS certificate file location.
-
  * @param   serverName SIDEX_VARIANT containing the server name
  *
  * @returns pathname of certificate file as content of a SIDEX string Variant. It has to be freed by the caller.
@@ -143,12 +138,20 @@ typedef  SIDEX_VARIANT (*TML_ON_CERTIFICATE_FILE_LOCATION_CB_FUNC)(SIDEX_VARIANT
 
 
 /**
- * @ingroup  coreGeneral
- * @brief    Accept tls negotiation on listener side
+ * @ingroup tlsGeneral
+ * @brief   Allows to configure if the provided tml core will accept TLS incoming connections
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
- *
- * param    bAccept TML_TRUE if the current core instance could accept incoming TLS connections, otherwise TML_FALSE is returned. 
+ * @param   pAcceptCB reference to callback handler method executed to notify user app level that a TLS request was received, 
+ *          allowing to accept or deny it according to the bAccept value returned by the handler. You can use NULL value for this parameter. 
+ *          This will make libtml-tls to set the default accept handler which always accept every TLS negotiation.
+ * @param   pCertReqCB reference to callback handler method executed to know where is located the certificate file to be used to cipher the session. 
+ *          You can use NULL value for this parameter. This will make libtml-tls Library to set the default certificate handler which returns a path 
+ *          to a test certificate. It is highly recommended to set this handler, however you can use NULL value for development environment.
+ * @param   pPrivateKeyReqCB reference to callback method executed to know where is located the private key file to be used to cipher the session. 
+ *          You can use NULL value for this parameter. This will make libtml-tls Library to set the default private key handler which returns a path 
+ *          to the test private key. It is highly recommended to set this handler, however you can use NULL values under development environment.
+ * @param   bAccept TML_TRUE if the current core instance could accept incoming TLS connections, otherwise TML_FALSE is returned. 
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
@@ -161,8 +164,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HA
 
 
 /**
- * @ingroup  coreGeneral
- * @brief    Start tls negotiation for the requested connection
+ * @ingroup tlsGeneral
+ * @brief   Starts the TLS transport security negotiation on the given connection.
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   bEncrypted       reference to encryption status.TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE
@@ -174,8 +177,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Start_Negotiation (TML_C
 
 
 /**
- * @ingroup  coreGeneral
- * @brief    Is encrption enabled for the requested connection
+ * @ingroup tlsGeneral
+ * @brief   Is encrption enabled for the requested connection
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   bEncrypted       reference to encryption status.TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE
@@ -187,8 +190,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CO
 
 
 /**
- * @ingroup  coreGeneral
- * @brief    Get the encrption status message
+ * @ingroup tlsGeneral
+ * @brief   Get the encrption status message
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   statusMsg        reference to string containing encryption status message.<br>
@@ -214,6 +217,62 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION
 
+
+/**
+ * @ingroup tlsGeneral
+ * @brief   Allows to create a digest from the provided string
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   string	         The string to digest
+ * @param   sDigest          reference to string with the hash value that represents the string provided
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_INFORMATION_UNDEFINED if no status message exists<br>
+ *          TML_ERR_MISSING_OBJ invalid connection handle
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (SIDEX_CTSTR* string, SIDEX_CTSTR** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, wchar_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, char16_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, char** sDigest);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Tls_Get_Digest tml_Tls_Get_Digest_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Tls_Get_Digest  tml_Tls_Get_Digest_W
+    #else
+      #define tml_Tls_Get_Digest  tml_Tls_Get_Digest_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup tlsGeneral
+ * @brief   Allows to return the certificate digest from the remote peer given TLS session is activated (this is also called the certificate fingerprint)
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   sDigest          reference to string representing a newly allocated fingerprint or NULL if it fails. If NULL is returned there is a TLS error (certificate not provided) or the system is out of memory.
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_INFORMATION_UNDEFINED if no status message exists<br>
+ *          TML_ERR_MISSING_OBJ invalid connection handle
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_CONNECTION_HANDLE connectionHandle, SIDEX_CTSTR** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, wchar_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, char16_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, char** sDigest);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Tls_Connection_Get_PeerSSLDigest tml_Tls_Connection_Get_PeerSSLDigest_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Tls_Connection_Get_PeerSSLDigest  tml_Tls_Connection_Get_PeerSSLDigest_W
+    #else
+      #define tml_Tls_Connection_Get_PeerSSLDigest  tml_Tls_Connection_Get_PeerSSLDigest_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
 
 #ifdef __cplusplus
 }// extern "C"

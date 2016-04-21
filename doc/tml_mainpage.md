@@ -18,6 +18,7 @@
   	- \ref coreGeneral "TML: General library functions"
   	- \ref coreHandle "TML: TMLCore functions"
   	- \ref tmlHandle "TML: Commands"
+  	- \ref tlsGeneral "TML TLS: TML tls library functions"
   - \ref sdxAPI "SIDEX: API reference"
   	- \ref general "SIDEX: General library functions"
   	- \ref sidexHandle "SIDEX: Document"
