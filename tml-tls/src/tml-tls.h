@@ -103,9 +103,6 @@ extern "C" {
 // @endcond
 **/
 
-void* m_pAcceptCB = NULL;
-void* m_pCertReqCB = NULL;
-void* m_pPrivateKeyReqCB = NULL;
 
 /**
  * @ingroup tlsGeneral

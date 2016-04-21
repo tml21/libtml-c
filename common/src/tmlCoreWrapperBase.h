@@ -58,6 +58,10 @@ protected:
      */
     VortexCtx* m_ctx;
 
+    void* m_pTLS_AcceptCB;
+    void* m_pTLS_CertReqCB;
+    void* m_pTLS_PrivateKeyReqCB;
+
 public:
     /* data */
     /* methods */
@@ -77,6 +81,43 @@ public:
      * @returns the Vortex execution context
      */
     VortexCtx* getVortexCtx();
+
+
+    /**
+      * @brief   Set the TLS accept callback method
+      */
+    void tmlCoreWrapperBase::setTlsAcceptCB(void* pAcceptCB);
+
+
+    /**
+      * @brief   Get the TLS accept callback method
+      */
+    void* tmlCoreWrapperBase::getTlsAcceptCB();
+
+
+    /**
+      * @brief   Set the TLS certifiction file request callback method
+      */
+    void tmlCoreWrapperBase::setTlsCertReqCB(void* pCertReqCB);
+
+
+    /**
+      * @brief   Get the TLS certifiction file request callback method
+      */
+    void* tmlCoreWrapperBase::getTlsCertReqCB();
+
+
+    /**
+      * @brief   Set the TLS private key file request callback method
+      */
+    void tmlCoreWrapperBase::setTlsPrivateKeyReqCB(void* pPrivateKeyReqCB);
+
+    /**
+      * @brief   Get the TLS private key file request callback method
+      */
+    void* tmlCoreWrapperBase::getTlsPrivateKeyReqCB();
+
+    bool tlsAcceptMethod (void* connection);
 
 };
 #endif  // TMLCOREWRAPPERBASE_H

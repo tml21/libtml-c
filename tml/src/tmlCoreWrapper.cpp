@@ -848,6 +848,7 @@ tmlCoreWrapper::tmlCoreWrapper(int iLogValue,
                                                                   TML_INT32 iThreadRemoveSteps, TML_INT32 iThreadPoolRemovePeriod, 
                                                                   TML_BOOL bThreadAutoRemove, TML_BOOL bThreadPreemptive)
 {
+  tmlCoreWrapperBase();
   m_bShutdown = false;
   initWrapper(iLogValue, iInitialThreadPoolSize, iThreadPoolMaxSize, iThreadAddSteps, iThreadPoolAddPeriod, 
                                                                      iThreadRemoveSteps, iThreadPoolRemovePeriod, 

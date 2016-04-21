@@ -43,6 +43,10 @@
  */
 tmlCoreWrapperBase::tmlCoreWrapperBase()
 {
+  m_ctx = NULL;
+  m_pTLS_AcceptCB = NULL;
+  m_pTLS_CertReqCB = NULL;
+  m_pTLS_PrivateKeyReqCB = NULL;
 }
 
 
@@ -60,4 +64,51 @@ tmlCoreWrapperBase::~tmlCoreWrapperBase()
  */
 VortexCtx* tmlCoreWrapperBase::getVortexCtx(){
   return m_ctx;
+}
+
+
+/**
+  * @brief   Set the TLS accept callback method
+  */
+void tmlCoreWrapperBase::setTlsAcceptCB(void* pAcceptCB){
+  m_pTLS_AcceptCB = pAcceptCB; 
+}
+
+
+/**
+  * @brief   Get the TLS accept callback method
+  */
+void* tmlCoreWrapperBase::getTlsAcceptCB(){
+  return m_pTLS_AcceptCB; 
+}
+
+
+/**
+  * @brief   Set the TLS certifiction file request callback method
+  */
+void tmlCoreWrapperBase::setTlsCertReqCB(void* pCertReqCB){
+  m_pTLS_CertReqCB = pCertReqCB; 
+}
+
+
+/**
+  * @brief   Get the TLS certifiction file request callback method
+  */
+void* tmlCoreWrapperBase::getTlsCertReqCB(){
+  return m_pTLS_CertReqCB;
+}
+
+
+/**
+  * @brief   Set the TLS private key file request callback method
+  */
+void tmlCoreWrapperBase::setTlsPrivateKeyReqCB(void* pPrivateKeyReqCB){
+  m_pTLS_PrivateKeyReqCB = pPrivateKeyReqCB; 
+}
+
+/**
+  * @brief   Get the TLS private key file request callback method
+  */
+void* tmlCoreWrapperBase::getTlsPrivateKeyReqCB(){
+  return m_pTLS_PrivateKeyReqCB; 
 }

@@ -61,10 +61,15 @@ axl_bool      check_and_accept_tls_request (VortexConnection* connection,
 
   axl_bool bRet = axl_true;
 
-  if (NULL != m_pAcceptCB){
+  VortexCtx* ctx = vortex_connection_get_ctx(connection);
+  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "CORE_HANDLE");
+
+  void* pAcceptCB = ((tmlCoreWrapperBase*) coreHandle)->getTlsAcceptCB();
+
+  if (NULL != pAcceptCB){
     SIDEX_VARIANT vServerName;
     sidex_Variant_New_String((char*)serverName, &vServerName);
-    TML_BOOL bRetVal = ((TML_BOOL(FUNC_C_DECL *)(SIDEX_VARIANT))m_pAcceptCB)(vServerName);
+    TML_BOOL bRetVal = ((TML_BOOL(FUNC_C_DECL *)(SIDEX_VARIANT))pAcceptCB)(vServerName);
     sidex_Variant_DecRef(vServerName);
     if (TML_FALSE == bRetVal){
       bRet = axl_false;
@@ -79,17 +84,21 @@ axl_bool      check_and_accept_tls_request (VortexConnection* connection,
 char* certificate_file_location (VortexConnection* connection, 
                                                        const char* serverName)
 {
-	VortexCtx* ctx = vortex_connection_get_ctx (connection);
+  VortexCtx* ctx = vortex_connection_get_ctx(connection);
+  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "CORE_HANDLE");
+
+  void* pCertReqCB = ((tmlCoreWrapperBase*) coreHandle)->getTlsCertReqCB();
+
   // perform some special operation to choose which 
   // certificate file to be used, then return it:
   char* fileLocation = NULL; 
   char* pathname = NULL;
   SIDEX_INT32 iLength;
   SIDEX_VARIANT vFileLocation = SIDEX_HANDLE_TYPE_NULL;
-  if (NULL != m_pCertReqCB){
+  if (NULL != pCertReqCB){
     SIDEX_VARIANT vServerName;
     sidex_Variant_New_String((char*)serverName, &vServerName);
-    vFileLocation = ((SIDEX_VARIANT(FUNC_C_DECL *)(SIDEX_VARIANT))m_pCertReqCB)(vServerName);
+    vFileLocation = ((SIDEX_VARIANT(FUNC_C_DECL *)(SIDEX_VARIANT))pCertReqCB)(vServerName);
     sidex_Variant_DecRef(vServerName);
   }
   if (SIDEX_HANDLE_TYPE_NULL != vFileLocation){
@@ -108,7 +117,11 @@ char* certificate_file_location (VortexConnection* connection,
 char* private_key_file_location (VortexConnection* connection, 
                                                        const char* serverName)
 {
-	VortexCtx* ctx = vortex_connection_get_ctx (connection);
+  VortexCtx* ctx = vortex_connection_get_ctx(connection);
+  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "CORE_HANDLE");
+
+  void* pPrivateKeyReqCB = ((tmlCoreWrapperBase*) coreHandle)->getTlsPrivateKeyReqCB();
+
   // perform some special operation to choose which 
   // private key file to be used, then return it:
    
@@ -116,10 +129,10 @@ char* private_key_file_location (VortexConnection* connection,
   char* pathname = NULL;
   SIDEX_INT32 iLength;
   SIDEX_VARIANT vFileLocation = SIDEX_HANDLE_TYPE_NULL;
-  if (NULL != m_pAcceptCB){
+  if (NULL != pPrivateKeyReqCB){
     SIDEX_VARIANT vServerName;
     sidex_Variant_New_String((char*)serverName, &vServerName);
-    vFileLocation = ((SIDEX_VARIANT(FUNC_C_DECL *)(SIDEX_VARIANT))m_pPrivateKeyReqCB)(vServerName);
+    vFileLocation = ((SIDEX_VARIANT(FUNC_C_DECL *)(SIDEX_VARIANT))pPrivateKeyReqCB)(vServerName);
     sidex_Variant_DecRef(vServerName);
   }
   if (SIDEX_HANDLE_TYPE_NULL != vFileLocation){
@@ -150,19 +163,17 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HA
   if (TML_HANDLE_TYPE_NULL != coreHandle){
     iRet = TML_SUCCESS;
 
-
-    m_pAcceptCB        = pAcceptCB;
-    m_pCertReqCB       = pCertReqCB;
-    m_pPrivateKeyReqCB = pPrivateKeyReqCB;
+    ((tmlCoreWrapperBase*) coreHandle)->setTlsAcceptCB(pAcceptCB);
+    ((tmlCoreWrapperBase*) coreHandle)->setTlsCertReqCB(pCertReqCB);
+    ((tmlCoreWrapperBase*) coreHandle)->setTlsPrivateKeyReqCB(pPrivateKeyReqCB);
 
     VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
-
+    vortex_ctx_set_data(ctx, "CORE_HANDLE", (axlPointer)coreHandle);
+    
     if (! vortex_tls_init (ctx)) {
       printf ("Unable to activate TLS, Vortex is not prepared\n");
     }
     else{
-      vortex_support_add_search_path (ctx, "C:\\ssl");    // activate TLS profile support using defaults
-
       if (! vortex_tls_accept_negotiation    (ctx,     // context to configure
                                              (NULL != pAcceptCB) ? check_and_accept_tls_request : NULL,        // accept all TLS request received
                                              (NULL != pCertReqCB) ? certificate_file_location : NULL,          // use default certificate file
@@ -322,7 +333,6 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (SIDEX_CTSTR* string, SI
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, char** sDigest){
   TML_INT32 iRet = TML_SUCCESS;
 
-  TML_INT32 iLengthUtf32;
   char* sAxlRet = vortex_tls_get_digest (VORTEX_SHA1, string); 
 
   int iLength = strlen(sAxlRet);
