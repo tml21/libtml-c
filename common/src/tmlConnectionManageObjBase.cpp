@@ -46,9 +46,9 @@
  */
 tmlConnectionManageObjBase::tmlConnectionManageObjBase()
 {
-  m_coreHandle = NULL;
+  m_coreHandle       = NULL;
   m_vortexConnection = NULL;
-  m_bEncrypted = TML_FALSE;
+  m_bEncrypted       = TML_FALSE;
 }
 
 /**

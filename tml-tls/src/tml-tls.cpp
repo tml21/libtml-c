@@ -52,7 +52,33 @@
 #include "unicode.h"
 
 // return axl_true if we agree to accept the TLS negotiation
-axl_bool      check_and_accept_tls_request (VortexConnection* connection, 
+void tls_failure_handler (VortexConnection* connection, const char*error_message, axlPointer user_data)
+{
+  VortexCtx* ctx = vortex_connection_get_ctx(connection);
+  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "TML_CORE_HANDLE");
+
+  void* pFailureCB = NULL;
+  void* pFailureData = NULL;
+  ((tmlCoreWrapperBase*) coreHandle)->getTlsFailureCB(&pFailureCB, &pFailureData);
+  TML_CONNECTION_HANDLE connectionHandle = (TML_CONNECTION_HANDLE) vortex_ctx_get_data(ctx, "TML_CONNECTION_HANDLE");
+  tmlConnectionManageObjBase* c = ((tmlConnectionManageObjBase*) connectionHandle);
+
+  if (NULL != pFailureCB){
+    SIDEX_VARIANT vErrorMessage = SIDEX_HANDLE_TYPE_NULL;
+    if (NULL != error_message){
+      sidex_Variant_New_String((char*)error_message, &vErrorMessage);
+    }
+    ((void(FUNC_C_DECL *)(TML_CONNECTION_HANDLE, SIDEX_VARIANT, void*))pFailureCB)(connectionHandle, vErrorMessage, pFailureData);
+    if (SIDEX_HANDLE_TYPE_NULL != vErrorMessage){
+      sidex_Variant_DecRef(vErrorMessage);
+    }
+  }
+  return; 
+}
+
+
+// return axl_true if we agree to accept the TLS negotiation
+axl_bool check_and_accept_tls_request (VortexConnection* connection, 
                                                        const char* serverName)
 {
   // perform some special operations against the serverName
@@ -62,7 +88,7 @@ axl_bool      check_and_accept_tls_request (VortexConnection* connection,
   axl_bool bRet = axl_true;
 
   VortexCtx* ctx = vortex_connection_get_ctx(connection);
-  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "CORE_HANDLE");
+  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "TML_CORE_HANDLE");
 
   void* pAcceptCB = ((tmlCoreWrapperBase*) coreHandle)->getTlsAcceptCB();
 
@@ -81,11 +107,12 @@ axl_bool      check_and_accept_tls_request (VortexConnection* connection,
   return bRet;  
 }
 
+// returns certificate file location
 char* certificate_file_location (VortexConnection* connection, 
                                                        const char* serverName)
 {
   VortexCtx* ctx = vortex_connection_get_ctx(connection);
-  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "CORE_HANDLE");
+  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "TML_CORE_HANDLE");
 
   void* pCertReqCB = ((tmlCoreWrapperBase*) coreHandle)->getTlsCertReqCB();
 
@@ -114,11 +141,12 @@ char* certificate_file_location (VortexConnection* connection,
   return pathname;  
 }
 
+// returns private key file location
 char* private_key_file_location (VortexConnection* connection, 
                                                        const char* serverName)
 {
   VortexCtx* ctx = vortex_connection_get_ctx(connection);
-  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "CORE_HANDLE");
+  TML_CORE_HANDLE coreHandle = (TML_CORE_HANDLE) vortex_ctx_get_data(ctx, "TML_CORE_HANDLE");
 
   void* pPrivateKeyReqCB = ((tmlCoreWrapperBase*) coreHandle)->getTlsPrivateKeyReqCB();
 
@@ -152,7 +180,7 @@ char* private_key_file_location (VortexConnection* connection,
 /**
  * @brief   Allows to configure if the provided tml core will accept TLS incoming connections
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HANDLE coreHandle, 
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_AcceptNegotiation(TML_CORE_HANDLE coreHandle, 
                                                                      TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC pAcceptCB,
                                                                      TML_ON_CERTIFICATE_FILE_LOCATION_CB_FUNC pCertReqCB,
                                                                      TML_ON_CERTIFICATE_PRIVATE_KEY_LOCATION_CB_FUNC pPrivateKeyReqCB,
@@ -168,17 +196,17 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HA
     ((tmlCoreWrapperBase*) coreHandle)->setTlsPrivateKeyReqCB(pPrivateKeyReqCB);
 
     VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
-    vortex_ctx_set_data(ctx, "CORE_HANDLE", (axlPointer)coreHandle);
+    vortex_ctx_set_data(ctx, "TML_CORE_HANDLE", (axlPointer)coreHandle);
     
     if (! vortex_tls_init (ctx)) {
-      printf ("Unable to activate TLS, Vortex is not prepared\n");
+      //printf ("Unable to activate TLS, Vortex is not prepared\n");
     }
     else{
       if (! vortex_tls_accept_negotiation    (ctx,     // context to configure
                                              (NULL != pAcceptCB) ? check_and_accept_tls_request : NULL,        // accept all TLS request received
                                              (NULL != pCertReqCB) ? certificate_file_location : NULL,          // use default certificate file
                                              (NULL != pPrivateKeyReqCB) ? private_key_file_location : NULL)){  // use default private key file
-        printf ("Cannot accept incoming TLS connections\n");
+        //printf ("Cannot accept incoming TLS connections\n");
       }
       else{
         bRet = TML_TRUE;
@@ -191,10 +219,42 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Accept_Negotiation(TML_CORE_HA
 
 
 /**
+ * @brief   Allows to configure a failure handler that will be called when a failure is found at SSL level or during the handshake with the particular function failing.
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_FailureHandler(TML_CORE_HANDLE coreHandle, 
+                                                                     TML_ON_TLS_FAILURE_CB_FUNC pFailureCB, void* pFailureData){
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+  TML_BOOL bRet = TML_FALSE;
+
+  if (TML_HANDLE_TYPE_NULL != coreHandle){
+    iRet = TML_SUCCESS;
+
+    ((tmlCoreWrapperBase*) coreHandle)->setTlsFailureCB(pFailureCB, pFailureData);
+
+    VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
+    vortex_ctx_set_data(ctx, "TML_CORE_HANDLE", (axlPointer)coreHandle);
+    
+    if (! vortex_tls_init (ctx)) {
+      //printf ("Unable to activate TLS, Vortex is not prepared\n");
+    }
+    else{
+      vortex_tls_set_failure_handler (ctx,     // context to configure
+                                     (NULL != pFailureCB) ? tls_failure_handler : NULL,
+                                     NULL);
+    }
+  }
+  return iRet;
+}
+
+
+/**
  * @brief    Start tls negotiation for the requested connection
  */
-TLS_CORE_API TML_INT32 tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL* bEncrypted) 
-{
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation (TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted);
+/**
+ * char* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_CONNECTION_HANDLE connectionHandle, char* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
@@ -214,28 +274,29 @@ TLS_CORE_API TML_INT32 tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HAND
       // start the TLS profile negotiation process
       VortexStatus status;
       char* status_message;
-      VortexConnection* tls_connection = vortex_tls_start_negotiation_sync (connection, NULL, 
+      VortexConnection* tls_connection = vortex_tls_start_negotiation_sync(connection, serverName, 
                                     &status, &status_message);
 
       ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg(status_message);
 
       switch (status) {
       case VortexOk:
+          /*
           printf ("TLS negotiation OK! over the new connection %ld\n",
                     vortex_connection_get_id (tls_connection));
           printf ("TLS negotiation message: %s\n",
                     status_message);
+          */
           // use the new connection reference provided by this function.
           retValue = tls_connection;
           bEncryptedVal = TML_TRUE;
           break;
       case VortexError: 
-          printf ("TLS negotiation have failed, message: %s\n",
-                    status_message);
+          // printf ("TLS negotiation have failed, message: %s\n", status_message);
           // ok, TLS process have failed but, do we have a connection
           // still working?
-          if (vortex_connection_is_ok (tls_connection, axl_false)) {
-            // well we don't have TLS activated but the connection still works
+          if (bAllowTlsFailures && vortex_connection_is_ok (tls_connection, axl_false)) {
+            // well we don't have TLS activated but the connection still works / use unencrypted
             retValue = tls_connection;
           } 
           else{
@@ -254,7 +315,138 @@ TLS_CORE_API TML_INT32 tml_Tls_Connection_Start_Negotiation (TML_CONNECTION_HAND
 
   *bEncrypted = bEncryptedVal;
   return iRet;
-}
+};
+/**
+ * wchar_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_X (TML_CONNECTION_HANDLE connectionHandle, wchar_t* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  TML_INT32 iLengthUtf8;
+  char* utf8Str = NULL;
+  try{
+    if (NULL == serverName){
+      iRet = tml_Tls_Connection_StartNegotiation_A (connectionHandle, utf8Str, bAllowTlsFailures, bEncrypted);
+    }
+    else{
+      utf8Str = UTF32toUTF8((wchar_t*)serverName, &iLengthUtf8);
+      if (NULL != utf8Str){
+        iRet = tml_Tls_Connection_StartNegotiation_A (connectionHandle, utf8Str, bAllowTlsFailures, bEncrypted);
+
+        delete[] utf8Str;
+      }
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+};
+/**
+ * char16_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_W (TML_CONNECTION_HANDLE connectionHandle, char16_t* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  TML_INT32 iLengthUtf8;
+  char* utf8Str = NULL;
+  try{
+    if (NULL == serverName){
+      iRet = tml_Tls_Connection_StartNegotiation_A (connectionHandle, utf8Str, bAllowTlsFailures, bEncrypted);
+    }
+    else{
+      char* utf8Str = UTF16toUTF8((wchar_t*)serverName, &iLengthUtf8);
+      if (NULL != utf8Str){
+        iRet = tml_Tls_Connection_StartNegotiation_A (connectionHandle, utf8Str, bAllowTlsFailures, bEncrypted);
+
+        delete[] utf8Str;
+      }
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+};
+
+/**
+ * @brief   Allows to activate TLS profile automatic negotiation for every connection created.
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, TML_CTSTR* serverName);
+/**
+ * char* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_A (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char* serverName){
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+  TML_BOOL bEncryptedVal = TML_FALSE;
+
+  if (TML_HANDLE_TYPE_NULL != coreHandle){
+    iRet = TML_SUCCESS;
+    VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
+    if (! vortex_tls_init (ctx)) {
+      //printf ("Unable to activate TLS, Vortex is not prepared");
+    }
+    else{
+      vortex_tls_set_auto_tls(ctx, 
+                              (TML_TRUE==bEnabled)? axl_true : axl_false, 
+                              (TML_TRUE==bAllowTlsFailures)? axl_true : axl_false,
+                              serverName);
+    }
+  }
+  return iRet;
+};
+/**
+ * wchar_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_X (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, wchar_t* serverName){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  TML_INT32 iLengthUtf8;
+  char* utf8Str = NULL;
+  try{
+    if (NULL == serverName){
+      iRet = tml_Tls_Core_Set_AutoNegotion_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
+    }
+    else{
+      utf8Str = UTF32toUTF8((wchar_t*)serverName, &iLengthUtf8);
+      if (NULL != utf8Str){
+        iRet = tml_Tls_Core_Set_AutoNegotion_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
+
+        delete[] utf8Str;
+      }
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+};
+/**
+ * char16_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_W (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char16_t* serverName){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  TML_INT32 iLengthUtf8;
+  char* utf8Str = NULL;
+  try{
+    if (NULL == serverName){
+      iRet = tml_Tls_Core_Set_AutoNegotion_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
+    }
+    else{
+      char* utf8Str = UTF16toUTF8((wchar_t*)serverName, &iLengthUtf8);
+      if (NULL != utf8Str){
+        iRet = tml_Tls_Core_Set_AutoNegotion_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
+
+        delete[] utf8Str;
+      }
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+};
 
 
 /**
@@ -283,6 +475,11 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CO
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
+  // TODO: 
+  // The connectionHandle->isEncrpyted() flag cannot be set using tml_Tls_Core_SetAuto_Negation().
+  // It can only be configured in the tml_Tls_Connection_StartNegotiation().
+  // tml_Tls_Core_SetAuto_Negation has no handler to get this information.
+  // 
   if (TML_HANDLE_TYPE_NULL != connectionHandle){
     iRet = TML_SUCCESS;
     *bEncrypted = ((tmlConnectionManageObjBase*) connectionHandle)->isEncrpyted();
@@ -294,7 +491,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CO
 /**
  * @brief    Get the encrption status message
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage (TML_CONNECTION_HANDLE connectionHandle, SIDEX_CTSTR** statusMsg);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMessage (TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR** statusMsg);
 /**
  * char* API
 **/
@@ -345,7 +542,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
 /**
  * @brief    Allows to create a digest from the provided string
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (SIDEX_CTSTR* string, TmlTlsDigestMethod method, SIDEX_CTSTR** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (TML_CTSTR* string, TmlTlsDigestMethod method, TML_CTSTR** sDigest);
 /**
  * char* API
 **/
@@ -431,7 +628,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, Tml
 /**
  * @brief    Allows to create a digest from the provided string
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, SIDEX_CTSTR** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, TML_CTSTR** sDigest);
 /**
  * char* API
 **/

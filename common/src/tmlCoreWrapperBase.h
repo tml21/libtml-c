@@ -58,6 +58,8 @@ protected:
      */
     VortexCtx* m_ctx;
 
+    void* m_pTLS_FailureCB;
+    void* m_pTLS_FailureData;
     void* m_pTLS_AcceptCB;
     void* m_pTLS_CertReqCB;
     void* m_pTLS_PrivateKeyReqCB;
@@ -81,6 +83,24 @@ public:
      * @returns the Vortex execution context
      */
     VortexCtx* getVortexCtx();
+
+
+    /**
+      * @brief   Set the TLS failure callback method
+      *
+      * @param pAcceptCB    reference to the callback method
+      * @param pFailureData reference to optional user pointer to be passed into the function when the handler is called. 
+      */
+    void tmlCoreWrapperBase::setTlsFailureCB(void* pFailureCB, void* pFailureData);
+
+
+    /**
+      * @brief   Get the TLS failure callback method and user data
+      *
+      * @param pTLS_FailureCB   returns the reference to the callback method
+      * @param pTLS_FailureData returns the reference to optional user pointer to be passed into the function when the handler is called. 
+      */
+    void getTlsFailureCB(void** pTLS_FailureCB, void** pTLS_FailureData);
 
 
     /**

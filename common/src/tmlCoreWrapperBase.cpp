@@ -43,9 +43,11 @@
  */
 tmlCoreWrapperBase::tmlCoreWrapperBase()
 {
-  m_ctx = NULL;
-  m_pTLS_AcceptCB = NULL;
-  m_pTLS_CertReqCB = NULL;
+  m_ctx                  = NULL;
+  m_pTLS_FailureData     = NULL;
+  m_pTLS_FailureCB       = NULL;
+  m_pTLS_AcceptCB        = NULL;
+  m_pTLS_CertReqCB       = NULL;
   m_pTLS_PrivateKeyReqCB = NULL;
 }
 
@@ -64,6 +66,24 @@ tmlCoreWrapperBase::~tmlCoreWrapperBase()
  */
 VortexCtx* tmlCoreWrapperBase::getVortexCtx(){
   return m_ctx;
+}
+
+
+/**
+  * @brief   Set the TLS failure callback method
+  */
+void tmlCoreWrapperBase::setTlsFailureCB(void* pFailureCB, void* pFailureData){
+  m_pTLS_FailureCB = pFailureCB;
+  m_pTLS_FailureData = pFailureData;
+}
+
+
+/**
+  * @brief   Get the TLS failure callback method and user data
+  */
+void tmlCoreWrapperBase::getTlsFailureCB(void** pTLS_FailureCB, void** pTLS_FailureData){
+  *pTLS_FailureCB   = m_pTLS_FailureCB;
+  *pTLS_FailureData = m_pTLS_FailureData;
 }
 
 

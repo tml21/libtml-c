@@ -109,6 +109,7 @@ void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
  */
 tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection)
 {
+  tmlConnectionManageObjBase();
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
   char* sNetAddress = new char[iLength];
@@ -129,6 +130,7 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
  */
 tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection)
 {
+  tmlConnectionManageObjBase();
   initConnectionManageObj(coreHandle, sNetAddress, pOnConnectCallback, pOnDisconnectCallback, vortexConnection);
 }
 
@@ -148,7 +150,6 @@ void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle,
 {
   m_iErr = TML_SUCCESS;
   m_tlsStatusMsg = SIDEX_HANDLE_TYPE_NULL;
-  m_bEncrypted = TML_FALSE;
   m_coreHandle = coreHandle;
   m_onConnectCallback    = pOnConnectCallback;       // The callback method to call in case of connection
   m_onDisconnectCallback = pOnDisconnectCallback;    // The callback method to call in case of disconnection
@@ -242,6 +243,9 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
           iRet = TML_ERR_SENDER_INVALID_PARAMS;
         }
         else{
+          // Set the "vortex ctx data" - used in tls_failure_handler()
+          vortex_ctx_set_data(ctx, "TML_CONNECTION_HANDLE", (axlPointer)this);
+
           m_vortexConnection = connection;
           // call the callback method for the created connection:
           globalCallback(m_onConnectCallback, (void*) this);
