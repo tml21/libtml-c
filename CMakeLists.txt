@@ -43,6 +43,7 @@ cmake_minimum_required(VERSION 3.1)
 ## set build parameter
 #######################################################
 SET (TML_TARGET_PLATFORM win_x86-64 CACHE STRING "set the build target")
+SET (BUILD_TLS no CACHE STRING "set build tls")
 #######################################################
 
 #######################################################
@@ -74,6 +75,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
   
   set(AXLINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\axl")
   set(VORTEXINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\vortex")
+  set(VORTEX-TLS-INCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\vortex")
+  set(VORTEX-SASL-INCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\vortex")
 
   LINK_DIRECTORIES("C:\\Program Files (x86)\\VortexW32\\lib")  
   include (CPack)
@@ -94,6 +97,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
   
   set(AXLINCLUDE "C:\\Program Files\\VortexW64\\include\\axl")
   set(VORTEXINCLUDE "C:\\Program Files\\VortexW64\\include\\vortex")
+  set(VORTEX-TLS-INCLUDE "C:\\Program Files\\VortexW32\\include\\vortex")
+  set(VORTEX-SASL-INCLUDE "C:\\Program Files\\VortexW32\\include\\vortex")
 
   LINK_DIRECTORIES("C:\\Program Files\\VortexW64\\lib")
 
@@ -115,6 +120,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
   
   set(AXLINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\axl")
   set(VORTEXINCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\vortex")
+  set(VORTEX-TLS-INCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\vortex")
+  set(VORTEX-SASL-INCLUDE "C:\\Program Files (x86)\\VortexW32\\include\\vortex")
 
   LINK_DIRECTORIES("C:\\Program Files (x86)\\VortexW32\\lib")
   
@@ -136,6 +143,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
   
   set(AXLINCLUDE "C:\\Program Files\\VortexW64\\include\\axl")
   set(VORTEXINCLUDE "C:\\Program Files\\VortexW64\\include\\vortex")
+  set(VORTEX-TLS-INCLUDE "C:\\Program Files\\VortexW64\\include\\vortex")
+  set(VORTEX-SASL-INCLUDE "C:\\Program Files\\VortexW64\\include\\vortex")
 
   LINK_DIRECTORIES("C:\\Program Files\\VortexW64\\lib")
   
@@ -387,6 +396,10 @@ if (${PLATFORM_FOUND} STREQUAL true)
   ## Source and destination directories:
   ADD_SUBDIRECTORY( sidex/src ${PROJECT}/sidex)
   ADD_SUBDIRECTORY( tml/src ${PROJECT}/tml)
+	if (${BUILD_TLS} STREQUAL yes)
+    ADD_SUBDIRECTORY( tml-tls/src ${PROJECT}/tml-tls)
+	endif (${BUILD_TLS} STREQUAL yes)
+  # ADD_SUBDIRECTORY( tml-tls/src ${PROJECT}/tml-sasl)
   
   if (${BUILD_TEST} STREQUAL true)
     #######################################################
@@ -402,7 +415,7 @@ if (${PLATFORM_FOUND} STREQUAL true)
     
     
     ADD_SUBDIRECTORY( test/src ${PROJECT}/test)
-    add_dependencies(${TEST_TARGET_NAME_LOCAL} ${CORE_TARGET_NAME_LOCAL})  
+    add_dependencies(${TEST_TARGET_NAME_LOCAL} ${CORE_TARGET_NAME_LOCAL})
     cmake_policy(SET CMP0046 OLD)
   endif (${BUILD_TEST} STREQUAL true)
 else (${PLATFORM_FOUND} STREQUAL true)
