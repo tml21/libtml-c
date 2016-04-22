@@ -191,9 +191,9 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_AcceptNegotiation(TML_CORE_HAN
   if (TML_HANDLE_TYPE_NULL != coreHandle){
     iRet = TML_SUCCESS;
 
-    ((tmlCoreWrapperBase*) coreHandle)->setTlsAcceptCB(pAcceptCB);
-    ((tmlCoreWrapperBase*) coreHandle)->setTlsCertReqCB(pCertReqCB);
-    ((tmlCoreWrapperBase*) coreHandle)->setTlsPrivateKeyReqCB(pPrivateKeyReqCB);
+    ((tmlCoreWrapperBase*) coreHandle)->setTlsAcceptCB((void*)pAcceptCB);
+    ((tmlCoreWrapperBase*) coreHandle)->setTlsCertReqCB((void*)pCertReqCB);
+    ((tmlCoreWrapperBase*) coreHandle)->setTlsPrivateKeyReqCB((void*)pPrivateKeyReqCB);
 
     VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
     vortex_ctx_set_data(ctx, "TML_CORE_HANDLE", (axlPointer)coreHandle);
@@ -229,7 +229,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_FailureHandler(TML_CORE_HA
   if (TML_HANDLE_TYPE_NULL != coreHandle){
     iRet = TML_SUCCESS;
 
-    ((tmlCoreWrapperBase*) coreHandle)->setTlsFailureCB(pFailureCB, pFailureData);
+    ((tmlCoreWrapperBase*) coreHandle)->setTlsFailureCB((void*)pFailureCB, (void*)pFailureData);
 
     VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
     vortex_ctx_set_data(ctx, "TML_CORE_HANDLE", (axlPointer)coreHandle);
@@ -268,7 +268,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_
     // initialize and check if current vortex library supports TLS
 
     if (! vortex_tls_init (ctx)) {
-      ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg("Unable to activate TLS, Vortex is not prepared");
+      ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg((char*)"Unable to activate TLS, Vortex is not prepared");
     }
     else{
       // start the TLS profile negotiation process
@@ -310,7 +310,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_
     ((tmlConnectionManageObjBase*) connectionHandle)->setEncrypted(bEncryptedVal);
   }
   else{
-    ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg("Invalid TML_CONNECTION_HANDLE");
+    ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg((char*)"Invalid TML_CONNECTION_HANDLE");
   }
 
   *bEncrypted = bEncryptedVal;

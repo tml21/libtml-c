@@ -91,7 +91,7 @@ public:
       * @param pAcceptCB    reference to the callback method
       * @param pFailureData reference to optional user pointer to be passed into the function when the handler is called. 
       */
-    void tmlCoreWrapperBase::setTlsFailureCB(void* pFailureCB, void* pFailureData);
+    void setTlsFailureCB(void* pFailureCB, void* pFailureData);
 
 
     /**
@@ -108,7 +108,7 @@ public:
       *
       * @param pAcceptCB reference to the callback method
       */
-    void tmlCoreWrapperBase::setTlsAcceptCB(void* pAcceptCB);
+    void setTlsAcceptCB(void* pAcceptCB);
 
 
     /**
@@ -116,7 +116,7 @@ public:
       *
       * @returns reference to the callback method
       */
-    void* tmlCoreWrapperBase::getTlsAcceptCB();
+    void* getTlsAcceptCB();
 
 
     /**
@@ -124,7 +124,7 @@ public:
       *
       * @param pCertReqCB reference to the callback method
       */
-    void tmlCoreWrapperBase::setTlsCertReqCB(void* pCertReqCB);
+    void setTlsCertReqCB(void* pCertReqCB);
 
 
     /**
@@ -132,7 +132,7 @@ public:
       *
       * @returns reference to the callback method
       */
-    void* tmlCoreWrapperBase::getTlsCertReqCB();
+    void* getTlsCertReqCB();
 
 
     /**
@@ -140,13 +140,13 @@ public:
       *
       * @param pPrivateKeyReqCB reference to the callback method
       */
-    void tmlCoreWrapperBase::setTlsPrivateKeyReqCB(void* pPrivateKeyReqCB);
+    void setTlsPrivateKeyReqCB(void* pPrivateKeyReqCB);
 
     /**
       * @brief   Get the TLS private key file request callback method
       *
       * @returns reference to the callback method
       */
-    void* tmlCoreWrapperBase::getTlsPrivateKeyReqCB();
+    void* getTlsPrivateKeyReqCB();
 };
 #endif  // TMLCOREWRAPPERBASE_H
