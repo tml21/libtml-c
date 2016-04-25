@@ -166,6 +166,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   
   set(AXLINCLUDE /usr/local/include/axl)
   set(VORTEXINCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-TLS-INCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-SASL-INCLUDE /usr/local/include/vortex1.1)
   
   LINK_DIRECTORIES(/usr/local/lib)
   LINK_DIRECTORIES(/usr/local/lib)
@@ -191,6 +193,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 
   set(AXLINCLUDE /usr/local/include/axl)
   set(VORTEXINCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-TLS-INCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-SASL-INCLUDE /usr/local/include/vortex1.1)
   
   LINK_DIRECTORIES(/usr/local/lib)
   LINK_DIRECTORIES(/usr/local/lib)
@@ -216,6 +220,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
 
   set(AXLINCLUDE /usr/local/include/axl)
   set(VORTEXINCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-TLS-INCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-SASL-INCLUDE /usr/local/include/vortex1.1)
   
   LINK_DIRECTORIES(/usr/local/lib)
   LINK_DIRECTORIES(/usr/local/lib)
@@ -241,6 +247,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
 
   set(AXLINCLUDE /usr/local/include/axl)
   set(VORTEXINCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-TLS-INCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-SASL-INCLUDE /usr/local/include/vortex1.1)
   
   LINK_DIRECTORIES(/usr/local/lib)
   LINK_DIRECTORIES(/usr/local/lib)
@@ -266,6 +274,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
   
   set(AXLINCLUDE /usr/local/include/axl)
   set(VORTEXINCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-TLS-INCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-SASL-INCLUDE /usr/local/include/vortex1.1)
   
   LINK_DIRECTORIES(/usr/local/lib)
   LINK_DIRECTORIES(/usr/local/lib)
@@ -291,6 +301,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
   
   set(AXLINCLUDE /usr/local/include/axl)
   set(VORTEXINCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-TLS-INCLUDE /usr/local/include/vortex1.1)
+  set(VORTEX-SASL-INCLUDE /usr/local/include/vortex1.1)
   
   LINK_DIRECTORIES(/usr/local/lib)
   LINK_DIRECTORIES(/usr/local/lib)
@@ -316,6 +328,9 @@ if (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
   
   set(AXLINCLUDE /x/workdir/libtml-c/3rdParty/libaxl/axl-0.7.0.b5340.g5351/src)
   set(VORTEXINCLUDE /x/workdir/libtml-c/3rdParty/libvortex/vortex-1.1.14.b5256.g5258/src)
+  set(VORTEX-TLS-INCLUDE /x/workdir/libtml-c/3rdParty/libvortex/vortex-1.1.14.b5256.g5258/src)
+  set(VORTEX-TLS-INCLUDE /x/workdir/libtml-c/3rdParty/libvortex/vortex-1.1.14.b5256.g5258/src)
+  set(VORTEX-SASL-INCLUDE /x/workdir/libtml-c/3rdParty/libvortex/vortex-1.1.14.b5256.g5258/src)
   set(ICONVINCLUDE /x/workdir/libtml-c/3rdParty/libiconv/libiconv-1.14/include)
   
   LINK_DIRECTORIES( /x/workdir/libtml-c/3rdParty/libaxl/axl-0.7.0.b5340.g5351/build/android_arm32/libaxl/)
