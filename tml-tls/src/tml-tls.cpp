@@ -46,7 +46,7 @@
 #include "tmlCoreWrapperBase.h"
 #include "tmlConnectionManageObjBase.h"
 #include "tml-tls.h"
-#include "tmlerrors.h"
+#include "tmlErrors.h"
 #include "sidex.h"
 #include <vortex_tls.h>
 #include "unicode.h"
