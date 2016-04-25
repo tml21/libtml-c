@@ -37,8 +37,6 @@
  
 #ifdef LINUX
 #include "stdio.h"
-#include "pthread.h"
-#include "semaphore.h"
 #ifdef OS_X
 #include <sys/errno.h>
 #else // OS_X
@@ -62,36 +60,8 @@
  */
 tmlCriticalSectionObj::tmlCriticalSectionObj()
 {
-#ifdef LINUX
-   pthread_mutexattr_t mutexattr;   // Mutex attribute variable
-   int irc;
-  // Set the mutex as a recursive mutex
- irc = pthread_mutexattr_init(&mutexattr);
- if (0 != irc){
-   printf ("tmlCriticalSectionObj Error on pthread_mutexattr_init %d\n", irc);
- }
- else{
-    irc = pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
-    if (0 != irc){
-      printf ("tmlCriticalSectionObj Error on pthread_mutexattr_settype %d\n", irc);
-    }
-    else{
-      // create the mutex with the attributes set
-      irc = pthread_mutex_init(&mutex, &mutexattr);
-      if (0 != irc){
-        printf ("tmlCriticalSectionObj Error on init mutex %d\n", irc);
-      }
-      //After initializing the mutex, the thread attribute can be destroyed
-      irc = pthread_mutexattr_destroy(&mutexattr);
-      if (0 != irc){
-        printf ("tmlCriticalSectionObj Error on destroy mutex attr %d\n", irc);
-      }
-    }
-  }
-#else // LINUX
-  axl_bool bSuccess = vortex_mutex_create (&m_csCriticalSection);
+  axl_bool bSuccess = vortex_mutex_create_full (&m_csCriticalSection, VORTEX_MUTEX_CONF_RECURSIVE);
   m_bCreated = (axl_true == bSuccess);
-#endif // LINUX  axl_bool bSuccess = axl_true;
 }
 
 
@@ -100,17 +70,9 @@ tmlCriticalSectionObj::tmlCriticalSectionObj()
  */
 tmlCriticalSectionObj::~tmlCriticalSectionObj()
 {
-#ifdef LINUX
-  // Destroy / close the mutex
-   int irc = pthread_mutex_destroy (&mutex);
-   if (0 != irc){
-     printf ("~tmlCriticalSectionObj Error on destroy mutex %d\n", irc);
-   }
-#else // LINUX
   if (m_bCreated){
     vortex_mutex_destroy (&m_csCriticalSection);
   }
-#endif // LINUX  
 }
 
 
@@ -118,25 +80,10 @@ tmlCriticalSectionObj::~tmlCriticalSectionObj()
  * @brief    Enter the critical section
  */
 bool tmlCriticalSectionObj::tmlCriticalSectionEnter(const char* sID){
-#ifdef LINUX
-  bool bOk = true;
-#ifdef ENABLE_LOG
-  pid_t tId = ::pthread_self();
-  printf ("%u ENTER %s\n", tId, sID);
-#endif //  ENABLE_LOG
-  // Acquire the mutex to access the shared resource
-
-  int irc = pthread_mutex_lock (&mutex);
-  if (0 != irc){
-    printf ("tmlCriticalSectionEnter Error on acquire mutex %d\n", irc);
-  }
-  return bOk;
-#else // LINUX
   if (m_bCreated){
     vortex_mutex_lock (&m_csCriticalSection);
   }
   return m_bCreated;
-#endif // LINUX  
 }
 
 
@@ -144,27 +91,9 @@ bool tmlCriticalSectionObj::tmlCriticalSectionEnter(const char* sID){
  * @brief    Leave the critical section
  */
 bool tmlCriticalSectionObj::tmlCriticalSectionLeave(const char* sID){
-#ifdef LINUX
-  bool bOk = true;
-#ifdef ENABLE_LOG
-  pid_t tId = ::pthread_self();
-  printf ("%u LEAVE %s\n", tId, sID);
-#endif //  ENABLE_LOG
-   // Release the mutex  and release the access to shared resource
-
-  int irc = pthread_mutex_unlock (&mutex);
-  if (0 != irc){
-    if (EPERM == irc)
-      printf ("tmlCriticalSectionLeave / current thread  did not acquire the critical section\n");
-    else
-      printf ("tmlCriticalSectionLeave Error on leave mutex %d\n", irc);
-  }
-  return bOk;
-#else // LINUX
   if (m_bCreated){
     vortex_mutex_unlock (&m_csCriticalSection);
   }
   return m_bCreated;
-#endif // LINUX  
 }
 

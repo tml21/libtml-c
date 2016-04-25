@@ -378,7 +378,7 @@ bool tmlConnectionObj::isEqual(const char* profile, const char* sHost, const cha
 axl_bool tmlConnectionObj::createCriticalSectionObject(int iLogMask, VortexMutex* mutex, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog)
 {
   m_log->log (iLogMask, sClass, sMethod, sFormatLog, sLog);
-  axl_bool bSuccess = vortex_mutex_create (mutex);
+  axl_bool bSuccess = vortex_mutex_create_full (mutex, VORTEX_MUTEX_CONF_RECURSIVE);
   return bSuccess;
 }
 
