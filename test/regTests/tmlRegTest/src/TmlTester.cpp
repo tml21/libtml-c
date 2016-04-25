@@ -42,7 +42,7 @@ TmlTester::TmlTester(SIDEX_TCHAR* testProcessName)
 {
   for(int iMutex = 0; iMutex < MAX_MUTEXES; iMutex++)
   {
-    if(!vortex_mutex_create(&m_mutex[iMutex]))
+    if(!vortex_mutex_create_full(&m_mutex[iMutex], VORTEX_MUTEX_CONF_RECURSIVE))
     {
       errorOutput(tmlrtT("TmlTester - vortex_mutex_create()"), false, false);
     }
