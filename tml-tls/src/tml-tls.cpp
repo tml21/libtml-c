@@ -292,6 +292,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_
           bEncryptedVal = TML_TRUE;
           break;
       case VortexError: 
+      default:
           // printf ("TLS negotiation have failed, message: %s\n", status_message);
           // ok, TLS process have failed but, do we have a connection
           // still working?
