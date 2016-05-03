@@ -400,7 +400,7 @@ public:
     /**
      * @brief  helper method / sleep for millisecond
     */
-    void SleepForMilliSeconds(DWORD mSecs);
+    static void SleepForMilliSeconds(DWORD mSecs);
 
 
     /**

@@ -193,8 +193,24 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
       if (!vortex_connection_is_ok (connection, axl_false))
       {
         log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_reconnect");
-        axl_bool bConnected;
-        bConnected = vortex_connection_reconnect (connection, NULL, NULL);
+        axl_bool bConnected = axl_false;
+        int retries = 10;
+        do{
+          bConnected = vortex_connection_reconnect (connection, NULL, NULL);
+          if (axl_false == bConnected) {
+            // Francis:
+            // there's a time there were the listener using (reusing)
+            // same port, will be not fully functional (there is little pause there due to time wait TCP state). 
+            // Even though we use the following declaration when starting a listener:
+            // setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &unit, sizeof (unit));
+            // ...there's still a small amount of time that the previous listener socket TCP
+            // buffers are collected, closed, etc...
+            // So let us wait a little bit here
+            tmlCoreWrapper::SleepForMilliSeconds(50);
+            --retries;
+          }
+        }
+        while ((axl_false == bConnected) && retries);
         if (axl_false == bConnected){
           const char* msg = vortex_connection_get_message(connection);
           log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);

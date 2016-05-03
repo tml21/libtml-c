@@ -159,57 +159,6 @@ void listenerFrameReceivedCallback (VortexChannel* channel,
 }
 
 
-/**
- * @brief  callback in case of new connection request
- */
-axl_bool listener_connection_accept_handler (VortexConnection * conn, axlPointer ptr) {
-  VORTEXLimitCheckDataCallbackData* limitCheckData = (VORTEXLimitCheckDataCallbackData*) ptr;
-  /* check if connection limit was reached */
-
-  limitCheckData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listener_connection_accept_handler", "Vortex CMD", "vortex_connection_get_ctx");
-  VortexCtx* ctx = vortex_connection_get_ctx 	(conn);
-  limitCheckData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listener_connection_accept_handler", "Vortex CMD", "vortex_reader_connections_watched");
-  int iConnectionsWartched = vortex_reader_connections_watched (ctx);
-  if (-1 != limitCheckData->iMax && iConnectionsWartched > limitCheckData->iMax)
-  {
-    return axl_false;
-  }
-  /* accept connection */
-  return axl_true;
-}
-
-
-/**
- * @brief  callback in case of new channel request
- */
-axl_bool listener_channel_accept_handler (int channel_num, VortexConnection * conn, axlPointer ptr) {
-  VORTEXLimitCheckDataCallbackData* limitCheckData = (VORTEXLimitCheckDataCallbackData*) ptr;
-  /* check if channels per connection limit was reached */
-  limitCheckData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listener_channel_accept_handler", "Vortex CMD", "vortex_connection_channels_count");
-  int iConnectionChannelCount = vortex_connection_channels_count (conn);
-  if (-1 != limitCheckData->iMax && iConnectionChannelCount > limitCheckData->iMax)
-  {
-    return axl_false;
-  }
-  /* accept new channel */
-  return axl_true;
-}
-
-
-/**
- * @brief  Callback of a close of a channel
- */
-int closeChannelCallback (int channel_num, 
-                          VortexConnection * connection, 
-                          axlPointer user_data)
-{
-  // A client has closed the channel to me. //
-  // tmlLogHandler* log = ( tmlLogHandler*) user_data;
-  // log->log ("TMLCoreListener", "closeChannelCallback", "Connection closed", "terminate a pending data transfer !");
-  return axl_true;
-}
-
-
 /*********************************************************************************************************************************
 *                                             Class definitions:
 *********************************************************************************************************************************/
@@ -340,8 +289,6 @@ TMLCoreListener::TMLCoreListener(TML_CORE_HANDLE tmlcorehandle, tmlLogHandler* l
   m_hValidListenerThread = false;
   m_iMultiSyncMessageCounter = 0;
   m_iLogFileIndex = 0;
-  m_connectionsLimitCheckData.iMax = -1;
-  m_connectionsLimitCheckData.pLog = loghandler;
   m_channelsPerConnectionLimitCheckData.iMax = -1;
   m_channelsPerConnectionLimitCheckData.pLog = loghandler;
   m_callbackData.callback = callback;
@@ -536,8 +483,7 @@ int TMLCoreListener::TMLCoreListener_RegisterProfile(const char* profile)
         if (bRegisterProfile){
           m_log->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "TMLCoreListener_RegisterProfile", "Vortex CMD", "vortex_profiles_register");
           bOk = vortex_profiles_register (m_ctx, profile, 
-                                          listener_channel_accept_handler, &m_channelsPerConnectionLimitCheckData,
-                                          //closeChannelCallback, NULL, // I don't need to register the callback methods so put them into comments
+                                          NULL, NULL,
                                           NULL, NULL,
                                           NULL, NULL);
 

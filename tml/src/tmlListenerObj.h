@@ -57,11 +57,6 @@ private:
      */
     TML_BOOL m_bListnerIsEnabled;
 
-    /**
-     * @brief    Maximum of accepted connections / in case of iMax = -1 it is unlimited
-     */
-    VORTEXLimitCheckDataCallbackData m_connectionsLimitCheckData;
-
 protected: 
 	  /* data */
     /**

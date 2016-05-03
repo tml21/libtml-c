@@ -43,26 +43,6 @@
 #include "logValues.h"
 
 /**
- * @brief  callback in case of new connection request
- */
-axl_bool listenerObj_connection_accept_handler (VortexConnection * conn, axlPointer ptr) {
-  VORTEXLimitCheckDataCallbackData* limitCheckData = (VORTEXLimitCheckDataCallbackData*) ptr;
-  /* check if connection limit was reached */
-
-  limitCheckData->pLog->log (TML_LOG_VORTEX_CMD, "tmlListenerObj", "listenerObj_connection_accept_handler", "Vortex CMD", "vortex_connection_get_ctx");
-  VortexCtx* ctx = vortex_connection_get_ctx (conn);
-  limitCheckData->pLog->log (TML_LOG_VORTEX_CMD, "tmlListenerObj", "listenerObj_connection_accept_handler", "Vortex CMD", "vortex_reader_connections_watched");
-  int iConnectionsWartched = vortex_reader_connections_watched (ctx);
-  if (-1 != limitCheckData->iMax && iConnectionsWartched > limitCheckData->iMax)
-  {
-    return axl_false;
-  }
-  /* accept connection */
-  return axl_true;
-}
-
-
-/**
  * @brief    Constructor.
  */
 tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle,const char* sNetAddress)
@@ -117,8 +97,6 @@ void tmlListenerObj::initListenerObj(TML_CORE_HANDLE coreHandle, const char* sNe
   m_binding = new tmlNetBinding(sNetAddress);
 
   tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
-  m_connectionsLimitCheckData.iMax = -1;
-  m_connectionsLimitCheckData.pLog = log;
 
   m_iRefCounter = 1;
 
@@ -334,12 +312,6 @@ TML_INT32 tmlListenerObj::set_Enabled(TML_BOOL bEnable){
               }
             }
           }
-        }
-        if (TML_SUCCESS == iRet){
-          ///////////////////////////////////////////////////////////////////////////
-          // configure connection notification callback:
-          log->log (TML_LOG_VORTEX_CMD, "tmlListenerObj", "set_Enabled", "Vortex CMD", "vortex_listener_set_on_connection_accepted");
-          vortex_listener_set_on_connection_accepted (m_ctx, listenerObj_connection_accept_handler, &m_connectionsLimitCheckData);
         }
       }
     }

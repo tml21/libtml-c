@@ -71,12 +71,6 @@ private:
      */
     void CloseAllOpenConnections();
 
-
-    /**
-     * @brief  helper method / sleep for millisecond
-    */
-    void SleepForMilliSeconds(DWORD mSecs);
-
 protected:
     /* data */
 
