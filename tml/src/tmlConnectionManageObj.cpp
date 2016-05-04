@@ -242,6 +242,15 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
       if (TML_SUCCESS == iRet){
         bIsIPV6 = m_binding->isIPV6();
       }
+      // Francis:
+      // there's a time there were the listener using (reusing)
+      // same port, will be not fully functional (there is little pause there due to time wait TCP state). 
+      // Even though we use the following declaration when starting a listener:
+      // setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &unit, sizeof (unit));
+      // ...there's still a small amount of time that the previous listener socket TCP
+      // buffers are collected, closed, etc...
+      // So let us wait a little bit here
+      tmlCoreWrapper::SleepForMilliSeconds(50);
       if (TML_SUCCESS == iRet){
         if (bIsIPV6){
           log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
