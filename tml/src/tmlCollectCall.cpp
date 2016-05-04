@@ -247,21 +247,25 @@ tmlCollectCall::~tmlCollectCall()
   // to be sure, that no more event messages will be started in the backgound
   //m_EventMessageHandlingParams.pDataQueue->clear();
 
-  ///////////////////////////////////////////
-  // Event message handling:
-  m_eventCallHandler->stopEventMessageHandlingThread();
-  delete (m_collectCallDestObjHandler);
-  m_collectCallDestObjHandler = NULL;
-  ////////////////////////////////////////////////////////////////////////////
-  //  Afterwards destroy event message handling:
-  delete (m_eventCallHandler);
-  m_eventCallHandler = NULL;
-  
   ////////////////////////////////////////
   // TMLCoreSender / drop all connections /
   // if there are async calls pendig it will wait:
   DropAllOpenConnections();
 
+  ///////////////////////////////////////////
+  // Event message handling:
+  m_internalAsyncEventMessageReturnMethod.SetCallback(NULL, 0);
+  m_internalEventMessage2ndStep.SetCallback(NULL, 0);
+  m_internalEventMessage1stStep.SetCallback(NULL, 0);
+  m_eventCallHandler->stopEventMessageHandlingThread();
+  delete (m_collectCallDestObjHandler);
+  m_collectCallDestObjHandler = NULL;
+
+  ////////////////////////////////////////////////////////////////////////////
+  //  Afterwards destroy event message handling:
+  delete (m_eventCallHandler);
+  m_eventCallHandler = NULL;
+  
   ////////////////////////////////////////////////////////////////////////////
   //  Now destroy the queue containing the background event message data:
   delete (m_EventMessageHandlingParams.pDataQueue);
@@ -269,15 +273,8 @@ tmlCollectCall::~tmlCollectCall()
   ////////////////////////////////////////////////////////////////////////////
   // Destroy the mutex that protect critial section about communication data:
   destroyCriticalSectionObject(TML_LOG_VORTEX_MUTEX, &m_mutexBackgroundEventMsg, "tmlCollectCall", "~tmlCollectCall", "Vortex CMD", "vortex_mutex_destroy");
-
-  ////////////////////////////////////////////////////////////////////////////
-  // Destroy the mutex that protect critial section about communication data:
   destroyCriticalSectionObject(TML_LOG_VORTEX_MUTEX, &m_mutexCollectCallCriticalSection, "tmlCollectCall", "~tmlCollectCall", "Vortex CMD", "vortex_mutex_destroy");
-  ////////////////////////////////////////////////////////////////////////////
-  // Destroy the mutex that protect critial section about communication data:
   destroyCriticalSectionObject(TML_LOG_VORTEX_MUTEX, &m_mutexCollectCallCriticalSection1stStep, "tmlCollectCall", "~tmlCollectCall", "Vortex CMD", "vortex_mutex_destroy");
-  ////////////////////////////////////////////////////////////////////////////
-  // Destroy the mutex that protect critial section about communication data:
   destroyCriticalSectionObject(TML_LOG_VORTEX_MUTEX, &m_mutexCollectCallCriticalSection2ndStep, "tmlCollectCall", "~tmlCollectCall", "Vortex CMD", "vortex_mutex_destroy");
 }
 

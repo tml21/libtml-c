@@ -60,6 +60,11 @@
 // internal thread destruction method
 axl_bool  intern_thread_destroy (TMLThreadDef* threadInfo)
 {
+  // wait for thread finish...
+  while (threadInfo->bThreadStarted)
+  {
+    SleepForMilliSeconds(50);
+  }
   VortexThread* data = threadInfo->pThreadDef;
   axl_bool bRet = vortex_thread_destroy (data, axl_true);
   return bRet;
@@ -97,6 +102,7 @@ axl_bool  intern_thread_create (TMLThreadDef* threadInfo, FUNC_STDCALL func(void
 FUNC_STDCALL AsyncHandlingThread (axlPointer pParam)
 {
   AsyncHandlingData* pThreadData = (AsyncHandlingData*)pParam;
+  pThreadData->threadInfo.bThreadStarted = true;
   tmlLogHandler* pLog = pThreadData->payload->pLog;
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,6 +116,8 @@ FUNC_STDCALL AsyncHandlingThread (axlPointer pParam)
   // Unlock the mutex to tell the parent process that I'm finished
   pLog->log (TML_LOG_VORTEX_MUTEX, "TMLCoreSender", "AsyncHandlingThread", "Vortex CMD", "vortex_mutex_unlock");
   intern_mutex_unlock (pThreadData->terminationMutex, pLog, "AsyncHandlingThread");
+
+  pThreadData->threadInfo.bThreadStarted = false;
   return 0;
 }
 
@@ -134,18 +142,16 @@ int StartAsyncHandlingThread(AsyncHandlingData* threadData, tmlEventHandler* eve
   threadData->eventHandler = eventHandler;
   threadData->terminationMutex = mutexAsyncThreadSync;
 
-
-  TMLThreadDef* threadInfo = &threadData->threadInfo;
   payload->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreSender", "StartAsyncHandlingThread", "Vortex CMD", "vortex_thread_create");
   // Thread- generation log
 #ifdef LINUX
   #ifdef OS_X
-    axl_bool bSuccess = intern_thread_create(threadInfo, AsyncHandlingThread, threadData);
+    axl_bool bSuccess = intern_thread_create(&threadData->threadInfo, AsyncHandlingThread, threadData);
   #else // OSX
-    axl_bool bSuccess = intern_thread_create(threadInfo, AsyncHandlingThread, threadData);
+    axl_bool bSuccess = intern_thread_create(&threadData->threadInfo, AsyncHandlingThread, threadData);
   #endif // OSX
 #else // LINUX
-    axl_bool bSuccess = intern_thread_create(threadInfo, AsyncHandlingThread, threadData);
+    axl_bool bSuccess = intern_thread_create(&threadData->threadInfo, AsyncHandlingThread, threadData);
 #endif // LINUX
   // Thread- generation log
   if (!bSuccess){
@@ -211,6 +217,7 @@ int TMLCoreSender::RestartAsyncHandlingThread(AsyncHandlingData* threadData, con
 FUNC_STDCALL TimerThread( void* pParam)
 {
   TimerThreadData* pThreadData = (TimerThreadData*)pParam;
+  pThreadData->threadInfo->bThreadStarted = true;
 
   bool bTerminateThread = false;
 
@@ -267,9 +274,12 @@ FUNC_STDCALL TimerThread( void* pParam)
       }
     }
   }while (!bTerminateThread);
+
+  delete[] handleArray;
+
   // Thread end
   pThreadData->pLog->log (TML_LOG_CORE_IO, "TMLCoreSender", "TimerThread", "TimerThread", "terminated");
-  delete[] handleArray;
+  pThreadData->threadInfo->bThreadStarted = false;
   return 0;
 }
 
@@ -285,6 +295,7 @@ int StartTimerThread(TimerThreadData* timerThreadData, tmlEventHandler* eventHan
   timerThreadData->pLog                 = pLogHandler;
   timerThreadData->eventHandler         = eventHandler;
   timerThreadData->terminationMutex     = NULL;
+  timerThreadData->threadInfo           = threadInfo;
 
   pLogHandler->log (TML_LOG_VORTEX_CMD, "TMLCoreSender", "StartTimerThread", "Vortex CMD", "vortex_thread_create");
 #ifdef LINUX
@@ -298,9 +309,6 @@ int StartTimerThread(TimerThreadData* timerThreadData, tmlEventHandler* eventHan
 #endif // LINUX
   if (!bSuccess){
     iRet = TML_ERR_SENDER_NOT_INITIALIZED;
-  }
-  else{
-    threadInfo->bThreadStarted = true;
   }
   return iRet;
 }
@@ -320,15 +328,10 @@ void StopTimerThread(const char* hStopTimer, AsyncHandlingThreadData* pThreadDat
       /////////////////////////////////////
       // Wait until the thread is finished:
       pThreadData->pLog->log (TML_LOG_VORTEX_MUTEX, "TMLCoreSender", "StopTimerThread", "Vortex CMD", "vortex_thread_destroy");
-#ifdef LINUX
       axl_bool bRet = intern_thread_destroy(threadInfo);
-#else
-      axl_bool bRet = intern_thread_destroy(threadInfo);
-#endif // LINUX
       if (AXL_FALSE == bRet){
         printf ("#### StopTimerThread - Error in \"vortex_thread_destroy\" ####\n");
       }
-      threadInfo->bThreadStarted = false;
       pThreadData->pLog->log (TML_LOG_VORTEX_MUTEX, "TMLCoreSender", "StopTimerThread", "Vortex CMD", "vortex_thread_destroy done");
     }
   }
@@ -1036,7 +1039,8 @@ TMLCoreSender::~TMLCoreSender()
     ///////////////////////////////////////////////////////////////
     // Delete Memory of the last call
     // Maybe we have had an async handling thread, so free memory:
-    if (NULL != m_AsyncHandlingData.threadInfo.pThreadDef){
+    if (NULL != m_AsyncHandlingData.threadInfo.pThreadDef)
+    {
       intern_thread_destroy (&m_AsyncHandlingData.threadInfo);
       m_AsyncHandlingData.threadInfo.pThreadDef = NULL;
     }

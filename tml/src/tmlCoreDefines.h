@@ -152,8 +152,8 @@ struct VORTEXSenderFrameReceivedCallbackData{
 };
 
 struct TMLThreadDef{
-    bool          bThreadStarted;
-    VortexThread* pThreadDef;
+  volatile bool bThreadStarted;
+  VortexThread* pThreadDef;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -222,6 +222,7 @@ struct TimerThreadData{
   tmlLogHandler*    pLog;                               // reference to logging handler
   tmlEventHandler*  eventHandler;
   VortexMutex*      terminationMutex;                   // mutex to signal termination
+  TMLThreadDef*     threadInfo;
 };
 
 
@@ -276,6 +277,7 @@ struct EventMsgHandlingParams{
   tmlLogHandler*     pLog;
   void*              pCBFunc;                           // reference to the call callback method to handle the event message in background
   tmlEventDataQueue* pDataQueue;                        // reference to the queue containing the background event message data
+  TMLThreadDef*      threadInfo;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////

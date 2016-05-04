@@ -51,6 +51,7 @@
 FUNC_STDCALL EventMsgHandlingThread (axlPointer pParam)
 {
   EventMsgHandlingParams* pThreadHandlingParams = (EventMsgHandlingParams*)pParam;
+  pThreadHandlingParams->threadInfo->bThreadStarted = true;
   tmlLogHandler* pLog = pThreadHandlingParams->pLog;
 
   pLog->log (TML_LOG_CORE_IO, "tmlEventCall", "EventMsgHandlingThread", "EventMsgHandlingThread", "start");
@@ -111,6 +112,8 @@ FUNC_STDCALL EventMsgHandlingThread (axlPointer pParam)
 
   // Thread end
   pLog->log (TML_LOG_CORE_IO, "tmlEventCall", "EventMsgHandlingThread", "EventMsgHandlingThread", "terminated");
+
+  pThreadHandlingParams->threadInfo->bThreadStarted = false;
   return 0;
 }
 
@@ -375,7 +378,7 @@ int tmlEventCall::startEventMessageHandlingThread(EventMsgHandlingParams* thread
   threadData->eventHandler = eventHandler;
   threadData->terminationMutex = NULL;
   threadData->pCBFunc = pCBFunc;
-
+  threadData->threadInfo = threadInfo;
 
   pLog->log (TML_LOG_VORTEX_CMD, "tmlEventCall", "StartEventMessageHandlingThread", "Vortex CMD", "vortex_thread_create");
 #ifdef LINUX
@@ -390,9 +393,6 @@ int tmlEventCall::startEventMessageHandlingThread(EventMsgHandlingParams* thread
   // Thread- generation log
   if (!bSuccess){
     iRet = TML_ERR_SENDER_NOT_INITIALIZED;
-  }
-  else{
-    threadInfo->bThreadStarted = true;
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -426,7 +426,6 @@ void tmlEventCall::stopEventMessageHandlingThread()
       if (AXL_FALSE == bRet){
         printf ("#### tmlEventCall - stopEventMessageHandlingThread - Error in \"vortex_thread_destroy\" ####\n");
       }
-      m_threadInfo.bThreadStarted = false;
       m_log->log (TML_LOG_VORTEX_MUTEX, "tmlEventCall", "stopEventMessageHandlingThread", "Vortex CMD", "vortex_thread_destroy done");
     }
   }
