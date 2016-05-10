@@ -83,7 +83,7 @@ TMLUniversalHashTable::~TMLUniversalHashTable()
         iRet = getKeys(&sKeys);
         for (SIDEX_INT32 i = 0; i < iSize && SIDEX_SUCCESS == iRet; ++i){
           iRet = removeEntry(sKeys[i]);
-          delete sKeys[i];
+          delete[] sKeys[i];
         }
         delete[] sKeys;
       }
@@ -223,27 +223,30 @@ int TMLUniversalHashTable::getKeys(char*** hashKeys)
       if (SIDEX_SUCCESS == iRet){
         if (0 < iSize){
           SIDEX_VARIANT vKeys;
-          iRet = sidex_Variant_Dict_Keys 	(m_hash, &vKeys);
+          iRet = sidex_Variant_Dict_Keys (m_hash, &vKeys);
           if (SIDEX_SUCCESS == iRet){
             char** cKeys = new char*[iSize];
-            for (SIDEX_INT32 i = 0;i < iSize && SIDEX_SUCCESS == iRet;++i){
-              SIDEX_VARIANT vKey;
-              iRet = sidex_Variant_List_Get(vKeys, i, &vKey);
+            for (SIDEX_INT32 i = 0; i < iSize; ++i){
+              cKeys[i] = NULL;
               if (SIDEX_SUCCESS == iRet){
-                char* sVal;
-                SIDEX_INT32 iLength;
-                sidex_Variant_As_String_A (vKey, &sVal, &iLength);
+                SIDEX_VARIANT vKey;
+                iRet = sidex_Variant_List_Get(vKeys, i, &vKey);
                 if (SIDEX_SUCCESS == iRet){
-                  cKeys[i] = new char[iLength+1];
-  #ifdef LINUX
-                  strcpy (cKeys[i], sVal);
-  #else // LINUX
-  #if _MSC_VER > 1500
-                  strcpy_s (cKeys[i], iLength+1, sVal);
-  #else
-                  strcpy (cKeys[i], sVal);
-  #endif
-  #endif // LINUX
+                  char* sVal;
+                  SIDEX_INT32 iLength;
+                  sidex_Variant_As_String_A (vKey, &sVal, &iLength);
+                  if (SIDEX_SUCCESS == iRet){
+                    cKeys[i] = new char[iLength+1];
+#ifdef LINUX
+                    strcpy (cKeys[i], sVal);
+#else // LINUX
+#if _MSC_VER > 1500
+                    strcpy_s (cKeys[i], iLength+1, sVal);
+#else
+                    strcpy (cKeys[i], sVal);
+#endif
+#endif // LINUX
+                  }
                 }
               }
             }
@@ -251,10 +254,17 @@ int TMLUniversalHashTable::getKeys(char*** hashKeys)
             if (TML_SUCCESS == iRet){
               *hashKeys = cKeys; 
             }
+            else{
+              // cleanup...
+              for (SIDEX_INT32 i = 0; i < iSize; ++i){
+                if (cKeys[i]) delete[] cKeys[i];
+              }
+              delete[] cKeys;
+            }
           }
         }
         else{
-          *hashKeys = SIDEX_HANDLE_TYPE_NULL;
+          *hashKeys = NULL;
         }
       }
     }
