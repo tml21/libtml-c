@@ -108,9 +108,7 @@ tmlEventHandler::~tmlEventHandler(){
   }
 #endif // USE_POSIX
 #endif // LINUX
-  // "LIBTML-26 Memory- Leak on tmlCore destruction"
-  // deletion here causes a segmentation fault on Linux
-  //delete m_hashTable;
+  delete m_hashTable;
 }
 
 

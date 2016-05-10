@@ -120,7 +120,7 @@ sidexHashTable::~sidexHashTable()
       }
       if (!m_data[i].single){
         // deallocate the next hashTable:
-        delete[] m_data[i].ht;
+        delete m_data[i].ht;
         m_data[i].ht = NULL;
 
         /////////////////////////////////////////////////////////////
@@ -387,7 +387,7 @@ int sidexHashTable::setValue(char *key, SIDEX_VARIANT value, SIDEX_INT32* numOfE
             m_data[nKey].value = SIDEX_HANDLE_TYPE_NULL;
             m_data[nKey].valid = false;
             iRet = SIDEX_SUCCESS;
-            // but I can not reset the flag and key because there are NO following hashTables
+            // but I can not reset the flag and key because there ARE following hashTables
           }
         }
         else{
