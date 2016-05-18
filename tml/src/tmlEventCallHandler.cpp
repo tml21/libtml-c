@@ -287,15 +287,7 @@ int tmlEventCallHandler::startEventMessageHandlingThread(EventMsgHandlingParams*
   threadData->threadInfo = threadInfo;
 
   pLog->log (TML_LOG_VORTEX_CMD, "tmlEventCallHandler", "StartEventMessageHandlingThread", "Vortex CMD", "vortex_thread_create");
-#ifdef LINUX
-  #ifdef OS_X
     axl_bool bSuccess = intern_thread_create(threadInfo, EventHandlingThread, threadData);
-  #else // OSX
-    axl_bool bSuccess = intern_thread_create(threadInfo, EventHandlingThread, threadData);
-  #endif // OSX
-#else // LINUX
-    axl_bool bSuccess = intern_thread_create(threadInfo, EventHandlingThread, threadData);
-#endif // LINUX
   // Thread- generation log
   if (!bSuccess){
     iRet = TML_ERR_SENDER_NOT_INITIALIZED;

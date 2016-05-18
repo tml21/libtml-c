@@ -816,10 +816,6 @@ int tmlSingleCall::GetConnection(const char* profile, const char* sHost, const c
  * @brief    Search for an existing tmlConnectionObj in a VORTEXConnectionListElement for the requested parameter
  */
 int tmlSingleCall::SearchForConnectionObjInHT(const char* profile, const char* sHost, const char* sPort, tmlConnectionObj** connectionObj, VortexChannelPool** channelPool, bool* bFoundRet, bool bRemoveMarkedObjs){
-  ///////////////////////////////////////////////////////////////////////////
-  // Begin of critical section
-
-  enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlSingleCall", "SearchForConnectionObjInHT", "Vortex CMD", "vortex_mutex_lock");
   if (bRemoveMarkedObjs){
     //////////////////////////////////////////////////////////////////////////
     // It's a good idea to remove connections that are "marked to be remove":
@@ -929,10 +925,6 @@ int tmlSingleCall::SearchForConnectionObjInHT(const char* profile, const char* s
       delete (iKeys);
     }
   }
-
-  ///////////////////////////////////////////////////////////////////////////
-  // End of critical section
-  leaveCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlSingleCall", "SearchForConnectionObjInHT", "Vortex CMD", "vortex_mutex_unlock");
   return iRet;
 }
 
@@ -955,6 +947,10 @@ int tmlSingleCall::GetConnectionElement(const char* profile, const char* sHost, 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Get the connection out of my connection list for the attributes: profile, sHost, sPort / if it exists:
   VortexChannelPool* channelPool = NULL;
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlSingleCall", "SearchForConnectionObjInHT", "Vortex CMD", "vortex_mutex_lock");
+
   iRet = SearchForConnectionObjInHT(profile, sHost, sPort, &connectionObj, &channelPool, &bFound, bRemoveMarkedObjs);
   if (TML_SUCCESS == iRet){
     if (!bFound){
@@ -977,6 +973,26 @@ int tmlSingleCall::GetConnectionElement(const char* profile, const char* sHost, 
           connectionObj->setConnectionObj(profile, sHost, sPort, coreSenderAttr, channelPool, connectionMgrWork);
           connectionObj->lock(true, true);
           AddConnectionElement(connectionObj, true);
+
+          //////////////////////////////////////////////
+          // The first time allocation of a thread pool:
+          tmlConnectionManageObj* connectionMgr;
+          VortexConnection* connectionAttr = NULL;
+          connectionObj->getConnectionManageObj(&connectionMgr);
+          if (NULL != connectionMgr){
+            connectionAttr = connectionMgr->getVortexConnection();
+          }
+          if (NULL != connectionAttr && NULL != profile){
+            ////////////////////////////////////////
+            // now create  a new channel pool:
+            m_log->log (TML_LOG_VORTEX_CMD, "TMLSingleCall", "GetConnectionElement", "Vortex CMD", "vortex_channel_pool_new");
+            // Thread- generation log
+            channelPool = vortex_channel_pool_new(connectionAttr, profile, 1, NULL, NULL, NULL, NULL, NULL, NULL);
+            // Thread- generation log
+            ////////////////////////////////////////////////////////////////////////////
+            // And now it's time to set the channelPool attribute in the connectionObj:
+            connectionObj->setChannelPool(channelPool);
+          }
         }
       }
     }
@@ -984,36 +1000,19 @@ int tmlSingleCall::GetConnectionElement(const char* profile, const char* sHost, 
       connectionObj->getSender(&coreSenderAttr);
     }
   }
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  leaveCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlSingleCall", "SearchForConnectionObjInHT", "Vortex CMD", "vortex_mutex_unlock");
+
   if (TML_SUCCESS == iRet){
     connectionObj->setRawViaVortexPayloadFeeder(bRawViaVortexPayloadFeeder);
     ////////////////////////////////////////////////////////////
     // Possible new logging value:
     iRet = coreSenderAttr->TMLCoreSender_Set_Logging_Value(m_iLogValue);
 
-    
-    connectionObj->getChannelPool(&channelPool);
-    if (NULL == channelPool){
-      //////////////////////////////////////////////
-      // The first time allocation of a thread pool:
-      tmlConnectionManageObj* connectionMgr;
-      VortexConnection* connectionAttr = NULL;
-      connectionObj->getConnectionManageObj(&connectionMgr);
-      if (NULL != connectionMgr){
-        connectionAttr = connectionMgr->getVortexConnection();
-      }
-      if (NULL != connectionAttr && NULL != profile){
-        ////////////////////////////////////////
-        // now create  a new channel pool:
-        m_log->log (TML_LOG_VORTEX_CMD, "TMLSingleCall", "GetConnectionElement", "Vortex CMD", "vortex_channel_pool_new");
-        // Thread- generation log
-        channelPool = vortex_channel_pool_new(connectionAttr, profile, 1, NULL, NULL, NULL, NULL, NULL, NULL);
-        // Thread- generation log
-        ////////////////////////////////////////////////////////////////////////////
-        // And now it's time to set the channelPool attribute in the connectionObj:
-        connectionObj->setChannelPool(channelPool);
-      }
+    if (TML_SUCCESS == iRet){
+      *pConnectionObj = connectionObj;
     }
-    *pConnectionObj = connectionObj;
   }
   return iRet;
 }
