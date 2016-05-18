@@ -291,9 +291,9 @@ int StartTimerThread(TimerThreadData* timerThreadData, tmlEventHandler* eventHan
   pLogHandler->log (TML_LOG_VORTEX_CMD, "TMLCoreSender", "StartTimerThread", "Vortex CMD", "vortex_thread_create");
 #ifdef LINUX
   #ifdef OS_X
-  axl_bool bSuccess = intern_thread_create(threadInfo, TimerThread, timerThreadData);
+  axl_bool bSuccess = intern_thread_create(timerThreadData->threadInfo, TimerThread, timerThreadData);
   #else // OSX
-    axl_bool bSuccess = intern_thread_create(threadInfo, TimerThread, timerThreadData);
+    axl_bool bSuccess = intern_thread_create(timerThreadData->threadInfo, TimerThread, timerThreadData);
   #endif // OSX
 #else // LINUX
     axl_bool bSuccess = intern_thread_create(timerThreadData->threadInfo, TimerThread, timerThreadData);
