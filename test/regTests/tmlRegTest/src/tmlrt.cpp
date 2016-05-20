@@ -39,6 +39,7 @@
 #include "TestParams.h"
 #include "tmlrt_Connections.h"
 #include "tmlrt_MultipleListeners.h"
+#include "tmlrt_TLS.h"
 #include "tmlrt_SendingCommands.h"
 
 /** @brief Main function, accepts command line parameters
@@ -114,28 +115,44 @@
     else    { wcout << "Running without params file!" << endl; }
     wcout << endl;
 
-    int i = 0, n = TestParams->getTestLoopCount();
-    wcout << "Tests - Start... ( " << n << " loop" << ((n > 1) ? "s )" : " )") << endl;
-    wcout << endl;
-    do
+    if(TestParams->isActingAsRepeater())
     {
-      wcout << "----------------------------------------" << endl;
-      wcout << "  Loop #" << (i + 1) << endl;
-      wcout << "----------------------------------------" << endl;
+      wcout << "Acting as Repeater!" << endl;
+
+      int maxIdleTime = TestParams->getMaxIdleTime();
+      wcout << "Max idle time = ";
+      if(maxIdleTime <= 0) { wcout << "endless!" << endl; }
+      else                 { wcout << maxIdleTime << "s" << endl; }
       wcout << endl;
 
-      if(!testTmlConnections()) break;            // test the connection API
-      if(!testTmlMultiListeners()) break;         // test the multi listener API
-      if(!testTmlSendingCommands()) break;        // test the sending commands API
-
-      i++;
+      startRepeater();
     }
-    while(i < n);
-    if(i == n) result = 0;
+    else
+    {
+      int i = 0, n = TestParams->getTestLoopCount();
+      wcout << "Tests - Start... ( " << n << " loop" << ((n > 1) ? "s )" : " )") << endl;
+      wcout << endl;
+      do
+      {
+        wcout << "----------------------------------------" << endl;
+        wcout << "  Loop #" << (i + 1) << endl;
+        wcout << "----------------------------------------" << endl;
+        wcout << endl;
 
-    wcout << endl;
-    wcout << "Tests - " << (result ? S_FINISH_FAILED : S_FINISH_SUCCESS) << endl;
-    wcout << endl;
+        //if(!testTmlConnections()) break;            // test the connection API
+        //if(!testTmlMultiListeners()) break;         // test the multi listener API
+        if(!testTmlTLS()) break;                    // test the TLS encryption API
+        //if(!testTmlSendingCommands()) break;        // test the sending commands API
+
+        i++;
+      }
+      while(i < n);
+      if(i == n) result = 0;
+
+      wcout << endl;
+      wcout << "Tests - " << (result ? S_FINISH_FAILED : S_FINISH_SUCCESS) << endl;
+      wcout << endl;
+    }
 
     DELETE_OBJ(TestParams);
     deleteGlobalMutex();

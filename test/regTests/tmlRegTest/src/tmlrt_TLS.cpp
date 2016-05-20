@@ -35,43 +35,24 @@
  *    wobe-systems GmbH
  */
 
-#include "tmlrt_Connections.h"
-#include "TmlConnectionTester.h"
+#include "tmlrt_TLS.h"
+#include "TmlTLSTester.h"
 
-/** @ingroup Test_Connections
-* @brief Test of the TML connection API
-*
-* A sender, a listener and a command are initialized and the command is synchronously(abbr. sync) send
-* to the listener. It is checked at the listener if the data, that was send with the command,
-* stayed the same and is then overwritten. After the reply of the listener, the data is checked again.
+/** @ingroup Test_TLS
+* @brief Test of the TML TLS encryption API
 *
 * @returns bool : false on failure of test, true on success.
 */
-bool testTmlConnections()
+bool testTmlTLS()
 {
   bool success = false;
-	TmlConnectionTester* tester = new TmlConnectionTester(tmlrtT("TmlConnectionTester"));
+	TmlTLSTester* tester = new TmlTLSTester(tmlrtT("TmlTLSTester"));
   if(tester)
   {
     do
     {
       if(!tester->prepare()) break;
-
-      if(!tester->testConnect()) break;
-      if(!tester->testClose()) break;
-      if(!tester->testGetAddress()) break;
-      if(!tester->testGetRemoteProfiles()) break;
-      if(!tester->testValidate()) break;
-      if(!tester->testGetConnectionCount()) break;
-      if(!tester->testGetConnection_Core()) break;
-      if(!tester->testGetConnectionByAddress()) break;
-      if(!tester->testSetOnConnect()) break;
-      if(!tester->testSetOnDisconnect()) break;
-      if(!tester->testSendSync()) break;
-      if(!tester->testSendAsync()) break;
-      if(!tester->testGetConnection_Cmd()) break;
-      if(!tester->testConnectionEvents()) break;
-      if(!tester->testConnectionBalancers()) break;
+      if(!tester->testTLS()) break;
     }
     while(false);
 
@@ -80,4 +61,21 @@ bool testTmlConnections()
 	  DELETE_OBJ(tester);
   }
   return(success);
+}
+
+/** @ingroup Test_TLS
+* @brief Starts the repeater function for the TLS regression test
+*/
+void startRepeater()
+{
+	TmlTLSTester* repeater = new TmlTLSTester(tmlrtT("TmlTLSRepeater"));
+  if(repeater)
+  {
+    if(repeater->prepare())
+    {
+      repeater->startRepeater();
+    }
+    repeater->cleanup();
+	  DELETE_OBJ(repeater);
+  }
 }
