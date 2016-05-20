@@ -115,6 +115,12 @@
   */
 #define INITIAL_THREAD_PREEMPTIVE     TML_TRUE
 
+/////////////////////////////////////////////////////////////////////////////////////
+// Thread status definitions
+#define THREAD_STOPPED                      0
+#define THREAD_IN_PROCESS                   1
+#define THREAD_PENDING_TO_START             2
+
 
 // Prototying:
 class tmlConnectionObj;
@@ -152,7 +158,7 @@ struct VORTEXSenderFrameReceivedCallbackData{
 };
 
 struct TMLThreadDef{
-  volatile bool bThreadStarted;
+  volatile int iThreadStatus;
   VortexThread* pThreadDef;
 };
 

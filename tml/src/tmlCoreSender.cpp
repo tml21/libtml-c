@@ -61,7 +61,7 @@
 axl_bool  intern_thread_destroy (TMLThreadDef* threadInfo)
 {
   // wait for thread finish...
-  while (threadInfo->bThreadStarted)
+  while (threadInfo->iThreadStatus)
   {
     SleepForMilliSeconds(0);
   }
@@ -102,7 +102,7 @@ axl_bool  intern_thread_create (TMLThreadDef* threadInfo, FUNC_STDCALL func(void
 FUNC_STDCALL AsyncHandlingThread (axlPointer pParam)
 {
   AsyncHandlingData* pThreadData = (AsyncHandlingData*)pParam;
-  pThreadData->threadInfo.bThreadStarted = true;
+  pThreadData->threadInfo.iThreadStatus = THREAD_IN_PROCESS;
   tmlLogHandler* pLog = pThreadData->payload->pLog;
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ FUNC_STDCALL AsyncHandlingThread (axlPointer pParam)
   pLog->log (TML_LOG_VORTEX_MUTEX, "TMLCoreSender", "AsyncHandlingThread", "Vortex CMD", "vortex_mutex_unlock");
   intern_mutex_unlock (pThreadData->terminationMutex, pLog, "AsyncHandlingThread");
 
-  pThreadData->threadInfo.bThreadStarted = false;
+  pThreadData->threadInfo.iThreadStatus = THREAD_STOPPED;
   return 0;
 }
 
@@ -141,6 +141,7 @@ int StartAsyncHandlingThread(AsyncHandlingData* threadData, tmlEventHandler* eve
   threadData->payload = payload;
   threadData->eventHandler = eventHandler;
   threadData->terminationMutex = mutexAsyncThreadSync;
+  threadData->threadInfo.iThreadStatus = THREAD_PENDING_TO_START;
 
   payload->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreSender", "StartAsyncHandlingThread", "Vortex CMD", "vortex_thread_create");
   // Thread- generation log
@@ -209,7 +210,7 @@ int TMLCoreSender::RestartAsyncHandlingThread(AsyncHandlingData* threadData, con
 FUNC_STDCALL TimerThread( void* pParam)
 {
   TimerThreadData* pThreadData = (TimerThreadData*)pParam;
-  pThreadData->threadInfo->bThreadStarted = true;
+  pThreadData->threadInfo->iThreadStatus = THREAD_IN_PROCESS;
 
   bool bTerminateThread = false;
 
@@ -271,7 +272,7 @@ FUNC_STDCALL TimerThread( void* pParam)
 
   // Thread end
   pThreadData->pLog->log (TML_LOG_CORE_IO, "TMLCoreSender", "TimerThread", "TimerThread", "terminated");
-  pThreadData->threadInfo->bThreadStarted = false;
+  pThreadData->threadInfo->iThreadStatus = THREAD_STOPPED;
   return 0;
 }
 
@@ -287,17 +288,10 @@ int StartTimerThread(TimerThreadData* timerThreadData, tmlEventHandler* eventHan
   timerThreadData->pLog                 = pLogHandler;
   timerThreadData->eventHandler         = eventHandler;
   timerThreadData->terminationMutex     = NULL;
+  timerThreadData->threadInfo->iThreadStatus = THREAD_PENDING_TO_START;
 
   pLogHandler->log (TML_LOG_VORTEX_CMD, "TMLCoreSender", "StartTimerThread", "Vortex CMD", "vortex_thread_create");
-#ifdef LINUX
-  #ifdef OS_X
   axl_bool bSuccess = intern_thread_create(timerThreadData->threadInfo, TimerThread, timerThreadData);
-  #else // OSX
-    axl_bool bSuccess = intern_thread_create(timerThreadData->threadInfo, TimerThread, timerThreadData);
-  #endif // OSX
-#else // LINUX
-    axl_bool bSuccess = intern_thread_create(timerThreadData->threadInfo, TimerThread, timerThreadData);
-#endif // LINUX
   if (!bSuccess){
     iRet = TML_ERR_SENDER_NOT_INITIALIZED;
   }
@@ -310,7 +304,7 @@ int StartTimerThread(TimerThreadData* timerThreadData, tmlEventHandler* eventHan
  */
 void StopTimerThread(const char* hStopTimer, AsyncHandlingThreadData* pThreadData, TMLThreadDef* threadInfo)
 {
-  if (threadInfo->bThreadStarted){
+  if (threadInfo->iThreadStatus){
     pThreadData->pLog->log (TML_LOG_CORE_IO, "TMLCoreSender", "StopTimerThread", "Timer Thread", "Stop");
     if (! pThreadData->eventHandler->SetEventOnHandle(hStopTimer)){
       pThreadData->pLog->log ("TMLCoreSender", "StopTimerThread", "SetEvent", "failed");
@@ -671,7 +665,6 @@ void AsyncHandlingThreadMethod (LPVOID pParam)
   VORTEXSenderFrameReceivedCallbackData* callbackData = NULL;
   AsyncHandlingThreadData* pThreadData = (AsyncHandlingThreadData*)pParam;
   bool bTimerStarted = false;
-  pThreadData->threadInfo->bThreadStarted = false;
 
   bool bLock = true;
   intern_mutex_lock (pThreadData->mutexCriticalSection, pThreadData->pLog, "AsyncHandlingThreadMethod");
@@ -2021,6 +2014,7 @@ int TMLCoreSender::TMLCoreSender_SendMessage(tmlConnectionObj* pConnectionObj, T
           m_AsyncHandlingThreadData.senderSyncEventArray = m_senderSyncEventArray;
           m_AsyncHandlingThreadData.dwTimeoutValue = iTimeout;
           m_AsyncHandlingThreadData.timerThreadData = &m_timerThreadData;
+          m_AsyncHandlingThreadData.timerThreadData->threadInfo->iThreadStatus = THREAD_STOPPED;
           m_AsyncHandlingThreadData.tmlhandle = tmlhandle;
           m_AsyncHandlingThreadData.mutexCriticalSection = &m_mutexCriticalSection;
           m_AsyncHandlingThreadData.connectionObj = pConnectionObj;
@@ -2029,6 +2023,7 @@ int TMLCoreSender::TMLCoreSender_SendMessage(tmlConnectionObj* pConnectionObj, T
           m_AsyncHandlingThreadData.multiAsyncMsg = m_multiAsyncMsg;
           m_AsyncHandlingThreadData.timerTerminationMutex = &m_mutexTimerThreadSync;
           m_AsyncHandlingThreadData.threadInfo = &m_asyncThreadInfo;
+          m_AsyncHandlingThreadData.threadInfo->iThreadStatus = THREAD_STOPPED;
 
           ////////////////////////////////////////////
           // there is an active async command processing:
@@ -2133,6 +2128,7 @@ int TMLCoreSender::TMLCoreSender_SendAsyncMessage(tmlConnectionObj* pConnectionO
           m_AsyncHandlingThreadData.senderSyncEventArray = m_senderSyncEventArray;
           m_AsyncHandlingThreadData.dwTimeoutValue = iTimeout;
           m_AsyncHandlingThreadData.timerThreadData = &m_timerThreadData;
+          m_AsyncHandlingThreadData.timerThreadData->threadInfo->iThreadStatus = THREAD_STOPPED;
           m_AsyncHandlingThreadData.tmlhandle = tmlhandle;
           m_AsyncHandlingThreadData.mutexCriticalSection = &m_mutexCriticalSection;
           m_AsyncHandlingThreadData.connectionObj = pConnectionObj;
@@ -2141,6 +2137,7 @@ int TMLCoreSender::TMLCoreSender_SendAsyncMessage(tmlConnectionObj* pConnectionO
           m_AsyncHandlingThreadData.multiAsyncMsg = m_multiAsyncMsg;
           m_AsyncHandlingThreadData.timerTerminationMutex = &m_mutexTimerThreadSync;
           m_AsyncHandlingThreadData.threadInfo = &m_asyncThreadInfo;
+          m_AsyncHandlingThreadData.threadInfo->iThreadStatus = THREAD_STOPPED;
           ////////////////////////////////////////////
           // there is an active async command processing:
           SetAsyncCmdProcessing(true);

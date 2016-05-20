@@ -48,7 +48,7 @@
 FUNC_STDCALL EventHandlingThread (axlPointer pParam)
 {
   EventMsgHandlingParams* pThreadHandlingParams = (EventMsgHandlingParams*)pParam;
-  pThreadHandlingParams->threadInfo->bThreadStarted = true;
+  pThreadHandlingParams->threadInfo->iThreadStatus = THREAD_IN_PROCESS;
   tmlLogHandler* pLog = pThreadHandlingParams->pLog;
 
   pLog->log (TML_LOG_CORE_IO, "tmlEventCallHandler", "EventHandlingThread", "EventHandlingThread", "start");
@@ -109,7 +109,7 @@ FUNC_STDCALL EventHandlingThread (axlPointer pParam)
   // Thread end
   pLog->log (TML_LOG_CORE_IO, "tmlEventCallHandler", "EventHandlingThread", "EventHandlingThread", "terminated");
 
-  pThreadHandlingParams->threadInfo->bThreadStarted = false;
+  pThreadHandlingParams->threadInfo->iThreadStatus = THREAD_STOPPED;
   return 0;
 }
 
@@ -130,7 +130,7 @@ tmlEventCallHandler::tmlEventCallHandler(tmlLogHandler* loghandler, void* pCBFun
 
   ////////////////////////////////////////////////////////////////////////////
   // No thread started at this momemt
-  m_threadInfo.bThreadStarted = false;
+  m_threadInfo.iThreadStatus = THREAD_STOPPED;
 }
 
 
@@ -285,6 +285,7 @@ int tmlEventCallHandler::startEventMessageHandlingThread(EventMsgHandlingParams*
   threadData->terminationMutex = NULL;
   threadData->pCBFunc = pCBFunc;
   threadData->threadInfo = threadInfo;
+  threadData->threadInfo->iThreadStatus = THREAD_PENDING_TO_START;
 
   pLog->log (TML_LOG_VORTEX_CMD, "tmlEventCallHandler", "StartEventMessageHandlingThread", "Vortex CMD", "vortex_thread_create");
     axl_bool bSuccess = intern_thread_create(threadInfo, EventHandlingThread, threadData);
@@ -301,7 +302,7 @@ int tmlEventCallHandler::startEventMessageHandlingThread(EventMsgHandlingParams*
  */
 void tmlEventCallHandler::stopEventMessageHandlingThread()
 {
-  if (m_threadInfo.bThreadStarted){
+  if (m_threadInfo.iThreadStatus){
     m_log->log (TML_LOG_CORE_IO, "tmlEventCallHandler", "StopEventMessageHandlingThread", "EventHandlingThread", "Stop");
     if (! m_eventHandler->SetEventOnHandle(m_eventMessageHandlingEventArray[EVENT_HANDLING_MESSAGE_TERMINATE_EVENT])){
       m_log->log ("tmlEventCallHandler", "StopEventMessageHandlingThread", "SetEvent", "failed");
