@@ -37,10 +37,12 @@
 
 #include "TmlSendingCommandsTester.h"
 #include "TestParams.h"
+#include <windows.h>
 
 TmlSendingCommandsTester::TmlSendingCommandsTester(SIDEX_TCHAR* testProcessName) : TmlTester(testProcessName)
 {
-    
+    aData.blockUntilAsyncReturn = false;
+    aData.sleepTimer = 4000;
 }
 
 
@@ -63,9 +65,11 @@ void TmlSendingCommandsTester::_prepare()
   }
 }
 
+
+
 bool TmlSendingCommandsTester::testSyncMessage()
 {
-  setTestSectionName(tmlrtT("testConnect"));
+  setTestSectionName(tmlrtT("tml_Send_SyncMessage"));
   messageOutput(S_START);
   reset();
 
@@ -80,6 +84,7 @@ bool TmlSendingCommandsTester::testSyncMessage()
 
     TML_COMMAND_HANDLE tCommandEmpty = TML_HANDLE_TYPE_NULL;
     TML_COMMAND_HANDLE tCommand = TML_HANDLE_TYPE_NULL;
+
     tml_Cmd_Create(&tCommand);
     setCommandID(tCommand, 1234);
     
@@ -93,7 +98,7 @@ bool TmlSendingCommandsTester::testSyncMessage()
             checkForSuccess();
 
             // A valid test call for tml_Send_SyncMessage
-            m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            m_iErr = tml_Send_SyncMessage( getCore(0), tCommand, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
             checkForSuccess();
 
             // Check for missing core handle
@@ -129,6 +134,151 @@ bool TmlSendingCommandsTester::testSyncMessage()
 
     deleteCore(1);
     deleteCore(0);
+
+    DELETE_STR(sAddress1);
+
+  } // network card count > 0
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+void TmlSendingCommandsTester::callBackAsyncCmd(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData)
+{
+    AsyncCallbackData* atest = (AsyncCallbackData*) pCBData;
+    
+    cout << "Sender waited for: " << atest->sleepTimer << "ms" << endl;
+    atest->blockUntilAsyncReturn = true;
+}
+
+void TmlSendingCommandsTester::listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData)
+{
+    AsyncCallbackData* atest = (AsyncCallbackData*) pCBData;
+    TestingForReturns check;
+    TML_COMMAND_HANDLE CommandHdl = TML_HANDLE_TYPE_NULL;
+    tml_Cmd_Create(&CommandHdl);
+    
+    int aSleep = atest->sleepTimer / 4;
+
+    cout << "Listener received sleep command: " << atest->sleepTimer << "ms" << endl;
+
+    // Check for invalid TML command handle
+    check.m_iErr = tml_Send_AsyncProgressReply(NULL, 1);
+    check.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncProgressReply(MissingObj)"));
+
+    // Check if the progress count is out of range
+    check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, -1);
+    check.checkForExpectedReturnCode(TML_ERR_COMMAND_PROGRESS_RANGE, tmlrtT("tml_Send_AsyncProgressReply(CommandProgressOutOfRange)"));
+
+    // Check if core handle is assigned to a command 
+    check.m_iErr = tml_Send_AsyncProgressReply(CommandHdl, 1);
+    check.checkForExpectedReturnCode(TML_ERR_ATTRIBUTE_NOT_SET, tmlrtT("tml_Send_AsyncProgressReply(NoCoreAssignedtoCmd)"));
+ 
+    // A valid test call for tml_Send_AsyncProgressReply
+    check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 1);
+    Sleep(aSleep);
+
+    check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 25);
+    Sleep(aSleep);
+
+    check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 50);
+    Sleep(aSleep);
+
+    check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 75);
+    Sleep(aSleep);
+
+    check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 100);
+
+    tml_Cmd_Free(&CommandHdl);
+}
+
+void TmlSendingCommandsTester::asyncProgressDisplay(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData, TML_INT32 iProgress)
+{
+    cout << "Received Progress Reply: " << iProgress << "%" << endl;
+}
+
+bool TmlSendingCommandsTester::testAsyncMessage()
+{
+  setTestSectionName(tmlrtT("tml_Send_AsyncMessage"));
+  messageOutput(S_START);
+  reset();
+
+  int n = TestParams->getNetworkCardCount();
+
+  if(n > 0)
+  {  
+    int          iPort     = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard     = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress1 = tmlrt_cat(sCard, tmlrtT(":"), tmlrt_itoa(iPort), 4);
+    DELETE_STR(sCard);
+
+    TML_COMMAND_HANDLE tCommand = TML_HANDLE_TYPE_NULL;
+    tml_Cmd_Create(&tCommand);
+    setCommandID(tCommand, 1234);
+
+    if(createCore(0) && createCore(1))
+    {
+      if(createListener(1, 0, sAddress1))
+      {
+        if(startListener(1, 0))
+        {
+
+            m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE);
+            checkForSuccess();
+
+            // Check for missing core handle
+            m_iErr = tml_Send_AsyncMessage(TML_HANDLE_TYPE_NULL, tCommand, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AyncMessage(NoCoreHandle)"));
+
+            // Check for wrong profile
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_SENDER_PROFILE_NOT_SUPPORTED, tmlrtT("tml_Send_AsyncMessage(WrongProfile)")); 
+
+            // Check for wrong profile
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_SENDER_PROFILE_NOT_SUPPORTED, tmlrtT("tml_Send_AsyncMessage(WrongProfile)"));    
+            
+            // Check for invalid profile type
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, NULL , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(SIDEX_ERR_UNICODE, tmlrtT("tml_Send_AsyncMessage(InvalidProfileType)"));
+
+            // Check for invalid host address
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE , tmlrtT("127.0.5.1"), tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_SENDER_INVALID_PARAMS, tmlrtT("tml_Send_AsyncMessage(WrongHostAddress)"));
+
+            // Listener callback for command id 1234
+            m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, 1234, TmlSendingCommandsTester::listenerCallBack, &(aData));
+            checkForSuccess();
+
+            // Sender callback when listener returns
+            m_iErr = tml_Cmd_Register_CommandReady(tCommand, TmlSendingCommandsTester::callBackAsyncCmd, &(aData));
+            checkForSuccess();
+
+            // Sender callback for incoming listener progress messages
+            m_iErr = tml_Cmd_Register_Progress(tCommand, TmlSendingCommandsTester::asyncProgressDisplay, &(aData));
+            checkForSuccess();
+
+            // Check for invalid host port
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE , S_TP_127_0_0_1, tmlrtT("5555"), 3000);
+            checkForExpectedReturnCode(TML_ERR_SENDER_INVALID_PARAMS, tmlrtT("tml_Send_AsyncMessage(WrongHostPort)"));
+
+            // A valid test call for tml_Send_AsyncMessage
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 10000);
+            checkForSuccess();       
+
+            while(!(aData.blockUntilAsyncReturn));
+            aData.blockUntilAsyncReturn = false;                       
+
+        } // startListener 1, 0
+        deleteListener(1, 0);
+      } // createListener 1, 0, addr 1
+    } // createCore 0 and 1
+
+    tml_Cmd_Free(&tCommand);
+    deleteCore(1);
+    deleteCore(0);    
 
     DELETE_STR(sAddress1);
 

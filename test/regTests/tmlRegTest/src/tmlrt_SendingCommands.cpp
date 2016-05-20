@@ -47,7 +47,8 @@ bool testTmlSendingCommands()
     do
     {
       if(!tester->prepare()) break;
-      if(!tester->testSyncMessage()) break;
+      //if(!tester->testSyncMessage()) break;
+      if(!tester->testAsyncMessage()) break;
 
     }
     while(false);

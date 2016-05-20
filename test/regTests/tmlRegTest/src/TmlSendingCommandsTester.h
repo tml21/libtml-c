@@ -41,23 +41,34 @@
 #include "TmlTester.h"
 #include "TmlCore.h"
 
+typedef struct 
+{
+    bool blockUntilAsyncReturn;
+    int  sleepTimer; 
+        
+}AsyncCallbackData;
 
 class TmlSendingCommandsTester : public TmlTester
 {
 private:
-	TmlCore* m_coreSenderSide;
-	TmlCore* m_coreListenerSide;
-	array<int, AMOUNT_OF_CMDS> m_cmdCodes;
-
+  AsyncCallbackData aData;
+  	
 protected:
   void _prepare();
   //virtual void _cleanup();
+
 
 public:
   TmlSendingCommandsTester(SIDEX_TCHAR* testProcessName = NULL);
   ~TmlSendingCommandsTester(void);
 
-	bool testSyncMessage();
+  static void callBackAsyncCmd(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
+  static void listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
+  static void asyncProgressDisplay(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData, TML_INT32 iProgress);
+ 
+ 	bool testSyncMessage();
+  bool testAsyncMessage();
+
 	
 };
 
