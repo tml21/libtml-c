@@ -373,11 +373,11 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_W (TML_
 /**
  * @brief   Allows to activate TLS profile automatic negotiation for every connection created.
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, TML_CTSTR* serverName);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, TML_CTSTR* serverName);
 /**
  * char* API
 **/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_A (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char* serverName){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_A (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char* serverName){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
@@ -399,19 +399,19 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_A (TML_CORE_H
 /**
  * wchar_t* API
 **/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_X (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, wchar_t* serverName){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_X (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, wchar_t* serverName){
   TML_INT32 iRet = TML_SUCCESS;
 
   TML_INT32 iLengthUtf8;
   char* utf8Str = NULL;
   try{
     if (NULL == serverName){
-      iRet = tml_Tls_Core_Set_AutoNegotion_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
+      iRet = tml_Tls_Core_Set_AutoNegotiation_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
     }
     else{
       utf8Str = UTF32toUTF8((wchar_t*)serverName, &iLengthUtf8);
       if (NULL != utf8Str){
-        iRet = tml_Tls_Core_Set_AutoNegotion_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
+        iRet = tml_Tls_Core_Set_AutoNegotiation_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
 
         delete[] utf8Str;
       }
@@ -425,19 +425,19 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_X (TML_CORE_H
 /**
  * char16_t* API
 **/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_W (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char16_t* serverName){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_W (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char16_t* serverName){
   TML_INT32 iRet = TML_SUCCESS;
 
   TML_INT32 iLengthUtf8;
   char* utf8Str = NULL;
   try{
     if (NULL == serverName){
-      iRet = tml_Tls_Core_Set_AutoNegotion_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
+      iRet = tml_Tls_Core_Set_AutoNegotiation_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
     }
     else{
       char* utf8Str = UTF16toUTF8((wchar_t*)serverName, &iLengthUtf8);
       if (NULL != utf8Str){
-        iRet = tml_Tls_Core_Set_AutoNegotion_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
+        iRet = tml_Tls_Core_Set_AutoNegotiation_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
 
         delete[] utf8Str;
       }

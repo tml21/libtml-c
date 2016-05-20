@@ -242,18 +242,18 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_
  *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid coreHandle handle
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, TML_CTSTR* serverName);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_X (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, wchar_t* serverName);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_W (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char16_t* serverName);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_A (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char* serverName);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, TML_CTSTR* serverName);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_X (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, wchar_t* serverName);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_W (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char16_t* serverName);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_A (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char* serverName);
 #if !defined (DOXYGEN_GENERATION)
   #ifdef TML_UNICODE
-    #define tml_Tls_Core_Set_AutoNegotion tml_Tls_Core_Set_AutoNegotion_X
+    #define tml_Tls_Core_Set_AutoNegotiation tml_Tls_Core_Set_AutoNegotiation_X
   #else
     #ifdef TML_UNICODE_16
-      #define tml_Tls_Core_Set_AutoNegotion  tml_Tls_Core_Set_AutoNegotion_W
+      #define tml_Tls_Core_Set_AutoNegotiation  tml_Tls_Core_Set_AutoNegotiation_W
     #else
-      #define tml_Tls_Core_Set_AutoNegotion  tml_Tls_Core_Set_AutoNegotion_A
+      #define tml_Tls_Core_Set_AutoNegotiation  tml_Tls_Core_Set_AutoNegotiation_A
     #endif // TML_UNICODE_16
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION
