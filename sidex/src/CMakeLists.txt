@@ -40,6 +40,11 @@ set(COMMON_INCLUDE_PATH ../../common/src)
 set(COMMON_SRC_PATH ../../common/src)
 
 #######################################################
+## set build parameter for install (default = yes
+#######################################################
+SET (GEN_TML_INSTALLER_FILES yes CACHE STRING "set tml installer files")
+
+#######################################################
 ## Source & Header
 set  (COMMON_INSTALL_SOURCES_HEADER ${COMMON_SRC_PATH}/globalDefines.h 
                     ${COMMON_SRC_PATH}/stdIntTypes.h )
@@ -369,6 +374,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
 #######################################################
 ## Install
-install (TARGETS ${SIDEXLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
-install (FILES ${SIDEX_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
-install (FILES ${COMMON_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+if (${GEN_TML_INSTALLER_FILES} STREQUAL yes)
+  install (TARGETS ${SIDEXLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
+  install (FILES ${SIDEX_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+  install (FILES ${COMMON_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+endif (${GEN_TML_INSTALLER_FILES} STREQUAL yes)
