@@ -65,7 +65,8 @@ public:
   static void callBackAsyncCmd(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
   static void listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
   static void asyncProgressDisplay(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData, TML_INT32 iProgress);
- 
+  static void asyncStatusReply(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData, TML_INT32 iType, TML_CTSTR *sMsg);
+
  	bool testSyncMessage();
   bool testAsyncMessage();
 
