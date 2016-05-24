@@ -37,7 +37,6 @@
 
 #include "TmlSendingCommandsTester.h"
 #include "TestParams.h"
-#include <windows.h>
 
 TmlSendingCommandsTester::TmlSendingCommandsTester(SIDEX_TCHAR* testProcessName) : TmlTester(testProcessName)
 {
@@ -164,7 +163,7 @@ void TmlSendingCommandsTester::listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TM
     TestingForReturns check;
     TML_COMMAND_HANDLE CommandHdl = TML_HANDLE_TYPE_NULL;
     tml_Cmd_Create(&CommandHdl);
-    
+
     int aSleep = atest->sleepTimer / 4;
 
     cout << "Listener received sleep command: " << atest->sleepTimer << "ms" << endl;
@@ -220,19 +219,19 @@ void TmlSendingCommandsTester::listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TM
     // A valid test call for tml_Send_AsyncProgressReply
     check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 1);
     check.checkForSuccess();
-    Sleep(aSleep);
+    TmlSleep(aSleep);
 
     check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 25);
     check.checkForSuccess();
-    Sleep(aSleep);
+    TmlSleep(aSleep);
 
     check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 50);
     check.checkForSuccess();
-    Sleep(aSleep);
+    TmlSleep(aSleep);
 
     check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 75);
     check.checkForSuccess();
-    Sleep(aSleep);
+    TmlSleep(aSleep);
 
     check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, 100);
     check.checkForSuccess();
@@ -250,7 +249,7 @@ void TmlSendingCommandsTester::asyncProgressDisplay(TML_COMMAND_HANDLE tmlhandle
 void TmlSendingCommandsTester::asyncStatusReply(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData, TML_INT32 iType, TML_CTSTR *sMsg)
 {
   cout << "iType: " << iType << " Message: ";
-  fprintf(stdout, "%ls\n", sMsg);
+  fprintf(stdout, "%ls\n", (SIDEX_TCHAR *) sMsg);
   //wcout << (wchar_t *)sMsg << endl;
 }
 
