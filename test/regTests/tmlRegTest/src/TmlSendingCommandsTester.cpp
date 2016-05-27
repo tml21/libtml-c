@@ -42,6 +42,7 @@ TmlSendingCommandsTester::TmlSendingCommandsTester(SIDEX_TCHAR* testProcessName)
 {
     aData.blockUntilAsyncReturn = false;
     aData.sleepTimer = 4000;
+    aData.checkAsyncReturn = 0;
 }
 
 
@@ -64,7 +65,11 @@ void TmlSendingCommandsTester::_prepare()
   }
 }
 
-
+void TmlSendingCommandsTester::callBackSyncCmd(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData)
+{
+    cout << "Listener received cmd 1000" << endl;
+    TmlSleep(1500);
+}
 
 bool TmlSendingCommandsTester::testSyncMessage()
 {
@@ -82,7 +87,11 @@ bool TmlSendingCommandsTester::testSyncMessage()
     DELETE_STR(sCard);
 
     TML_COMMAND_HANDLE tCommandEmpty = TML_HANDLE_TYPE_NULL;
-    TML_COMMAND_HANDLE tCommand = TML_HANDLE_TYPE_NULL;
+    TML_COMMAND_HANDLE tCommandSleep = TML_HANDLE_TYPE_NULL;
+    TML_COMMAND_HANDLE tCommand      = TML_HANDLE_TYPE_NULL;
+
+    tml_Cmd_Create(&tCommandSleep);
+    setCommandID(tCommandSleep, 1000);
 
     tml_Cmd_Create(&tCommand);
     setCommandID(tCommand, 1234);
@@ -93,15 +102,24 @@ bool TmlSendingCommandsTester::testSyncMessage()
       {
         if(startListener(1, 0))
         {
+            
             m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE);
+            checkForSuccess();
+
+            m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, (TML_COMMAND_ID_TYPE) 1000, &(TmlSendingCommandsTester::callBackSyncCmd), &(aData));
             checkForSuccess();
 
             /***********************************  START Test tml_Send_SyncMessage  *******************************/
 
+            
+            // tml_Send_SyncMessage timeout is 1000ms. The callBackSyncCmd waits 1500ms which results in a timeout error
+            m_iErr = tml_Send_SyncMessage( getCore(0), tCommandSleep, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 1000);
+            checkForExpectedReturnCode(TML_ERR_TIMEOUT, tmlrtT("tml_Send_SyncMessage(Timeout)"));
+            
             // A valid test call for tml_Send_SyncMessage
             m_iErr = tml_Send_SyncMessage( getCore(0), tCommand, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
             checkForSuccess();
-
+            
             // Check for missing core handle
             m_iErr = tml_Send_SyncMessage(TML_HANDLE_TYPE_NULL, tCommand, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
             checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_SyncMessage(NoCoreHandle)"));
@@ -115,9 +133,9 @@ bool TmlSendingCommandsTester::testSyncMessage()
             checkForExpectedReturnCode(TML_ERR_SENDER_PROFILE_NOT_SUPPORTED, tmlrtT("tml_Send_SyncMessage(WrongProfile)"));            
 
             #if defined(SIDEX_UNICODE) || defined(TML_UNICODE)
-            // Check for invalid profile type
+            // Check for invalid Unicode error
             m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, NULL , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
-            checkForExpectedReturnCode(SIDEX_ERR_UNICODE, tmlrtT("tml_Send_SyncMessage(InvalidProfileType)"));
+            checkForExpectedReturnCode(SIDEX_ERR_UNICODE, tmlrtT("tml_Send_SyncMessage(Unicode error)"));
             #endif
 
             // Check for invalid host address
@@ -126,7 +144,8 @@ bool TmlSendingCommandsTester::testSyncMessage()
 
             // Check for invalid host port
             m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, S_IO_PROFILE , S_TP_127_0_0_1, tmlrtT("5555"), 3000);
-            checkForExpectedReturnCode(TML_ERR_SENDER_INVALID_PARAMS, tmlrtT("tml_Send_SyncMessage(WrongHostPort)"));
+            checkForExpectedReturnCode(TML_ERR_SENDER_INVALID_PARAMS, tmlrtT("tml_Send_SyncMessage(WrongHostPort)"));           
+            
             
             /***********************************  END Test tml_Send_SyncMessage  *******************************/
            
@@ -135,6 +154,9 @@ bool TmlSendingCommandsTester::testSyncMessage()
         deleteListener(1, 0);
       } // createListener 1, 0, addr 1
     } // createCore 0 and 1
+
+    tml_Cmd_Free(&tCommand);
+    tml_Cmd_Free(&tCommandSleep);
 
     deleteCore(1);
     deleteCore(0);
@@ -152,9 +174,23 @@ bool TmlSendingCommandsTester::testSyncMessage()
 void TmlSendingCommandsTester::callBackAsyncCmd(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData)
 {
     AsyncCallbackData* atest = (AsyncCallbackData*) pCBData;
-    
-    cout << "Sender waited for: " << atest->sleepTimer << "ms" << endl;
+    cout << "Sender command 1234 finished waiting time: " << atest->sleepTimer << "ms" << endl;
+    if(atest->checkAsyncReturn == 0) atest->checkAsyncReturn = 1234;
     atest->blockUntilAsyncReturn = true;
+}
+
+void TmlSendingCommandsTester::callBackAsyncCmdInstant(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData)
+{
+    AsyncCallbackData* atest = (AsyncCallbackData *) pCBData;
+    cout << "Sender command 1235 finished" << endl;
+    //TmlSleep(3500);
+    if(atest->checkAsyncReturn == 0) atest->checkAsyncReturn = 1235;
+}
+
+void TmlSendingCommandsTester::listenerCallBackReturnInstantly(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData)
+{
+    AsyncCallbackData * atest = (AsyncCallbackData *) pCBData;
+    cout << "Listener received command 1235 and returns immediatly" << endl;
 }
 
 void TmlSendingCommandsTester::listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData)
@@ -166,46 +202,11 @@ void TmlSendingCommandsTester::listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TM
 
     int aSleep = atest->sleepTimer / 4;
 
-    cout << "Listener received sleep command: " << atest->sleepTimer << "ms" << endl;
-
-    /*********************************  START Test tml_Send_AsyncStatusReply  *****************************/
-
-    // Check for invalid TML command handle
-    check.m_iErr = tml_Send_AsyncStatusReply(NULL, 10, tmlrtT("Test"));
-    check.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncStatusReply(MissingObj)"));
-
-    // Check for not supported command handle
-    check.m_iErr = tml_Send_AsyncStatusReply(CommandHdl, 10, tmlrtT("Test"));
-    check.checkForExpectedReturnCode(TML_ERR_ATTRIBUTE_NOT_SET, tmlrtT("tml_Send_AsyncStatusReply(MissingObj)"));
-    
-    // Check for not undefined reply type
-    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, -1, tmlrtT("Test"));
-    check.checkForExpectedReturnCode(TML_ERR_COMMAND_REPLY_TYPE_UNDEFINED, tmlrtT("tml_Send_AsyncStatusReply(AttributeNotSet)"));
-
-    #if defined(SIDEX_UNICODE) || defined(TML_UNICODE)
-    // Check for Unicode error
-    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, -1, NULL);
-    check.checkForExpectedReturnCode(SIDEX_ERR_UNICODE, tmlrtT("tml_Send_AsyncStatusReply(UnicodeError)"));
-    #endif
-
-    // A valid test call for tml_Send_AsyncStatusReply
-    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, 10, tmlrtT("Test10"));
-    check.checkForSuccess();
-
-    // A valid test call for tml_Send_AsyncStatusReply
-    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, 20, tmlrtT("Test20"));
-    check.checkForSuccess();
-
-    // A valid test call for tml_Send_AsyncStatusReply
-    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, 30, tmlrtT("Test30"));
-    check.checkForSuccess();
-
-    /*********************************  END   Test tml_Send_AsyncStatusReply  *****************************/
-
+    cout << "Listener received command 1234 sleep time: " << atest->sleepTimer << "ms" << endl;
 
     /*********************************  START Test tml_Send_AsyncProgressReply  *****************************/
     // Check for invalid TML command handle
-    check.m_iErr = tml_Send_AsyncProgressReply(NULL, 1);
+    check.m_iErr = tml_Send_AsyncProgressReply(TML_HANDLE_TYPE_NULL, 1);
     check.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncProgressReply(MissingObj)"));
 
     // Check if the progress count is out of range
@@ -237,6 +238,40 @@ void TmlSendingCommandsTester::listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TM
     check.checkForSuccess();
 
     /*********************************  END   Test tml_Send_AsyncProgressReply  *****************************/
+
+    /*********************************  START Test tml_Send_AsyncStatusReply  *****************************/
+
+    // Check for invalid TML command handle
+    check.m_iErr = tml_Send_AsyncStatusReply(TML_HANDLE_TYPE_NULL , 10, tmlrtT("Test"));
+    check.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncStatusReply(MissingObj)"));
+
+    // Check for not supported command handle
+    check.m_iErr = tml_Send_AsyncStatusReply(CommandHdl, 10, tmlrtT("Test"));
+    check.checkForExpectedReturnCode(TML_ERR_ATTRIBUTE_NOT_SET, tmlrtT("tml_Send_AsyncStatusReply(MissingObj)"));
+    
+    // Check for not undefined reply type
+    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, -1, tmlrtT("Test"));
+    check.checkForExpectedReturnCode(TML_ERR_COMMAND_REPLY_TYPE_UNDEFINED, tmlrtT("tml_Send_AsyncStatusReply(AttributeNotSet)"));
+
+    #if defined(SIDEX_UNICODE) || defined(TML_UNICODE)
+    // Check for Unicode error
+    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, -1, NULL);
+    check.checkForExpectedReturnCode(SIDEX_ERR_UNICODE, tmlrtT("tml_Send_AsyncStatusReply(UnicodeError)"));
+    #endif
+
+    // A valid test call for tml_Send_AsyncStatusReply
+    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, 10, tmlrtT("Test10"));
+    check.checkForSuccess();
+
+    // A valid test call for tml_Send_AsyncStatusReply
+    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, 20, tmlrtT("Test20"));
+    check.checkForSuccess();
+
+    // A valid test call for tml_Send_AsyncStatusReply
+    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, 30, tmlrtT("Test30"));
+    check.checkForSuccess();
+
+    /*********************************  END   Test tml_Send_AsyncStatusReply  *****************************/
     
     tml_Cmd_Free(&CommandHdl);
 }
@@ -272,6 +307,10 @@ bool TmlSendingCommandsTester::testAsyncMessage()
     tml_Cmd_Create(&tCommand);
     setCommandID(tCommand, 1234);
 
+    TML_COMMAND_HANDLE tCommand2 = TML_HANDLE_TYPE_NULL;
+    tml_Cmd_Create(&tCommand2);
+    setCommandID(tCommand2, 1235);
+
     if(createCore(0) && createCore(1))
     {
       if(createListener(1, 0, sAddress1))
@@ -290,13 +329,9 @@ bool TmlSendingCommandsTester::testAsyncMessage()
             // Check for wrong profile
             m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
             checkForExpectedReturnCode(TML_ERR_SENDER_PROFILE_NOT_SUPPORTED, tmlrtT("tml_Send_AsyncMessage(WrongProfile)")); 
-
-            // Check for wrong profile
-            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
-            checkForExpectedReturnCode(TML_ERR_SENDER_PROFILE_NOT_SUPPORTED, tmlrtT("tml_Send_AsyncMessage(WrongProfile)"));    
-            
+    
             #if defined(SIDEX_UNICODE) || defined(TML_UNICODE)
-            // Check for invalid profile type
+            // Check for Unicode Error
             m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, NULL , S_TP_127_0_0_1, tmlrt_itoa(iPort), 3000);
             checkForExpectedReturnCode(SIDEX_ERR_UNICODE, tmlrtT("tml_Send_AsyncMessage(InvalidProfileType)"));
             #endif
@@ -317,6 +352,9 @@ bool TmlSendingCommandsTester::testAsyncMessage()
             m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, 1234, TmlSendingCommandsTester::listenerCallBack, &(aData));
             checkForSuccess();
 
+            m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, 1337, TmlSendingCommandsTester::listenerCallBack, &(aData));
+            checkForSuccess();
+
             // Sender callback when listener returns
             m_iErr = tml_Cmd_Register_CommandReady(tCommand, TmlSendingCommandsTester::callBackAsyncCmd, &(aData));
             checkForSuccess();
@@ -329,6 +367,14 @@ bool TmlSendingCommandsTester::testAsyncMessage()
             m_iErr = tml_Cmd_Register_StatusReply(tCommand, TmlSendingCommandsTester::asyncStatusReply, &(aData));
             checkForSuccess();
 
+            // Listener command that returns immediatly
+            m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, 1235, TmlSendingCommandsTester::listenerCallBackReturnInstantly, &(aData));
+            checkForSuccess();
+
+            // Listener command that returns immediatly
+            m_iErr = tml_Cmd_Register_CommandReady(tCommand2, TmlSendingCommandsTester::callBackAsyncCmdInstant, &(aData));
+            checkForSuccess();
+
             /********************************** End of callback registrations ************************************/
 
             // A valid test call for tml_Send_AsyncMessage.  
@@ -336,8 +382,25 @@ bool TmlSendingCommandsTester::testAsyncMessage()
             m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 10000);
             checkForSuccess();       
 
+            TmlSleep(1000);
+
+            // This call tests the async behaviour of the libTML library
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand2, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 10000);
+            checkForSuccess();       
+
             while(!(aData.blockUntilAsyncReturn));
             aData.blockUntilAsyncReturn = false;                       
+
+            if(aData.checkAsyncReturn == 1235)
+            {
+                m_iErr = 0;
+            }
+            else if(aData.checkAsyncReturn == 1234)
+            {
+                cout << "Command 1234 returned first. This should not happen." << endl;
+                m_iErr = -1;
+            }             
+            checkForSuccess();
 
         } // startListener 1, 0
         deleteListener(1, 0);
@@ -345,6 +408,7 @@ bool TmlSendingCommandsTester::testAsyncMessage()
     } // createCore 0 and 1
 
     tml_Cmd_Free(&tCommand);
+    tml_Cmd_Free(&tCommand2);
     deleteCore(1);
     deleteCore(0);    
 

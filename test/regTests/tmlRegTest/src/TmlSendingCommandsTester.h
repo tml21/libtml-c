@@ -44,8 +44,9 @@
 typedef struct 
 {
     bool blockUntilAsyncReturn;
-    int  sleepTimer; 
-        
+    int  sleepTimer;
+    int  checkAsyncReturn;
+            
 }AsyncCallbackData;
 
 class TmlSendingCommandsTester : public TmlTester
@@ -62,14 +63,16 @@ public:
   TmlSendingCommandsTester(SIDEX_TCHAR* testProcessName = NULL);
   ~TmlSendingCommandsTester(void);
 
+  static void callBackSyncCmd(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
   static void callBackAsyncCmd(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
+  static void callBackAsyncCmdInstant(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
   static void listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
+  static void listenerCallBackReturnInstantly(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
   static void asyncProgressDisplay(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData, TML_INT32 iProgress);
   static void asyncStatusReply(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData, TML_INT32 iType, TML_CTSTR *sMsg);
 
  	bool testSyncMessage();
   bool testAsyncMessage();
-
 	
 };
 
