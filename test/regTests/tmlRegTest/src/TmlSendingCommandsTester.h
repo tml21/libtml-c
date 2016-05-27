@@ -43,7 +43,7 @@
 
 typedef struct 
 {
-    bool blockUntilAsyncReturn;
+    volatile bool blockUntilAsyncReturn;
     int  sleepTimer;
     int  checkAsyncReturn;
             

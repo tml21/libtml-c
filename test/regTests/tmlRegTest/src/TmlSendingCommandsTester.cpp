@@ -68,7 +68,7 @@ void TmlSendingCommandsTester::_prepare()
 void TmlSendingCommandsTester::callBackSyncCmd(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData)
 {
     cout << "Listener received cmd 1000" << endl;
-    TmlSleep(1500);
+    TmlSleep(2000);
 }
 
 bool TmlSendingCommandsTester::testSyncMessage()
@@ -284,8 +284,12 @@ void TmlSendingCommandsTester::asyncProgressDisplay(TML_COMMAND_HANDLE tmlhandle
 void TmlSendingCommandsTester::asyncStatusReply(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData, TML_INT32 iType, TML_CTSTR *sMsg)
 {
   cout << "iType: " << iType << " Message: ";
-  fprintf(stdout, "%ls\n", (SIDEX_TCHAR *) sMsg);
-  //wcout << (wchar_t *)sMsg << endl;
+  
+  #ifdef SIDEX_UNICODE
+  fwprintf (stdout, L"%ls\n", sMsg);
+  #else// SIDEX_UNICODE
+  printf ("%s\n", sMsg);
+  #endif// SIDEX_UNICODE
 }
 
 bool TmlSendingCommandsTester::testAsyncMessage()
@@ -388,7 +392,9 @@ bool TmlSendingCommandsTester::testAsyncMessage()
             m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand2, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 10000);
             checkForSuccess();       
 
-            while(!(aData.blockUntilAsyncReturn));
+            while(!(aData.blockUntilAsyncReturn)){
+              TmlSleep(50);
+            };
             aData.blockUntilAsyncReturn = false;                       
 
             if(aData.checkAsyncReturn == 1235)
