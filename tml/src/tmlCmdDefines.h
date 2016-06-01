@@ -295,6 +295,31 @@
 */
 #define CMD_INTERNAL_STREAM_WRITE                         719
 
+/**
+* @brief    Internal command for event subscription request with connection handle
+*/
+#define CMD_INTERNAL_CONNECTION_EVENT_SUBSCRIPTION_REQUEST 720
+
+
+/**
+* @brief    Internal command for event unsubscription request with connection handle
+*/
+#define CMD_INTERNAL_CONNECTION_EVENT_UNSUBSCRIPTION_REQUEST 721
+
+
+/**
+* @brief    Internal command for load balanced subscription request with connection handle
+*/
+#define CMD_INTERNAL_CONNECTION_LOAD_BALANCED_SUBSCRIPTION_REQUEST   722
+
+
+/**
+* @brief    Internal command for unsubscription request with connection handle
+*/
+#define CMD_INTERNAL_CONNECTION_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST 723
+
+
+
 
 
 
