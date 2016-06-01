@@ -392,7 +392,9 @@ bool TmlSendingCommandsTester::testAsyncMessage()
             m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand2, S_IO_PROFILE , S_TP_127_0_0_1, tmlrt_itoa(iPort), 10000);
             checkForSuccess();       
 
-            while(!(aData.blockUntilAsyncReturn));
+            while(!(aData.blockUntilAsyncReturn)){
+              TmlSleep(50);
+            };
             aData.blockUntilAsyncReturn = false;                       
 
             if(aData.checkAsyncReturn == 1235)

@@ -126,7 +126,7 @@
 
       if(!testTmlConnections()) break;            // test the connection API
       if(!testTmlMultiListeners()) break;         // test the multi listener API
-	     if(!testTmlSendingCommands()) break;        // test the sending commands API
+      if(!testTmlSendingCommands()) break;        // test the sending commands API
 
       i++;
     }

@@ -393,7 +393,7 @@ int tmlEventHandler::WaitForSingleEvent(const char* cIdentification, DWORD timeo
         }
         else{
           // Is there a possible timeout condition ?
-          if (sleepForOneMilliSecondAndCheckTimeout(&timeout)){
+          if (sleepForMilliSecondsAndCheckTimeout(&timeout)){
             bTerminate = true;
             iRet = WAIT_TOUT;
           }
@@ -430,7 +430,7 @@ int tmlEventHandler::WaitForSingleEvent(const char* cIdentification, DWORD timeo
          if (EPERM == retCode){
            /* check whether somebody else has the mutex */
            // Is there a possible timeout condition ?
-           if (sleepForOneMilliSecondAndCheckTimeout(&timeout)){
+           if (sleepForMilliSecondsAndCheckTimeout(&timeout)){
              iRet = WAIT_TOUT;
              bTerminate = true;
            }
@@ -507,7 +507,7 @@ int tmlEventHandler::WaitForMultipleEvent(const char** cIdentifications, DWORD i
 
     if  (iRet == WAIT_SUCCEEDED && !bTerminate){
       // Is there a possible timeout condition ?
-      if (sleepForOneMilliSecondAndCheckTimeout(&timeout)){
+      if (sleepForMilliSecondsAndCheckTimeout(&timeout)){
         bTerminate = true;
         iRet = WAIT_TOUT;
       }
@@ -555,7 +555,7 @@ int tmlEventHandler::WaitForMultipleEvent(const char** cIdentifications, DWORD i
 
     if  (iRet == WAIT_SUCCEEDED && !bTerminate){
       // Is there a possible timeout condition ?
-      if (sleepForOneMilliSecondAndCheckTimeout(&timeout)){
+      if (sleepForMilliSecondsAndCheckTimeout(&timeout)){
         bTerminate = true;
         iRet = WAIT_TOUT;
       }
@@ -603,7 +603,7 @@ int tmlEventHandler::WaitForMultipleEvent(const char** cIdentifications, DWORD i
 /**
  * @brief  sleep for one millisecond and check for timeout condition
 */
-bool tmlEventHandler::sleepForOneMilliSecondAndCheckTimeout(DWORD* pTimeout){
+bool tmlEventHandler::sleepForMilliSecondsAndCheckTimeout(DWORD* pTimeout){
   DWORD timeout = *pTimeout;
   bool bTimeOut = false;
 
@@ -611,12 +611,14 @@ bool tmlEventHandler::sleepForOneMilliSecondAndCheckTimeout(DWORD* pTimeout){
   // Delay for one millisecond:
   timespec delay;
   delay.tv_sec = 0;
-  delay.tv_nsec = 1000000;  // 1 milli sec
+
+  // I changed the delay from 1 to 50 Millisecond because a deliberately timeout did not come correct
+  delay.tv_nsec = 50000000;  // number of milli sec
   // sleep for delay time
   nanosleep(&delay, NULL);
   if (timeout != INFINITE){
-    --timeout;
-    if (0 == timeout){
+    timeout -= 50;
+    if (0 >= timeout){
       bTimeOut = true;
     }
     else{
