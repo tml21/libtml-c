@@ -286,9 +286,9 @@ void TmlSendingCommandsTester::asyncStatusReply(TML_COMMAND_HANDLE tmlhandle, TM
   cout << "iType: " << iType << " Message: ";
   
   #ifdef SIDEX_UNICODE
-  fwprintf (stdout, L"%ls\n", sMsg);
+  fwprintf (stdout, L"%ls\n", (wchar_t*) sMsg);
   #else// SIDEX_UNICODE
-  printf ("%s\n", sMsg);
+  printf ("%s\n", (char *) *sMsg);
   #endif// SIDEX_UNICODE
 }
 
