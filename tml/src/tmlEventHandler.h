@@ -92,13 +92,13 @@ private:
 
 #ifdef LINUX
     /**
-    * @brief  sleep for one millisecond and check for timeout condition
+    * @brief  sleep for milliseconds and check for timeout condition
     *
     * @param   pTimeout reference to the amount of left milliseconds
     *
     * @returns true on timeout condition, otherwise false
     */
-    bool sleepForOneMilliSecondAndCheckTimeout(DWORD* pTimeout);
+    bool sleepForMilliSecondsAndCheckTimeout(DWORD* pTimeout);
 #endif
 
 public:

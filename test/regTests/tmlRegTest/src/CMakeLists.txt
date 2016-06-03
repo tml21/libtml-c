@@ -205,8 +205,10 @@ set	 (TEST_SOURCES_HEADER
   "TmlConnectionTester.h"
   "TmlCore.h"
   "TmlMultipleListenersTester.h"
+  "TmlSendingCommandsTester.h"
   "tmlrt_Connections.h"
   "tmlrt_MultipleListeners.h"
+  "tmlrt_SendingCommands.h"
   "tmlrt_Utils.h"
   "TmlTester.h")
 set  (TEST_SOURCES
@@ -216,9 +218,11 @@ set  (TEST_SOURCES
   "TmlConnectionTester.cpp"
   "TmlCore.cpp"
   "TmlMultipleListenersTester.cpp"
+  "TmlSendingCommandsTester.cpp"
   "tmlrt.cpp"
   "tmlrt_Connections.cpp"
   "tmlrt_MultipleListeners.cpp"
+  "tmlrt_SendingCommands.cpp"
   "tmlrt_Utils.cpp"
   "TmlTester.cpp"
   "../../../../common/src/unicode.cpp")
