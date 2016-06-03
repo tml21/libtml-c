@@ -606,7 +606,7 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
             break;
       case CMD_INTERNAL_CONNECTION_LOAD_BALANCED_SUBSCRIPTION_REQUEST:
       case CMD_INTERNAL_LOAD_BALANCED_SUBSCRIPTION_REQUEST:
-             if (CMD_INTERNAL_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST == iCmd){
+             if (CMD_INTERNAL_LOAD_BALANCED_SUBSCRIPTION_REQUEST == iCmd){
               m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_LOAD_BALANCED_SUBSCRIPTION_REQUEST");
               if (TML_SUCCESS == iRet){
                 iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_HOST, &sHost, &iLength);
