@@ -41,6 +41,11 @@ set(TMLINCLUDE ../../tml/src)
 set(SIDEXINCLUDE ../../sidex/src)
 
 #######################################################
+## set build parameter for install (default = yes
+#######################################################
+SET (GEN_TLS_INSTALLER_FILES yes CACHE STRING "set tls installer files")
+
+#######################################################
 ## Source & Header
 
 set  (TLS_COMMON_SOURCES_HEADER ${COMMON_INCLUDE_PATH}/tmlConnectionManageObjBase.h
@@ -389,5 +394,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
 #######################################################
 ## Install
-install (TARGETS ${TLSLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
-install (FILES ${TLS_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+if (${GEN_TLS_INSTALLER_FILES} STREQUAL yes)
+  install (TARGETS ${TLSLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
+  install (FILES ${TLS_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+endif (${GEN_TLS_INSTALLER_FILES} STREQUAL yes)
