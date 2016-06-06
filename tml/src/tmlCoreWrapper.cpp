@@ -168,9 +168,6 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
   // list containing the connection manager objects
   m_connectionMgrObjs = sidex_Variant_New_List();
   ////////////////////////////////
-  // list containing the connection manager objects
-  m_registeredCloseObjs = sidex_Variant_New_List();
-  ////////////////////////////////
   // The debug log handler
   m_log = new tmlLogHandler();
   ////////////////////////////////
@@ -180,9 +177,6 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   
   m_csObj = new tmlCriticalSectionObj();
-  ////////////////////////////////
-  // mutex to protect m_registeredCloseObjs
-  m_csCloseHandling = new tmlCriticalSectionObj();
   ////////////////////////////////
   // mutex to protect tmlSingleCall::getConnection
   m_csGetConnection = new tmlCriticalSectionObj();
@@ -1006,7 +1000,6 @@ tmlCoreWrapper::~tmlCoreWrapper()
 
   sidex_Variant_DecRef(m_connectionMgrObjs);
   sidex_Variant_DecRef(m_listenerObjs);
-  sidex_Variant_DecRef(m_registeredCloseObjs);
 
 
 ///////////////////////////////////////
@@ -1053,7 +1046,6 @@ vortex_ctx_unref (&m_ctx);
   ////////////////////////////////
   // Critical section object
   delete (m_csObj);
-  delete (m_csCloseHandling);
   delete (m_csGetConnection);
 }
 
@@ -2497,14 +2489,6 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
 
 
 /**
- * @brief    returns mutex protecting m_registeredCloseObjs
- */
-tmlCriticalSectionObj* tmlCoreWrapper::getCsCloseHandling(){
-  return m_csCloseHandling;
-}
-
-
-/**
  * @brief    returns mutex protecting tmlSingleCall::getConnection
  */
 tmlCriticalSectionObj* tmlCoreWrapper::getCsGetConnection(){
@@ -3042,12 +3026,4 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, ch
   delete[]sNetAddress;
 
   return iRet;
-}
-
-
-/**
-  * @brief    Get registered connection close list.
-  */
-SIDEX_VARIANT tmlCoreWrapper::Get_ConnectionCloseList(){
-  return m_registeredCloseObjs;
 }

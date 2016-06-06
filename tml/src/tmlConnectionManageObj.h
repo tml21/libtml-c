@@ -372,6 +372,8 @@ public:
 
     /**
      * @brief     register connectionLost callback
+     *
+     * @param   connection reference VortexConnection of the request
      */
     void registerConnnectionLost(VortexConnection* connection);
 
