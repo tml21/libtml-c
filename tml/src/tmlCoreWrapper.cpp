@@ -177,6 +177,9 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
   // list containing the connection manager objects
   m_connectionMgrObjs = sidex_Variant_New_List();
   ////////////////////////////////
+  // list containing the connection manager objects
+  m_registeredCloseObjs = sidex_Variant_New_List();
+  ////////////////////////////////
   // The debug log handler
   m_log = new tmlLogHandler();
   ////////////////////////////////
@@ -186,6 +189,13 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   
   m_csObj = new tmlCriticalSectionObj();
+  ////////////////////////////////
+  // mutex to protect m_registeredCloseObjs
+  m_csCloseHandling = new tmlCriticalSectionObj();
+  ////////////////////////////////
+  // mutex to protect tmlSingleCall::getConnection
+  m_csGetConnection = new tmlCriticalSectionObj();
+
   //m_ctx = ctx;
   ///////////////////////////////////////////////////////////////////
   // The Vortex ececution context will be created in the DllMain now
@@ -860,36 +870,21 @@ tmlCoreWrapper::tmlCoreWrapper(int iLogValue,
  */
 void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
 {
+  tmlCoreWrapper_Connection_Deregister_ConnnectionLost();
   m_sender->DeregisterConnectionLost();
   ////////////////////////////////////////////////////////////////
   // Disable the listener:
   tmlCoreWrapper_Enable_Listener(false);
+  ////////////////////////////////
+  // destruct the connection manager objects
+  tmlCoreWrapper_Connection_CloseAll();
+  ////////////////////////////////
+  // destruct the listener objects
+  tmlCoreWrapper_Listener_CloseAll();
 
   ////////////////////////////////////////////////////////////////
   // Unregister all dispatch callback methods:
-  TML_INT32 iSize = 0;
-  TML_INT32 iRet = tmlCoreWrapper_Get_Registered_Profiles_Size(&iSize);
-
-  SIDEX_VARIANT registeredProfiles = SIDEX_HANDLE_TYPE_NULL;
-  iRet = tmlCoreWrapper_Get_Registered_Profiles(&registeredProfiles);
-
-  if (TML_SUCCESS == iRet){
-    for (int k = 0; k < iSize; ++k){
-      SIDEX_VARIANT vSingleKey;
-      iRet = sidex_Variant_List_Get(registeredProfiles, k, &vSingleKey);
-      if (SIDEX_SUCCESS == iRet){
-        SIDEX_INT32 iLength;
-        char* sSingleKey;
-        iRet = sidex_Variant_As_String(vSingleKey, &sSingleKey, &iLength);
-        if (SIDEX_SUCCESS == iRet){
-          iRet = tmlCoreWrapper_Unregister_Profile (sSingleKey);
-        }
-      }
-    }
-    if (SIDEX_HANDLE_TYPE_NULL != registeredProfiles){
-      sidex_Variant_DecRef(registeredProfiles);
-    }
-  }
+  unregisterAll_Registered_Profiles();
   // Finish with unregister all dispatch callback methods
   ////////////////////////////////////////////////////////////////
 
@@ -907,6 +902,7 @@ void tmlCoreWrapper::tmlCoreWrapper_General_Deregistration()
  */
 tmlCoreWrapper::~tmlCoreWrapper()
 {
+  tmlCoreWrapper_Connection_Deregister_ConnnectionLost();
   ////////////////////////////////
   // destruct the connection manager objects
   tmlCoreWrapper_Connection_CloseAll();
@@ -955,6 +951,8 @@ tmlCoreWrapper::~tmlCoreWrapper()
 
   sidex_Variant_DecRef(m_connectionMgrObjs);
   sidex_Variant_DecRef(m_listenerObjs);
+  sidex_Variant_DecRef(m_registeredCloseObjs);
+
 
 ///////////////////////////////////////
 // To debug m_ctx ref counting:
@@ -1000,6 +998,8 @@ vortex_ctx_unref (&m_ctx);
   ////////////////////////////////
   // Critical section object
   delete (m_csObj);
+  delete (m_csCloseHandling);
+  delete (m_csGetConnection);
 }
 
 
@@ -2332,6 +2332,22 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
 
 
 /**
+ * @brief    returns mutex protecting m_registeredCloseObjs
+ */
+tmlCriticalSectionObj* tmlCoreWrapper::getCsCloseHandling(){
+  return m_csCloseHandling;
+}
+
+
+/**
+ * @brief    returns mutex protecting tmlSingleCall::getConnection
+ */
+tmlCriticalSectionObj* tmlCoreWrapper::getCsGetConnection(){
+  return m_csGetConnection;
+}
+
+
+/**
  */
 int tmlCoreWrapper::getLogFileIndex(){
   return m_iLogFileIndex;
@@ -2637,9 +2653,6 @@ TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE
 
   // Delete a TML connection handle from the connection list:
   tmlCoreWrapper_Delete_ConnectionItem(*connectionHandle);
-
-  // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
-  delete (tmlConnectionManageObj*)*connectionHandle;
   *connectionHandle = TML_HANDLE_TYPE_NULL;
 
   return iRet;
@@ -2662,6 +2675,22 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
   }
 }
 
+
+/**
+  * @brief     Deregister connectionLost callback
+  */
+void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
+
+  TML_UINT32 iCount = 0;
+  tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  for (TML_INT32 i = iCount-1; i >= 0; --i){
+    TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+    tmlCoreWrapper_Get_Connection (i, &connection);
+    if (connection){
+      ((tmlConnectionManageObj*)connection)->deregisterConnnectionLost();
+    }
+  }
+}
      
 /**
   * @brief    Delete a TML connection handle from the connection list
@@ -2677,6 +2706,8 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
     if (connectionHandle == tmpConnection){
       bFound = true;
       sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
+      // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
+      delete (tmlConnectionManageObj*)tmpConnection;
     }
   }
 }
@@ -2738,7 +2769,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CO
   */
 TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout){
   int  iRet = TML_SUCCESS;
-  iRet = m_sender->sender_SendAsyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), NULL, false);
+  iRet = m_sender->sender_SendAsyncMessage(sProfile, connectionHandle, m_iWindowSize, tmlhandle, iTimeout + m_log->getAdditionalTimeout(), false, false);
   return iRet;
 }
 
@@ -2845,4 +2876,12 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, ch
   delete[]sNetAddress;
 
   return iRet;
+}
+
+
+/**
+  * @brief    Get registered connection close list.
+  */
+SIDEX_VARIANT tmlCoreWrapper::Get_ConnectionCloseList(){
+  return m_registeredCloseObjs;
 }

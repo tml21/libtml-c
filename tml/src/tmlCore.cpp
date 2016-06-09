@@ -6550,12 +6550,17 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_A(TML_CORE
       iRet = TML_ERR_MISSING_OBJ;
     }
     else{
-      try{
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_ConnectionByAddress");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_ConnectionByAddress(sAddress, connectionHandle);
+      if (NULL == sAddress){
+        iRet = TML_ERR_UNICODE;
       }
-      catch (...){
-        iRet = TML_ERR_COMMON;
+      else{
+        try{
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_ConnectionByAddress");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_ConnectionByAddress(sAddress, connectionHandle);
+        }
+        catch (...){
+          iRet = TML_ERR_COMMON;
+        }
       }
     }
   }
@@ -6616,19 +6621,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_A(TML_CONNECTION_H
   else{
     try{
       TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
-      if (TML_HANDLE_TYPE_NULL == coreHandle){
+      if ((TML_HANDLE_TYPE_NULL == coreHandle) || (TML_HANDLE_TYPE_NULL == tmlhandle)){
         iRet = TML_ERR_MISSING_OBJ;
       }
       else{
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-        if (TML_SUCCESS == iRet){
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_SendAsync");
-          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_SendAsyncMessage(connectionHandle, sProfile, tmlhandle, iTimeout);
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
           if (TML_SUCCESS == iRet){
-            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendAsync", sProfile, " succeeded");
-          }
-          else{
-            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendAsync", sProfile, " failed !");
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_SendAsync");
+            iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_SendAsyncMessage(connectionHandle, sProfile, tmlhandle, iTimeout);
+            if (TML_SUCCESS == iRet){
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendAsync", sProfile, " succeeded");
+            }
+            else{
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendAsync", sProfile, " failed !");
+            }
           }
         }
       }
@@ -6694,19 +6704,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_A(TML_CONNECTION_HA
   else{
     try{
       TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
-      if (TML_HANDLE_TYPE_NULL == coreHandle){
+      if ((TML_HANDLE_TYPE_NULL == coreHandle) || (TML_HANDLE_TYPE_NULL == tmlhandle)){
         iRet = TML_ERR_MISSING_OBJ;
       }
       else{
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-        if (TML_SUCCESS == iRet){
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_SendSync");
-          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_SendSyncMessage(connectionHandle, sProfile, tmlhandle, iTimeout);
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
           if (TML_SUCCESS == iRet){
-            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendSync", sProfile, " succeeded");
-          }
-          else{
-            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendSync", sProfile, " failed !");
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_SendSync");
+            iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_SendSyncMessage(connectionHandle, sProfile, tmlhandle, iTimeout);
+            if (TML_SUCCESS == iRet){
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendSync", sProfile, " succeeded");
+            }
+            else{
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_SendSync", sProfile, " failed !");
+            }
           }
         }
       }

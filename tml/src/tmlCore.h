@@ -990,9 +990,9 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_SyncMessage_A(TML_CORE_HANDLE core
  * @ingroup  dataIO
  * @brief    Send an asynchronous message / command.
  *
- * The call returns after sending the message without waiting for a reply. If a result has to be received or 
- * possible error needs to be handled a callback function has to be registered with tml_Cmd_Register_CommandReady()
- * before the call. 
+ * The call returns after sending the message without waiting for a reply. 
+ * The result of the command execution and possible error needs to be handled in a callback function registered with tml_Cmd_Register_CommandReady().
+ * In the callback function you also have to free the TML command handle using tml_Cmd_Free(). 
  *
  * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
  * @param   tmlhandle   TML command handle
@@ -3702,9 +3702,9 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_A(TML_CORE
  * @ingroup  connectionManagement
  * @brief    Send async command on existing connection.
  *
- * The call returns after sending the message without waiting for a reply. If a result has to be received or 
- * possible error needs to be handled a callback function has to be registered with tml_Cmd_Register_CommandReady()
- * before the call. 
+ * The call returns after sending the message without waiting for a reply. 
+ * The result of the command execution and possible error needs to be handled in a callback function registered with tml_Cmd_Register_CommandReady().
+ * In the callback function you also have to free the TML command handle using tml_Cmd_Free(). 
  *
  * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param  sProfile         profile identification string

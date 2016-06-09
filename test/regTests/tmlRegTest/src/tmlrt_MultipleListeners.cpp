@@ -34,34 +34,38 @@
  * Contributors:
  *    wobe-systems GmbH
  */
-#ifndef TMLLIST_H
-#define TMLLIST_H
 
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
-#include "TestingForReturns.h"
+#include "tmlrt_MultipleListeners.h"
+#include "TmlMultipleListenersTester.h"
 
-class TmlList : TestingForReturns {
-public: 
-	TmlList();
-	TmlList(SIDEX_TCHAR* name);
-	SIDEX_INT32 size();
-	SIDEX_INT32 append(SIDEX_TCHAR* string);
-	SIDEX_INT32 append(SIDEX_BOOL boolean);
-	//SIDEX_INT32 insertString(SIDEX_TCHAR* string);
-	SIDEX_INT32 setBool(SIDEX_INT32 index, SIDEX_BOOL boolean);
-	SIDEX_TCHAR* getString(SIDEX_INT32 index);
-	SIDEX_BOOL getBool(SIDEX_INT32 index);
-	~TmlList();
-private:
-	SIDEX_VARIANT formatStringToSidexVariant(SIDEX_TCHAR* string);
-	SIDEX_VARIANT sidexList;
-	SIDEX_VARIANT item;
-	SIDEX_INT32 amount;
-	SIDEX_INT32 itemPosition;
-};
+bool testTmlMultiListeners()
+{
+  bool success = false;
+	TmlMultipleListenersTester* tester = new TmlMultipleListenersTester(tmlrtT("TmlMultipleListenersTester"));
+  if(tester)
+  {
+    do
+    {
+      if(!tester->prepare()) break;
 
+      if(!tester->simpleTestTmlMultiListenerSendSyncMessage()) break;
+      if(!tester->simpleTestTmlMultiListenerSendAsyncMessage()) break;
+      if(!tester->simpleTestTmlMultiListener()) break;
+      if(!tester->testTmlCoreListenerClose()) break;
+      if(!tester->testTmlCoreListenerGetSetEnabled()) break;
+      if(!tester->testTmlCoreGetListenerCountErrorCodes()) break;
+      if(!tester->testTmlCoreGetListenerErrorCodes()) break;
+      if(!tester->testTmlListenerGetSetEnabledForErrorCodes()) break;
+//      if(!tester->testTmlCoreListenerCreateCloseErrorCodes()) break;
+      if(!tester->testTmlMultiListenerLoadBalancingMessages()) break;
+//      if(!tester->testTmlMultiListenerEventMessages()) break;
+      if(!tester->testTmlListenerGetAddressErrorCodes()) break;
+    }
+    while(false);
 
-#endif	//TMLLIST_H
+    tester->cleanup();
+    success = tester->isTestOK();
+	  DELETE_OBJ(tester);
+  }
+  return(success);
+}

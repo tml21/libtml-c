@@ -34,142 +34,172 @@
  * Contributors:
  *    wobe-systems GmbH
  */
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
-#include "TestingForReturns.h"
-#include "TmlList.h"
+
 #include "tmlrt_Utils.h"
+#include "TestingForReturns.h"
 #include "TmlCore.h"
 
-TmlCore::TmlCore(SIDEX_TCHAR* name) {
-// RK: Commented because ist did not build
-//	errorLocationOutput = new char[50]();
-//	tmlrt_cat(errorLocationOutput, name);
-//	tmlrt_cat(errorLocationOutput, tmlrtT(" - TmlCore"));
-	core = TML_HANDLE_TYPE_NULL;
-	profileNames = TmlList(errorLocationOutput);
+TmlCore::TmlCore(SIDEX_TCHAR* testProcessName)
+       : TestingForReturns(testProcessName)
+{
+	m_core = TML_HANDLE_TYPE_NULL;
+
+	m_listenerAddresses = LISTENERS_ADDRESS;
+	m_ip = NULL;
+	m_port = NULL;
+	amountOfProfiles = 0;
+	initArrays();
 }
+
 
 TmlCore::~TmlCore() {
-	//delete[] errorLocationOutput;
 }
 
-TmlCore::TmlCore () {
-	core = TML_HANDLE_TYPE_NULL;
-}
-
-TML_INT32 TmlCore::defaultInit() { 
-	iErr = initCore();
+TML_INT32 TmlCore::defaultInit(bool listenerSide) { 
+	m_iErr = initCore();
 	checkForSuccess();
-	iErr = setDefaultIP();
+	m_iErr = initListeners(listenerSide);
 	checkForSuccess();
-	iErr = setDefaultPort();
+	m_iErr = setDefaultProfile();
 	checkForSuccess();
-	iErr = setDefaultProfile();
+	m_iErr = startListeners(listenerSide);
 	checkForSuccess();
-	iErr = startListener();
-	checkForSuccess();
-	return iErr;
+	return m_iErr;
 }
 
 TML_INT32 TmlCore::initCore() {
-	iErr = tml_Core_Open(&core, 0);
+	m_iErr = tml_Core_Open(&m_core, 0);
 	checkForSuccess();
-	return iErr;
+	return m_iErr;
 }
 
 TML_INT32 TmlCore::addProfileToCore(SIDEX_TCHAR* profile) {
 	appendProfileToList(profile);
-	iErr = tml_Profile_Register (core, profile);	
+	m_iErr = tml_Profile_Register (m_core, profile);	
 	checkForSuccess();
-	return iErr;
+	return m_iErr;
 }
 
 SIDEX_VARIANT TmlCore::formatToSidexString(SIDEX_TCHAR* profile) {
 	SIDEX_VARIANT formattedString = SIDEX_HANDLE_TYPE_NULL;
-	iErr = sidex_Variant_New_String(profile, &formattedString);
+	m_iErr = sidex_Variant_New_String(profile, &formattedString);
 	checkForSuccess();
 	return formattedString;
 }
 
 void TmlCore::appendProfileToList(SIDEX_TCHAR* profile) {
-	iErr = profileNames.append(profile);
-	iErr = tml_Profile_Register(core,profile);
-	checkForSuccess();
+	int index = amountOfProfiles;
+	m_profileNames[index] = profile;
+	amountOfProfiles = +1;
 }
 
 TML_INT32 TmlCore::setDefaultProfile() {
-	appendProfileToList(IO_PROFILE);
+	addProfileToCore(S_IO_PROFILE);
 	checkForSuccess();
-	return iErr;
+	return m_iErr;
 }
 
 TML_INT32 TmlCore::setDefaultPort() {
-	iErr = setPort(IO_PORT);
+	m_iErr = setPort(S_IO_PORT);
 	checkForSuccess();
-	return iErr;
+	return m_iErr;
 }
 
 TML_INT32 TmlCore::setPort(SIDEX_TCHAR* port) {
-	this->port = port;
-	iErr = tml_Core_Set_ListenerPort(core, port);
+	m_port = port;
+	m_iErr = tml_Core_Set_ListenerPort(m_core, m_port);
 	checkForSuccess();
-	return iErr;
+	return m_iErr;
 }
 
 TML_INT32 TmlCore::setDefaultIP() {
-	ip = LISTENER_NETWORK_INTERFACE_IP;
-	iErr = tml_Core_Set_ListenerIP (core, LISTENER_NETWORK_INTERFACE_IP);
+	m_ip = S_LISTENER_NETWORK_INTERFACE_IP;
+	m_iErr = tml_Core_Set_ListenerIP (m_core, S_LISTENER_NETWORK_INTERFACE_IP);
 	checkForSuccess();
-	return iErr;
+	return m_iErr;
 }
 
-TML_INT32 TmlCore::startListener() {
-	iErr = tml_Core_Set_ListenerEnabled (core, TML_TRUE);
-	checkForSuccess();
-	return iErr;
+TML_INT32 TmlCore::startListeners(bool listenerSide) {
+	if (listenerSide) {
+		for (unsigned int i = 0; i < m_listenerHandles.size(); i++) {
+			m_iErr = tml_Listener_Set_Enabled(m_listenerHandles[i], TML_TRUE);
+			checkForSuccess();
+		}
+	}
+	else {	//senderSide
+		m_iErr = tml_Listener_Set_Enabled(m_listenerHandles[0], TML_TRUE);
+		checkForSuccess();
+	}
+	return m_iErr;
 }
 
 TML_INT32 TmlCore::freeTmlCore() {
-	iErr = tml_Core_Close(&core);
+	m_iErr = tml_Core_Close(&m_core);	//listeners are getting closed here automatically
 	checkForSuccess();
-	return iErr;
+	return m_iErr;
 }
 
 bool TmlCore::isInitialized() {
 	bool coreInitialized = true;
-	if(core == TML_HANDLE_TYPE_NULL) {
+	if(TML_HANDLE_TYPE_NULL == m_core) {
 		coreInitialized = false;
 	}
 	return coreInitialized;
 }
 
 TML_CORE_HANDLE TmlCore::getCore() {
-	return core;
+	return m_core;
 }
 
-TmlList TmlCore::getProfileNames() {
-	return profileNames;
+array<SIDEX_TCHAR*, MAX_AMOUNT_OF_PROFILES> TmlCore::getProfileNames() {
+	return m_profileNames;
 }
 
 SIDEX_TCHAR* TmlCore::getPort() {
-	return port;
+	return m_port;
 }
 
 SIDEX_TCHAR* TmlCore::getIP() {
-	return ip;
+	return m_ip;
 }
 
-TML_INT32 TmlCore::registerDefaultCmds(array<int, 5> cmdCodes) {
-	TML_INT32 amountOfProfiles = profileNames.size();
-	TML_INT32 amountOfCmdCodes = cmdCodes.size();
+TML_INT32 TmlCore::registerDefaultCmds(array<int, AMOUNT_OF_CMDS> cmdCodes) {
+	SIDEX_TCHAR* nameFromProfiles = NULL;
+	TML_INT32 cmdCodeFromList= 0;
 	for(int i = 0; i < amountOfProfiles; i++) {
-		for(int j = 0; j < amountOfCmdCodes; j++) {
-			iErr = tml_Profile_Register_Cmd(core, profileNames.getString(i), (TML_COMMAND_ID_TYPE) cmdCodes.at(j), cbgenericCmd, TML_HANDLE_TYPE_NULL);
+		nameFromProfiles = m_profileNames[i];
+		for(int j = 0; j < AMOUNT_OF_CMDS; j++) {
+			cmdCodeFromList = cmdCodes.at(j);
+			m_iErr = tml_Profile_Register_Cmd(m_core, nameFromProfiles, (TML_COMMAND_ID_TYPE) cmdCodes.at(j), cbgenericCmd, TML_HANDLE_TYPE_NULL);
 			checkForSuccess();
 		}
 	}
-	return iErr;
+	return m_iErr;
 }
+
+TML_INT32 TmlCore::initListeners(bool listenerSide) {
+	if (listenerSide) {
+		for (unsigned int i = 0; i < m_listenerHandles.size(); i++) {
+			m_iErr = tml_Core_Listener_Create(m_core, m_listenerAddresses[i], &m_listenerHandles[i]);
+			checkForSuccess();
+		}
+	}
+	else {
+		m_iErr = tml_Core_Listener_Create(m_core, S_LISTENER_ADDRESS, &m_listenerHandles[0]);
+		checkForSuccess();
+	}
+	return m_iErr;
+}
+
+void TmlCore::initArrays() {
+	for (unsigned int i = 0; i < m_listenerHandles.size(); i++) {
+		m_listenerHandles[i] = TML_HANDLE_TYPE_NULL;
+	}
+
+	for (unsigned int i = 0; i < m_profileNames.size(); i++) {
+		m_profileNames[i] = tmlrtT("");
+	}
+}
+
+
+

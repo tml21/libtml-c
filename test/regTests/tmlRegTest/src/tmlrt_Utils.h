@@ -37,6 +37,28 @@
 #ifndef TMLRT_UTILS_H
 #define TMLRT_UTILS_H
 
+#if defined(_MEM_LEAK_CHECK_) && defined(_DEBUG)
+  // enable memory leak detection...
+  #ifndef _CRTDBG_MAP_ALLOC
+    #define _CRTDBG_MAP_ALLOC
+  #endif
+  #include <stdlib.h>
+  #include <crtdbg.h>
+#endif
+
+#include <vortex.h>
+#ifdef LINUX
+  #include <wchar.h>
+  #include <stdbool.h>
+  #include <string.h>
+  #include <unistd.h>
+#else
+  #include <stdio.h>
+  #include <tchar.h>
+  #include <Windows.h>     //for function sleep
+#endif
+
+#include <unicode.h>
 #include <iostream>
 #include <array>
 using namespace std;
@@ -44,94 +66,57 @@ using namespace std;
 #include <tmlCore.h>
 
 //constants for reuse
-#ifdef SIDEX_UNICODE
-#define DOCUMENT (wchar_t*) L"Document"
-#define wDOCUMENT (wchar_t*) L"Doc<ument"
-#define DOCUMENT2 (wchar_t*) L"AnotherDocument"
-#define GROUP (wchar_t*) L"group"
-#define KEY (wchar_t*) L"key"
-#define GROUP2 (wchar_t*) L"hällöWörld"
-#define KEY2 (wchar_t*) L"良い一日"
-#define GROUP3 (wchar_t*) L"góðurdagur"
-#define KEY3 (wchar_t*) L"গ্রুপ"
-#define GROUP4 (wchar_t*) L"समूह"
-#define KEY4 (wchar_t*) L"ກຸ່ມ"
-#define wGROUP (wchar_t*) L"group&"
-#define wKEY (wchar_t*) L"key]]>"
-#define A_S_VAL (wchar_t*) L"systems"
-#define B_S_VAL (wchar_t*) L"team"
-#define COLUMN (wchar_t*) L"name"
-#define COLUMN2 (wchar_t*) L"góðurdagur"
-#define MINDATE (wchar_t*) L"0001-01-01 00:00:00:000"
-#define MAXDATE (wchar_t*) L"9999-12-31 23:59:59:999"
-#define wDATE (wchar_t*) L"0000-00-00 24:00:58:999"
-#define uDATE (wchar_t*) L"0000-00-00 12:48:11:810"
-#define HANDLEKEY (wchar_t*) L"handleKey"
-#define FLOATKEY (wchar_t*) L"floatKey"
-#define minStr (wchar_t*) L" "
-#else
-#define DOCUMENT (char*) "Document"
-#define wDOCUMENT (char*) "Doc<ument"
-#define DOCUMENT2 (char*) "AnotherDocument"
-#define GROUP (char*) "group"
-#define KEY (char*) "key"
-#define GROUP2 (char*) "helloWorld"
-#define KEY2 (char*) "anotherKey"
-#define GROUP3 (char*) "anotherGroup"
-#define KEY3 (char*) "KEY"
-#define GROUP4 (char*) "GROUPFOUR"
-#define KEY4 (char*) "keyfour"
-#define wGROUP (char*) "group&"
-#define wKEY (char*) "key]]>"
-#define A_S_VAL (char*) "systems"
-#define B_S_VAL (char*) "team"
-#define COLUMN (char*) "name"
-#define COLUMN2 (char*) "AnotherName"
-#define MINDATE (char*) "0001-01-01 00:00:00:000"
-#define MAXDATE (char*) "9999-12-31 23:59:59:999"
-#define wDATE (char*) "0000-00-00 24:00:58:999"
-#define uDATE (char*) "0000-00-00 12:48:11:810"
-#define HANDLEKEY (char*) "handleKey"
-#define FLOATKEY (char*) "floatKey"
-#define minStr (char*) " "
-#endif
+extern SIDEX_TCHAR* S_EMPTY;
+extern SIDEX_TCHAR* S_UNNAMED;
+extern SIDEX_TCHAR* S_START;
+extern SIDEX_TCHAR* S_FINISH_SUCCESS;
+extern SIDEX_TCHAR* S_FINISH_FAILED;
+extern SIDEX_TCHAR* S_GROUP_TEST;
+extern SIDEX_TCHAR* S_KEY_INDEX;
 
+extern SIDEX_TCHAR* S_DOCUMENT;
+extern SIDEX_TCHAR* S_wDOCUMENT;
+extern SIDEX_TCHAR* S_DOCUMENT2;
+extern SIDEX_TCHAR* S_GROUP;
+extern SIDEX_TCHAR* S_KEY;
+extern SIDEX_TCHAR* S_GROUP2;
+extern SIDEX_TCHAR* S_KEY2;
+extern SIDEX_TCHAR* S_GROUP3;
+extern SIDEX_TCHAR* S_KEY3;
+extern SIDEX_TCHAR* S_GROUP4;
+extern SIDEX_TCHAR* S_KEY4;
+extern SIDEX_TCHAR* S_wGROUP;
+extern SIDEX_TCHAR* S_wKEY;
+extern SIDEX_TCHAR* S_A_S_VAL;
+extern SIDEX_TCHAR* S_B_S_VAL;
+extern SIDEX_TCHAR* S_COLUMN;
+extern SIDEX_TCHAR* S_COLUMN2;
+extern SIDEX_TCHAR* S_MINDATE;
+extern SIDEX_TCHAR* S_MAXDATE;
+extern SIDEX_TCHAR* S_wDATE;
+extern SIDEX_TCHAR* S_uDATE;
+extern SIDEX_TCHAR* S_HANDLEKEY;
+extern SIDEX_TCHAR* S_FLOATKEY;
+extern SIDEX_TCHAR* S_minStr;
 
-#ifdef TML_UNICODE
-  #define IO_PROFILE                    (wchar_t*) L"http://wobe-team.com/profiles/plain_profile"
-  #define IO_PROFILE_TWO				(wchar_t*) L"http://wobe-team.com/profiles/simple_profile"
-  #define IO_PROFILE_THREE				(wchar_t*) L"http://wobe-team.com/profiles/basic_profile"
-  #define LISTENER_NETWORK_INTERFACE_IP (wchar_t*) L"0.0.0.0"
-  #define IO_PORT                       (wchar_t*) L"44100"
-  #define IO_PORT_TWO                   (wchar_t*) L"44102"
-  #define IO_PORT_THREE                 (wchar_t*) L"44103"
-  #define IO_PORT_FOUR	                (wchar_t*) L"44104"
-  #define IO_PORT_FIVE					(wchar_t*) L"44105"
-  #define DESTINATION_HOST_IP           (wchar_t*) L"127.0.0.1"
+extern SIDEX_TCHAR* S_IO_PROFILE;
+extern SIDEX_TCHAR* S_IO_PROFILE_TWO;
+extern SIDEX_TCHAR* S_IO_PROFILE_THREE;
+extern SIDEX_TCHAR* S_LISTENER_NETWORK_INTERFACE_IP;
+extern SIDEX_TCHAR* S_IO_PORT;
+extern SIDEX_TCHAR* S_IO_PORT_TWO;
+extern SIDEX_TCHAR* S_IO_PORT_THREE;
+extern SIDEX_TCHAR* S_IO_PORT_FOUR;
+extern SIDEX_TCHAR* S_IO_PORT_FIVE;
+extern SIDEX_TCHAR* S_DESTINATION_HOST_IP;
+extern SIDEX_TCHAR* S_LISTENER_ADDRESS;
 
-  #define MEANING                       (wchar_t*) L"Meaning"
-  #define OF_LIFE                       (wchar_t*) L"ofLife"
+extern SIDEX_TCHAR* S_MEANING;
+extern SIDEX_TCHAR* S_OF_LIFE;
 
-  #define DEFAULT_BOOTSTRAP				(wchar_t*) L"bootstrapTemplate.sdx"
-#else // TML_UNICODE
-  #define IO_PROFILE                    (char*) "http://wobe-team.com/profiles/plain_profile"
-  #define IO_PROFILE_TWO                (char*) "http://wobe-team.com/profiles/simple_profile"
-  #define IO_PROFILE_THREE              (char*) "http://wobe-team.com/profiles/basic_profile"
-  #define LISTENER_NETWORK_INTERFACE_IP (char*) "0.0.0.0"
-  #define IO_PORT                       (char*) "44100"
-  #define IO_PORT_TWO                   (char*) "44102"
-  #define IO_PORT_THREE                 (char*) "44103"
-  #define IO_PORT_FOUR	                (char*) "44104"
-  #define IO_PORT_FIVE					(char*) "44105"
-  #define DESTINATION_HOST_IP           (char*) "127.0.0.1"
+extern SIDEX_TCHAR* S_DEFAULT_BOOTSTRAP;
 
-  #define MEANING                       (char*) "Meaning"
-  #define OF_LIFE                       (char*) "ofLife"
-
-  #define DEFAULT_BOOTSTRAP				(char*) "bootstrapTemplate.sdx"
-#endif // TML_UNICODE
-
-const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
+#define CHOICE_FINISH_MESSAGE(a) a ? S_FINISH_SUCCESS : S_FINISH_FAILED
 
 //makro for creating strings in the right format
 #ifdef SIDEX_UNICODE
@@ -140,11 +125,46 @@ const array<int, 5> COMMAND_CODES_LIST = {10,20,30,42,50};
 #define tmlrtT(a) (char*) a
 #endif // SIDEX_UNICODE
 
-//Wrapper function for concatenating two strings
-SIDEX_TCHAR * tmlrt_cat( SIDEX_TCHAR * destination, const SIDEX_TCHAR * source);
+// Helper functions for strings
+SIDEX_TCHAR* tmlrt_cat(SIDEX_TCHAR* first, SIDEX_TCHAR* second = NULL, SIDEX_TCHAR* third = NULL, int delStr = 0);
+SIDEX_TCHAR* tmlrt_cpy(SIDEX_TCHAR* source);
+int          tmlrt_cmp(SIDEX_TCHAR* first, SIDEX_TCHAR* second);
+SIDEX_TCHAR* tmlrt_itoa(int value);
+
+#define DELETE_STR(s) { if(s) { delete[](s); s = NULL; } }
+#define DELETE_OBJ(o) { if(o) { delete(o);   o = NULL; } }
+
+const int DEFAULT_TIMEOUT = 5000;
+const int AMOUNT_OF_CMDS = 5;
+const int AMOUNT_OF_LISTENERS = 5;
+const int MAX_AMOUNT_OF_PROFILES = 5;
+const array<int, AMOUNT_OF_CMDS> COMMAND_CODES_LIST = {10,50,42,30,20};
+
+const array<SIDEX_TCHAR*, 5> LISTENERS_PORTS = { tmlrtT("4711"), tmlrtT("4712"), tmlrtT("1815"), tmlrtT("1420"), tmlrtT("1234") };
+const array<SIDEX_TCHAR*, 5> LISTENERS_ADDRESS = { tmlrtT("0.0.0.0:4711"), tmlrtT("0.0.0.0:4712"), tmlrtT("0.0.0.0:1815"), tmlrtT("0.0.0.0:1420"), tmlrtT("0.0.0.0:1234") };
+
+void TmlSleep(int milliseconds);
+
+bool initGlobalMutex();
+bool enterGlobalMutex();
+void leaveGlobalMutex();
+void deleteGlobalMutex();
 
 //cb for cmd 
 void FUNC_C_DECL cbgenericCmd(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data);
 
+//cb for onPeerRegister
+TML_BOOL FUNC_C_DECL onPeerCB(TML_BOOL bSubscribe, TML_CTSTR *sHost, TML_CTSTR *sPort, TML_POINTER pCBData);
+
+//cb if cmd reply was received from listener
+void FUNC_C_DECL cbGenericCmdReplyReceived(TML_COMMAND_HANDLE tmlhandle, TML_POINTER pCBData);
+
+//set the bool array to false
+void initCmdRepliesReceived();
+
+//check whether all cmds were freed
+bool allCmdsFreed();
+
+void setCmdRepliesReceivedToTrue(int indexOfDisabledListener);
 
 #endif //TMLRT_UTILS_H

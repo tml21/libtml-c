@@ -56,12 +56,50 @@ void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
 {
   // Call the class callback handling method with all it's member- attributes 
   // to handle the lost connection:
-  try{
-    globalCallback(user_data, connection);
+  TML_CORE_HANDLE wrapper = (TML_CORE_HANDLE)user_data;
+
+  tmlCriticalSectionObj* mutex = ((tmlCoreWrapper*)wrapper)->getCsCloseHandling();
+  mutex->tmlCriticalSectionEnter("connectionCloseHandler");
+
+  // check out the a registered conection close callback
+  SIDEX_VARIANT list = ((tmlCoreWrapper*)wrapper)->Get_ConnectionCloseList();
+  tmlConnectionManageObj* conMgr = NULL;
+
+  bool bFound = false; 
+
+  SIDEX_INT32 iSize = 0;
+  SIDEX_INT32 iRet = sidex_Variant_List_Size(list, &iSize);
+  if (SIDEX_SUCCESS == iRet){
+    SIDEX_VARIANT dictItem;
+    for (SIDEX_INT32 i = 0; SIDEX_SUCCESS == iRet && !bFound && i < iSize; ++i){
+      iRet = sidex_Variant_List_Get(list, i, &dictItem);
+      SIDEX_VARIANT connectionItem;
+      if (SIDEX_SUCCESS == iRet){
+        iRet = sidex_Variant_Dict_Get(dictItem, (char*)"VortexConnection", &connectionItem);
+        SIDEX_INT64 iVal;
+        if (SIDEX_SUCCESS == iRet){
+          iRet = sidex_Variant_As_Integer(connectionItem, &iVal);
+          if (SIDEX_SUCCESS == iRet){
+            if (((VortexConnection*) iVal) == connection){
+              SIDEX_VARIANT conMgrItem = SIDEX_HANDLE_TYPE_NULL;
+              iRet = sidex_Variant_Dict_Get(dictItem, (char*)"ConMgr", &conMgrItem);
+              if (SIDEX_SUCCESS == iRet){
+                iRet = sidex_Variant_As_Integer(conMgrItem, &iVal);
+                if (SIDEX_SUCCESS == iRet){
+                  conMgr = (tmlConnectionManageObj*) iVal;
+                  bFound = true;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
-  catch(...){
-    printf ("Exception caught in connectionCloseHandler / maybe caused by a shudown\n");
+  if (bFound){
+    globalCallback(conMgr->getConnectionCloseHandler(), connection);
   }
+  mutex->tmlCriticalSectionLeave("connectionCloseHandler");
 }
 
 
@@ -166,8 +204,7 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
 
         ////////////////////////////////////////////////////////////
         // Register callback for the case of a lost of connection:
-        log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_set_on_close_full");
-        vortex_connection_set_on_close_full (connection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
+        registerConnnectionLost(connection);
       }
     }
     else{
@@ -209,9 +246,7 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
 
           ////////////////////////////////////////////////////////////
           // Register callback for the case of a lost of connection:
-          log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_set_on_close_full");
-          vortex_connection_set_on_close_full (connection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
-
+          registerConnnectionLost(connection);
         }
       }
     }
@@ -235,11 +270,14 @@ TML_INT32 tmlConnectionManageObj::getLastErr(){
 void tmlConnectionManageObj::cleanUp(){
   if (getRef()){
     if (decRef() == 0){
+      ////////////////////////////////////////////////////////////////////////
+      // Invoke the connectionCloseHandler manually:
+      connectionCloseHandler(m_vortexConnection, (axlPointer)getCoreHandle());
+
       tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
       ////////////////////////////////////////////////////////////////////////
       // remove registered callback:
-      log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "cleanUp", "Vortex CMD", "vortex_connection_remove_on_close_full");
-      vortex_connection_remove_on_close_full (m_vortexConnection, connectionCloseHandler, &m_internalConnectionCloseHandlerMethod);
+      deregisterConnnectionLost();
       // If I am the owner I have to close the connection:
       if (NULL != m_vortexConnection && m_bIsOwner){ 
         ////////////////////////////////////////////////////////////////////////
@@ -256,6 +294,14 @@ void tmlConnectionManageObj::cleanUp(){
       delete m_binding;
     }
   }
+}
+
+
+/**
+ * @brief Returns the connection close handler
+ */
+void* tmlConnectionManageObj::getConnectionCloseHandler(){
+  return &m_internalConnectionCloseHandlerMethod;
 }
 
 
@@ -494,7 +540,9 @@ int tmlConnectionManageObj::getRef(){
 bool tmlConnectionManageObj::SignalConnectionClose(void* connection)
 {
   // call fix callback method to inform about disconnection:
-  globalCallback(m_onDisconnectCallback, (void*) this);
+  if (TML_HANDLE_TYPE_NULL != m_onDisconnectCallback){
+    globalCallback(m_onDisconnectCallback, (void*) this);
+  }
 
   if (TML_HANDLE_TYPE_NULL != m_onProgrammableDisconnectCallback){
   // call Programmable callback method to inform about disconnection:
@@ -513,4 +561,108 @@ bool tmlConnectionManageObj::SignalConnectionClose(void* connection)
  */
 void tmlConnectionManageObj::setOnDisconnectFull(void* setOnDisconnectFullCB){
   m_onProgrammableDisconnectCallback = setOnDisconnectFullCB;
+}
+
+
+/**
+  * @brief     Deregister connectionLost callback
+  */
+void tmlConnectionManageObj::deregisterConnnectionLost(){
+
+  tmlCriticalSectionObj* mutex = ((tmlCoreWrapper*)m_coreHandle)->getCsCloseHandling();
+  mutex->tmlCriticalSectionEnter("deregisterConnnectionLost");
+
+  SIDEX_VARIANT list = ((tmlCoreWrapper*)m_coreHandle)->Get_ConnectionCloseList();
+
+  // deregistration of conection close callback
+  bool bFound = false; 
+  SIDEX_INT32 iSize = 0;
+  SIDEX_INT32 iRet = sidex_Variant_List_Size(list, &iSize);
+  if (SIDEX_SUCCESS == iRet){
+    SIDEX_VARIANT dictItem;
+    for (SIDEX_INT32 i = 0; SIDEX_SUCCESS == iRet && !bFound && i < iSize; ++i){
+      iRet = sidex_Variant_List_Get(list, i, &dictItem);
+      SIDEX_VARIANT connectionItem;
+      if (SIDEX_SUCCESS == iRet){
+        iRet = sidex_Variant_Dict_Get(dictItem, (char*)"VortexConnection", &connectionItem);
+        SIDEX_INT64 iVal;
+        if (SIDEX_SUCCESS == iRet){
+          iRet = sidex_Variant_As_Integer(connectionItem, &iVal);
+          if (SIDEX_SUCCESS == iRet){
+            if (((VortexConnection*) iVal) == m_vortexConnection){
+              bFound = true;
+              sidex_Variant_List_DeleteItem (list, i);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (bFound){
+    tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
+    ////////////////////////////////////////////////////////////////////////
+    // remove registered callback:
+    log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "deregisterConnnectionLost", "Vortex CMD", "vortex_connection_remove_on_close_full");
+    vortex_connection_remove_on_close_full (m_vortexConnection, connectionCloseHandler, (axlPointer)getCoreHandle());
+  }
+  mutex->tmlCriticalSectionLeave("deregisterConnnectionLost");
+}
+
+
+/**
+  * @brief     Register connectionLost callback
+  */
+void tmlConnectionManageObj::registerConnnectionLost(VortexConnection* connection){
+
+  tmlCriticalSectionObj* mutex = ((tmlCoreWrapper*)m_coreHandle)->getCsCloseHandling();
+  mutex->tmlCriticalSectionEnter("registerConnnectionLost");
+
+  SIDEX_VARIANT list = ((tmlCoreWrapper*)m_coreHandle)->Get_ConnectionCloseList();
+
+  //  registration of conection close callback
+  SIDEX_INT32 iSize = 0;
+  bool bFound = false; 
+  SIDEX_INT32 iRet = sidex_Variant_List_Size(list, &iSize);
+  if (SIDEX_SUCCESS == iRet){
+    SIDEX_VARIANT dictItem;
+    for (SIDEX_INT32 i = 0; SIDEX_SUCCESS == iRet && !bFound && i < iSize; ++i){
+      iRet = sidex_Variant_List_Get(list, i, &dictItem);
+      SIDEX_VARIANT connectionItem;
+      if (SIDEX_SUCCESS == iRet){
+        iRet = sidex_Variant_Dict_Get(dictItem, (char*)"VortexConnection", &connectionItem);
+        SIDEX_INT64 iVal;
+        if (SIDEX_SUCCESS == iRet){
+          iRet = sidex_Variant_As_Integer(connectionItem, &iVal);
+          if (SIDEX_SUCCESS == iRet){
+            if (((VortexConnection*) iVal) == connection){
+              bFound = true;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!bFound){
+    SIDEX_INT64 iVal;
+    SIDEX_VARIANT dict = sidex_Variant_New_Dict();
+    iVal = (SIDEX_INT64) connection;
+    SIDEX_VARIANT connectionItem = sidex_Variant_New_Integer(iVal);
+    sidex_Variant_Dict_Set(dict, (char*)"VortexConnection", connectionItem);
+    iVal = (SIDEX_INT64) this;
+    SIDEX_VARIANT conMgrItem = sidex_Variant_New_Integer(iVal);
+    sidex_Variant_Dict_Set(dict, (char*)"ConMgr", conMgrItem);
+    SIDEX_INT32 iPos;
+    sidex_Variant_List_Append(list, dict, &iPos);
+    sidex_Variant_DecRef(conMgrItem);
+    sidex_Variant_DecRef(connectionItem);
+    sidex_Variant_DecRef(dict);
+    tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
+    ////////////////////////////////////////////////////////////////////////
+    // ser registered callback:
+    log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "registerConnnectionLost", "Vortex CMD", "vortex_connection_set_on_close_full");
+    vortex_connection_set_on_close_full (connection, connectionCloseHandler, (axlPointer)getCoreHandle());
+  }
+  mutex->tmlCriticalSectionLeave("registerConnnectionLost");
 }

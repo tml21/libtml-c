@@ -35,41 +35,11 @@
  *    wobe-systems GmbH
  */
 
-#ifdef LINUX
-  #include <wchar.h>
-  #include <stdbool.h>
-  #include <string.h>
-  #include <unistd.h>
-#else
-  #include <stdio.h>
-  #include <tchar.h>
-  #include <Windows.h>     //for function sleep
-#endif
+#ifndef MULTIPLELISTENERS_H
+#define MULTIPLELISTENERS_H
 
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
 #include "tmlrt_Utils.h"
-#include "TestingProcess.h"
 
+bool testTmlMultiListeners();
 
-
-/** @ingroup Test_Sending_Commands
-* @brief Testing a simple communication between a sender and a listener
-* 
-* A sender, a listener and a command are initialized and the command is synchronously(abbr. sync) send 
-* to the listener. It is checked at the listener if the data, that was send with the command,
-* stayed the same and is then overwritten. After the reply of the listener, the data is checked again.
-*
-* @returns bool : false on failure of test, true on success.
-*/
-void simpleTestTmlSendSyncMessage() {
-	TestingProcess simpleSendSyncMessage = TestingProcess(tmlrtT("simpleSendSyncMessage"));
-	simpleSendSyncMessage.defaultListenerInit();
-	simpleSendSyncMessage.initSenderSide();
-	simpleSendSyncMessage.sendArbitraryCmds();
-	simpleSendSyncMessage.freeCmds();
-	simpleSendSyncMessage.freeTmlCores();
-
-}
+#endif //MULTIPLELISTENERS_H

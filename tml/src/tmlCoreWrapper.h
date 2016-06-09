@@ -57,6 +57,21 @@ private:
     /* data */
 
     /**
+     * @brief    Reference to list containing registered connection close callbacks
+     */
+    SIDEX_VARIANT          m_registeredCloseObjs;
+
+    /**
+     * @brief    Reference to mutex necessary for tmlSingleCall::getConnection
+     */
+    tmlCriticalSectionObj* m_csGetConnection;
+
+    /**
+     * @brief    Reference to mutex necessary for m_registeredCloseObjs
+     */
+    tmlCriticalSectionObj* m_csCloseHandling;
+
+    /**
      * @brief    Reference to list containing listener objects
      */
     SIDEX_VARIANT          m_listenerObjs;
@@ -77,6 +92,7 @@ private:
     bool                   m_bShutdown;
 
     tmlCriticalSectionObj* m_csObj;
+
     /**
      * @brief    handler for a command / message to multiple registered Vortex destinations
      */
@@ -1830,6 +1846,18 @@ public:
 
 
     /**
+     * @brief    returns mutex protecting m_registeredCloseObjs
+     */
+    tmlCriticalSectionObj* getCsCloseHandling();
+
+
+    /**
+     * @brief    returns mutex protecting tmlSingleCall::getConnection
+     */
+    tmlCriticalSectionObj* getCsGetConnection();
+
+
+    /**
      * @brief   Create a new listener.
      *
      * @param   sHost            network host / ip.
@@ -2008,6 +2036,12 @@ public:
 
 
     /**
+     * @brief     Deregister connectionLost callback
+     */
+    void tmlCoreWrapper_Connection_Deregister_ConnnectionLost();
+
+
+    /**
      * @brief    Delete a TML connection handle from the connection list
      *
      * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
@@ -2155,5 +2189,11 @@ public:
      *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested network address don't exist
      */
     TML_INT32 tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, char* sPort, TML_CONNECTION_HANDLE* connectionHandle);
+
+    /**
+      * @brief    Get registered connection close list.
+      */
+    SIDEX_VARIANT Get_ConnectionCloseList();
+
 };
 #endif  // TMLCOREWRAPPER_H

@@ -37,47 +37,45 @@
 #ifndef TESTTMLCORE_H
 #define TESTTMLCORE_H
 
-
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
 #include "TestingForReturns.h"
-#include "TmlList.h"
-#include "tmlrt_Utils.h"
 
-class TmlCore : TestingForReturns {
+class TmlCore : public TestingForReturns
+{
 public:
-	TmlCore(SIDEX_TCHAR* name);
-	TmlCore();
-	TML_INT32 defaultInit();
+	TmlCore(SIDEX_TCHAR* testProcessName = NULL);
+	~TmlCore();
+
+	array<TML_LISTENER_HANDLE, AMOUNT_OF_LISTENERS> m_listenerHandles;
+
+	array<SIDEX_TCHAR*, MAX_AMOUNT_OF_PROFILES> getProfileNames();
+	TML_CORE_HANDLE getCore();
+	SIDEX_TCHAR* getPort();
+	SIDEX_TCHAR* getIP();
+
+	TML_INT32 defaultInit(bool listenerSide);
 	TML_INT32 initCore();
 	TML_INT32 addProfileToCore(SIDEX_TCHAR* profile);
 	TML_INT32 setDefaultProfile();
 	TML_INT32 setDefaultPort();
 	TML_INT32 setPort(SIDEX_TCHAR* port);
 	TML_INT32 setDefaultIP();
-	TML_INT32 startListener();
+	TML_INT32 startListeners(bool listenerSide);
 	TML_INT32 freeTmlCore();
-	bool isInitialized();
-	TmlList getProfileNames();
-	TML_CORE_HANDLE getCore();
-	SIDEX_TCHAR* getPort();
-	SIDEX_TCHAR* getIP();
-	TML_INT32 registerDefaultCmds(array<int, 5> cmdCodes);
-	~TmlCore();
-
+	TML_INT32 registerDefaultCmds(array<int, AMOUNT_OF_CMDS> cmdCodes);
+	bool isInitialized();	
+	TML_INT32 initListeners(bool listenerSide);
+	
 protected:
+	TML_CORE_HANDLE m_core;
+	int amountOfProfiles;
+	array<SIDEX_TCHAR*, AMOUNT_OF_LISTENERS> m_listenerAddresses;
+	array<SIDEX_TCHAR*, MAX_AMOUNT_OF_PROFILES> m_profileNames;
+	SIDEX_TCHAR* m_ip;
+	SIDEX_TCHAR* m_port;
+	void initArrays();
+
 	void appendProfileToList(SIDEX_TCHAR* profile);
 	SIDEX_VARIANT formatToSidexString(SIDEX_TCHAR* profile);
-	TML_CORE_HANDLE core;
-	TmlList profileNames;
-	SIDEX_TCHAR* ip;
-	SIDEX_TCHAR* port;
-
-
 };
-
-
 
 #endif	//TESTTMLCORE_H

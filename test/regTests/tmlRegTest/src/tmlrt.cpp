@@ -1,4 +1,4 @@
-/* 
+/*
  *  libTML:  A BEEP based Messaging Suite
  *  Copyright (C) 2016 wobe-systems GmbH
  *
@@ -16,7 +16,7 @@
  *  License along with this program; if not, write to the Free
  *  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  *  02111-1307 USA
- *  
+ *
  *  You may find a copy of the license under this software is released
  *  at COPYING file. This is LGPL software: you are welcome to develop
  *  proprietary applications using this library without any royalty or
@@ -35,24 +35,10 @@
  *    wobe-systems GmbH
  */
 
-#ifdef LINUX
-  #include <wchar.h>
-  #include <stdbool.h>
-  #include <string.h>
-#else
-  #include <stdio.h>
-  #include <tchar.h>
-  #include <string.h>
-#endif
-#include <iostream>
-using namespace std;
-#include <tmlCore.h>
-#include <sidex.h>
-#include "tmlrt_SendingCommands.h"
-//#include "tmlrt_LoadBalancing.h"
 #include "tmlrt_Utils.h"
-#include "TestingProcess.h"
-
+#include "TestParams.h"
+#include "tmlrt_Connections.h"
+#include "tmlrt_MultipleListeners.h"
 
 /** @brief Main function, accepts command line parameters
 * @param int argc : contains amount of arguments in argv
@@ -60,13 +46,102 @@ using namespace std;
 * @returns int : 0 if everything went okay, -1 if a failure/error occurred or the options of the user were not recognized
 */
 #ifdef LINUX
-    int main(int argc, char* argv[])
+  int main(int argc, char* argv[])
 #else //LINUX
-    int _tmain(int argc, char* argv[])
+  int _tmain(int argc, char* argv[])
 #endif
-{	
-	//testing to send messages
-	simpleTestTmlSendSyncMessage();
+{
+  int result = -1;
 
-    return 0;
+  wcout << "=======================" << endl;
+  wcout << "  TML regression test  " << endl;
+  wcout << "=======================" << endl;
+  wcout << endl;
+
+  #if defined(_MEM_LEAK_CHECK_) && defined(_DEBUG)
+    // enable memory leak report at program exit...
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+    wcout << "Memory leak detection is enabled!" << endl;
+    wcout << endl;
+
+    // just for debugging: set memory allocation break point
+    //_CrtSetBreakAlloc(-1);  // <- pass here the {xxx} value from the leak report
+  #endif
+
+  wcout << (8 * sizeof(int)) << "bit" << endl;
+  wcout << "UTF" << (8 * sizeof(SIDEX_TCHAR)) << endl;
+  wcout << endl;
+
+  wcout << "Programm is called with " << (argc - 1) << " parameter" << ((argc > 2) ? "s." : ".") << endl;
+  for(int i = 1; i < argc; i++) { wcout << "Param" << i << " = " << argv[i] << endl; }
+  wcout << endl;
+
+  SIDEX_TCHAR* pArg = NULL;
+  SIDEX_TCHAR* pBuf = NULL;
+  if(argc > 1)
+  {
+    SIDEX_INT32 iLength = 0;
+    switch(sizeof(SIDEX_TCHAR))
+    {
+      case 1:
+      {
+        pArg = (SIDEX_TCHAR*)argv[1];
+        break;
+      }
+      case 2:
+      {
+        pBuf = (SIDEX_TCHAR*)UTF8toUTF16(argv[1], &iLength);
+        pArg = pBuf;
+        break;
+      }
+      case 4:
+      {
+        pBuf = (SIDEX_TCHAR*)UTF8toUTF32(argv[1], &iLength);
+        pArg = pBuf;
+        break;
+      }
+    }
+  }
+
+  TestParams = new CTestParams(pArg);
+  if(TestParams)
+  {
+    initGlobalMutex();
+    SIDEX_TCHAR* pfn = TestParams->getParamsFileName();
+    if(pfn) { wcout << "Using params file: " << pfn << endl; }
+    else    { wcout << "Running without params file!" << endl; }
+    wcout << endl;
+
+    int i = 0, n = TestParams->getTestLoopCount();
+    wcout << "Tests - Start... ( " << n << " loop" << ((n > 1) ? "s )" : " )") << endl;
+    wcout << endl;
+    do
+    {
+      wcout << "----------------------------------------" << endl;
+      wcout << "  Loop #" << (i + 1) << endl;
+      wcout << "----------------------------------------" << endl;
+      wcout << endl;
+
+      if(!testTmlConnections()) break;            // test the connection API
+      if(!testTmlMultiListeners()) break;         // test the multi listener API
+
+      i++;
+    }
+    while(i < n);
+    if(i == n) result = 0;
+
+    wcout << endl;
+    wcout << "Tests - " << (result ? S_FINISH_FAILED : S_FINISH_SUCCESS) << endl;
+    wcout << endl;
+
+    DELETE_OBJ(TestParams);
+    deleteGlobalMutex();
+  }
+
+  DELETE_STR(pBuf);
+
+  wcout << "========================================" << endl;
+  wcout << endl;
+  return(result);
 }

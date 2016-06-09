@@ -680,35 +680,15 @@ void AsyncHandlingThreadMethod (LPVOID pParam)
   TMLThreadDef threadInfo;
   threadInfo.bThreadStarted = false;
 
+  bool bLock = true;
+  intern_mutex_lock (pThreadData->mutexCriticalSection, pThreadData->pLog, "AsyncHandlingThreadMethod");
+
   pThreadData->pLog->log (TML_LOG_CORE_IO, "TMLCoreSender", "AsyncHandlingThreadMethod", "Start", "");
 
   ////////////////////////////////
   // The channelPool :
   VortexChannelPool* channelPoolAttr = NULL;
   pThreadData->connectionObj->getChannelPool(&channelPoolAttr);
-  if (NULL == channelPoolAttr){
-    //////////////////////////////////////////////
-    // The first time allocation of a thread pool:
-    tmlConnectionManageObj* connectionMgr;
-    VortexConnection* connectionAttr = NULL;
-    pThreadData->connectionObj->getConnectionManageObj(&connectionMgr);
-    if (NULL != connectionMgr){
-      connectionAttr = connectionMgr->getVortexConnection();
-    }
-    char* profile = NULL;
-    pThreadData->connectionObj->getProfile(&profile);
-    if (NULL != connectionAttr && NULL != profile){
-      ////////////////////////////////////////
-      // now create  a new channel pool:
-      pThreadData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreSender", "AsyncHandlingThreadMethod", "Vortex CMD", "vortex_channel_pool_new");
-      // Thread- generation log
-      channelPoolAttr = vortex_channel_pool_new(connectionAttr, profile, 1, NULL, NULL, NULL, NULL, NULL, NULL);
-      // Thread- generation log
-      ////////////////////////////////////////////////////////////////////////////
-      // And now it's time to set the channelPool attribute in the connectionObj:
-      pThreadData->connectionObj->setChannelPool(channelPoolAttr);
-    }
-  }
 
   ////////////////////////////////
   // The channel :
@@ -796,6 +776,8 @@ void AsyncHandlingThreadMethod (LPVOID pParam)
             iRet = TML_ERR_SENDER_COMMUNICATION;
           }
           else{
+            bLock = false;
+            intern_mutex_unlock (pThreadData->mutexCriticalSection, pThreadData->pLog, "AsyncHandlingThreadMethod");
             /* Start timer now */
             // Timeout is INFINITE at initialization time:
             iRet = StartTimerThread(pThreadData->timerThreadData, pThreadData->eventHandler, pThreadData->senderSyncEventArray, INFINITE, pThreadData->pLog, &threadInfo);
@@ -1004,6 +986,11 @@ void AsyncHandlingThreadMethod (LPVOID pParam)
   globalCallback(pThreadData->asyncCmdCallbackHandlerMethod,  pThreadData);
 
   pThreadData->pLog->log (TML_LOG_CORE_IO, "TMLCoreSender", "AsyncHandlingThreadMethod", "End", "");
+
+  if (bLock){
+    intern_mutex_unlock (pThreadData->mutexCriticalSection, pThreadData->pLog, "AsyncHandlingThreadMethod");
+  }
+
 }
 
 
@@ -1078,10 +1065,6 @@ TMLCoreSender::~TMLCoreSender()
     // Free the reference to a structure to handle connection close of a server:
     delete (m_closeCallbackData);
 
-    ////////////////////////////////////////////////////////////////////////////
-    // Free event handler
-    delete (m_eventHandler);
-
     if (NULL != m_ctx){
       ////////////////////////////////////////////////////////////////////////////
       // Destroy the mutex that protect critial section about communication data:
@@ -1108,6 +1091,11 @@ TMLCoreSender::~TMLCoreSender()
       delete (m_multiAsyncMsg);
     m_bValidInitialized = false;
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Free event handler
+  if (NULL != m_eventHandler)
+    delete (m_eventHandler);
 }
 
 

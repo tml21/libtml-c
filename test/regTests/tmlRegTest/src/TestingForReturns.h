@@ -1,4 +1,4 @@
-/* 
+/*
  *  libTML:  A BEEP based Messaging Suite
  *  Copyright (C) 2016 wobe-systems GmbH
  *
@@ -16,7 +16,7 @@
  *  License along with this program; if not, write to the Free
  *  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  *  02111-1307 USA
- *  
+ *
  *  You may find a copy of the license under this software is released
  *  at COPYING file. This is LGPL software: you are welcome to develop
  *  proprietary applications using this library without any royalty or
@@ -34,25 +34,50 @@
  * Contributors:
  *    wobe-systems GmbH
  */
+
 #ifndef TESTINGFORRETURNS_H
 #define TESTINGFORRETURNS_H
 
+#include "tmlrt_Utils.h"
 
-#include <iostream>
-using namespace std;
-#include <sidex.h>
-#include <tmlCore.h>
+class TestingForReturns
+{ //TODO auﬂer mit namen sehr zufrieden
+protected:
+  SIDEX_TCHAR* m_testProcessName;
+  SIDEX_TCHAR* m_testSectionName;
+  bool         m_testOK, m_testOK_Overall;
 
-class TestingForReturns {	//TODO auﬂer mit namen sehr zufrieden
 public:
-	bool testOK;
-	TML_INT32 iErr;
-	SIDEX_TCHAR* errorLocationOutput;
-	void errorOutput();
-	void checkForExpectedReturnCode(TML_INT32 expectedReturnCode);
-	void checkForSuccess();
+  TML_INT32    m_iErr;
+
+public:
+  TestingForReturns(SIDEX_TCHAR* testProcessName = NULL);
+  ~TestingForReturns();
+
+  void         reset(bool overall = false);
+  void         setTestSectionName(SIDEX_TCHAR* testSectionName = NULL);
+
+  SIDEX_TCHAR* getTestProcessName();
+  SIDEX_TCHAR* getTestSectionName();
+  TML_INT32    getLastErrorCode();
+  bool         isTestOK();
+
+  void messageOutput(SIDEX_TCHAR* messageText = NULL,
+                     bool withProcessName = true, bool withSectionName = true, bool deleteText = false);
+  void contentOutput(SIDEX_TCHAR* name, SIDEX_TCHAR* content,
+                     bool withProcessName = true, bool withSectionName = true, bool deleteName = false, bool deleteContent = false);
+  void numberOutput(SIDEX_TCHAR* name, SIDEX_INT32 number,
+                     bool withProcessName = true, bool withSectionName = true, bool deleteName = false);
+  void indexOutput(SIDEX_TCHAR* arrayName, SIDEX_INT32 index, SIDEX_TCHAR* content,
+                     bool withProcessName = true, bool withSectionName = true, bool deleteArrayName = false, bool deleteContent = false);
+
+protected:
+  void errorOutput(SIDEX_TCHAR* messageText = NULL, bool withErrorCode = true, bool deleteText = false);
+
+public:
+  bool checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* messageText = NULL, bool deleteText = false);
+  bool checkForSuccess(SIDEX_TCHAR* messageText = NULL, bool deleteText = false);
+  bool checkForValue(SIDEX_TCHAR* name, SIDEX_INT32 desiredValue, SIDEX_INT32 actualValue, bool deleteName = false);
 };
 
-
-
-#endif	//TESTINGFORRETURNS_H
+#endif  //TESTINGFORRETURNS_H
