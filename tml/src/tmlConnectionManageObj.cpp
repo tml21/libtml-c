@@ -206,7 +206,7 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
             // ...there's still a small amount of time that the previous listener socket TCP
             // buffers are collected, closed, etc...
             // So let us wait a little bit here
-            tmlCoreWrapper::SleepForMilliSeconds(50);
+            SleepForMilliSeconds(50);
             --retries;
           }
         }
@@ -250,7 +250,7 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
       // ...there's still a small amount of time that the previous listener socket TCP
       // buffers are collected, closed, etc...
       // So let us wait a little bit here
-      tmlCoreWrapper::SleepForMilliSeconds(50);
+      SleepForMilliSeconds(50);
       if (TML_SUCCESS == iRet){
         if (bIsIPV6){
           log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");

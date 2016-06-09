@@ -61,7 +61,9 @@ CTestParams::CTestParams(SIDEX_TCHAR* testParamsFileName)
     }
     if(!ensureDefaultParams())
     {
-      sidex_Save_Content(m_sdxParams, tmlrtT("C:\\filledTestParams.sdx"));
+      #ifndef LINUX
+        sidex_Save_Content(m_sdxParams, tmlrtT("C:\\filledTestParams.sdx"));
+      #endif
     }
   }
 }

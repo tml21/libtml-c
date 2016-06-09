@@ -51,6 +51,7 @@
 FUNC_STDCALL EventMsgHandlingThread (axlPointer pParam)
 {
   EventMsgHandlingParams* pThreadHandlingParams = (EventMsgHandlingParams*)pParam;
+  pThreadHandlingParams->threadInfo->iThreadStatus = THREAD_IN_PROCESS;
   tmlLogHandler* pLog = pThreadHandlingParams->pLog;
 
   pLog->log (TML_LOG_CORE_IO, "tmlEventCall", "EventMsgHandlingThread", "EventMsgHandlingThread", "start");
@@ -111,6 +112,8 @@ FUNC_STDCALL EventMsgHandlingThread (axlPointer pParam)
 
   // Thread end
   pLog->log (TML_LOG_CORE_IO, "tmlEventCall", "EventMsgHandlingThread", "EventMsgHandlingThread", "terminated");
+
+  pThreadHandlingParams->threadInfo->iThreadStatus = THREAD_STOPPED;
   return 0;
 }
 
@@ -131,7 +134,7 @@ tmlEventCall::tmlEventCall(tmlLogHandler* loghandler, void* pCBFunc)
 
   ////////////////////////////////////////////////////////////////////////////
   // No thread started at this momemt
-  m_threadInfo.bThreadStarted = false;
+  m_threadInfo.iThreadStatus = THREAD_STOPPED;
 
   ////////////////////////////////////////////////////////////////////////////
   // create the queue containing the background event message data
@@ -375,24 +378,14 @@ int tmlEventCall::startEventMessageHandlingThread(EventMsgHandlingParams* thread
   threadData->eventHandler = eventHandler;
   threadData->terminationMutex = NULL;
   threadData->pCBFunc = pCBFunc;
-
+  threadData->threadInfo = threadInfo;
+  threadData->threadInfo->iThreadStatus = THREAD_PENDING_TO_START;
 
   pLog->log (TML_LOG_VORTEX_CMD, "tmlEventCall", "StartEventMessageHandlingThread", "Vortex CMD", "vortex_thread_create");
-#ifdef LINUX
-  #ifdef OS_X
     axl_bool bSuccess = intern_thread_create(threadInfo, EventMsgHandlingThread, threadData);
-  #else // OSX
-    axl_bool bSuccess = intern_thread_create(threadInfo, EventMsgHandlingThread, threadData);
-  #endif // OSX
-#else // LINUX
-    axl_bool bSuccess = intern_thread_create(threadInfo, EventMsgHandlingThread, threadData);
-#endif // LINUX
   // Thread- generation log
   if (!bSuccess){
     iRet = TML_ERR_SENDER_NOT_INITIALIZED;
-  }
-  else{
-    threadInfo->bThreadStarted = true;
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -411,7 +404,7 @@ void tmlEventCall::stopEventMessageHandlingThread()
   // Begin of critical section
   enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlEventCall", "stopEventMessageHandlingThread", "Vortex CMD", "vortex_mutex_lock");
 
-  if (m_threadInfo.bThreadStarted){
+  if (m_threadInfo.iThreadStatus){
     m_log->log (TML_LOG_CORE_IO, "tmlEventCall", "StopEventMessageHandlingThread", "EventMsgHandlingThread", "Stop");
     if (! m_eventHandler->SetEventOnHandle(m_eventMessageHandlingEventArray[EVENT_HANDLING_MESSAGE_TERMINATE_EVENT])){
       m_log->log ("tmlEventCall", "StopEventMessageHandlingThread", "SetEvent", "failed");
@@ -426,7 +419,6 @@ void tmlEventCall::stopEventMessageHandlingThread()
       if (AXL_FALSE == bRet){
         printf ("#### tmlEventCall - stopEventMessageHandlingThread - Error in \"vortex_thread_destroy\" ####\n");
       }
-      m_threadInfo.bThreadStarted = false;
       m_log->log (TML_LOG_VORTEX_MUTEX, "tmlEventCall", "stopEventMessageHandlingThread", "Vortex CMD", "vortex_thread_destroy done");
     }
   }

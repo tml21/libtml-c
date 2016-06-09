@@ -115,6 +115,12 @@
   */
 #define INITIAL_THREAD_PREEMPTIVE     TML_TRUE
 
+/////////////////////////////////////////////////////////////////////////////////////
+// Thread status definitions
+#define THREAD_STOPPED                      0
+#define THREAD_IN_PROCESS                   1
+#define THREAD_PENDING_TO_START             2
+
 
 // Prototying:
 class tmlConnectionObj;
@@ -152,8 +158,8 @@ struct VORTEXSenderFrameReceivedCallbackData{
 };
 
 struct TMLThreadDef{
-    bool          bThreadStarted;
-    VortexThread* pThreadDef;
+  volatile int iThreadStatus;
+  VortexThread* pThreadDef;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -222,6 +228,7 @@ struct TimerThreadData{
   tmlLogHandler*    pLog;                               // reference to logging handler
   tmlEventHandler*  eventHandler;
   VortexMutex*      terminationMutex;                   // mutex to signal termination
+  TMLThreadDef*     threadInfo;
 };
 
 
@@ -276,6 +283,7 @@ struct EventMsgHandlingParams{
   tmlLogHandler*     pLog;
   void*              pCBFunc;                           // reference to the call callback method to handle the event message in background
   tmlEventDataQueue* pDataQueue;                        // reference to the queue containing the background event message data
+  TMLThreadDef*      threadInfo;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////

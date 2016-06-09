@@ -53,4 +53,9 @@ class tmlLogHandler;
     void intern_mutex_lock(VortexMutex* mutex_def, tmlLogHandler* log, const char* identifier);
     void intern_mutex_unlock(VortexMutex* mutex_def, tmlLogHandler* log, const char* identifier);
 
+    /**
+     * @brief  helper method / sleep for millisecond
+    */
+    void SleepForMilliSeconds(long mSecs);
+
 #endif // SYSTEMBASE_H

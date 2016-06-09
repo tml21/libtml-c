@@ -64,7 +64,7 @@ class TCallback : public CCallback // Inheriting
 		// Execute the Callback
 		virtual bool Execute(void *Param) const 
 		{
-			if (pFunction) return (cInst->*pFunction)(Param);
+			if (cInst && pFunction) return (cInst->*pFunction)(Param);
 			else printf("ERROR : the callback function has not been defined !!!!\n");
 			// an undefined callback function will crash the program if you don't check here !
 			return false;

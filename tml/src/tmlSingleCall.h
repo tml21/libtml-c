@@ -71,6 +71,7 @@ private:
      */
     void CloseAllOpenConnections();
 
+
 protected:
     /* data */
 

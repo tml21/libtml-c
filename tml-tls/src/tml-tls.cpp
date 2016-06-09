@@ -219,17 +219,17 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_AcceptNegotiation(TML_CORE_HAN
 
 
 /**
- * @brief   Allows to configure a failure handler that will be called when a failure is found at SSL level or during the handshake with the particular function failing.
+ * @brief   Allows to configure an error handler that will be called when a failure is found at SSL level or during the handshake with the particular function failing.
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_FailureHandler(TML_CORE_HANDLE coreHandle, 
-                                                                     TML_ON_TLS_FAILURE_CB_FUNC pFailureCB, void* pFailureData){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_OnError(TML_CORE_HANDLE coreHandle, 
+                                                                     TML_ON_TLS_ERROR_CB_FUNC pErrorCB, void* pErrorData){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bRet = TML_FALSE;
 
   if (TML_HANDLE_TYPE_NULL != coreHandle){
     iRet = TML_SUCCESS;
 
-    ((tmlCoreWrapperBase*) coreHandle)->setTlsFailureCB((void*)pFailureCB, (void*)pFailureData);
+    ((tmlCoreWrapperBase*) coreHandle)->setTlsFailureCB((void*)pErrorCB, (void*)pErrorData);
 
     VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
     vortex_ctx_set_data(ctx, "TML_CORE_HANDLE", (axlPointer)coreHandle);
@@ -239,7 +239,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_FailureHandler(TML_CORE_HA
     }
     else{
       vortex_tls_set_failure_handler (ctx,     // context to configure
-                                     (NULL != pFailureCB) ? tls_failure_handler : NULL,
+                                     (NULL != pErrorCB) ? tls_failure_handler : NULL,
                                      NULL);
     }
   }

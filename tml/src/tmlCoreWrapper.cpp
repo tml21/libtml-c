@@ -996,25 +996,6 @@ vortex_ctx_unref (&m_ctx);
 
 
 /**
- * @brief  helper method / sleep for millisecond
-*/
-void tmlCoreWrapper::SleepForMilliSeconds(DWORD mSecs){
-#ifdef LINUX // LINUX
-  ///////////////////////////////////////////////////////////////////////////
-  // Delay for one millisecond:
-  timespec delay;
-  delay.tv_sec = 0;
-  delay.tv_nsec = 1000000 * mSecs;  // 1 milli sec * mSecs
-  // sleep for delay time
-  nanosleep(&delay, NULL);
-  return;
-#else // LINUX
-  Sleep (mSecs);
-#endif // LINUX
-}
-
-
-/**
  * @brief   Set the callback method for thread creation.
  */
 int tmlCoreWrapper::tmlCoreWrapper_Thread_Set_OnCreate(void *pCBCreate){
@@ -2639,7 +2620,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bExi
 TML_INT32  tmlCoreWrapper::tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle, bool bDeregisterSenderRegistration){
   TML_INT32 iRet = TML_SUCCESS;
 
-  if (bDeregisterSenderRegistration){
+  if (bDeregisterSenderRegistration && connectionHandle){
     m_sender->DeregisterConnectionLostAndFree((tmlConnectionManageObj*)*connectionHandle);
   }
 

@@ -160,15 +160,15 @@ typedef  SIDEX_VARIANT (*TML_ON_CERTIFICATE_PRIVATE_KEY_LOCATION_CB_FUNC)(SIDEX_
 
 /**
  * @ingroup tlsGeneral
- * @brief   Callback function called when a failure is found during TLS handshake.
+ * @brief   Callback function called when an error is found during TLS handshake.
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   errorMessage     string Variant containing the errorMessage
- * @param   pFailureData     reference to optional user data configured in tml_Tls_Core_Set_FailureHandler() 
+ * @param   pErrorData       reference to optional user data configured in tml_Tls_Core_Set_OnError() 
  *
- * @see tml_Tls_Core_Set_FailureHandler()
+ * @see tml_Tls_Core_Set_OnError()
  */
-typedef  void (*TML_ON_TLS_FAILURE_CB_FUNC)(TML_CONNECTION_HANDLE connection, SIDEX_VARIANT errorMessage, void* pFailureData);
+typedef  void (*TML_ON_TLS_ERROR_CB_FUNC)(TML_CONNECTION_HANDLE connection, SIDEX_VARIANT errorMessage, void* pErrorData);
 
 
 /**
@@ -393,16 +393,16 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML
 
 /**
  * @ingroup tlsGeneral
- * @brief   Allows to configure a failure handler that will be called when a failure is found at SSL level or during the handshake with the particular function failing.
+ * @brief   Allows to configure an error handler that will be called when a failure is found at SSL level or during the handshake with the particular function failing.
  *
  * @param   coreHandle TML    core handle (TML_CORE_HANDLE)
- * @param   pFailureCB        the failure handler to be called when an error is found
- * @param   pFailureData      reference to optional user data to be passed into the function when the handler is called
+ * @param   pErrorCB          the error handler to be called when an error is found
+ * @param   pErrorData        reference to optional user data to be passed into the function when the handler is called
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_MISSING_OBJ invalid core handle
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_FailureHandler(TML_CORE_HANDLE coreHandle, TML_ON_TLS_FAILURE_CB_FUNC pFailureCB, void* pFailureData);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_OnError(TML_CORE_HANDLE coreHandle, TML_ON_TLS_ERROR_CB_FUNC pErrorCB, void* pErrorData);
 #ifdef __cplusplus
 }// extern "C"
 #endif

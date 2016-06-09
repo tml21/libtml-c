@@ -96,12 +96,11 @@ FUNC_STDCALL TimerThread( void* pParam);
  * @param   hSynchronisationHandleArray  Array of timer synchonisation handles.
  * @param   dwTimeout                    The timeout value (in ms)
  * @param   pLogHandler                  Reference to tmlLogHandler for logging 
- * @param   threadInfo                   Reference to TMLThreadDef 
  *
  * @returns TML_SUCCESS in case of success.<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED in case of a problem.
  */
-int StartTimerThread(TimerThreadData* timerThreadData, tmlEventHandler* eventHandler, const char** hSynchronisationHandleArray, DWORD dwTimeout, tmlLogHandler* pLogHandler, TMLThreadDef* threadInfo);
+int StartTimerThread(TimerThreadData* timerThreadData, tmlEventHandler* eventHandler, const char** hSynchronisationHandleArray, DWORD dwTimeout, tmlLogHandler* pLogHandler);
 
 
 /**
@@ -266,7 +265,8 @@ private:
     /**
      * @brief    Thread inforamtion structure 
      */
-    //TMLThreadDef m_threadInfo;
+    TMLThreadDef         m_timerThreadInfo;
+    TMLThreadDef         m_asyncThreadInfo;
 
     /**
      * The error code that will be set during construction / initSender()

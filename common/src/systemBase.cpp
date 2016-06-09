@@ -53,3 +53,21 @@ void intern_mutex_lock(VortexMutex* mutex_def, tmlLogHandler* log, const char* i
 void intern_mutex_unlock(VortexMutex* mutex_def, tmlLogHandler* log, const char* identifier){
   vortex_mutex_unlock (mutex_def);
 }
+
+/**
+ * @brief  helper method / sleep for millisecond
+*/
+void SleepForMilliSeconds(long mSecs){
+#ifdef LINUX // LINUX
+  ///////////////////////////////////////////////////////////////////////////
+  // Delay for one millisecond:
+  timespec delay;
+  delay.tv_sec = 0;
+  delay.tv_nsec = 1000000 * mSecs;  // 1 milli sec * mSecs
+  // sleep for delay time
+  nanosleep(&delay, NULL);
+  return;
+#else // LINUX
+  Sleep (mSecs);
+#endif // LINUX
+}
