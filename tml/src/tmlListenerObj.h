@@ -57,11 +57,6 @@ private:
      */
     TML_BOOL m_bListnerIsEnabled;
 
-    /**
-     * @brief    Maximum of accepted connections / in case of iMax = -1 it is unlimited
-     */
-    VORTEXLimitCheckDataCallbackData m_connectionsLimitCheckData;
-
 protected: 
 	  /* data */
     /**
@@ -100,12 +95,11 @@ public:
      * @brief    Constructor.
      *
      * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
-     * @param   ctx         reference to Vortex execution context
      * @param   sNetAddress network address of the listener binding.
      *
      * @returns an instance of tmlListenerObj.
      */
-    tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sNetAddress);
+    tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
 
 
 
@@ -113,13 +107,12 @@ public:
      * @brief    Constructor.
      *
      * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
-     * @param   ctx         reference to Vortex execution context
      * @param   sHost       network host / ip.
      * @param   sPort       port.
      *
      * @returns an instance of tmlListenerObj.
      */
-    tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sHost, const char* sPort);
+    tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort);
 
 
     /**
@@ -132,11 +125,9 @@ public:
      * @brief    init the object
      *
      * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
-     * @param   ctx         reference to Vortex execution context
      * @param   sNetAddress network address for connection binding.
-     * @param   ctx         reference to Vortex execution context
      */
-    void initListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sNetAddress);
+    void initListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress);
 
 
     /**

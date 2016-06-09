@@ -102,7 +102,7 @@ bool initGlobalMutex()
 {
   if(!g_mutex_valid)
   {
-    g_mutex_valid = (vortex_mutex_create(&g_mutex_handle) == axl_true);
+    g_mutex_valid = (vortex_mutex_create_full(&g_mutex_handle, VORTEX_MUTEX_CONF_RECURSIVE) == axl_true);
     if(!g_mutex_valid) { wcout << "Failed: initGlobalMutex - vortex_mutex_create()" << endl; }
   }
   return(g_mutex_valid);

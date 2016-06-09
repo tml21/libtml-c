@@ -42,9 +42,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#ifdef LINUX
-#include <pthread.h>
-#endif // LINUX
 #include <vortex.h>
 
 class  tmlCriticalSectionObj
@@ -56,16 +53,12 @@ private:
     /**
      * @brief    The critical section attribute
      */
-#ifdef LINUX
-    pthread_mutex_t mutex;           // Mutex
-#else // LINUX
     VortexMutex m_csCriticalSection;
 
     /**
      * @brief    The created attribute
      */
     bool              m_bCreated;
-#endif // LINUX
 
 	  /* methods */
 

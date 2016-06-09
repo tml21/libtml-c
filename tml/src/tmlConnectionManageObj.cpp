@@ -109,6 +109,7 @@ void connectionCloseHandler(VortexConnection *connection, axlPointer user_data)
  */
 tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection)
 {
+  tmlConnectionManageObjBase();
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
   char* sNetAddress = new char[iLength];
@@ -129,6 +130,7 @@ tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const
  */
 tmlConnectionManageObj::tmlConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection)
 {
+  tmlConnectionManageObjBase();
   initConnectionManageObj(coreHandle, sNetAddress, pOnConnectCallback, pOnDisconnectCallback, vortexConnection);
 }
 
@@ -147,6 +149,7 @@ tmlConnectionManageObj::~tmlConnectionManageObj()
 void tmlConnectionManageObj::initConnectionManageObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress, void*  pOnConnectCallback, void*  pOnDisconnectCallback, VortexConnection* vortexConnection)
 {
   m_iErr = TML_SUCCESS;
+  m_tlsStatusMsg = SIDEX_HANDLE_TYPE_NULL;
   m_coreHandle = coreHandle;
   m_onConnectCallback    = pOnConnectCallback;       // The callback method to call in case of connection
   m_onDisconnectCallback = pOnDisconnectCallback;    // The callback method to call in case of disconnection
@@ -190,8 +193,24 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
       if (!vortex_connection_is_ok (connection, axl_false))
       {
         log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_reconnect");
-        axl_bool bConnected;
-        bConnected = vortex_connection_reconnect (connection, NULL, NULL);
+        axl_bool bConnected = axl_false;
+        int retries = 10;
+        do{
+          bConnected = vortex_connection_reconnect (connection, NULL, NULL);
+          if (axl_false == bConnected) {
+            // Francis:
+            // there's a time there were the listener using (reusing)
+            // same port, will be not fully functional (there is little pause there due to time wait TCP state). 
+            // Even though we use the following declaration when starting a listener:
+            // setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &unit, sizeof (unit));
+            // ...there's still a small amount of time that the previous listener socket TCP
+            // buffers are collected, closed, etc...
+            // So let us wait a little bit here
+            tmlCoreWrapper::SleepForMilliSeconds(50);
+            --retries;
+          }
+        }
+        while ((axl_false == bConnected) && retries);
         if (axl_false == bConnected){
           const char* msg = vortex_connection_get_message(connection);
           log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "vortex_connection_get_message", msg);
@@ -223,6 +242,15 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
       if (TML_SUCCESS == iRet){
         bIsIPV6 = m_binding->isIPV6();
       }
+      // Francis:
+      // there's a time there were the listener using (reusing)
+      // same port, will be not fully functional (there is little pause there due to time wait TCP state). 
+      // Even though we use the following declaration when starting a listener:
+      // setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &unit, sizeof (unit));
+      // ...there's still a small amount of time that the previous listener socket TCP
+      // buffers are collected, closed, etc...
+      // So let us wait a little bit here
+      tmlCoreWrapper::SleepForMilliSeconds(50);
       if (TML_SUCCESS == iRet){
         if (bIsIPV6){
           log->log (TML_LOG_VORTEX_CMD, "tmlConnectionManageObj", "establishVortexConnection", "Vortex CMD", "vortex_connection_new");
@@ -240,6 +268,9 @@ TML_INT32 tmlConnectionManageObj::establishVortexConnection(){
           iRet = TML_ERR_SENDER_INVALID_PARAMS;
         }
         else{
+          // Set the "vortex ctx data" - used in tls_failure_handler()
+          vortex_ctx_set_data(ctx, "TML_CONNECTION_HANDLE", (axlPointer)this);
+
           m_vortexConnection = connection;
           // call the callback method for the created connection:
           globalCallback(m_onConnectCallback, (void*) this);
@@ -292,6 +323,9 @@ void tmlConnectionManageObj::cleanUp(){
         m_vortexConnection = NULL;
       }
       delete m_binding;
+      if (SIDEX_HANDLE_TYPE_NULL != m_tlsStatusMsg){
+        sidex_Variant_DecRef(m_tlsStatusMsg);
+      }
     }
   }
 }
@@ -302,14 +336,6 @@ void tmlConnectionManageObj::cleanUp(){
  */
 void* tmlConnectionManageObj::getConnectionCloseHandler(){
   return &m_internalConnectionCloseHandlerMethod;
-}
-
-
-/**
- * @brief Get the TML core handle.
- */
-TML_CORE_HANDLE tmlConnectionManageObj::getCoreHandle(){
-  return m_coreHandle;
 }
 
 
@@ -497,14 +523,6 @@ TML_INT32 tmlConnectionManageObj::validate(TML_BOOL bReconnect, TML_BOOL* bConne
   }
   *bConnected = iStatus;
   return iRet;
-}
-
-
-/**
-  * @brief   Get Vortex connection 
-  */
-VortexConnection* tmlConnectionManageObj::getVortexConnection(){
-  return m_vortexConnection;
 }
 
 

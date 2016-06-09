@@ -34,66 +34,68 @@
  * Contributors:
  *    wobe-systems GmbH
  */
- 
+
+/** @file tmlCore.cpp
+  * 
+  * @brief Definitions and dll import file for the TMLCore Object API
+  *
+  * To use the TMLCore interface library add the tmlCore.h, tmlGlobalDefines.h, tmlErrors.h and tmlCore.lib into your project and take
+  * care to have the libvortex-1.1.dll, libaxl.dll and the tmlCore.dll in your path.
+  */
+
+#include "tml-sasl.h"
 #ifdef LINUX
-#include "stdio.h"
-#ifdef OS_X
-#include <sys/errno.h>
-#else // OS_X
-#ifdef FREE_BSD
-#include <sys/errno.h>
-#else // FREE_BSD
-#include <asm-generic/errno-base.h>
-#endif // FREE_BSD
-#endif // OS_X
-#include <unistd.h>
 #else // LINUX
+#include "windows.h"
 #endif // LINUX
-#include "tmlCriticalSectionObj.h"
-
-////////////////////////////////////
-// Enable logging for debug:
-// #define ENABLE_LOG 1
 
 /**
- * @brief    Constructor.
+ * @brief    Returns library version.
  */
-tmlCriticalSectionObj::tmlCriticalSectionObj()
+SASL_CORE_API void DLL_CALL_CONV tml_sasl_Get_Version(int* iVersion){
+  *iVersion = 4711;
+};
+
+#ifdef LINUX
+void __attribute__ ((constructor)) my_load(void);
+void __attribute__ ((destructor)) my_unload(void);
+
+// Called when the library is loaded and before dlopen() returns
+void my_load(void)
 {
-  axl_bool bSuccess = vortex_mutex_create_full (&m_csCriticalSection, VORTEX_MUTEX_CONF_RECURSIVE);
-  m_bCreated = (axl_true == bSuccess);
+    // BEIM LADEN DER DLL:
+    // Add initialization code
 }
 
-
-/**
- * @brief    Destructor.
- */
-tmlCriticalSectionObj::~tmlCriticalSectionObj()
+// Called when the library is unloaded and before dlclose()
+// returns
+void my_unload(void)
 {
-  if (m_bCreated){
-    vortex_mutex_destroy (&m_csCriticalSection);
-  }
+    // BEIM FREIGEBEN DER DLL:
+    // Add clean-up code
 }
+#else
+BOOL WINAPI DllMain(
+    HINSTANCE hinstDLL,  // handle to DLL module
+    DWORD fdwReason,     // reason for calling function
+    LPVOID lpReserved )  // reserved
+{
 
+    // Perform actions based on the reason for calling.
+    switch( fdwReason ) 
+    { 
+        case DLL_PROCESS_ATTACH:
+         break;
 
-/**
- * @brief    Enter the critical section
- */
-bool tmlCriticalSectionObj::tmlCriticalSectionEnter(const char* sID){
-  if (m_bCreated){
-    vortex_mutex_lock (&m_csCriticalSection);
-  }
-  return m_bCreated;
+        case DLL_THREAD_ATTACH:
+         break;
+
+        case DLL_THREAD_DETACH:
+         break;
+
+        case DLL_PROCESS_DETACH:
+         break;
+    }
+    return TRUE;  // Successful DLL_PROCESS_ATTACH.
 }
-
-
-/**
- * @brief    Leave the critical section
- */
-bool tmlCriticalSectionObj::tmlCriticalSectionLeave(const char* sID){
-  if (m_bCreated){
-    vortex_mutex_unlock (&m_csCriticalSection);
-  }
-  return m_bCreated;
-}
-
+#endif

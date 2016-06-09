@@ -43,38 +43,18 @@
 #include "logValues.h"
 
 /**
- * @brief  callback in case of new connection request
- */
-axl_bool listenerObj_connection_accept_handler (VortexConnection * conn, axlPointer ptr) {
-  VORTEXLimitCheckDataCallbackData* limitCheckData = (VORTEXLimitCheckDataCallbackData*) ptr;
-  /* check if connection limit was reached */
-
-  limitCheckData->pLog->log (TML_LOG_VORTEX_CMD, "tmlListenerObj", "listenerObj_connection_accept_handler", "Vortex CMD", "vortex_connection_get_ctx");
-  VortexCtx* ctx = vortex_connection_get_ctx (conn);
-  limitCheckData->pLog->log (TML_LOG_VORTEX_CMD, "tmlListenerObj", "listenerObj_connection_accept_handler", "Vortex CMD", "vortex_reader_connections_watched");
-  int iConnectionsWartched = vortex_reader_connections_watched (ctx);
-  if (-1 != limitCheckData->iMax && iConnectionsWartched > limitCheckData->iMax)
-  {
-    return axl_false;
-  }
-  /* accept connection */
-  return axl_true;
-}
-
-
-/**
  * @brief    Constructor.
  */
-tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sNetAddress)
+tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle,const char* sNetAddress)
 {
-  initListenerObj(coreHandle, ctx, sNetAddress);
+  initListenerObj(coreHandle, sNetAddress);
 }
 
 
 /**
  * @brief    Constructor.
  */
-tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sHost, const char* sPort)
+tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, const char* sHost, const char* sPort)
 {
   int iLength = strlen(sHost) + strlen(sPort) + 2;
 
@@ -85,7 +65,7 @@ tmlListenerObj::tmlListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const
     sprintf_s(sNetAddress, iLength, "%s:%s", sHost, sPort);
   #endif // LINUX
 
-  initListenerObj(coreHandle, ctx, sNetAddress);
+  initListenerObj(coreHandle, sNetAddress);
 
   delete[]sNetAddress;
 }
@@ -104,20 +84,19 @@ tmlListenerObj::~tmlListenerObj()
 /**
   * @brief    init the object
   */
-void tmlListenerObj::initListenerObj(TML_CORE_HANDLE coreHandle, VortexCtx* ctx, const char* sNetAddress){
-  m_ctx = ctx;
+void tmlListenerObj::initListenerObj(TML_CORE_HANDLE coreHandle, const char* sNetAddress){
+
+  m_coreHandle = coreHandle;
+  m_ctx = ((tmlCoreWrapper*)m_coreHandle)->getVortexCtx();
 
   m_bListnerIsEnabled = TML_FALSE;
 
-  m_coreHandle = coreHandle;
 
   m_vortexConnection = NULL;
 
   m_binding = new tmlNetBinding(sNetAddress);
 
   tmlLogHandler* log =  ((tmlCoreWrapper*)m_coreHandle)->getLogHandler();
-  m_connectionsLimitCheckData.iMax = -1;
-  m_connectionsLimitCheckData.pLog = log;
 
   m_iRefCounter = 1;
 
@@ -333,12 +312,6 @@ TML_INT32 tmlListenerObj::set_Enabled(TML_BOOL bEnable){
               }
             }
           }
-        }
-        if (TML_SUCCESS == iRet){
-          ///////////////////////////////////////////////////////////////////////////
-          // configure connection notification callback:
-          log->log (TML_LOG_VORTEX_CMD, "tmlListenerObj", "set_Enabled", "Vortex CMD", "vortex_listener_set_on_connection_accepted");
-          vortex_listener_set_on_connection_accepted (m_ctx, listenerObj_connection_accept_handler, &m_connectionsLimitCheckData);
         }
       }
     }

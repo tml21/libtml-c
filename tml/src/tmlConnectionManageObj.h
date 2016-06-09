@@ -46,6 +46,7 @@
 #include "tmlStdTypes.h"
 #include "tmlNetBinding.h"
 #include "tmlCCallback.h"
+#include "tmlConnectionManageObjBase.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // C - declarations:
@@ -59,10 +60,9 @@ extern "C" {
  */
   void connectionCloseHandler(VortexConnection *connection, axlPointer user_data);
 
-
 }// extern "C"
 
-class tmlConnectionManageObj //connection management object class
+class tmlConnectionManageObj : public tmlConnectionManageObjBase //connection management object class
 {
 private:
     /* data */
@@ -73,16 +73,6 @@ protected:
      * @brief    reference counter
      */
     int               m_iRefCounter;
-
-    /**
-     * @brief    TML core handle
-     */
-    TML_CORE_HANDLE   m_coreHandle;
-
-    /**
-     * @brief    reference VortexConnection object
-     */
-    VortexConnection* m_vortexConnection;
 
     /**
      * @brief    Betwork binding object
@@ -180,12 +170,6 @@ public:
      * @brief Returns the connection close handler
      */
     void* getConnectionCloseHandler();
-
-    /**
-     * @brief Get the TML core handle.
-     */
-    TML_CORE_HANDLE getCoreHandle();
-
 
     /**
      * @brief Get the network hostname / IP of the connection binding.
@@ -325,14 +309,6 @@ public:
      *          TML_ERR_MISSING_OBJ invalid core handle
      */
     TML_INT32 validate(TML_BOOL bReconnect, TML_BOOL* bConnected);
-
-
-    /**
-     * @brief   Get Vortex connection 
-     *
-     * @returns the Vortex connection / NULL if invalid
-     */
-    VortexConnection* getVortexConnection();
 
 
     /**

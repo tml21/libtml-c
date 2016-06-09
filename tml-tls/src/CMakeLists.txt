@@ -29,7 +29,7 @@
 #
 #    wobe-systems GmbH
 #    support@libtml.org
-#
+#  
 # Contributors:
 #    wobe-systems GmbH
 
@@ -37,98 +37,29 @@
 ## Common src path
 set(COMMON_INCLUDE_PATH ../../common/src)
 set(COMMON_SRC_PATH ../../common/src)
+set(TMLINCLUDE ../../tml/src)
 set(SIDEXINCLUDE ../../sidex/src)
 
 #######################################################
 ## Source & Header
-set  (TML_COMMON_SOURCES_HEADER 
-                    ${COMMON_SRC_PATH}/globalDefines.h 
-                    ${COMMON_SRC_PATH}/logValues.h 
-                    ${COMMON_SRC_PATH}/stdIntTypes.h 
-                    ${COMMON_SRC_PATH}/systemBase.h 
-                    ${COMMON_SRC_PATH}/tmlConnectionManageObjBase.h
-                    ${COMMON_SRC_PATH}/tmlCoreWrapperBase.h
-                    ${COMMON_SRC_PATH}/unicode.h )
 
-set  (TML_INSTALL_SOURCES_HEADER tmlCore.h
-                      tmlErrors.h
-                      tmlGlobalDefines.h
-                      tmlStdTypes.h )
-                      
-set  (TML_SOURCES_HEADER tmlCCallback.h
-                      tmlCmdDefines.h
-                      tmlCollectCall.h
-                      tmlCollectCallDestinationObj.h
-                      tmlCollectCallDestinationObjHandler.h
-                      tmlConnectionManageObj.h
-                      tmlConnectionObj.h
-                      tmlCoreDefines.h
-                      tmlCoreHash.h
-                      tmlCoreListener.h
-                      tmlCoreSender.h
-                      tmlCoreWrapper.h
-                      tmlCriticalSectionObj.h
-                      tmlDestinationAddressHandlingHashValue.h
-                      tmlDispatcher.h
-                      tmlEventCall.h
-                      tmlEventCallHandler.h
-                      tmlEventData.h
-                      tmlEventDataQueue.h
-                      tmlEventHandler.h
-                      tmlGlobalCallback.h
-                      tmlListenerObj.h
-                      tmlLogHandler.h
-                      tmlMultiAsyncMsg.h
-                      tmlNetBinding.h
-                      tmlObjWrapper.h
-                      tmlProfileHandler.h
-                      tmlReceiverStream.h
-                      tmlSenderStream.h
-                      tmlSingleCall.h
-                      tmlStreamHandler.h
-                      tmlUniversalHashTable.h )
-                      
-set (TML_COMMON_SOURCES ${COMMON_SRC_PATH}/systemBase.cpp
-                      ${COMMON_SRC_PATH}/tmlConnectionManageObjBase.cpp
-                      ${COMMON_SRC_PATH}/tmlCoreWrapperBase.cpp
-                      ${COMMON_SRC_PATH}/unicode.cpp )        
-                                    
-set (TML_SOURCES      tmlCollectCall.cpp
-                      tmlCollectCallDestinationObj.cpp
-                      tmlCollectCallDestinationObjHandler.cpp
-                      tmlConnectionManageObj.cpp
-                      tmlConnectionObj.cpp
-                      tmlCore.cpp
-                      tmlCoreHash.cpp
-                      tmlCoreListener.cpp
-                      tmlCoreSender.cpp
-                      tmlCoreWrapper.cpp
-                      tmlCriticalSectionObj.cpp
-                      tmlDestinationAddressHandlingHashValue.cpp
-                      tmlDispatcher.cpp
-                      tmlEventCall.cpp
-                      tmlEventCallHandler.cpp
-                      tmlEventData.cpp
-                      tmlEventDataQueue.cpp
-                      tmlEventHandler.cpp
-                      tmlGlobalCallback.cpp
-                      tmlListenerObj.cpp
-                      tmlLogHandler.cpp
-                      tmlMultiAsyncMsg.cpp
-                      tmlNetBinding.cpp
-                      tmlObjWrapper.cpp
-                      tmlProfileHandler.cpp
-                      tmlReceiverStream.cpp
-                      tmlSenderStream.cpp
-                      tmlSingleCall.cpp
-                      tmlStreamHandler.cpp
-                      tmlUniversalHashTable.cpp )
+set  (TLS_COMMON_SOURCES_HEADER ${COMMON_INCLUDE_PATH}/tmlConnectionManageObjBase.h
+                                ${COMMON_INCLUDE_PATH}/unicode.h
+                                ${COMMON_INCLUDE_PATH}/tmlCoreWrapperBase.h )
 
-source_group("CommonHeaderfiles" FILES ${TML_COMMON_SOURCES_HEADER})
-source_group("InstallHeaderfiles" FILES ${TML_INSTALL_SOURCES_HEADER})
-source_group("Headerfiles" FILES ${TML_SOURCES_HEADER})
-source_group("CommonSourcefiles" FILES ${TML_COMMON_SOURCES})
-source_group("Sourcefiles" FILES ${TML_SOURCES})
+set  (TLS_INSTALL_SOURCES_HEADER tml-tls.h )
+                      
+                   
+set (TLS_COMMON_SOURCES ${COMMON_SRC_PATH}/tmlConnectionManageObjBase.cpp 
+                        ${COMMON_SRC_PATH}/unicode.cpp
+                        ${COMMON_SRC_PATH}/tmlCoreWrapperBase.cpp)
+
+set (TLS_SOURCES      tml-tls.cpp)
+
+source_group("CommonHeaderfiles" FILES ${TLS_COMMON_SOURCES_HEADER})
+source_group("InstallHeaderfiles" FILES ${TLS_INSTALL_SOURCES_HEADER})
+source_group("CommonSourcefiles" FILES ${TLS_COMMON_SOURCES})
+source_group("Sourcefiles" FILES ${TLS_SOURCES})
 
 #######################################################
 ## Windows 32 bit / MinGW build
@@ -136,10 +67,11 @@ source_group("Sourcefiles" FILES ${TML_SOURCES})
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
   set(AXLLIB libaxl.lib)
   set(VORTEXLIB libvortex-1.1.lib)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.lib)
 
   set(PREPROCESSOR_DEF -DTML_EXPORTS -DMINGW_BUILD)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT false)
   ADD_DEFINITIONS ("-m32")
   set(CMAKE_CXX_FLAGS "-m32")
@@ -154,10 +86,11 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
   set(AXLLIB libaxl.lib)
   set(VORTEXLIB libvortex-1.1.lib)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.lib)
 
   set(PREPROCESSOR_DEF -DTML_EXPORTS -DMINGW_BUILD)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT true)
   ADD_DEFINITIONS ("-m64")
   set(CMAKE_CXX_FLAGS "-m64")
@@ -170,12 +103,14 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 ## Windows 32 bit
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
+
   set(AXLLIB libaxl.lib)
   set(VORTEXLIB libvortex-1.1.lib)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.lib)
   
   set(PREPROCESSOR_DEF -DTML_EXPORTS)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT false)
   
   set (INST_LIB_PATH ./lib)
@@ -186,12 +121,15 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
 ## Windows / 64 bit
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
+  set_source_files_properties(tmlCore.rc PROPERTIES LANGUAGE RC)
+
   set(AXLLIB libaxl.lib)
   set(VORTEXLIB libvortex-1.1.lib)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.lib)
 
   set(PREPROCESSOR_DEF -DTML_EXPORTS)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT true)
   
   set (INST_LIB_PATH ./lib)
@@ -204,6 +142,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.so)
   set(ICONVLIB libiconv.so)
   set(PTHREADLIB libpthread.so)
 
@@ -212,7 +151,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(CMAKE_CXX_FLAGS "-m32")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT false)
   
   set (INST_LIB_PATH /usr/lib)
@@ -225,6 +164,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.so)
   set(ICONVLIB libiconv.so)
   set(PTHREADLIB libpthread.so)
 
@@ -233,7 +173,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   set(CMAKE_CXX_FLAGS "-m64")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT true)
   
   set (INST_LIB_PATH /usr/lib)
@@ -246,6 +186,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.so)
   set(ICONVLIB libiconv.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
@@ -253,7 +194,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
   set(CMAKE_CXX_FLAGS "-m32")
   set(PREPROCESSOR_DEF -DLINUX -DFREE_BSD -DGCC4)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT false)
   
   set (INST_LIB_PATH /usr/local/lib)
@@ -266,6 +207,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.so)
   set(ICONVLIB libiconv.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
@@ -273,7 +215,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
   set(CMAKE_CXX_FLAGS "-m64")
   set(PREPROCESSOR_DEF -DLINUX -DFREE_BSD -DGCC4)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT true)
   
   set (INST_LIB_PATH /usr/local/lib)
@@ -287,13 +229,14 @@ if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
   set(ICONVLIB libiconv.dylib)
   set(AXLLIB libaxl.0.dylib)
   set(VORTEXLIB libvortex-1.1.dylib)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.dylib)
 
   ADD_DEFINITIONS ("-std=c++11")
   ADD_DEFINITIONS ("-arch i386")
   set(PREPROCESSOR_DEF -DLINUX -DOS_X)
   set(CMAKE_CXX_FLAGS "-arch i386")
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT false)
   
   set (INST_LIB_PATH /usr/local/lib)
@@ -307,13 +250,14 @@ if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
   set(ICONVLIB libiconv.dylib)
   set(AXLLIB libaxl.0.dylib)
   set(VORTEXLIB libvortex-1.1.dylib)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.dylib)
 
   ADD_DEFINITIONS ("-std=c++11")
   ADD_DEFINITIONS ("-arch x86_64")
   set(PREPROCESSOR_DEF -DLINUX -DOS_X)
   set(CMAKE_CXX_FLAGS "-arch x86_64")
  
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT true)
   
   set (INST_LIB_PATH /usr/local/lib)
@@ -327,11 +271,12 @@ if (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
   set(ICONVLIB libiconv.so)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.so)
 
   ADD_DEFINITIONS ("-std=c++11")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4 -DANDROID)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT false)
   
   set (INST_LIB_PATH /usr/local/lib)
@@ -345,12 +290,13 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(ICONVLIB libiconv.so)
   set(AXLLIB libaxl.so)
   set(VORTEXLIB libvortex-1.1.so)
+  set(VORTEX-TLS-LIB libvortex-tls-1.1.so)
   set(PTHREADLIB libpthread.so)
 
   ADD_DEFINITIONS ("-std=c++0x")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
   
-  set(TARGET tmlcore)
+  set(TARGET tml-tls)
   set(IS64BIT false)
   
   set (INST_LIB_PATH /usr/lib)
@@ -359,26 +305,26 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
                     
 if (${IS64BIT} STREQUAL false)
-  set(TMLLIBNAME_LOCAL  ${TARGET}${TML_API_VERSION})
-  set(TMLLIBNAME ${TMLLIBNAME_LOCAL} PARENT_SCOPE)
+  set(TLSLIBNAME_LOCAL  ${TARGET}${TML_API_VERSION})
+  set(TLSLIBNAME ${TLSLIBNAME_LOCAL} PARENT_SCOPE)
 endif (${IS64BIT} STREQUAL false)
 if (${IS64BIT} STREQUAL true)
-  set(TMLLIBNAME_LOCAL ${TARGET}${TML_API_VERSION}_64)
-  set(TMLLIBNAME ${TMLLIBNAME_LOCAL} PARENT_SCOPE)
+  set(TLSLIBNAME_LOCAL ${TARGET}${TML_API_VERSION}_64)
+  set(TLSLIBNAME ${TLSLIBNAME_LOCAL} PARENT_SCOPE)
 endif (${IS64BIT} STREQUAL true)
 
 #######################################################
 ## The target is a shared library 
-ADD_LIBRARY( ${TMLLIBNAME_LOCAL} SHARED ${TML_COMMON_SOURCES_HEADER} ${TML_INSTALL_SOURCES_HEADER} ${TML_SOURCES_HEADER} ${TML_COMMON_SOURCES} ${TML_SOURCES})
+ADD_LIBRARY( ${TLSLIBNAME_LOCAL} SHARED ${TLS_INSTALL_SOURCES_HEADER} ${TLS_COMMON_SOURCES} ${TLS_SOURCES} ${TLS_COMMON_SOURCES_HEADER})
 
 #######################################################
 ## On MinGW build target prefix don't have to be lib:
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
-  set_target_properties(${TMLLIBNAME_LOCAL} PROPERTIES PREFIX "")
+  set_target_properties(${TLSLIBNAME_LOCAL} PROPERTIES PREFIX "")
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32_mingw)
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
-  set_target_properties(${TMLLIBNAME_LOCAL} PROPERTIES PREFIX "")
+  set_target_properties(${TLSLIBNAME_LOCAL} PROPERTIES PREFIX "")
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 
 
@@ -393,7 +339,9 @@ endif()
 INCLUDE_DIRECTORIES (${AXLINCLUDE})
 INCLUDE_DIRECTORIES (${ICONVINCLUDE})
 INCLUDE_DIRECTORIES (${VORTEXINCLUDE})
+INCLUDE_DIRECTORIES (${VORTEX-TLS-INCLUDE})
 INCLUDE_DIRECTORIES (${SIDEXINCLUDE})
+INCLUDE_DIRECTORIES (${TMLINCLUDE})
 INCLUDE_DIRECTORIES (${COMMON_INCLUDE_PATH})
 INCLUDE_DIRECTORIES ( . )
 
@@ -403,41 +351,43 @@ ADD_DEFINITIONS( ${PREPROCESSOR_DEF})
               
 #######################################################
 ## libraries
-TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${AXLLIB} )    
-TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${VORTEXLIB} )    
-TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${SIDEXLIBNAME} )    
+TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${AXLLIB} )    
+TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${VORTEXLIB} )    
+TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${VORTEX-TLS-LIB} )    
+TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${SIDEXLIBNAME} )    
+TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${TMLLIBNAME} )    
 
 #######################################################
 ## ICONV library in case of OSX
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${PTHREADLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${PTHREADLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${PTHREADLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${PTHREADLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL freeBSD_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-32)
 if (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL osx_x86-64)
 if (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${ICONVLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL android_arm32)
 if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${ICONVLIB} )                         
-  TARGET_LINK_LIBRARIES(${TMLLIBNAME_LOCAL} ${PTHREADLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${ICONVLIB} )                         
+  TARGET_LINK_LIBRARIES(${TLSLIBNAME_LOCAL} ${PTHREADLIB} )                         
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
 #######################################################
 ## Install
-install (TARGETS ${TMLLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
-install (FILES ${TML_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+install (TARGETS ${TLSLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
+install (FILES ${TLS_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})

@@ -538,8 +538,6 @@ bool TmlConnectionTester::testGetRemoteProfiles()
 
             m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE);
             checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), S_IO_PROFILE, tmlrtT(")")), true);
-// ToDo: we need LIBTML-22 to be fixed
-//            checkRemoteProfileCount(hConnection1, 1, tmlrtT("One profile on connection1"));
 
             if(createListener(1, 1, sAddress2))
             {
@@ -553,32 +551,19 @@ bool TmlConnectionTester::testGetRemoteProfiles()
 
                   m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE_TWO);
                   checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), S_IO_PROFILE_TWO, tmlrtT(")")), true);
-// ToDo: we need LIBTML-22 to be fixed
-//                  checkRemoteProfileCount(hConnection2, 2, tmlrtT("Two profiles on connection2"));
+                  // We still have one remote profile on an established connection:
+                  checkRemoteProfileCount(hConnection2, 1, tmlrtT("Two profiles on connection2"));
 
                   m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE_THREE);
                   checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), S_IO_PROFILE_THREE, tmlrtT(")")), true);
-// ToDo: we need LIBTML-22 to be fixed
-//                  checkRemoteProfileCount(hConnection2, 3, tmlrtT("Three profiles on connection2"));
-
-// ToDo: we need LIBTML-22 to be fixed
-// !!! workaraound begin !!!
-  // Remote profile list doesn't update, if already connected!
-  m_iErr = tml_Connection_Close(&hConnection2);
-  checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
-  hConnection2 = TML_HANDLE_TYPE_NULL;
-  m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
-  checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress2, tmlrtT(")")), true);
-/*
-  stopListener(1, 1);
-  TmlSleep(100);  // <-- Bug: won't reconnect without sleep!
-  startListener(1, 1);
-  TML_BOOL bConnected = TML_FALSE;
-  m_iErr = tml_Connection_Validate(hConnection2, TML_TRUE, &bConnected);
-  checkForSuccess(tmlrtT("tml_Connection_Validate(Connection2)"));
-  checkForValue(tmlrtT("tml_Connection_Validate(Connection2)"), TML_TRUE, bConnected, false);
-*/
-// !!! workaraound end !!!
+                  // We still have one remote profile on an established connection:
+                  checkRemoteProfileCount(hConnection2, 1, tmlrtT("Three profiles on connection2"));
+                  stopListener(1, 1);
+                  startListener(1, 1);
+                  TML_BOOL bConnected = TML_FALSE;
+                  m_iErr = tml_Connection_Validate(hConnection2, TML_TRUE, &bConnected);
+                  checkForSuccess(tmlrtT("tml_Connection_Validate(Connection2)"));
+                  checkForValue(tmlrtT("tml_Connection_Validate(Connection2)"), TML_TRUE, bConnected, false);
 
                   // Test getting remote profiles...
                   lProfiles = SIDEX_HANDLE_TYPE_NULL;
@@ -1398,15 +1383,12 @@ bool TmlConnectionTester::testSendSync()
               m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, 1234, &CallbackHandler_Command, pData);
               if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register_Cmd("), S_IO_PROFILE, tmlrtT(", 1234)")), true))
               {
-// ToDo: we need LIBTML-22 to be fixed
-// !!! workaraound begin !!!
-// Reconnect - Remote profile list doesn't update, if already connected!
-m_iErr = tml_Connection_Close(&hConnection);
-checkForSuccess(tmlrtT("tml_Connection_Close(NoProfileConnection)"));
-hConnection = TML_HANDLE_TYPE_NULL;
-m_iErr = tml_Core_Connect(getCore(0), sAddress, &hConnection);
-checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress, tmlrtT(")")), true);
-// !!! workaraound end !!!
+                // Reconnect - Remote profile list doesn't update, if already connected!
+                m_iErr = tml_Connection_Close(&hConnection);
+                checkForSuccess(tmlrtT("tml_Connection_Close(NoProfileConnection)"));
+                hConnection = TML_HANDLE_TYPE_NULL;
+                m_iErr = tml_Core_Connect(getCore(0), sAddress, &hConnection);
+                checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress, tmlrtT(")")), true);
             
                 // Test without command...
                 m_iErr = tml_Connection_SendSync(hConnection, S_IO_PROFILE, TML_HANDLE_TYPE_NULL, 2000);
@@ -1547,15 +1529,12 @@ bool TmlConnectionTester::testSendAsync()
               m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, 1234, &CallbackHandler_Command, pData);
               if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register_Cmd("), S_IO_PROFILE, tmlrtT(", 1234)")), true))
               {
-// ToDo: we need LIBTML-22 to be fixed
-// !!! workaraound begin !!!
-// Reconnect - Remote profile list doesn't update, if already connected!
-m_iErr = tml_Connection_Close(&hConnection);
-checkForSuccess(tmlrtT("tml_Connection_Close(NoProfileConnection)"));
-hConnection = TML_HANDLE_TYPE_NULL;
-m_iErr = tml_Core_Connect(getCore(0), sAddress, &hConnection);
-checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress, tmlrtT(")")), true);
-// !!! workaraound end !!!
+                // Reconnect - Remote profile list doesn't update, if already connected!
+                m_iErr = tml_Connection_Close(&hConnection);
+                checkForSuccess(tmlrtT("tml_Connection_Close(NoProfileConnection)"));
+                hConnection = TML_HANDLE_TYPE_NULL;
+                m_iErr = tml_Core_Connect(getCore(0), sAddress, &hConnection);
+                checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress, tmlrtT(")")), true);
 
                 // Test without command...
                 m_iErr = tml_Connection_SendAsync(hConnection, S_IO_PROFILE, TML_HANDLE_TYPE_NULL, 2000);

@@ -289,12 +289,6 @@ class TMLCoreListener
     tmlProfileHandler* m_pHandler;
 
     /**
-     * @brief    Maximum of accepted connections / in case of iMax = -1 it is unlimited
-     */
-    VORTEXLimitCheckDataCallbackData m_connectionsLimitCheckData;
-
-
-    /**
      * @brief    Maximum of accepted channels per connection / in case of iMax = -1 it is unlimited:
      */
     VORTEXLimitCheckDataCallbackData m_channelsPerConnectionLimitCheckData;

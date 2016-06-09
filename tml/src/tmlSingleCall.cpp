@@ -153,25 +153,6 @@ void tmlSingleCall::ShutdownAllOpenConnections()
 
 
 /**
- * @brief  helper method / sleep for millisecond
-*/
-void tmlSingleCall::SleepForMilliSeconds(DWORD mSecs){
-#ifdef LINUX // LINUX
-  ///////////////////////////////////////////////////////////////////////////
-  // Delay for one millisecond:
-  timespec delay;
-  delay.tv_sec = 0;
-  delay.tv_nsec = 1000000 * mSecs;  // 1 milli sec * mSecs
-  // sleep for delay time
-  nanosleep(&delay, NULL);
-  return;
-#else // LINUX
-  Sleep (mSecs);
-#endif // LINUX
-}
-
-
-/**
  * @brief   Close all open Connections / has to becalled after ShutdownAllOpenConnections
  */
 void tmlSingleCall::CloseAllOpenConnections()
@@ -392,7 +373,7 @@ bool tmlSingleCall::SignalConnectionCloseToSender(void* connectionMgrObj)
           // It makes sense to sleep for a while because afterwards
           // it will be possible that the connection is unlocked
           // and will be able to be removed out of the list:
-        //  SleepForMilliSeconds(20);
+          // tmlCoreWrapper::SleepForMilliSeconds(20);
           ////////////////////////////////////////////////////////////
           // Now remove all "marked to be remove" entries in the list:
         //  RemoveMarkedSenderOutOfConnectionList(false);
@@ -890,7 +871,7 @@ int tmlSingleCall::SearchForConnectionObjInHT(const char* profile, const char* s
                 do{
                   intConnectionObj->getChannelPool(channelPool);
                   if (NULL == *channelPool){
-                    SleepForMilliSeconds(20);
+                    tmlCoreWrapper::SleepForMilliSeconds(20);
                     ++iCount;
                   }
                 }
