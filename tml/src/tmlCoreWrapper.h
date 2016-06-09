@@ -57,6 +57,16 @@ private:
     /* data */
 
     /**
+     * @brief    Reference to list containing listener objects
+     */
+    SIDEX_VARIANT          m_listenerObjs;
+
+    /**
+     * @brief    Reference to list containing connection manager objects
+     */
+    SIDEX_VARIANT          m_connectionMgrObjs;
+
+    /**
      * @brief    Reference to tmlProfileHandler object
      */
     tmlProfileHandler*     m_pHandler;
@@ -166,10 +176,44 @@ private:
      */
     unsigned int m_maxEventMsgQueueLength;
 
+    /**
+    * @brief    Reference to callback method that will be invoked in case of a connect action
+    */
+    TML_ON_CONNECT_CB_FUNC      m_pOnConnectCallback;
+
+
+    /**
+    * @brief    Reference to callback method parameter that will be used in case of a connect action
+    */
+    TML_POINTER                 m_pOnConnectData;
+
+    /**
+    * @brief    Reference to callback method that will be invoked in case of a disconnect action
+    */
+    TML_ON_DISCONNECT_CB_FUNC   m_pOnDisconnectCallback;
+
+
+    /**
+    * @brief    Reference to callback method parameter that will be used in case of a disconnect action
+    */
+    TML_POINTER                 m_pOnDisconnectData;
+
 protected: 
     /* data */
+    /**
+     * @brief    Reference to the class callback handling method to handle a new message
+     */
     TCallback<tmlCoreWrapper> m_ListenerCallback;
 
+    /**
+     * @brief    Reference to the class callback handling method for connection establishment
+     */
+    TCallback<tmlCoreWrapper> m_internalConnectionEstablishHandlerMethod;
+
+    /**
+     * @brief    Reference to the class callback handling method for connection close
+     */
+    TCallback<tmlCoreWrapper> m_internalConnectionCloseHandlerMethod;
 
     /* methods */
 
@@ -296,7 +340,6 @@ public:
     /**
      * @brief    Constructor.
      *
-     * @param    ctx                      The VORTEX execution context.
      * @param    iLogValue                The debug logging value.
      * @param    iInitialThreadPoolSize   Initial thread pool size.
      * @param    iThreadPoolMaxSize       Maximal thread pool size.
@@ -313,7 +356,7 @@ public:
      *
      * @returns an instance of tmlCoreWrapper
      */
-    tmlCoreWrapper(VortexCtx* ctx, int iLogValue,
+    tmlCoreWrapper(int iLogValue,
                          TML_INT32 iInitialThreadPoolSize, TML_INT32 iThreadPoolMaxSize, 
                         TML_INT32 iThreadAddSteps, TML_INT32 iThreadPoolAddPeriod,
                         TML_INT32 iThreadRemoveSteps, TML_INT32 iThreadPoolRemovePeriod, 
@@ -329,9 +372,31 @@ public:
 
 
     /**
+     * @brief    Get the Vortex execution context
+     *
+     * @returns the Vortex execution context
+     */
+    VortexCtx* getVortexCtx();
+
+
+    /**
+     * @brief    Get the loghandler
+     *
+     * @returns the loghandler
+     */
+     tmlLogHandler* getLogHandler();
+
+
+    /**
      * @brief    make all deregistrations / sometimes useful before calling the destructor.
      */
     void tmlCoreWrapper_General_Deregistration();
+
+
+    /**
+     * @brief  helper method / sleep for millisecond
+    */
+    void SleepForMilliSeconds(DWORD mSecs);
 
 
     /**
@@ -774,7 +839,6 @@ public:
      * @param   sHost       The host name / IP number.
      * @param   sPort       The Port.
      * @param   iTimeout    Timeout for the command execution (in ms).
-     * @param   iMode       The command mode (TMLCOM_MODE_ASYNC or TMLCOM_MODE_EVT).
      *
      * @returns TML_SUCCESS in case of success.<br>
      *          TML_ERR_INITIALIZATION in case of a common initialization problem.<br>
@@ -786,7 +850,7 @@ public:
      *
      * @see tmlErrors.h
      */
-    int tmlCoreWrapper_SendAsyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout, int iMode);
+    int tmlCoreWrapper_SendAsyncMessage(TML_COMMAND_HANDLE tmlhandle, const char* profile, const char* sHost, const char* sPort, unsigned int iTimeout);
 
 
     /**
@@ -1763,5 +1827,333 @@ public:
      * @brief    returns the index of the contiguous log file
      */
     int getLogFileIndex();
+
+
+    /**
+     * @brief   Create a new listener.
+     *
+     * @param   sHost            network host / ip.
+     * @param   sPort            port.
+     * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Create(const char* sHost, const char* sPort, TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief   Create a new listener.
+     *
+     * @param   sAddress         network address for listener binding
+     * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Create(const char* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief   Close a listener and release resources.
+     *
+     * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Close(TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief     Close all listener instances and release resources.
+     */
+    void tmlCoreWrapper_Listener_CloseAll();
+
+
+    /**
+     * @brief    Delete a TML listener handle from the listener list
+     *
+     * @param   listenerHandle TML listener handle (TML_LISTENER_HANDLE)
+     */
+    void tmlCoreWrapper_Delete_ListenerItem(TML_LISTENER_HANDLE listenerHandle);
+
+
+    /**
+     * @brief    Add a TML listener handle to the listener list
+     *
+     * @param   listenerHandle TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Add_ListenerItem(TML_LISTENER_HANDLE listenerHandle);
+
+
+    /**
+     * @brief   Is any listener registered
+     *
+     * @returns TML_TRUE, is any listener is registered.
+     */
+    TML_BOOL tmlCoreWrapper_Has_Any_Listener();
+
+
+    /**
+     * @brief   Get the number of listeners.
+     *
+     * @param   iCount     reference to the number of listeners
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Get_ListenerCount(TML_UINT32* iCount);
+
+
+    /**
+     * @brief   Get listener's handle from a TML core.
+     *
+     * @param   index index of listener
+     * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Get_Listener(TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief    Get listener's handle from a TML core.
+     *
+     * @param   sAddress network binding address
+     * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_INFORMATION_UNDEFINED a listener for the requested network binding address don't exist
+     */
+    TML_INT32 tmlCoreWrapper_Get_ListenerByAddress(char* sAddress, TML_LISTENER_HANDLE* listenerHandle);
+
+
+    /**
+     * @brief    Enable/disable a listener. 
+     *
+     * To enable / disable all listeners, use tmlCoreWrapper_Enable_Listener()
+     *
+     * @param   listenerHandle TML listener handle, NULL to enable/disable all listeners
+     * @param   bEnable        TML_TRUE to enable, TML_FALSE to disable the listener
+     *
+     * @returns TML_SUCCESS in case of success.
+     *
+     * @see tmlCoreWrapper_Enable_Listener(), tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Listener_Set_Enabled(TML_LISTENER_HANDLE listenerHandle, TML_BOOL bEnable);
+
+
+    /**
+     * @brief    Get enable status of a listener.
+     *
+     * @param   listenerHandle TML listener handle
+     *
+     * @returns listener enable status.
+     *
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_BOOL tmlCoreWrapper_Listener_Get_Enabled(TML_LISTENER_HANDLE listenerHandle);
+
+
+    /**
+     * @brief   Create a new connection.
+     *
+     * @param   sHost            network host / ip.
+     * @param   sPort            port.
+     * @param   bExistingFail    if true a successful search for an existing connection reaches into an Error (is not allowed).
+     * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+     * @param   vortexConnection reference to a VortexConnection, NULL to create a new connection
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connect(const char* sHost, const char* sPort, bool bExistingFail, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection);
+
+
+    /**
+     * @brief   Create a new connection.
+     *
+     * @param   sAddress         network address
+     * @param   bExistingFail    if true a successful search for an existing connection reaches into an Error (is not allowed).
+     * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+     * @param   vortexConnection reference to a VortexConnection, NULL to create a new connection
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connect(const char* sAddress, bool bExistingFail, TML_CONNECTION_HANDLE* connectionHandle, VortexConnection* vortexConnection);
+
+
+    /**
+     * @brief   Close a connection and release resources.
+     *
+     * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
+     * @param   bDeregisterSenderRegistration if true the sender object has to deregister the connection
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connection_Close(TML_CONNECTION_HANDLE* connectionHandle, bool bDeregisterSenderRegistration);
+
+
+    /**
+     * @brief     Close all connections and release resources.
+     */
+    void tmlCoreWrapper_Connection_CloseAll();
+
+
+    /**
+     * @brief    Delete a TML connection handle from the connection list
+     *
+     * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+     */
+    void tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle);
+
+
+    /**
+     * @brief    Add a TML connection handle to the connection list
+     *
+     * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle);
+
+
+    /**
+     * @brief   Returns the number of connections.
+     *
+     * @param   iCount     reference to the number of connections
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Get_ConnectionCount(TML_UINT32* iCount);
+
+
+    /**
+     * @brief   Get connection handle from a TML core.
+     *
+     * @param   index index of connection
+     * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle);
+
+
+    /**
+     * @brief   Send async command on existing connection.
+     *
+     * The call returns after sending the message without waiting for a reply. If a result has to be received or 
+     * possible error needs to be handled a callback function has to be registered with tml_Cmd_Register_CommandReady()
+     * before the call. 
+     *
+     * @param  connectionHandle TML connection handle (TML_CORE_HANDLE)
+     * @param  sProfile         profile identification string
+     * @param  tmlhandle        TML command handle
+     * @param  iTimeout         timeout in milliseconds
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connection_SendAsyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+
+
+    /**
+     * @brief   Send sync command on existing connection.
+     *
+     * Sending a message synchronously means that the call returns after the result of the message call
+     * was received or an error occurred.
+     *
+     * @param  connectionHandle TML connection handle (TML_CORE_HANDLE)
+     * @param  sProfile         profile identification string
+     * @param  tmlhandle        TML command handle
+     * @param  iTimeout         timeout in milliseconds
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Connection_SendSyncMessage(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_COMMAND_HANDLE tmlhandle, TML_UINT32 iTimeout);
+
+
+    /**
+      * @brief   Class callback method that will be called by establishment of a connection
+     *
+     * connection reference to tmlConnectionManageObj instance
+     *
+     * @returns true success.
+     */
+    bool signalConnectionEstablished(void* connection);
+
+
+    /**
+     * @brief   Send sync command on existing connection.
+     *
+     * Read TML_ON_CONNECT_CB_FUNC() for further reference.
+     *
+     * @param   pCBFunc    callback function or NULL to remove previously registered function
+     * @param   pCBData    user data or NULL
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Set_OnConnect(TML_ON_CONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
+
+
+    /**
+     * @brief   Class callback method that will be called by close of a connection
+     *
+     * connection reference to tmlConnectionManageObj instance
+     *
+     * @returns true success.
+     */
+    bool signalConnectionClosed(void* connection);
+
+
+    /**
+     * @brief    Callback function to signal a closed connection.
+     *
+     * Read TML_ON_DISCONNECT_CB_FUNC() for further reference.
+     *
+     * @param   pCBFunc    callback function or NULL to remove previously registered function
+     * @param   pCBData    user data or NULL
+     *
+     * @returns TML_SUCCESS in case of success.
+     * @see tmlErrors.h,tmlStdTypes.h
+     */
+    TML_INT32 tmlCoreWrapper_Set_OnDisconnect(TML_ON_DISCONNECT_CB_FUNC pCBFunc, TML_POINTER pCBData);
+
+
+    /**
+     * @brief    Get connection handle.
+     *
+     * @param   sAddress         requested network binding address
+     * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested network address don't exist
+     */
+    TML_INT32 tmlCoreWrapper_Get_ConnectionByAddress(char* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
+
+
+    /**
+     * @brief    Get connection handle.
+     *
+     * @param   sHost            network host / ip.
+     * @param   sPort            port.
+     * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
+     *
+     * @returns TML_SUCCESS in case of success<br>
+     *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested network address don't exist
+     */
+    TML_INT32 tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, char* sPort, TML_CONNECTION_HANDLE* connectionHandle);
 };
 #endif  // TMLCOREWRAPPER_H

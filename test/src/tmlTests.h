@@ -42,7 +42,13 @@
 
 bool listenerTest01();
 bool senderTest01();
+bool senderTest02();
 bool sendAndListenTest01();
 bool sendAndListenTest02();
+bool sendAndListenTest03();
+bool sendAndListenTest04();
+bool validateConnection();
+void closePossibleExistingCoreHandle();
+
 
 #endif // TMLTESTS_H

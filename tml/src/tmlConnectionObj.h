@@ -43,6 +43,7 @@
 #endif // _MSC_VER > 1000
 
 #include "tmlCoreSender.h"
+#include "tmlConnectionManageObj.h"
 
 static TML_INT64          m_iMagicNumber = 0;
 
@@ -55,16 +56,16 @@ private:
     /**
      * @brief    char array to set the date arribute
      */
-    bool               m_bPendingToBeRemoved;
-    char*              m_sProfile;
-    char*              m_sHost;
-    char*              m_sPort;
-    VortexChannelPool* m_channelPool;
-    VortexChannel*     m_channel;
-    TMLCoreSender*     m_sender;
-    VortexConnection*  m_connection;
-    bool               m_bLocked;
-    bool               m_bRawViaVortexPayloadFeeder;
+    bool                     m_bPendingToBeRemoved;
+    char*                    m_sProfile;
+    char*                    m_sHost;
+    char*                    m_sPort;
+    VortexChannelPool*       m_channelPool;
+    VortexChannel*           m_channel;
+    TMLCoreSender*           m_sender;
+    tmlConnectionManageObj*  m_connectionMgr;
+    bool                     m_bLocked;
+    bool                     m_bRawViaVortexPayloadFeeder;
 
     /**
      * @brief  Datastructure contains the parameter for the tmlCoreSender's frame receive method
@@ -167,9 +168,9 @@ public:
      * @param   sPort       The Port.
      * @param   sender      Reference to an instance of tmlCoreSender.
      * @param   channelPool The channel pool
-     * @param   connection  Reference to an instance of VortexConnection.
+     * @param   connectionMgrObj  Reference to an instance of tmlConnectionManageObj.
      */
-    void setConnectionObj(const char* profile, const char* sHost, const char* sPort, TMLCoreSender* sender, VortexChannelPool* channelPool, VortexConnection* connection);
+    void setConnectionObj(const char* profile, const char* sHost, const char* sPort, TMLCoreSender* sender, VortexChannelPool* channelPool, tmlConnectionManageObj* connectionMgrObj);
 
 
     /**
@@ -270,11 +271,11 @@ public:
 
 
     /**
-     * @brief Get the VortexConnection object.
+     * @brief Get the tmlConnectionManageObj object.
      *
      * @param   connection  Reference to value to write the connection object to.
      */
-    void getConnection(VortexConnection** connection);
+    void getConnectionManageObj(tmlConnectionManageObj** connection);
 
 
     /**
