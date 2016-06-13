@@ -2779,6 +2779,10 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bExi
                            // The network address is not correct:
                            delete wrapper;
                            break;
+        case TML_ERR_SENDER_INVALID_PARAMS:
+                           // The destination is not available
+                           delete wrapper;
+                           break;
         case TML_SUCCESS : // No Break here
         default:           tmlCoreWrapper_Add_ConnectionItem((TML_CONNECTION_HANDLE) wrapper);
                            *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
