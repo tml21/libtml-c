@@ -188,7 +188,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_AcceptNegotiation(TML_CORE_HAN
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bRet = TML_FALSE;
 
-  if (TML_HANDLE_TYPE_NULL != coreHandle){
+  if (TML_HANDLE_TYPE_NULL != coreHandle && NULL != bAccept){
     iRet = TML_SUCCESS;
 
     ((tmlCoreWrapperBase*) coreHandle)->setTlsAcceptCB((void*)pAcceptCB);
@@ -458,7 +458,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_VerifyCert (TML_CONNECTI
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   axl_bool bVerified = axl_false;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != bVerifyOk){
     iRet = TML_SUCCESS;
     VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
     bVerified = vortex_tls_verify_cert(connection);
@@ -481,7 +481,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CO
   // It can only be configured in the tml_Tls_Connection_StartNegotiation().
   // tml_Tls_Core_SetAuto_Negation has no handler to get this information.
   // 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != bEncrypted){
     iRet = TML_SUCCESS;
     *bEncrypted = ((tmlConnectionManageObjBase*) connectionHandle)->isEncrpyted();
   }
@@ -500,7 +500,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != statusMsg){
     iRet = ((tmlConnectionManageObjBase*) connectionHandle)->getTlsStatusMsg_A(statusMsg);
     if(TML_SUCCESS != iRet){
       iRet = TML_ERR_INFORMATION_UNDEFINED;
@@ -515,7 +515,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != statusMsg){
     iRet = ((tmlConnectionManageObjBase*) connectionHandle)->getTlsStatusMsg_X(statusMsg);
     if(TML_SUCCESS != iRet){
       iRet = TML_ERR_INFORMATION_UNDEFINED;
@@ -530,7 +530,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != statusMsg){
     iRet = ((tmlConnectionManageObjBase*) connectionHandle)->getTlsStatusMsg_W(statusMsg);
     if(TML_SUCCESS != iRet){
       iRet = TML_ERR_INFORMATION_UNDEFINED;
@@ -550,20 +550,30 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (TML_CTSTR* string, TmlT
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsDigestMethod method, char** sDigest){
   TML_INT32 iRet = TML_SUCCESS;
 
-  char* sAxlRet = vortex_tls_get_digest ((VortexDigestMethod)method, string); 
+  if (NULL != sDigest){
+    if (NULL != string){
+      char* sAxlRet = vortex_tls_get_digest ((VortexDigestMethod)method, string); 
 
-  int iLength = strlen(sAxlRet);
-  char* sRet = new char[iLength+1];
+      int iLength = strlen(sAxlRet);
+      char* sRet = new char[iLength+1];
 
-#if defined (LINUX) || defined (MINGW_BUILD)
-  strncpy(sRet, sAxlRet, iLength);
-#else
-  strncpy_s(sRet, iLength+1, sAxlRet, iLength);
-#endif
-  sRet[iLength] = '\0';
+    #if defined (LINUX) || defined (MINGW_BUILD)
+      strncpy(sRet, sAxlRet, iLength);
+    #else
+      strncpy_s(sRet, iLength+1, sAxlRet, iLength);
+    #endif
+      sRet[iLength] = '\0';
 
-  *sDigest = sRet;
-  axl_free(sAxlRet);
+      *sDigest = sRet;
+      axl_free(sAxlRet);
+    }
+    else{
+      iRet = TML_ERR_UNICODE;
+    }
+  }
+  else{
+    iRet = TML_ERR_MISSING_OBJ;
+  }
   return iRet;
 };
 /**
@@ -572,25 +582,33 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsD
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlTlsDigestMethod method, wchar_t** sDigest){
   TML_INT32 iRet = TML_SUCCESS;
 
-  TML_INT32 iLengthUtf8;
-  TML_INT32 iLengthUtf32;
-  try{
-    char* utf8Str = UTF32toUTF8((wchar_t*)string, &iLengthUtf8);
-    if (NULL != utf8Str){
-      char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
-      wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
-      if (NULL != utf32Str){
-        *sDigest = utf32Str;
+  if (NULL != sDigest){
+    TML_INT32 iLengthUtf8;
+    TML_INT32 iLengthUtf32;
+    try{
+      char* utf8Str = UTF32toUTF8((wchar_t*)string, &iLengthUtf8);
+      if (NULL != utf8Str){
+        char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
+        wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
+        if (NULL != utf32Str){
+          *sDigest = utf32Str;
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
+        delete[] utf8Str;
+        axl_free(sRet);
       }
       else{
         iRet = TML_ERR_UNICODE;
       }
-      delete[] utf8Str;
-      axl_free(sRet);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
     }
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    iRet = TML_ERR_MISSING_OBJ;
   }
   return iRet;
 };
@@ -600,25 +618,30 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlT
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, TmlTlsDigestMethod method, char16_t** sDigest){
   TML_INT32 iRet = TML_SUCCESS;
 
-  TML_INT32 iLengthUtf8;
-  TML_INT32 iLengthUtf16;
-  try{
-    char* utf8Str = UTF16toUTF8((wchar_t*)string, &iLengthUtf8);
-    if (NULL != utf8Str){
-      char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
-      char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
-      if (NULL != utf16Str){
-        *sDigest = utf16Str;
+  if (NULL != sDigest){
+    TML_INT32 iLengthUtf8;
+    TML_INT32 iLengthUtf16;
+    try{
+      char* utf8Str = UTF16toUTF8((wchar_t*)string, &iLengthUtf8);
+      if (NULL != utf8Str){
+        char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
+        char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
+        if (NULL != utf16Str){
+          *sDigest = utf16Str;
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
+        delete[] utf8Str;
+        axl_free(sRet);
       }
-      else{
-        iRet = TML_ERR_UNICODE;
-      }
-      delete[] utf8Str;
-      axl_free(sRet);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
     }
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    iRet = TML_ERR_MISSING_OBJ;
   }
   return iRet;
 };
@@ -636,7 +659,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_C
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char** sDigest){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != sDigest){
     iRet = TML_SUCCESS;
     VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
 
@@ -664,7 +687,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, wchar_t** sDigest){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != sDigest){
     iRet = TML_SUCCESS;
 
     TML_INT32 iLengthUtf32;
@@ -693,7 +716,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char16_t** sDigest){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != sDigest){
     iRet = TML_SUCCESS;
 
     TML_INT32 iLengthUtf16;

@@ -147,7 +147,7 @@
 #define SIDEX_ERR_FIRST_NEXT                    1017
 
 /**
-* @brief    unicode conversion error
+* @brief    unicode conversion error or string reference is NULL
 * @ingroup sidexReturncodes
 */
 #define SIDEX_ERR_UNICODE                       1018

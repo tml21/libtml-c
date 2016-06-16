@@ -137,38 +137,56 @@ TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Version(TML_INT32* apiVer, TML_INT3
  * char* API
 **/
 TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Version_A(TML_INT32* apiVer, TML_INT32* libVer, char** verStr){
-  *apiVer = API_VERSION_NUMBER;
-  *libVer = LIB_VERSION_NUMBER;
-  *verStr = LIB_VERSION_STRING_A;
+  if (NULL != apiVer){
+    *apiVer = API_VERSION_NUMBER;
+  }
+  if (NULL != libVer){
+    *libVer = LIB_VERSION_NUMBER;
+  }
+  if (NULL != verStr){
+    *verStr = LIB_VERSION_STRING_A;
+  }
 };
 /**
  * wchar_t* API
 **/
 TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Version_X(TML_INT32* apiVer, TML_INT32* libVer, wchar_t** verStr){
-  *apiVer = API_VERSION_NUMBER;
-  *libVer = LIB_VERSION_NUMBER;
-   if (SIDEX_HANDLE_TYPE_NULL != m_cVersionX){
-    *verStr = m_cVersionX;
+  if (NULL != apiVer){
+    *apiVer = API_VERSION_NUMBER;
   }
-  else{
-    SIDEX_INT32 iLength;
-    m_cVersionX = UTF8toUTF32(LIB_VERSION_STRING_A, &iLength);
-    *verStr = m_cVersionX;
+  if (NULL != libVer){
+    *libVer = LIB_VERSION_NUMBER;
+  }
+  if (NULL != verStr){
+    if (SIDEX_HANDLE_TYPE_NULL != m_cVersionX){
+      *verStr = m_cVersionX;
+    }
+    else{
+      SIDEX_INT32 iLength;
+      m_cVersionX = UTF8toUTF32(LIB_VERSION_STRING_A, &iLength);
+      *verStr = m_cVersionX;
+    }
   }
 };
 /**
  * char16_t* API
 **/
 TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Version_W(TML_INT32* apiVer, TML_INT32* libVer, char16_t** verStr){
-  *apiVer = API_VERSION_NUMBER;
-  *libVer = LIB_VERSION_NUMBER;
-  if (SIDEX_HANDLE_TYPE_NULL != m_cVersionW){
-    *verStr = m_cVersionW;
+  if (NULL != apiVer){
+    *apiVer = API_VERSION_NUMBER;
   }
-  else{
-    SIDEX_INT32 iLength;
-    m_cVersionW = (char16_t*)UTF8toUTF16(LIB_VERSION_STRING_A, &iLength);
-    *verStr = m_cVersionW;
+  if (NULL != libVer){
+    *libVer = LIB_VERSION_NUMBER;
+  }
+  if (NULL != verStr){
+    if (SIDEX_HANDLE_TYPE_NULL != m_cVersionW){
+      *verStr = m_cVersionW;
+    }
+    else{
+      SIDEX_INT32 iLength;
+      m_cVersionW = (char16_t*)UTF8toUTF16(LIB_VERSION_STRING_A, &iLength);
+      *verStr = m_cVersionW;
+    }
   }
 };
 
@@ -181,21 +199,33 @@ TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Copyright(TML_CTSTR** sValue, TML_I
  * char* API
 **/
 TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Copyright_A(char** sValue, TML_INT32* iLength){
-  *iLength = (TML_INT32)strlen(TML_STRING_COPYRIGHT_A);
-  *sValue = TML_STRING_COPYRIGHT_A;
+  if (NULL != sValue){
+    *sValue = TML_STRING_COPYRIGHT_A;
+  }
+  if (NULL != iLength){
+    *iLength = (TML_INT32)strlen(TML_STRING_COPYRIGHT_A);
+  }
 };
 /**
  * wchar_t* API
 **/
 TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Copyright_X(wchar_t** sValue, TML_INT32* iLength){
   if (TML_HANDLE_TYPE_NULL != m_cCopyrightX){
-    *sValue = m_cCopyrightX;
-    *iLength = m_iLengthCopyrightX;
+    if (NULL != sValue){
+      *sValue = m_cCopyrightX;
+    }
+    if (NULL != iLength){
+      *iLength = m_iLengthCopyrightX;
+    }
   }
   else{
     m_cCopyrightX = UTF8toUTF32(TML_STRING_COPYRIGHT_A, &m_iLengthCopyrightX);
-    *sValue = m_cCopyrightX;
-    *iLength = m_iLengthCopyrightX;
+    if (NULL != sValue){
+      *sValue = m_cCopyrightX;
+    }
+    if (NULL != iLength){
+      *iLength = m_iLengthCopyrightX;
+    }
   }
 };
 /**
@@ -203,13 +233,21 @@ TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Copyright_X(wchar_t** sValue, TML_I
 **/
 TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Copyright_W(char16_t** sValue, TML_INT32* iLength){
   if (TML_HANDLE_TYPE_NULL != m_cCopyrightW){
-    *sValue = m_cCopyrightW;
-    *iLength = m_iLengthCopyrightW;
+    if (NULL != sValue){
+      *sValue = m_cCopyrightW;
+    }
+    if (NULL != iLength){
+      *iLength = m_iLengthCopyrightW;
+    }
   }
   else{
     m_cCopyrightW = (char16_t*)UTF8toUTF16(TML_STRING_COPYRIGHT_A, &m_iLengthCopyrightW);
-    *sValue = m_cCopyrightW;
-    *iLength = m_iLengthCopyrightW;
+    if (NULL != sValue){
+      *sValue = m_cCopyrightW;
+    }
+    if (NULL != iLength){
+      *iLength = m_iLengthCopyrightW;
+    }
   }
 };
 
@@ -267,24 +305,24 @@ TML_CORE_API void DLL_CALL_CONV tml_Configure_Thread_Pool_Handling(TML_INT32 iIn
  * @brief   Open an instance of a TMLCore.
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Open(TML_CORE_HANDLE* coreHandle, TML_INT32 iLogValue){
-  // To debug PHP
-  //iLogValue = 0x10;
-  //DebugBreak();
-  TML_INT32 iRet;
-  try{
-    //tmlCoreWrapper* obj = new tmlCoreWrapper(m_ctx, iLogValue, m_bLicensed);
-    tmlCoreWrapper* obj = new tmlCoreWrapper((int)iLogValue,
-                                              m_iInitialThreadPoolSize, m_iThreadPoolMaxSize, 
-                                              m_iThreadAddSteps, m_iThreadPoolAddPeriod, 
-                                              m_iThreadRemoveSteps, m_iThreadPoolRemovePeriod, 
-                                              m_bThreadAutoRemove, m_bThreadPreemptive);
-    m_iLogFileIndex = obj->getLogFileIndex();
-    *coreHandle = (TML_CORE_HANDLE) obj;
-    iRet = (TML_INT32)obj->tmlCoreWrapper_Set_Logging_Value((int)iLogValue);
-    obj->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Open");
-  }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+
+  if (NULL != coreHandle){
+    try{
+      //tmlCoreWrapper* obj = new tmlCoreWrapper(m_ctx, iLogValue, m_bLicensed);
+      tmlCoreWrapper* obj = new tmlCoreWrapper((int)iLogValue,
+                                                m_iInitialThreadPoolSize, m_iThreadPoolMaxSize, 
+                                                m_iThreadAddSteps, m_iThreadPoolAddPeriod, 
+                                                m_iThreadRemoveSteps, m_iThreadPoolRemovePeriod, 
+                                                m_bThreadAutoRemove, m_bThreadPreemptive);
+      m_iLogFileIndex = obj->getLogFileIndex();
+      *coreHandle = (TML_CORE_HANDLE) obj;
+      iRet = (TML_INT32)obj->tmlCoreWrapper_Set_Logging_Value((int)iLogValue);
+      obj->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Open");
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -294,11 +332,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Open(TML_CORE_HANDLE* coreHandle, 
  * @brief  Dismiss the instance of a TMLCore.
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Close(TML_CORE_HANDLE* coreHandle){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
-    iRet = TML_ERR_MISSING_OBJ;
-  }
-  else{
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
+  if (NULL != coreHandle){
     try{
       ////////////////////////////////////////////////////////////////////////////
       // Core is in shutdown process:
@@ -325,14 +360,14 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Close(TML_CORE_HANDLE* coreHandle)
       printf ("### exception caught in \"tml_Core_Close\" ####\n");
       iRet = TML_ERR_COMMON;
     }
-  }
-  if (NULL != m_log){
-    delete m_log;
-    m_log = NULL;
-  }
-  if (NULL != c_csObj){
-    delete c_csObj;
-    c_csObj = NULL;
+    if (NULL != m_log){
+      delete m_log;
+      m_log = NULL;
+    }
+    if (NULL != c_csObj){
+      delete c_csObj;
+      c_csObj = NULL;
+    }
   }
   return iRet;
 }
@@ -364,15 +399,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_GeneralDeregistration(TML_CORE_HAN
  */
 TML_CORE_API void DLL_CALL_CONV tml_Core_Thread_Set_OnCreate(void* pCBCreate){
   try{
-    /*
-    {//if (0 <= m_iLogFileIndex){
-      // To debug PHP
-      if (NULL != pCBCreate)
-        tml_log((TML_INT32)0xFFFFFF, "tml_Core_Thread_Set_OnCreate", "Value", "", "");
-      else
-        tml_log((TML_INT32)0xFFFFFF, "tml_Core_Thread_Set_OnCreate", "NULL", "", "");
-    }
-    */
     vortex_thread_set_create ((VortexThreadCreateFunc)pCBCreate);
   }
   catch (...){
@@ -385,15 +411,6 @@ TML_CORE_API void DLL_CALL_CONV tml_Core_Thread_Set_OnCreate(void* pCBCreate){
  */
 TML_CORE_API void DLL_CALL_CONV tml_Core_Thread_Set_OnDestroy(void* pCBDestroy){
   try{
-  /*
-  {//if (0 <= m_iLogFileIndex){
-      // To debug PHP
-      if (NULL != pCBDestroy)
-        tml_log((TML_INT32)0xFFFFFF, "tml_Core_Thread_Set_OnDestroy", "Value", "", "");
-      else
-        tml_log((TML_INT32)0xFFFFFF, "tml_Core_Thread_Set_OnDestroy", "NULL", "", "");
-    }
-    */
     vortex_thread_set_destroy ((VortexThreadDestroyFunc)pCBDestroy);
   }
   catch (...){
@@ -417,28 +434,30 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register(TML_CORE_HANDLE coreHa
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_A(TML_CORE_HANDLE coreHandle, const char* profile){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == profile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Register");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Register_Profile(profile);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
         if (TML_SUCCESS == iRet){
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_A of profile", profile, " succeeded");
-        }
-        else{
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_A of profile", profile, " failed !");
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Register");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Register_Profile(profile);
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_A of profile", profile, " succeeded");
+          }
+          else{
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_A of profile", profile, " failed !");
+          }
         }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -450,22 +469,17 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_X(TML_CORE_HANDLE core
   TML_INT32 iRet = TML_ERR_UNICODE;
   TML_INT32 iLengthUtf8;
 
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == profile){
-    iRet = TML_ERR_MISSING_OBJ;
-  }
-  else{
+    char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
+    if (NULL != utf8ProfileName){
     try{
-      char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
-      if (NULL != utf8ProfileName){
-        iRet = tml_Profile_Register_A(coreHandle, utf8ProfileName);
-        if (TML_SUCCESS == iRet){
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " succeeded");
-        }
-        else{
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " failed !");
-        }
-        delete[] utf8ProfileName;
+      iRet = tml_Profile_Register_A(coreHandle, utf8ProfileName);
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " succeeded");
       }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " failed !");
+      }
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -480,22 +494,17 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_W(TML_CORE_HANDLE core
   TML_INT32 iRet = TML_ERR_UNICODE;
   TML_INT32 iLengthUtf8;
 
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == profile){
-    iRet = TML_ERR_MISSING_OBJ;
-  }
-  else{
+  char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
+  if (NULL != utf8ProfileName){
     try{
-      char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
-      if (NULL != utf8ProfileName){
-        iRet = tml_Profile_Register_A(coreHandle, utf8ProfileName);
-        if (TML_SUCCESS == iRet){
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " succeeded");
-        }
-        else{
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " failed !");
-        }
-        delete[] utf8ProfileName;
+      iRet = tml_Profile_Register_A(coreHandle, utf8ProfileName);
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " succeeded");
       }
+      else{
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Register_W of profile", utf8ProfileName, " failed !");
+      }
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -512,28 +521,30 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Unregister(TML_CORE_HANDLE core
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Unregister_A(TML_CORE_HANDLE coreHandle, const char* profile){
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Unregister");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Unregister_Profile(profile);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
         if (TML_SUCCESS == iRet){
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Unregister_A of profile", profile, " succeeded");
-        }
-        else{
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Unregister_A of profile", profile, " failed !");
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Unregister");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Unregister_Profile(profile);
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Unregister_A of profile", profile, " succeeded");
+          }
+          else{
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Profile_Unregister_A of profile", profile, " failed !");
+          }
         }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -594,7 +605,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Unregister_W(TML_CORE_HANDLE co
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_Registered_Count(TML_CORE_HANDLE coreHandle, TML_INT32* iSize){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == iSize){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -620,7 +631,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_Registered_Count(TML_CORE_H
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_Registered(TML_CORE_HANDLE coreHandle, SIDEX_VARIANT* profiles){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == profiles){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -649,31 +660,33 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_RegisterState(TML_CORE_HAND
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_RegisterState_A(TML_CORE_HANDLE coreHandle, char* profile, TML_BOOL* bRegistered){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == bRegistered){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        bool bRet;
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Get_RegisterState");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Is_Profile_Registered(profile, &bRet);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
         if (TML_SUCCESS == iRet){
-          if (bRet){
-            *bRegistered = TML_TRUE;
-          }
-          else{
-            *bRegistered = TML_FALSE;
+          bool bRet;
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Get_RegisterState");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Is_Profile_Registered(profile, &bRet);
+          if (TML_SUCCESS == iRet){
+            if (bRet){
+              *bRegistered = TML_TRUE;
+            }
+            else{
+              *bRegistered = TML_FALSE;
+            }
           }
         }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -725,22 +738,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_Cmd(TML_CORE_HANDLE co
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_Cmd_A(TML_CORE_HANDLE coreHandle, const char* profile, TML_COMMAND_ID_TYPE cmd, TML_ON_CMD_DISPATCH_CB_FUNC pCBFunc, TML_POINTER pCBData){
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Register_Cmd");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Register_Cmd(profile, cmd, pCBFunc, pCBData);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Register_Cmd");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Register_Cmd(profile, cmd, pCBFunc, pCBData);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -792,22 +807,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnDeleteCmd(TML_CORE_HANDLE
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnDeleteCmd_A(TML_CORE_HANDLE coreHandle, const char* profile, TML_ON_CMD_DELETION_CB_FUNC pCBFunc, TML_POINTER pCBData){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == profile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Set_OnDeleteCmd");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnDeleteCmd(profile, pCBFunc, pCBData);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Set_OnDeleteCmd");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnDeleteCmd(profile, pCBFunc, pCBData);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -819,16 +836,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnDeleteCmd_X(TML_CORE_HAND
   TML_INT32 iRet = TML_ERR_UNICODE;
   TML_INT32 iLengthUtf8;
 
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == profile){
-    iRet = TML_ERR_MISSING_OBJ;
-  }
-  else{
+  char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
+  if (NULL != utf8ProfileName){
     try{
-      char* utf8ProfileName = UTF32toUTF8((wchar_t*)profile, &iLengthUtf8);
-      if (NULL != utf8ProfileName){
-        iRet = tml_Profile_Set_OnDeleteCmd_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
-        delete[] utf8ProfileName;
-      }
+      iRet = tml_Profile_Set_OnDeleteCmd_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
+      delete[] utf8ProfileName;
     }
     catch (...){
       iRet = TML_ERR_COMMON;
@@ -843,17 +855,12 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnDeleteCmd_W(TML_CORE_HAND
   TML_INT32 iRet = TML_ERR_UNICODE;
   TML_INT32 iLengthUtf8;
 
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == profile){
-    iRet = TML_ERR_MISSING_OBJ;
-  }
-  else{
+  char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
+  if (NULL != utf8ProfileName){
     try{
-      char* utf8ProfileName = UTF16toUTF8((wchar_t*)profile, &iLengthUtf8);
-      if (NULL != utf8ProfileName){
         iRet = tml_Profile_Set_OnDeleteCmd_A(coreHandle, utf8ProfileName, pCBFunc, pCBData);
         delete[] utf8ProfileName;
       }
-    }
     catch (...){
       iRet = TML_ERR_COMMON;
     }
@@ -869,22 +876,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnCustomDispatch(TML_CORE_H
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnCustomDispatch_A(TML_CORE_HANDLE coreHandle, const char* profile, TML_ON_CMD_CUSTOM_DISPATCH_CB_FUNC pCBFunc, TML_POINTER pCBData){
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Set_OnCustomDispatch");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnCustomDispatch(profile, pCBFunc, pCBData);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Profile_Set_OnCustomDispatch");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnCustomDispatch(profile, pCBFunc, pCBData);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -936,22 +945,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerPort(TML_CORE_HANDLE c
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerPort_A(TML_CORE_HANDLE coreHandle, char* sPort){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == sPort){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerPort", sPort);
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerPort_A(sPort);
+    if (NULL != sPort){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerPort", sPort);
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerPort_A(sPort);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -960,22 +971,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerPort_A(TML_CORE_HANDLE
  * wchar_t* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerPort_X(TML_CORE_HANDLE coreHandle, wchar_t* sPort){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == sPort){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerPort", sPort);
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerPort_X(sPort);
+    if (NULL != sPort){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerPort", sPort);
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerPort_X(sPort);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -984,22 +997,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerPort_X(TML_CORE_HANDLE
  * char16_t* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerPort_W(TML_CORE_HANDLE coreHandle, char16_t* sPort){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == sPort){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerPort", sPort);
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerPort_W(sPort);
+    if (NULL != sPort){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerPort", sPort);
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerPort_W(sPort);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -1014,7 +1029,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerPort(TML_CORE_HANDLE c
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerPort_A(TML_CORE_HANDLE coreHandle, char** sPort){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == sPort){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1038,7 +1053,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerPort_A(TML_CORE_HANDLE
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerPort_X(TML_CORE_HANDLE coreHandle, wchar_t** sPort){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == sPort){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1062,7 +1077,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerPort_X(TML_CORE_HANDLE
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerPort_W(TML_CORE_HANDLE coreHandle, char16_t** sPort){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == sPort){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1090,22 +1105,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerIP(TML_CORE_HANDLE cor
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerIP_A(TML_CORE_HANDLE coreHandle, char* sIP){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == sIP){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerIP", sIP);
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerIP_A(sIP);
+    if (NULL != sIP){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerIP", sIP);
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerIP_A(sIP);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -1114,22 +1131,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerIP_A(TML_CORE_HANDLE c
  * wchar_t* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerIP_X(TML_CORE_HANDLE coreHandle, wchar_t* sIP){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == sIP){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerIP", sIP);
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerIP_X(sIP);
+    if (NULL != sIP){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerIP", sIP);
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerIP_X(sIP);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -1138,22 +1157,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerIP_X(TML_CORE_HANDLE c
  * char16_t* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerIP_W(TML_CORE_HANDLE coreHandle, char16_t* sIP){
-  TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == sIP){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerIP", sIP);
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerIP_W(sIP);
+    if (NULL != sIP){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd:tml_Core_Set_ListenerIP", sIP);
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_ListenerIP_W(sIP);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -1168,7 +1189,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerIP(TML_CORE_HANDLE cor
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerIP_A(TML_CORE_HANDLE coreHandle, char** sIP){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == sIP){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1192,7 +1213,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerIP_A(TML_CORE_HANDLE c
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerIP_X(TML_CORE_HANDLE coreHandle, wchar_t** sIP){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == sIP){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1216,7 +1237,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerIP_X(TML_CORE_HANDLE c
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerIP_W(TML_CORE_HANDLE coreHandle, char16_t** sIP){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == sIP){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1273,7 +1294,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerEnabled(TML_CORE_HANDL
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerEnabled(TML_CORE_HANDLE coreHandle, TML_BOOL* bEnable){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == bEnable){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1334,7 +1355,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_WindowSize(TML_CORE_HANDLE cor
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_WindowSize(TML_CORE_HANDLE coreHandle, TML_INT32* iWindowSize){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == iWindowSize){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1389,7 +1410,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_LoggingValue(TML_CORE_HANDLE c
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_LoggingValue(TML_CORE_HANDLE coreHandle, TML_INT32* iLogValue){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == iLogValue){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1423,32 +1444,37 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_SyncMessage_A(TML_CORE_HANDLE core
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Send_SyncMessage", "begin", tmlhandle);
 #endif //TIMEOUT_LOGGING
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == tmlhandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_SyncMessage");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendSyncMessage(tmlhandle, profile, sHost, sPort, (unsigned int)iTimeout);
-      }
+    if (NULL == profile || NULL == sHost || NULL == sPort){
+      iRet = TML_ERR_UNICODE;
     }
-    catch (...){
+    else{
       try{
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_SyncMessage");
-        m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "profile", profile);
-        tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "profile", profile);
-        m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Host", sHost);
-        tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Host", sHost);
-        m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Port", sPort);
-        tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Port", sPort);
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_SyncMessage");
+          iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendSyncMessage(tmlhandle, profile, sHost, sPort, (unsigned int)iTimeout);
+        }
       }
       catch (...){
+        try{
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_SyncMessage");
+          m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "profile", profile);
+          tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "profile", profile);
+          m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Host", sHost);
+          tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Host", sHost);
+          m_log->log (TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Port", sPort);
+          tml_log_A(TML_LOG_EVENT, "TMLCore", "tml_Send_SyncMessage", "Port", sPort);
+        }
+        catch (...){
+        }
+        iRet = TML_ERR_COMMON;
       }
-      iRet = TML_ERR_COMMON;
     }
   }
 #ifdef TIMEOUT_LOGGING
@@ -1535,21 +1561,26 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncMessage_A(TML_CORE_HANDLE cor
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Send_AsyncMessage", "begin", tmlhandle);
 #endif //TIMEOUT_LOGGING
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == tmlhandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_AsyncMessage");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendAsyncMessage(tmlhandle, profile, sHost, sPort, (unsigned int) iTimeout);
-      }
+    if (NULL == profile || NULL == sHost || NULL == sPort){
+      iRet = TML_ERR_UNICODE;
     }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+    else{
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_AsyncMessage");
+          iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendAsyncMessage(tmlhandle, profile, sHost, sPort, (unsigned int) iTimeout);
+        }
+      }
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
 #ifdef TIMEOUT_LOGGING
@@ -1664,27 +1695,29 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncStatusReply(TML_COMMAND_HANDL
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncStatusReply_A(TML_COMMAND_HANDLE tmlhandle, TML_INT32 iType, char* sStatus)
 {
-  TML_INT32  iRet = TML_SUCCESS;
+  TML_INT32  iRet = TML_ERR_UNICODE;
 
   if (TML_HANDLE_TYPE_NULL == tmlhandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      TML_CORE_HANDLE coreHandle;
-      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Core_Reference(&coreHandle);
-      if (TML_SUCCESS == iRet){
-        ////////////////////////////////////////////////////////////////////////////
-        // Core is in shutdown process:
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+    if (NULL != sStatus){
+      try{
+        TML_CORE_HANDLE coreHandle;
+        iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Core_Reference(&coreHandle);
         if (TML_SUCCESS == iRet){
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_AsyncStatusReply");
-          iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendAsyncStatusReply(tmlhandle, (int)iType, sStatus);
+          ////////////////////////////////////////////////////////////////////////////
+          // Core is in shutdown process:
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Send_AsyncStatusReply");
+            iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SendAsyncStatusReply(tmlhandle, (int)iType, sStatus);
+          }
         }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -1742,17 +1775,22 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Subscribe_MessageDestination_A(TML_
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Subscribe_MessageDestination");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventSubscribeMessageDestination(profile, sHost, sPort);
-      }
+    if (NULL == profile || NULL == sHost || NULL == sPort){
+      iRet = TML_ERR_UNICODE;
     }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+    else{
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Subscribe_MessageDestination");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventSubscribeMessageDestination(profile, sHost, sPort);
+        }
+      }
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -1822,20 +1860,17 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestina
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestination_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile)
 {
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
 
   if (TML_HANDLE_TYPE_NULL == connectionHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
-      if (TML_HANDLE_TYPE_NULL == coreHandle){
-        iRet = TML_ERR_MISSING_OBJ;
-      }
-      else{
-        if (NULL == sProfile){
-          iRet = TML_ERR_UNICODE;
+    if (NULL != sProfile){
+      try{
+        TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+        if (TML_HANDLE_TYPE_NULL == coreHandle){
+          iRet = TML_ERR_MISSING_OBJ;
         }
         else{
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
@@ -1850,9 +1885,9 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestina
           }
         }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -1907,7 +1942,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations(
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_A(TML_CORE_HANDLE coreHandle, const char* profile, SIDEX_VARIANT* subscriptions)
 {
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1932,7 +1967,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_X(TML_CORE_HANDLE coreHandle, const wchar_t* profile, SIDEX_VARIANT* subscriptions)
 {
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -1963,7 +1998,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_W(TML_CORE_HANDLE coreHandle, const char16_t* profile, SIDEX_VARIANT* subscriptions)
 {
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -2004,17 +2039,22 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_MessageDestination_A(TM
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Unsubscribe_MessageDestination");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventUnsubscribeMessageDestination(profile, sHost, sPort);
-      }
+    if (NULL == profile || NULL == sHost || NULL == sPort){
+      iRet = TML_ERR_UNICODE;
     }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+    else{
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Unsubscribe_MessageDestination");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventUnsubscribeMessageDestination(profile, sHost, sPort);
+        }
+      }
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -2082,7 +2122,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDesti
 /**
  * char* API
 **/
-TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile)
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile)
 {
   TML_INT32 iRet = TML_SUCCESS;
 
@@ -2260,22 +2300,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnError(TML_CORE_HANDLE coreHan
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnError_A(TML_CORE_HANDLE coreHandle, const char* profile, TML_ON_EVT_ERROR_CB_FUNC pCBFunc, TML_POINTER pCBData)
 {
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnError");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterCallbackOnError(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnError");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterCallbackOnError(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -2302,9 +2344,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnError_X(TML_CORE_HANDLE coreH
           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnError");
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterCallbackOnError(utf8ProfileName, pCBFunc, pCBData, idUNICODE_WCHAR_T);
           delete[] utf8ProfileName;
-        }
-        else{
-          iRet = TML_ERR_UNICODE;
         }
       }
     }
@@ -2337,9 +2376,6 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnError_W(TML_CORE_HANDLE coreH
           iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterCallbackOnError(utf8ProfileName, pCBFunc, pCBData, idUNICODE_CHAR16_T);
           delete[] utf8ProfileName;
         }
-        else{
-          iRet = TML_ERR_UNICODE;
-        }
       }
     }
     catch (...){
@@ -2357,22 +2393,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnQueueOverflow(TML_CORE_HANDLE
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnQueueOverflow_A(TML_CORE_HANDLE coreHandle, const char* profile, TML_ON_EVT_QUEUE_OVERFLOW_CB_FUNC pCBFunc, TML_POINTER pCBData){
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnQueueOverflow");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnQueueOverflow(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnQueueOverflow");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Set_OnQueueOverflow(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -2453,22 +2491,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPopulate(TML_CORE_HANDLE core
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPopulate_A(TML_CORE_HANDLE coreHandle, const char* profile, TML_ON_POPULATE_CB_FUNC pCBFunc, TML_POINTER pCBData)
 {
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnPopulate");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterPopulateCallback(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnPopulate");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterPopulateCallback(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
   return iRet;
@@ -2552,22 +2592,24 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_Message_A(TML_CORE_HANDLE core
 #ifdef TIMEOUT_LOGGING
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Evt_Send_Message", "begin", tmlhandle);
 #endif //TIMEOUT_LOGGING
-  TML_INT32 iRet = TML_SUCCESS;
+  TML_INT32 iRet = TML_ERR_UNICODE;
   if (TML_HANDLE_TYPE_NULL == coreHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    try{
-      ////////////////////////////////////////////////////////////////////////////
-      // Core is in shutdown process:
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-      if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Send_Message");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventSendMessage(tmlhandle, profile);
+    if (NULL != profile){
+      try{
+        ////////////////////////////////////////////////////////////////////////////
+        // Core is in shutdown process:
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+        if (TML_SUCCESS == iRet){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Send_Message");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventSendMessage(tmlhandle, profile);
+        }
       }
-    }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
     }
   }
 #ifdef TIMEOUT_LOGGING
@@ -2634,8 +2676,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_SubscriptionRequest_A(TML_CORE
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Send_SubscriptionRequest");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventSendSubscriptionRequest(profile, sSourceHost, sSourcePort, sDestHost, sDestPort, (unsigned int)iTimeout);
+         if (NULL != profile && NULL != sSourceHost && NULL != sSourcePort && NULL != sDestHost && NULL != sDestPort){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Send_SubscriptionRequest");
+          iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventSendSubscriptionRequest(profile, sSourceHost, sSourcePort, sDestHost, sDestPort, (unsigned int)iTimeout);
+         }
+         else{
+           iRet = TML_ERR_UNICODE;
+         }
       }
     }
     catch (...){
@@ -2817,8 +2864,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPeerRegister_A(TML_CORE_HANDL
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnPeerRegister");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterOnPeerCallback(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+        if (NULL != profile){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Set_OnPeerRegister");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventRegisterOnPeerCallback(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -2913,8 +2965,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_UnsubscriptionRequest_A(TML_CO
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Send_UnsubscriptionRequest");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventSendUnsubscriptionRequest(profile, sSourceHost, sSourcePort, sDestHost, sDestPort, (unsigned int)iTimeout);
+        if (NULL != profile && NULL != sSourceHost && NULL != sSourcePort && NULL != sDestHost && NULL != sDestPort){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Send_UnsubscriptionRequest");
+          iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventSendUnsubscriptionRequest(profile, sSourceHost, sSourcePort, sDestHost, sDestPort, (unsigned int)iTimeout);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -3097,8 +3154,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Subscribe_MessageDestination_A(TML_
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Subscribe_MessageDestination");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSubscribeMessageDestination(profile, sHost, sPort);
+        if (NULL != profile && NULL != sHost && NULL != sPort){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Subscribe_MessageDestination");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSubscribeMessageDestination(profile, sHost, sPort);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -3257,7 +3319,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations(
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_A(TML_CORE_HANDLE coreHandle, const char* profile, SIDEX_VARIANT* subscriptions)
 {
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -3282,7 +3344,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_X(TML_CORE_HANDLE coreHandle, const wchar_t* profile, SIDEX_VARIANT* subscriptions)
 {
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -3312,7 +3374,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_W(TML_CORE_HANDLE coreHandle, const char16_t* profile, SIDEX_VARIANT* subscriptions)
 {
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -3357,8 +3419,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_MessageDestination_A(TM
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Unsubscribe_MessageDestination");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedUnsubscribeMessageDestination(profile, sHost, sPort);
+        if (NULL != profile && NULL != sHost && NULL != sPort){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Unsubscribe_MessageDestination");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedUnsubscribeMessageDestination(profile, sHost, sPort);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -3617,8 +3684,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPopulate_A(TML_CORE_HANDLE co
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnPopulate");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterPopulateCallback(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+        if (NULL != profile){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnPopulate");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterPopulateCallback(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -3713,8 +3785,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnBusyStatusRequest_A(TML_CORE_
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnBusyStatusRequest");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterBusyStatusCallback(profile, pCBFunc, pCBData);
+        if (NULL != profile){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnBusyStatusRequest");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterBusyStatusCallback(profile, pCBFunc, pCBData);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -3782,15 +3859,20 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnCalculation_A(TML_CORE_HANDLE
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        if (NULL == pCBFunc)
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnCalculationn / reset Function");
-        else
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnCalculationn / set Function");
-        if (NULL == pCBData)
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnCalculationn / reset Data");
-        else
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnCalculationn / set Data");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterCalculator(profile, pCBFunc, pCBData);
+        if (NULL != profile){
+          if (NULL == pCBFunc)
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnCalculationn / reset Function");
+          else
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnCalculationn / set Function");
+          if (NULL == pCBData)
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnCalculationn / reset Data");
+          else
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Set_OnCalculationn / set Data");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterCalculator(profile, pCBFunc, pCBData);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -3860,8 +3942,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SyncMessage_A(TML_CORE_HANDLE 
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_SyncMessage");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendSyncMessage(tmlhandle, profile, (unsigned int)iTimeout);
+       if (NULL != profile){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_SyncMessage");
+          iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendSyncMessage(tmlhandle, profile, (unsigned int)iTimeout);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -3947,8 +4034,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_AsyncMessage_A(TML_CORE_HANDLE
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_AsyncMessage");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendAsyncMessage(tmlhandle, profile, (unsigned int)iTimeout);
+       if (NULL != profile){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_AsyncMessage");
+          iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendAsyncMessage(tmlhandle, profile, (unsigned int)iTimeout);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -4031,8 +4123,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SubscriptionRequest_A(TML_CORE
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_SubscriptionRequest");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendSubscriptionRequest(profile, sSourceHost, sSourcePort, sDestHost, sDestPort, (unsigned int)iTimeout);
+        if (NULL != profile && NULL != sSourceHost && NULL != sSourcePort && NULL != sDestHost && NULL != sDestPort){
+           ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_SubscriptionRequest");
+           iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendSubscriptionRequest(profile, sSourceHost, sSourcePort, sDestHost, sDestPort, (unsigned int)iTimeout);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -4214,8 +4311,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPeerRegister_A(TML_CORE_HANDL
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Bal_OnPeerRegister");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterOnPeerCallback(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+        if (NULL != profile){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Evt_Bal_OnPeerRegister");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedRegisterOnPeerCallback(profile, pCBFunc, pCBData, idUNICODE_ASCII);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -4310,8 +4412,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_UnsubscriptionRequest_A(TML_CO
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_UnsubscriptionRequest");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendUnsubscriptionRequest(profile, sSourceHost, sSourcePort, sDestHost, sDestPort, (unsigned int)iTimeout);
+        if (NULL != profile && NULL != sSourceHost && NULL != sSourcePort && NULL != sDestHost && NULL != sDestPort){
+         ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Bal_Send_UnsubscriptionRequest");
+         iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSendUnsubscriptionRequest(profile, sSourceHost, sSourcePort, sDestHost, sDestPort, (unsigned int)iTimeout);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -4508,7 +4615,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_MaxConnectionFailCount(TML_CORE
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_MaxConnectionFailCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount)
 {
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == iCount){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -4562,7 +4669,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_MaxConnectionFailCount(TML_CORE
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_MaxConnectionFailCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount)
 {
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == iCount){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -4614,7 +4721,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_MaxQueuedEventMessages(TML_CORE
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_MaxQueuedEventMessages(TML_CORE_HANDLE coreHandle, TML_UINT32* iMaximum){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == iMaximum){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -4644,12 +4751,17 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_MaxQueuedEventMessages(TML_CORE
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Create(TML_COMMAND_HANDLE* tmlhandle) {
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    tmlObjWrapper* wrapper = new tmlObjWrapper((char*)"API");
-    *tmlhandle = (TML_COMMAND_HANDLE) wrapper;
+  if (NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      tmlObjWrapper* wrapper = new tmlObjWrapper((char*)"API");
+      *tmlhandle = (TML_COMMAND_HANDLE) wrapper;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 };
@@ -4661,7 +4773,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Create(TML_COMMAND_HANDLE* tmlhandl
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Free(TML_COMMAND_HANDLE* tmlhandle) {
 
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+  if (NULL == tmlhandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -4683,11 +4795,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Free(TML_COMMAND_HANDLE* tmlhandle)
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_Progress(TML_COMMAND_HANDLE tmlhandle, TML_ON_PROGRESS_REPLY_CB_FUNC pCBFunc, TML_POINTER pCBData){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_Progress(pCBFunc, pCBData);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_Progress(pCBFunc, pCBData);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4697,11 +4814,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_Progress(TML_COMMAND_HANDL
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_Progress(TML_COMMAND_HANDLE tmlhandle, TML_ON_PROGRESS_REPLY_CB_FUNC* pCBFunc, TML_POINTER* pCBData){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Registered_Progress(pCBFunc, pCBData);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == pCBFunc || NULL == pCBData){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Registered_Progress(pCBFunc, pCBData);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4716,11 +4838,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_StatusReply(TML_COMMAND_HA
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_StatusReply_A(TML_COMMAND_HANDLE tmlhandle, TML_ON_STATUS_REPLY_CB_FUNC pCBFunc, TML_POINTER pCBData){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_StatusReply(pCBFunc, pCBData, idUNICODE_ASCII);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_StatusReply(pCBFunc, pCBData, idUNICODE_ASCII);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4729,11 +4856,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_StatusReply_A(TML_COMMAND_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_StatusReply_X(TML_COMMAND_HANDLE tmlhandle, TML_ON_STATUS_REPLY_CB_FUNC pCBFunc, TML_POINTER pCBData){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_StatusReply(pCBFunc, pCBData, idUNICODE_WCHAR_T);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_StatusReply(pCBFunc, pCBData, idUNICODE_WCHAR_T);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4742,11 +4874,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_StatusReply_X(TML_COMMAND_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_StatusReply_W(TML_COMMAND_HANDLE tmlhandle, TML_ON_STATUS_REPLY_CB_FUNC pCBFunc, TML_POINTER pCBData){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_StatusReply(pCBFunc, pCBData, idUNICODE_CHAR16_T);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_StatusReply(pCBFunc, pCBData, idUNICODE_CHAR16_T);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4757,12 +4894,17 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_StatusReply_W(TML_COMMAND_
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_StatusReply(TML_COMMAND_HANDLE tmlhandle, TML_ON_STATUS_REPLY_CB_FUNC* pCBFunc, TML_POINTER* pCBData){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    tmlUnicodeID iUnicode;
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Registered_StatusReply(pCBFunc, pCBData, &iUnicode);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == pCBFunc || NULL == pCBData){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      tmlUnicodeID iUnicode;
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Registered_StatusReply(pCBFunc, pCBData, &iUnicode);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4772,11 +4914,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_StatusReply(TML_COMMAND_
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_CommandReady(TML_COMMAND_HANDLE tmlhandle, TML_ON_COMMAND_READY_CB_FUNC pCBFunc, TML_POINTER pCBData){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_CommandReady(pCBFunc, pCBData);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Register_CommandReady(pCBFunc, pCBData);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4787,11 +4934,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_CommandReady(TML_COMMAND_H
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_CommandReady(TML_COMMAND_HANDLE tmlhandle,TML_ON_COMMAND_READY_CB_FUNC* pCBFunc, TML_POINTER* pCBData){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Registered_CommandReady(pCBFunc, pCBData);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == pCBFunc || NULL == pCBData){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Registered_CommandReady(pCBFunc, pCBData);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4802,11 +4954,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_CommandReady(TML_COMMAND
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Core_Reference(TML_COMMAND_HANDLE tmlhandle, TML_CORE_HANDLE tmlcorehandle){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Core_Reference(tmlcorehandle);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Core_Reference(tmlcorehandle);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4817,11 +4974,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Core_Reference(TML_COMMAND
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Core_Reference(TML_COMMAND_HANDLE tmlhandle, TML_CORE_HANDLE* tmlcorehandle){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Core_Reference(tmlcorehandle);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == tmlcorehandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Core_Reference(tmlcorehandle);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4836,11 +4998,21 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Profile(TML_COMMAND_HANDLE
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Profile_A(TML_COMMAND_HANDLE tmlhandle, const char* profile){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Profile(profile);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    if (NULL != profile){
+      try{
+        ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Profile(profile);
+      }
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
+    }
+    else{
+      iRet = TML_ERR_UNICODE;
+    }
   }
   
   return iRet;
@@ -4894,11 +5066,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Profile(TML_COMMAND_HANDLE
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Profile_A(TML_COMMAND_HANDLE tmlhandle, const char** profile){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Profile_A(profile);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == profile){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Profile_A(profile);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4907,11 +5084,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Profile_A(TML_COMMAND_HAND
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Profile_X(TML_COMMAND_HANDLE tmlhandle, const wchar_t** profile){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Profile_X(profile);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == profile){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Profile_X(profile);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4920,11 +5102,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Profile_X(TML_COMMAND_HAND
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Profile_W(TML_COMMAND_HANDLE tmlhandle, const char16_t** profile){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Profile_W(profile);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == profile){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Profile_W(profile);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4934,11 +5121,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Profile_W(TML_COMMAND_HAND
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Session_ID(TML_COMMAND_HANDLE tmlhandle, TML_INT32 iSesionID){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Session_ID((int)iSesionID);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Session_ID((int)iSesionID);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4949,11 +5141,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Session_ID(TML_COMMAND_HAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Session_ID(TML_COMMAND_HANDLE tmlhandle, TML_INT32* iSesionID){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = (TML_INT32)((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Session_ID(iSesionID);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == iSesionID){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = (TML_INT32)((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Session_ID(iSesionID);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4964,11 +5161,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Session_ID(TML_COMMAND_HAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Channel(TML_COMMAND_HANDLE tmlhandle, TML_POINTER channel){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Channel(channel);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Channel(channel);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4979,11 +5181,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Channel(TML_COMMAND_HANDLE
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Channel(TML_COMMAND_HANDLE tmlhandle, TML_POINTER* channel){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Channel(channel);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == channel){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Channel(channel);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -4994,11 +5201,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Channel(TML_COMMAND_HANDLE
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Channel_ID(TML_COMMAND_HANDLE tmlhandle, TML_INT32 channelID){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Channel_ID((int)channelID);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Channel_ID((int)channelID);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5009,11 +5221,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Channel_ID(TML_COMMAND_HAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Channel_ID(TML_COMMAND_HANDLE tmlhandle, TML_INT32* channelID){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Channel_ID(channelID);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == channelID){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Channel_ID(channelID);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5024,11 +5241,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Channel_ID(TML_COMMAND_HAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Message_ID(TML_COMMAND_HANDLE tmlhandle, TML_INT32 iMessageID){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Message_ID((int)iMessageID);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Set_Message_ID((int)iMessageID);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5039,11 +5261,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Message_ID(TML_COMMAND_HAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Message_ID(TML_COMMAND_HANDLE tmlhandle, TML_INT32* iMessageID){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Message_ID(iMessageID);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == iMessageID){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Attr_Get_Message_ID(iMessageID);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5058,11 +5285,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetCreationTime(TML_COMMAND_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetCreationTime_A(TML_COMMAND_HANDLE tmlhandle, char** time){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetCreationTime(time);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == time){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetCreationTime(time);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5125,14 +5357,21 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCreationTime(TML_COMMAND_
  * char* API
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCreationTime_A(TML_COMMAND_HANDLE tmlhandle, char* time){
-  TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetCreationTime(time);
-    if (TML_SUCCESS != iRet)
-      iRet = TML_ERR_INITIALIZATION;
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    if (NULL != time){
+      try{
+        iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetCreationTime(time);
+        if (TML_SUCCESS != iRet)
+          iRet = TML_ERR_INITIALIZATION;
+      }
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
+    }
   }
   return iRet;
 }
@@ -5181,11 +5420,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCreationTime_W(TML_COMMAN
  */
  TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetCommand(TML_COMMAND_HANDLE tmlhandle, TML_COMMAND_ID_TYPE* cmd){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetCommand(cmd);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == cmd){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetCommand(cmd);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5196,13 +5440,18 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCreationTime_W(TML_COMMAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCommand(TML_COMMAND_HANDLE tmlhandle, TML_COMMAND_ID_TYPE cmd){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetCommand(cmd);
-    if (TML_SUCCESS != iRet)
-      iRet = TML_ERR_INITIALIZATION;
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetCommand(cmd);
+      if (TML_SUCCESS != iRet)
+        iRet = TML_ERR_INITIALIZATION;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5213,11 +5462,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCommand(TML_COMMAND_HANDL
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetError(TML_COMMAND_HANDLE tmlhandle, TML_INT32* error){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetError(error);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == error){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetError(error);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5228,13 +5482,18 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetError(TML_COMMAND_HANDLE 
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetError(TML_COMMAND_HANDLE tmlhandle, TML_INT32 error){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetError(error);
-    if (TML_SUCCESS != iRet)
-      iRet = TML_ERR_INITIALIZATION;
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetError(error);
+      if (TML_SUCCESS != iRet)
+        iRet = TML_ERR_INITIALIZATION;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5249,11 +5508,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetErrorMessage(TML_COMMAND_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetErrorMessage_A(TML_COMMAND_HANDLE tmlhandle, char** msg, TML_INT32* iMsgLength){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetErrorMessage(msg, iMsgLength);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == msg || NULL == iMsgLength){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetErrorMessage(msg, iMsgLength);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5317,13 +5581,18 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetErrorMessage(TML_COMMAND_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetErrorMessage_A(TML_COMMAND_HANDLE tmlhandle, char* msg, TML_INT32 iMsgLength){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = (TML_INT32)((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetErrorMessage(msg, (int) iMsgLength);
-    if (TML_SUCCESS != iRet)
-      iRet = TML_ERR_INITIALIZATION;
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = (TML_INT32)((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetErrorMessage(msg, (int) iMsgLength);
+      if (TML_SUCCESS != iRet)
+        iRet = TML_ERR_INITIALIZATION;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5371,11 +5640,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetErrorMessage_W(TML_COMMAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetState(TML_COMMAND_HANDLE tmlhandle, TML_INT32* state){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetState(state);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == state){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetState(state);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5386,13 +5660,18 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetState(TML_COMMAND_HANDLE 
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetState(TML_COMMAND_HANDLE tmlhandle, TML_INT32 state){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetState(state);
-    if (TML_SUCCESS != iRet && TML_ERR_COMMAND_STATE_UNDEFINED != iRet)
-      iRet = TML_ERR_INITIALIZATION;
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetState(state);
+      if (TML_SUCCESS != iRet && TML_ERR_COMMAND_STATE_UNDEFINED != iRet)
+        iRet = TML_ERR_INITIALIZATION;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5403,11 +5682,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetState(TML_COMMAND_HANDLE 
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetMode(TML_COMMAND_HANDLE tmlhandle, TML_INT32* mode){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetMode(mode);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == mode){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetMode(mode);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5418,13 +5702,18 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetMode(TML_COMMAND_HANDLE t
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetMode(TML_COMMAND_HANDLE tmlhandle, TML_INT32 mode){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetMode(mode);
-    if (TML_SUCCESS != iRet && TML_ERR_COMMAND_MODE_UNDEFINED != iRet)
-      iRet = TML_ERR_INITIALIZATION;
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetMode(mode);
+      if (TML_SUCCESS != iRet && TML_ERR_COMMAND_MODE_UNDEFINED != iRet)
+        iRet = TML_ERR_INITIALIZATION;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5435,11 +5724,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetMode(TML_COMMAND_HANDLE t
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetReplyType(TML_COMMAND_HANDLE tmlhandle, TML_INT32* type){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetReplyType(type);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == type){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetReplyType(type);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5450,13 +5744,18 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetReplyType(TML_COMMAND_HAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetReplyType(TML_COMMAND_HANDLE tmlhandle, TML_INT32 type){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetReplyType(type);
-    if (TML_SUCCESS != iRet && TML_ERR_COMMAND_REPLY_TYPE_UNDEFINED != iRet)
-      iRet = TML_ERR_INITIALIZATION;
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetReplyType(type);
+      if (TML_SUCCESS != iRet && TML_ERR_COMMAND_REPLY_TYPE_UNDEFINED != iRet)
+        iRet = TML_ERR_INITIALIZATION;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5467,11 +5766,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetReplyType(TML_COMMAND_HAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetProgress(TML_COMMAND_HANDLE tmlhandle, TML_INT32* progress){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetProgress(progress);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == progress){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetProgress(progress);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5482,13 +5786,18 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetProgress(TML_COMMAND_HAND
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetProgress(TML_COMMAND_HANDLE tmlhandle, TML_INT32 progress){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetProgress(progress);
-    if (TML_SUCCESS != iRet && TML_ERR_COMMAND_PROGRESS_RANGE != iRet)
-      iRet = TML_ERR_INITIALIZATION;
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetProgress(progress);
+      if (TML_SUCCESS != iRet && TML_ERR_COMMAND_PROGRESS_RANGE != iRet)
+        iRet = TML_ERR_INITIALIZATION;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5503,11 +5812,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetReplyMessage(TML_COMMAND_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetReplyMessage_A(TML_COMMAND_HANDLE tmlhandle, char** msg, TML_INT32* iMsgLength){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetReplyMessage(msg, iMsgLength);
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == msg || NULL == iMsgLength){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_GetReplyMessage(msg, iMsgLength);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5571,13 +5885,18 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetReplyMessage(TML_COMMAND_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetReplyMessage_A(TML_COMMAND_HANDLE tmlhandle, char* msg, TML_INT32 iMsgLength){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = (TML_INT32)((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetReplyMessage(msg, (int)iMsgLength);
-    if (TML_SUCCESS != iRet)
-      iRet = TML_ERR_INITIALIZATION;
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = (TML_INT32)((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Header_SetReplyMessage(msg, (int)iMsgLength);
+      if (TML_SUCCESS != iRet)
+        iRet = TML_ERR_INITIALIZATION;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5625,11 +5944,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetReplyMessage_W(TML_COMMAN
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Acquire_Sidex_Handle(TML_COMMAND_HANDLE tmlhandle, SIDEX_HANDLE* shandle){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Acquire_Sidex_Handle(shandle, (char*)"API");
+  if (TML_HANDLE_TYPE_NULL == tmlhandle || NULL == shandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Acquire_Sidex_Handle(shandle, (char*)"API");
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5640,11 +5964,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Acquire_Sidex_Handle(TML_COMMAND_HA
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Release_Sidex_Handle(TML_COMMAND_HANDLE tmlhandle){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Release_Sidex_Handle((char*)"API");
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Release_Sidex_Handle((char*)"API");
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5655,11 +5984,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Release_Sidex_Handle(TML_COMMAND_HA
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Debug(TML_COMMAND_HANDLE tmlhandle){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Debug();
+  if (TML_HANDLE_TYPE_NULL == tmlhandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      iRet = ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Debug();
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -5683,9 +6017,14 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Open_A(TML_CORE_HANDLE coreHa
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_STREAM_HANDLING, "TMLCore", "API", "Cmd", "tml_RecStream_Open");
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_RecStream_Open");
-        iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_RecStream_Open(iID, sPort, sHost, profile);
+        if (NULL != profile && NULL != sHost && NULL != sPort){ 
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_STREAM_HANDLING, "TMLCore", "API", "Cmd", "tml_RecStream_Open");
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_RecStream_Open");
+          iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_RecStream_Open(iID, sPort, sHost, profile);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -5781,7 +6120,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Close(TML_CORE_HANDLE coreHan
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_GetSize(TML_CORE_HANDLE coreHandle, TML_STREAM_ID_TYPE iID, TML_INT64* rsize){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == rsize){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -5835,7 +6174,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Seek(TML_CORE_HANDLE coreHand
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_GetPosition(TML_CORE_HANDLE coreHandle, TML_STREAM_ID_TYPE iID, TML_INT64* rposition){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == rposition){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -5889,7 +6228,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Write(TML_CORE_HANDLE coreHan
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Read(TML_CORE_HANDLE coreHandle, TML_STREAM_ID_TYPE iID, TML_POINTER buffer, TML_INT32 count, TML_INT32* bytesRead){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == bytesRead || NULL == buffer){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -5916,7 +6255,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Read(TML_CORE_HANDLE coreHand
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_ReadBuffer(TML_CORE_HANDLE coreHandle, TML_STREAM_ID_TYPE iID, TML_POINTER buffer, TML_INT32 count){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == buffer){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -5975,7 +6314,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Open(TML_CORE_HANDLE coreHand
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Open_A(TML_CORE_HANDLE coreHandle, TML_STREAM_ID_TYPE* iID, const char* profile, const char* sHost, const char* sPort){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == iID){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -5984,9 +6323,14 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Open_A(TML_CORE_HANDLE coreHa
       // Core is in shutdown process:
       iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
       if (TML_SUCCESS == iRet){
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_STREAM_HANDLING, "TMLCore", "API", "Cmd", "tml_SndStream_Open");
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_SndStream_Open");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SndStream_Open(iID, sPort, sHost, profile);
+        if (NULL != profile && NULL != sPort && NULL != sHost){
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_STREAM_HANDLING, "TMLCore", "API", "Cmd", "tml_SndStream_Open");
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_SndStream_Open");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SndStream_Open(iID, sPort, sHost, profile);
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
     }
     catch (...){
@@ -6055,18 +6399,23 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Open_W(TML_CORE_HANDLE coreHa
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Close(TML_CORE_HANDLE coreHandle, TML_STREAM_ID_TYPE iID){
   TML_INT32 iRet = TML_SUCCESS;
-  try{
-    ////////////////////////////////////////////////////////////////////////////
-    // Core is in shutdown process:
-    int iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-    if (TML_SUCCESS == iRet){
-      ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_STREAM_HANDLING, "TMLCore", "API", "Cmd", "tml_SndStream_Close");
-      ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_SndStream_Close");
-      iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SndStream_Close(iID);
-    }
+  if (TML_HANDLE_TYPE_NULL == coreHandle){
+    iRet = TML_ERR_MISSING_OBJ;
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
+  else{
+    try{
+      ////////////////////////////////////////////////////////////////////////////
+      // Core is in shutdown process:
+      int iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+      if (TML_SUCCESS == iRet){
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_STREAM_HANDLING, "TMLCore", "API", "Cmd", "tml_SndStream_Close");
+        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_SndStream_Close");
+        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_SndStream_Close(iID);
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
   }
   return iRet;
 }
@@ -6269,24 +6618,29 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_log(TML_INT32 iLogMask, const TML_CTSTR
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_log_A(TML_INT32 iLogMask, const char* sClass, const char* sMethod, const char* sFormatLog, const char* sLog){
   TML_INT32 iRet = TML_SUCCESS;
-  if (NULL == c_csObj){
-    c_csObj = new tmlCriticalSectionObj();
+  if (NULL == sClass || NULL == sMethod || NULL == sFormatLog || NULL == sLog){
+    iRet = TML_ERR_UNICODE;
   }
-  c_csObj->tmlCriticalSectionEnter("tml_log");
-  try{
-    if (NULL == m_log){
-      m_log = new tmlLogHandler((char*)"a", (int)m_iLogIndex);
-      m_iLogIndex = m_log->calcContFileIndex();
+  else{
+    if (NULL == c_csObj){
+      c_csObj = new tmlCriticalSectionObj();
     }
-    tmlLogHandler* log = new tmlLogHandler((char*)"a", (int)m_iLogIndex);
-    log->setLoggingValue((int)iLogMask);
-    log->log ((int)iLogMask, sClass, sMethod, sFormatLog, sLog);
-    delete log;
+    c_csObj->tmlCriticalSectionEnter("tml_log");
+    try{
+      if (NULL == m_log){
+        m_log = new tmlLogHandler((char*)"a", (int)m_iLogIndex);
+        m_iLogIndex = m_log->calcContFileIndex();
+      }
+      tmlLogHandler* log = new tmlLogHandler((char*)"a", (int)m_iLogIndex);
+      log->setLoggingValue((int)iLogMask);
+      log->log ((int)iLogMask, sClass, sMethod, sFormatLog, sLog);
+      delete log;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+    c_csObj->tmlCriticalSectionLeave("tml_log");
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
-  }
-  c_csObj->tmlCriticalSectionLeave("tml_log");
   return iRet;
 }
 /**
@@ -6362,25 +6716,30 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI(TML_INT32 iLogMask, const TML_CTST
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* sClass, const char* sMethod, const char* sFormatLog, const TML_INT64 iVal){
   TML_INT32 iRet = TML_SUCCESS;
-  if (NULL == c_csObj){
-    c_csObj = new tmlCriticalSectionObj();
+  if (NULL == sClass || NULL == sMethod || NULL == sFormatLog){
+    iRet = TML_ERR_UNICODE;
   }
-  c_csObj->tmlCriticalSectionEnter("tml_logI");
-
-  try{
-    if (NULL == m_log){
-      m_log = new tmlLogHandler((char*)"a", (int)m_iLogIndex);
-      m_iLogIndex = m_log->calcContFileIndex();
+  else{
+    if (NULL == c_csObj){
+      c_csObj = new tmlCriticalSectionObj();
     }
-    tmlLogHandler* log = new tmlLogHandler((char*)"a", (int)m_iLogIndex);
-    log->setLoggingValue((int)iLogMask);
-    log->log ((int)iLogMask, sClass, sMethod, sFormatLog, iVal);
-    delete (log);
+    c_csObj->tmlCriticalSectionEnter("tml_logI");
+
+    try{
+      if (NULL == m_log){
+        m_log = new tmlLogHandler((char*)"a", (int)m_iLogIndex);
+        m_iLogIndex = m_log->calcContFileIndex();
+      }
+      tmlLogHandler* log = new tmlLogHandler((char*)"a", (int)m_iLogIndex);
+      log->setLoggingValue((int)iLogMask);
+      log->log ((int)iLogMask, sClass, sMethod, sFormatLog, iVal);
+      delete (log);
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+    c_csObj->tmlCriticalSectionLeave("tml_logI");
   }
-  catch (...){
-    iRet = TML_ERR_COMMON;
-  }
-  c_csObj->tmlCriticalSectionLeave("tml_logI");
   return iRet;
 }
 /**
