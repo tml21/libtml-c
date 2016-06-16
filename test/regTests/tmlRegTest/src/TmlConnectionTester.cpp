@@ -45,6 +45,7 @@ SIDEX_TCHAR* cbt_Name[] =
 {
   tmlrtT("OnConnect"), tmlrtT("OnDisconnect"),
   tmlrtT("OnCommand"), tmlrtT("OnCmdConnectionCommand"),
+  tmlrtT("OnEvent"), tmlrtT("OnBalancer"),
   tmlrtT("")  // end of list marker
 };
 
@@ -57,13 +58,12 @@ cbData_t* prepareCallbackData(TmlConnectionTester* tester, int iCore, cbType_t t
   cbData_t* result = NULL;
   if((iCore >= 0) && (iCore < MAX_CORES) && (type >= 0) && (type < cbt_TypeCount))
   {
-    result = &cbData_Connection[iCore][type];
-    result->tester        = tester;
-    result->type          = type;
-    result->iCore         = iCore;
-    result->iValue        = 0;
-    result->sValue        = NULL;
-    result->bDeleteString = false;
+    result         = &cbData_Connection[iCore][type];
+    result->tester = tester;
+    result->type   = type;
+    result->iCore  = iCore;
+    result->iValue = 0;
+    result->sValue = NULL;
   }
   return(result);
 }
@@ -85,7 +85,6 @@ void CallbackHandler_DisConnection(TML_CONNECTION_HANDLE hConnection, TML_POINTE
         leaveGlobalMutex();
       }
     }
-    if(data->bDeleteString) DELETE_STR(data->sValue);
   }
   else
   {
@@ -114,7 +113,6 @@ void CallbackHandler_Command(TML_COMMAND_HANDLE hCommand, TML_POINTER pCBData)
         leaveGlobalMutex();
       }
     }
-    if(data->bDeleteString) DELETE_STR(data->sValue);
   }
   else
   {
@@ -143,7 +141,6 @@ void CallbackHandler_CommandConnection(TML_COMMAND_HANDLE hCommand, TML_POINTER 
         leaveGlobalMutex();
       }
     }
-    if(data->bDeleteString) DELETE_STR(data->sValue);
   }
   else
   {
@@ -163,6 +160,8 @@ TmlConnectionTester::TmlConnectionTester(SIDEX_TCHAR* testProcessName)
   m_cbLog_Connection    = 0;
   m_cbLog_Disconnection = 0;
   m_cbLog_Command       = 0;
+  m_cbLog_Event         = 0;
+  m_cbLog_Balancer      = 0;
 }
 
 TmlConnectionTester::~TmlConnectionTester()
@@ -1330,6 +1329,17 @@ void TmlConnectionTester::OnCommandCallback(TML_COMMAND_HANDLE hCommand, cbData_
         m_cbLog_Command |= id;
         break;
       }
+      case cbtOnEvent:
+      {
+        m_cbLog_Event += id;
+        break;
+      }
+      case cbtOnBalancer:
+      {
+        m_cbLog_Balancer |= id;
+        m_cbLog_Balancer |= cbData->iValue;
+        break;
+      }
       default: break;
     }
   }
@@ -1811,6 +1821,465 @@ bool TmlConnectionTester::testGetConnection_Cmd()
 
     DELETE_STR(sAddress2);
     DELETE_STR(sAddress1);
+
+  } // network card count > 0
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+//------------------------------------------------------------------------------
+
+bool TmlConnectionTester::testConnectionEvents()
+{
+  setTestSectionName(tmlrtT("testConnectionEvents"));
+  messageOutput(S_START);
+  reset();
+
+  int n = TestParams->getNetworkCardCount();
+  if(n > 0)
+  {
+    int          iPort     = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard     = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress0 = tmlrt_cat(sCard, S_COLON, tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress1 = tmlrt_cat(sCard, S_COLON, tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress2 = tmlrt_cat(sCard, S_COLON, tmlrt_itoa(iPort++), 4);
+    DELETE_STR(sCard);
+
+    cbData_t* pData0 = prepareCallbackData(this, 0, cbtOnEvent);
+    cbData_t* pData1 = prepareCallbackData(this, 1, cbtOnEvent);
+    cbData_t* pData2 = prepareCallbackData(this, 2, cbtOnEvent);
+    if(pData0 && pData1 && pData2)
+    {
+      pData0->iValue = 1; pData0->sValue = tmlrtT("Core0");
+      pData1->iValue = 2; pData1->sValue = tmlrtT("Core1");
+      pData2->iValue = 4; pData2->sValue = tmlrtT("Core2");
+
+      if(createCore(0) && createCore(1) && createCore(2))
+      {
+        if(createListener(0, 0, sAddress0) && createListener(1, 0, sAddress1) && createListener(2, 0, sAddress2))
+        {
+          if(startListener(0, 0) && startListener(1, 0) && startListener(2, 0))
+          {
+            m_iErr = tml_Profile_Register(getCore(0), S_IO_PROFILE);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core0, "), S_IO_PROFILE, S_PARENTHESIS_R), true);
+
+            m_iErr = tml_Profile_Register_Cmd(getCore(0), S_IO_PROFILE, 1234, &CallbackHandler_Command, pData0);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register_Cmd(Core0, "), S_IO_PROFILE, tmlrtT(", 1234)")), true);
+
+            m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), S_IO_PROFILE, S_PARENTHESIS_R), true);
+
+            m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, 1234, &CallbackHandler_Command, pData1);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register_Cmd(Core1, "), S_IO_PROFILE, tmlrtT(", 1234)")), true);
+
+            m_iErr = tml_Profile_Register(getCore(2), S_IO_PROFILE);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core2, "), S_IO_PROFILE, S_PARENTHESIS_R), true);
+
+            m_iErr = tml_Profile_Register_Cmd(getCore(2), S_IO_PROFILE, 1234, &CallbackHandler_Command, pData2);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register_Cmd(Core2, "), S_IO_PROFILE, tmlrtT(", 1234)")), true);
+
+            if(m_testOK)
+            {
+              TML_CONNECTION_HANDLE hConnection1 = TML_HANDLE_TYPE_NULL;
+              m_iErr = tml_Core_Connect(getCore(0), sAddress1, &hConnection1);
+              checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect(Core0, "), sAddress1, tmlrtT(", Connection1)")), true);
+
+              TML_CONNECTION_HANDLE hConnection2 = TML_HANDLE_TYPE_NULL;
+              m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
+              checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect(Core0, "), sAddress2, tmlrtT(", Connection2)")), true);
+
+              if(m_testOK)
+              {
+                // - - - - - Test with missing connection handle - - - - -
+
+                m_iErr = tml_Connection_Evt_Subscribe_MessageDestination(TML_HANDLE_TYPE_NULL, S_IO_PROFILE);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Evt_Subscribe_MessageDestination(NoConnectionHandle)"));
+
+                m_iErr = tml_Connection_Evt_Unsubscribe_MessageDestination(TML_HANDLE_TYPE_NULL, S_IO_PROFILE);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Evt_Unsubscribe_MessageDestination(NoConnectionHandle)"));
+
+                m_iErr = tml_Connection_Evt_Send_SubscriptionRequest(TML_HANDLE_TYPE_NULL, S_IO_PROFILE, 1000);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Evt_Send_SubscriptionRequest(NoConnectionHandle)"));
+
+                m_iErr = tml_Connection_Evt_Send_UnsubscriptionRequest(TML_HANDLE_TYPE_NULL, S_IO_PROFILE, 1000);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Evt_Send_UnsubscriptionRequest(NoConnectionHandle)"));
+
+                // - - - - - Test with missing profile name - - - - -
+
+                m_iErr = tml_Connection_Evt_Subscribe_MessageDestination(hConnection1, NULL);
+                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Connection_Evt_Send_UnsubscriptionRequest(NoProfile)"));
+
+                m_iErr = tml_Connection_Evt_Unsubscribe_MessageDestination(hConnection1, NULL);
+                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Connection_Evt_Unsubscribe_MessageDestination(NoProfile)"));
+
+                m_iErr = tml_Connection_Evt_Send_SubscriptionRequest(hConnection1, NULL, 1000);
+                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Connection_Evt_Send_SubscriptionRequest(NoProfile)"));
+
+                m_iErr = tml_Connection_Evt_Send_UnsubscriptionRequest(hConnection1, NULL, 1000);
+                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Connection_Evt_Send_UnsubscriptionRequest(NoProfile)"));
+
+                // - - - - - - - - - -
+
+                if(checkEventSubscriptionCount(0, 0, S_IO_PROFILE, tmlrtT("Initial subscription count (Core0)")) &&
+                   checkEventSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("Initial subscription count (Core1)")) &&
+                   checkEventSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("Initial subscription count (Core2)")))
+                {
+                  m_iErr = tml_Connection_Evt_Subscribe_MessageDestination(hConnection1, S_IO_PROFILE);
+                  checkForSuccess(tmlrtT("tml_Connection_Evt_Subscribe_MessageDestination(Connection1, Profile)"));
+                  checkEventSubscriptionCount(0, 1, S_IO_PROFILE, tmlrtT("EvtSubscribe (Core0, Connection1)"));
+                  checkEventSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("EvtSubscribe (Core1, Connection1)"));
+                  checkEventSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("EvtSubscribe (Core2, Connection1)"));
+
+                  m_iErr = tml_Connection_Evt_Subscribe_MessageDestination(hConnection2, S_IO_PROFILE);
+                  checkForSuccess(tmlrtT("tml_Connection_Evt_Subscribe_MessageDestination(Connection2, Profile)"));
+                  checkEventSubscriptionCount(0, 2, S_IO_PROFILE, tmlrtT("EvtSubscribe (Core0, Connection2)"));
+                  checkEventSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("EvtSubscribe (Core1, Connection2)"));
+                  checkEventSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("EvtSubscribe (Core2, Connection2)"));
+
+                  m_iErr = tml_Connection_Evt_Send_SubscriptionRequest(hConnection1, S_IO_PROFILE, 1000);
+                  checkForSuccess(tmlrtT("tml_Connection_Evt_Send_SubscriptionRequest(Connection1, Profile)"));
+                  checkEventSubscriptionCount(0, 2, S_IO_PROFILE, tmlrtT("EvtSendSubscriptionRequest (Core0, Connection1)"));
+                  checkEventSubscriptionCount(1, 1, S_IO_PROFILE, tmlrtT("EvtSendSubscriptionRequest (Core1, Connection1)"));
+                  checkEventSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("EvtSendSubscriptionRequest (Core2, Connection1)"));
+
+                  m_iErr = tml_Connection_Evt_Send_SubscriptionRequest(hConnection2, S_IO_PROFILE, 1000);
+                  checkForSuccess(tmlrtT("tml_Connection_Evt_Send_SubscriptionRequest(Connection2, Profile)"));
+                  checkEventSubscriptionCount(0, 2, S_IO_PROFILE, tmlrtT("EvtSendSubscriptionRequest (Core0, Connection2)"));
+                  checkEventSubscriptionCount(1, 1, S_IO_PROFILE, tmlrtT("EvtSendSubscriptionRequest (Core1, Connection2)"));
+                  checkEventSubscriptionCount(2, 1, S_IO_PROFILE, tmlrtT("EvtSendSubscriptionRequest (Core2, Connection2)"));
+
+                  if(m_testOK)
+                  {
+                    m_cbLog_Event = 0;
+
+                    for(int iCore = 0; iCore < 3; iCore++)
+                    {
+                      TML_COMMAND_HANDLE hCommand = TML_HANDLE_TYPE_NULL;
+                      m_iErr = tml_Cmd_Create(&hCommand);
+                      checkForSuccess(tmlrt_cat(tmlrtT("tml_Cmd_Create() - (Core"), tmlrt_itoa(iCore), S_PARENTHESIS_R, 2), true);
+                      if(setCommandID(hCommand, 1234))
+                      {
+                        if(setCommandInt(hCommand, S_GROUP_TEST, S_KEY_INDEX, iCore + 11))
+                        {
+                          m_iErr = tml_Evt_Send_Message(getCore(iCore), hCommand, S_IO_PROFILE);
+                          checkForSuccess(tmlrt_cat(tmlrtT("tml_Evt_Send_Message(Core"),
+                                                    tmlrt_itoa(iCore),
+                                                    tmlrtT(", Command1234, Profile)"), 2), true);
+                        }
+                      }
+                      m_iErr = tml_Cmd_Free(&hCommand);
+                      checkForSuccess(tmlrt_cat(tmlrtT("tml_Cmd_Free() - (Core"), tmlrt_itoa(iCore), S_PARENTHESIS_R, 2), true);
+                      hCommand = TML_HANDLE_TYPE_NULL;
+                    }
+
+                    TmlSleep(1000); // wait a little bit for the events
+                    checkForValue(tmlrtT("Received events log"), 47, m_cbLog_Event, false);
+                  }
+
+                  m_iErr = tml_Connection_Evt_Send_UnsubscriptionRequest(hConnection2, S_IO_PROFILE, 1000);
+                  checkForSuccess(tmlrtT("tml_Connection_Evt_Send_UnsubscriptionRequest(Connection2, Profile)"));
+                  checkEventSubscriptionCount(0, 2, S_IO_PROFILE, tmlrtT("EvtSendUnsubscriptionRequest (Core0, Connection2)"));
+                  checkEventSubscriptionCount(1, 1, S_IO_PROFILE, tmlrtT("EvtSendUnsubscriptionRequest (Core1, Connection2)"));
+                  checkEventSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("EvtSendUnsubscriptionRequest (Core2, Connection2)"));
+
+                  m_iErr = tml_Connection_Evt_Send_UnsubscriptionRequest(hConnection1, S_IO_PROFILE, 1000);
+                  checkForSuccess(tmlrtT("tml_Connection_Evt_Send_UnsubscriptionRequest(Connection1, Profile)"));
+                  checkEventSubscriptionCount(0, 2, S_IO_PROFILE, tmlrtT("EvtSendUnsubscriptionRequest (Core0, Connection1)"));
+                  checkEventSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("EvtSendUnsubscriptionRequest (Core1, Connection1)"));
+                  checkEventSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("EvtSendUnsubscriptionRequest (Core2, Connection1)"));
+
+                  m_iErr = tml_Connection_Evt_Unsubscribe_MessageDestination(hConnection2, S_IO_PROFILE);
+                  checkForSuccess(tmlrtT("tml_Connection_Evt_Unsubscribe_MessageDestination(Connection2, Profile)"));
+                  checkEventSubscriptionCount(0, 1, S_IO_PROFILE, tmlrtT("EvtUnsubscribe (Core0, Connection2)"));
+                  checkEventSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("EvtUnsubscribe (Core1, Connection2)"));
+                  checkEventSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("EvtUnsubscribe (Core2, Connection2)"));
+
+                  m_iErr = tml_Connection_Evt_Unsubscribe_MessageDestination(hConnection1, S_IO_PROFILE);
+                  checkForSuccess(tmlrtT("tml_Connection_Evt_Unsubscribe_MessageDestination(Connection1, Profile)"));
+                  checkEventSubscriptionCount(0, 0, S_IO_PROFILE, tmlrtT("EvtUnsubscribe (Core0, Connection1)"));
+                  checkEventSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("EvtUnsubscribe (Core1, Connection1)"));
+                  checkEventSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("EvtUnsubscribe (Core2, Connection1)"));
+
+                  if(m_testOK) messageOutput(tmlrtT("Test culmination reached!"));
+                } // initial subscription counts
+              } // connections
+
+              // Close connections...
+              if(hConnection2 != TML_HANDLE_TYPE_NULL)
+              {
+                m_iErr = tml_Connection_Close(&hConnection2);
+                checkForSuccess(tmlrtT("tml_Connection_Close(Connection2)"));
+                hConnection2 = TML_HANDLE_TYPE_NULL;
+              }
+              if(hConnection1 != TML_HANDLE_TYPE_NULL)
+              {
+                m_iErr = tml_Connection_Close(&hConnection1);
+                checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
+                hConnection1 = TML_HANDLE_TYPE_NULL;
+              }
+
+            } // register profiles and commands
+          } // start listeners
+
+          stopListener(2, 0);
+          stopListener(1, 0);
+          stopListener(0, 0);
+
+        } // create listeners
+
+        deleteListener(2, 0);
+        deleteListener(1, 0);
+        deleteListener(0, 0);
+
+      } // create cores
+
+      deleteCore(2);
+      deleteCore(1);
+      deleteCore(0);
+
+    } // prepareCallbackData
+
+    DELETE_STR(sAddress2);
+    DELETE_STR(sAddress1);
+    DELETE_STR(sAddress0);
+
+  } // network card count > 0
+
+  messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
+  messageOutput();
+  setTestSectionName();
+  return(m_testOK);
+}
+
+//------------------------------------------------------------------------------
+
+bool TmlConnectionTester::testConnectionBalancers()
+{
+  setTestSectionName(tmlrtT("testConnectionBalancers"));
+  messageOutput(S_START);
+  reset();
+
+  int n = TestParams->getNetworkCardCount();
+  if(n > 0)
+  {
+    int          iPort     = TestParams->getFirstPortNumber();
+    SIDEX_TCHAR* sCard     = TestParams->getNetworkCard(0);
+    SIDEX_TCHAR* sAddress0 = tmlrt_cat(sCard, S_COLON, tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress1 = tmlrt_cat(sCard, S_COLON, tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress2 = tmlrt_cat(sCard, S_COLON, tmlrt_itoa(iPort++), 4);
+    SIDEX_TCHAR* sAddress3 = tmlrt_cat(sCard, S_COLON, tmlrt_itoa(iPort++), 4);
+    DELETE_STR(sCard);
+
+    cbData_t* pData1 = prepareCallbackData(this, 1, cbtOnBalancer);
+    cbData_t* pData2 = prepareCallbackData(this, 2, cbtOnBalancer);
+    cbData_t* pData3 = prepareCallbackData(this, 3, cbtOnBalancer);
+    if(pData1 && pData2 && pData3)
+    {
+      pData1->iValue = 2; pData1->sValue = tmlrtT("Core1");
+      pData2->iValue = 4; pData2->sValue = tmlrtT("Core2");
+      pData3->iValue = 8; pData3->sValue = tmlrtT("Core3");
+
+      if(createCore(0) && createCore(1) && createCore(2) && createCore(3))
+      {
+        if(createListener(0, 0, sAddress0) && createListener(1, 0, sAddress1) &&
+           createListener(2, 0, sAddress2) && createListener(3, 0, sAddress3))
+        {
+          if(startListener(0, 0) && startListener(1, 0) && startListener(2, 0) && startListener(3, 0))
+          {
+            m_iErr = tml_Profile_Register(getCore(0), S_IO_PROFILE);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core0, "), S_IO_PROFILE, S_PARENTHESIS_R), true);
+
+            m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), S_IO_PROFILE, S_PARENTHESIS_R), true);
+
+            m_iErr = tml_Profile_Register_Cmd(getCore(1), S_IO_PROFILE, 1234, &CallbackHandler_Command, pData1);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register_Cmd(Core1, "), S_IO_PROFILE, tmlrtT(", 1234)")), true);
+
+            m_iErr = tml_Profile_Register(getCore(2), S_IO_PROFILE);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core2, "), S_IO_PROFILE, S_PARENTHESIS_R), true);
+
+            m_iErr = tml_Profile_Register_Cmd(getCore(2), S_IO_PROFILE, 1234, &CallbackHandler_Command, pData2);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register_Cmd(Core2, "), S_IO_PROFILE, tmlrtT(", 1234)")), true);
+
+            m_iErr = tml_Profile_Register(getCore(3), S_IO_PROFILE);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core3, "), S_IO_PROFILE, S_PARENTHESIS_R), true);
+
+            m_iErr = tml_Profile_Register_Cmd(getCore(3), S_IO_PROFILE, 1234, &CallbackHandler_Command, pData3);
+            checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register_Cmd(Core3, "), S_IO_PROFILE, tmlrtT(", 1234)")), true);
+
+            if(m_testOK)
+            {
+              TML_CONNECTION_HANDLE hConnection1 = TML_HANDLE_TYPE_NULL;
+              m_iErr = tml_Core_Connect(getCore(0), sAddress1, &hConnection1);
+              checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect(Core0, "), sAddress1, tmlrtT(", Connection1)")), true);
+
+              TML_CONNECTION_HANDLE hConnection2 = TML_HANDLE_TYPE_NULL;
+              m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
+              checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect(Core0, "), sAddress2, tmlrtT(", Connection2)")), true);
+
+              TML_CONNECTION_HANDLE hConnection3 = TML_HANDLE_TYPE_NULL;
+              m_iErr = tml_Core_Connect(getCore(3), sAddress0, &hConnection3);
+              checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect(Core3, "), sAddress0, tmlrtT(", Connection3)")), true);
+
+              if(m_testOK)
+              {
+                // - - - - - Test with missing connection handle - - - - -
+
+                m_iErr = tml_Connection_Bal_Subscribe_MessageDestination(TML_HANDLE_TYPE_NULL, S_IO_PROFILE);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Bal_Subscribe_MessageDestination(NoConnectionHandle)"));
+
+                m_iErr = tml_Connection_Bal_Unsubscribe_MessageDestination(TML_HANDLE_TYPE_NULL, S_IO_PROFILE);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Bal_Unsubscribe_MessageDestination(NoConnectionHandle)"));
+
+                m_iErr = tml_Connection_Bal_Send_SubscriptionRequest(TML_HANDLE_TYPE_NULL, S_IO_PROFILE, 1000);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Bal_Send_SubscriptionRequest(NoConnectionHandle)"));
+
+                m_iErr = tml_Connection_Bal_Send_UnsubscriptionRequest(TML_HANDLE_TYPE_NULL, S_IO_PROFILE, 1000);
+                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Bal_Send_UnsubscriptionRequest(NoConnectionHandle)"));
+
+                // - - - - - Test with missing profile name - - - - -
+
+                m_iErr = tml_Connection_Bal_Subscribe_MessageDestination(hConnection1, NULL);
+                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Connection_Bal_Subscribe_MessageDestination(NoProfile)"));
+
+                m_iErr = tml_Connection_Bal_Unsubscribe_MessageDestination(hConnection1, NULL);
+                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Connection_Bal_Unsubscribe_MessageDestination(NoProfile)"));
+
+                m_iErr = tml_Connection_Bal_Send_SubscriptionRequest(hConnection1, NULL, 1000);
+                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Connection_Bal_Send_SubscriptionRequest(NoProfile)"));
+
+                m_iErr = tml_Connection_Bal_Send_UnsubscriptionRequest(hConnection1, NULL, 1000);
+                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Connection_Bal_Send_UnsubscriptionRequest(NoProfile)"));
+
+                // - - - - - - - - - -
+
+                if(checkBalancerSubscriptionCount(0, 0, S_IO_PROFILE, tmlrtT("Initial subscription count (Core0)")) &&
+                   checkBalancerSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("Initial subscription count (Core1)")) &&
+                   checkBalancerSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("Initial subscription count (Core2)")) &&
+                   checkBalancerSubscriptionCount(3, 0, S_IO_PROFILE, tmlrtT("Initial subscription count (Core3)")))
+                {
+                  m_iErr = tml_Connection_Bal_Subscribe_MessageDestination(hConnection1, S_IO_PROFILE);
+                  checkForSuccess(tmlrtT("tml_Connection_Bal_Subscribe_MessageDestination(Connection1, Profile)"));
+                  checkBalancerSubscriptionCount(0, 1, S_IO_PROFILE, tmlrtT("BalSubscribe (Core0, Connection1)"));
+                  checkBalancerSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("BalSubscribe (Core1, Connection1)"));
+                  checkBalancerSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("BalSubscribe (Core2, Connection1)"));
+                  checkBalancerSubscriptionCount(3, 0, S_IO_PROFILE, tmlrtT("BalSubscribe (Core3, Connection1)"));
+
+                  m_iErr = tml_Connection_Bal_Subscribe_MessageDestination(hConnection2, S_IO_PROFILE);
+                  checkForSuccess(tmlrtT("tml_Connection_Bal_Subscribe_MessageDestination(Connection2, Profile)"));
+                  checkBalancerSubscriptionCount(0, 2, S_IO_PROFILE, tmlrtT("BalSubscribe (Core0, Connection2)"));
+                  checkBalancerSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("BalSubscribe (Core1, Connection2)"));
+                  checkBalancerSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("BalSubscribe (Core2, Connection2)"));
+                  checkBalancerSubscriptionCount(3, 0, S_IO_PROFILE, tmlrtT("BalSubscribe (Core3, Connection2)"));
+
+                  m_iErr = tml_Connection_Bal_Send_SubscriptionRequest(hConnection3, S_IO_PROFILE, 1000);
+                  checkForSuccess(tmlrtT("tml_Connection_Bal_Send_SubscriptionRequest(Connection3, Profile)"));
+                  checkBalancerSubscriptionCount(0, 3, S_IO_PROFILE, tmlrtT("BalSendSubscriptionRequest (Core0, Connection3)"));
+                  checkBalancerSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("BalSendSubscriptionRequest (Core1, Connection3)"));
+                  checkBalancerSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("BalSendSubscriptionRequest (Core2, Connection3)"));
+                  checkBalancerSubscriptionCount(3, 0, S_IO_PROFILE, tmlrtT("BalSendSubscriptionRequest (Core3, Connection3)"));
+
+                  if(m_testOK)
+                  {
+                    m_cbLog_Balancer = 0;
+
+                    for(int i = 0; i < 6; i++)
+                    {
+                      TML_COMMAND_HANDLE hCommand = TML_HANDLE_TYPE_NULL;
+                      m_iErr = tml_Cmd_Create(&hCommand);
+                      checkForSuccess(tmlrt_cat(tmlrtT("tml_Cmd_Create() - ("), tmlrt_itoa(i), S_PARENTHESIS_R, 2), true);
+                      if(setCommandID(hCommand, 1234))
+                      {
+                        if(setCommandInt(hCommand, S_GROUP_TEST, S_KEY_INDEX, 16 << i))
+                        {
+                          m_iErr = tml_Bal_Send_SyncMessage(getCore(0), hCommand, S_IO_PROFILE, 1000);
+                          checkForSuccess(tmlrtT("tml_Bal_Send_SyncMessage(Core0, Command1234, Profile)"));
+                        }
+                      }
+                      m_iErr = tml_Cmd_Free(&hCommand);
+                      checkForSuccess(tmlrt_cat(tmlrtT("tml_Cmd_Free() - ("), tmlrt_itoa(i), S_PARENTHESIS_R, 2), true);
+                      hCommand = TML_HANDLE_TYPE_NULL;
+                    }
+
+                    checkForValue(tmlrtT("Received balancers log"), 1022, m_cbLog_Balancer, false);
+                  }
+
+                  m_iErr = tml_Connection_Bal_Send_UnsubscriptionRequest(hConnection3, S_IO_PROFILE, 1000);
+                  checkForSuccess(tmlrtT("tml_Connection_Bal_Send_UnsubscriptionRequest(Connection1, Profile)"));
+                  checkBalancerSubscriptionCount(0, 2, S_IO_PROFILE, tmlrtT("BalSendUnsubscriptionRequest (Core0, Connection3)"));
+                  checkBalancerSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("BalSendUnsubscriptionRequest (Core1, Connection3)"));
+                  checkBalancerSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("BalSendUnsubscriptionRequest (Core2, Connection3)"));
+                  checkBalancerSubscriptionCount(3, 0, S_IO_PROFILE, tmlrtT("BalSendUnsubscriptionRequest (Core3, Connection3)"));
+
+                  m_iErr = tml_Connection_Bal_Unsubscribe_MessageDestination(hConnection2, S_IO_PROFILE);
+                  checkForSuccess(tmlrtT("tml_Connection_Bal_Unsubscribe_MessageDestination(Connection2, Profile)"));
+                  checkBalancerSubscriptionCount(0, 1, S_IO_PROFILE, tmlrtT("BalUnsubscribe (Core0, Connection2)"));
+                  checkBalancerSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("BalUnsubscribe (Core1, Connection2)"));
+                  checkBalancerSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("BalUnsubscribe (Core2, Connection2)"));
+                  checkBalancerSubscriptionCount(3, 0, S_IO_PROFILE, tmlrtT("BalUnsubscribe (Core3, Connection2)"));
+
+                  m_iErr = tml_Connection_Bal_Unsubscribe_MessageDestination(hConnection1, S_IO_PROFILE);
+                  checkForSuccess(tmlrtT("tml_Connection_Bal_Unsubscribe_MessageDestination(Connection1, Profile)"));
+                  checkBalancerSubscriptionCount(0, 0, S_IO_PROFILE, tmlrtT("BalUnsubscribe (Core0, Connection1)"));
+                  checkBalancerSubscriptionCount(1, 0, S_IO_PROFILE, tmlrtT("BalUnsubscribe (Core1, Connection1)"));
+                  checkBalancerSubscriptionCount(2, 0, S_IO_PROFILE, tmlrtT("BalUnsubscribe (Core2, Connection1)"));
+                  checkBalancerSubscriptionCount(3, 0, S_IO_PROFILE, tmlrtT("BalUnsubscribe (Core3, Connection1)"));
+
+                  if(m_testOK) messageOutput(tmlrtT("Test culmination reached!"));
+                } // initial subscription counts
+              } // connections
+
+              // Close connections...
+              if(hConnection3 != TML_HANDLE_TYPE_NULL)
+              {
+                m_iErr = tml_Connection_Close(&hConnection3);
+                checkForSuccess(tmlrtT("tml_Connection_Close(Connection3)"));
+                hConnection3 = TML_HANDLE_TYPE_NULL;
+              }
+              if(hConnection2 != TML_HANDLE_TYPE_NULL)
+              {
+                m_iErr = tml_Connection_Close(&hConnection2);
+                checkForSuccess(tmlrtT("tml_Connection_Close(Connection2)"));
+                hConnection2 = TML_HANDLE_TYPE_NULL;
+              }
+              if(hConnection1 != TML_HANDLE_TYPE_NULL)
+              {
+                m_iErr = tml_Connection_Close(&hConnection1);
+                checkForSuccess(tmlrtT("tml_Connection_Close(Connection1)"));
+                hConnection1 = TML_HANDLE_TYPE_NULL;
+              }
+
+            } // register profiles and commands
+          } // start listeners
+
+          stopListener(3, 0);
+          stopListener(2, 0);
+          stopListener(1, 0);
+          stopListener(0, 0);
+
+        } // create listeners
+
+        deleteListener(3, 0);
+        deleteListener(2, 0);
+        deleteListener(1, 0);
+        deleteListener(0, 0);
+
+      } // create cores
+
+      deleteCore(3);
+      deleteCore(2);
+      deleteCore(1);
+      deleteCore(0);
+
+    } // prepareCallbackData
+
+    DELETE_STR(sAddress3);
+    DELETE_STR(sAddress2);
+    DELETE_STR(sAddress1);
+    DELETE_STR(sAddress0);
 
   } // network card count > 0
 

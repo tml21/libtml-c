@@ -52,6 +52,7 @@ enum cbType_t
 {
   cbtOnConnect = 0, cbtOnDisconnect,
   cbtOnCommand, cbtOnCmdConnectionCommand,
+  cbtOnEvent, cbtOnBalancer,
   cbt_TypeCount // type count in enum
 };
 // Note: keep cbType_t and cbt_Name in sync! (same item count)
@@ -64,7 +65,6 @@ struct cbData_t
   int                  iCore;
   int                  iValue;
   SIDEX_TCHAR*         sValue;
-  bool                 bDeleteString;
 };
 
 //------------------------------------------------------------------------------
@@ -72,9 +72,11 @@ struct cbData_t
 class TmlConnectionTester : public TmlTester
 {
 private:
-  volatile int  m_cbLog_Connection;
-  volatile int  m_cbLog_Disconnection;
-  volatile int  m_cbLog_Command;
+  volatile int m_cbLog_Connection;
+  volatile int m_cbLog_Disconnection;
+  volatile int m_cbLog_Command;
+  volatile int m_cbLog_Event;
+  volatile int m_cbLog_Balancer;
 
 protected:
   virtual void _prepare();
@@ -102,6 +104,8 @@ public:
   bool testSendSync();
   bool testSendAsync();
   bool testGetConnection_Cmd();
+  bool testConnectionEvents();
+  bool testConnectionBalancers();
 };
 
 #endif  // TML_CONNECTION_TESTER_H

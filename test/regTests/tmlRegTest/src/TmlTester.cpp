@@ -157,7 +157,7 @@ bool TmlTester::createCore(int iCore)
       m_iErr = tml_Core_Open(&m_core[iCore], 0);
 	    success = checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Open(core"),
                                           tmlrt_itoa(iCore + 1),
-                                          tmlrtT(")"), 2), true);
+                                          S_PARENTHESIS_R, 2), true);
     }
     else success = true;
   }
@@ -179,12 +179,12 @@ bool TmlTester::deleteCore(int iCore)
       m_iErr = tml_Core_GeneralDeregistration(m_core[iCore]);
 	    if(!checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_GeneralDeregistration(core"),
                                     tmlrt_itoa(iCore + 1),
-                                    tmlrtT(")"), 2), true)) success = false;
+                                    S_PARENTHESIS_R, 2), true)) success = false;
 
       m_iErr = tml_Core_Close(&m_core[iCore]);
 	    if(!checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Close(core"),
                                     tmlrt_itoa(iCore + 1),
-                                    tmlrtT(")"), 2), true)) success = false;
+                                    S_PARENTHESIS_R, 2), true)) success = false;
 
       m_core[iCore] = TML_HANDLE_TYPE_NULL;
     }
@@ -217,7 +217,7 @@ bool TmlTester::createListener(int iCore, int iListener, SIDEX_TCHAR* sAddress)
                                                                 tmlrt_itoa(iListener + 1), 5),
                                                       tmlrtT(", "),
                                                       sAddress, 1),
-                                            tmlrtT(")"), 2), true);
+                                            S_PARENTHESIS_R, 2), true);
       }
       else success = true;
     }
@@ -273,7 +273,7 @@ bool TmlTester::deleteListener(int iCore, int iListener)
                                           tmlrt_cat(tmlrt_itoa(iCore + 1),
                                                     tmlrtT(", listener"),
                                                     tmlrt_itoa(iListener + 1), 5),
-                                          tmlrtT(")"), 2), true);
+                                          S_PARENTHESIS_R, 2), true);
       m_listener[iCore][iListener] = TML_HANDLE_TYPE_NULL;
     }
     else success = true;
@@ -294,7 +294,7 @@ bool TmlTester::checkConnectionCount(int iCore, int nExpectedConnections, SIDEX_
       m_iErr = tml_Core_Get_ConnectionCount(m_core[iCore], &iCount);
       if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Get_ConnectionCount(Core"),
                                    tmlrt_itoa(iCore),
-                                   tmlrtT(")"), 2), true))
+                                   S_PARENTHESIS_R, 2), true))
       {
         success = checkForValue(tmlrt_cat(debugText, tmlrtT(" Connection count")),
                                 nExpectedConnections, iCount, true);
@@ -322,6 +322,70 @@ bool TmlTester::checkRemoteProfileCount(TML_CONNECTION_HANDLE hConnection, int n
     {
       sidex_Variant_DecRef(lProfiles);
       lProfiles = SIDEX_HANDLE_TYPE_NULL;
+    }
+  }
+  return(success);
+}
+
+bool TmlTester::checkEventSubscriptionCount(int iCore, int nExpectedSubscriptions, SIDEX_TCHAR* sProfile, SIDEX_TCHAR* debugText)
+{
+  bool success = false;
+  if((iCore >= 0) && (iCore < MAX_CORES))
+  {
+    if(m_core[iCore] != TML_HANDLE_TYPE_NULL)
+    {
+      SIDEX_VARIANT svSubscriptions = SIDEX_HANDLE_TYPE_NULL;
+      m_iErr = tml_Evt_Get_Subscribed_MessageDestinations(m_core[iCore], sProfile, &svSubscriptions);
+      if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Evt_Get_Subscribed_MessageDestinations(Core"),
+                                   tmlrt_cat(tmlrt_itoa(iCore),
+                                             tmlrtT(", "),
+                                             sProfile, 1),
+                                   S_PARENTHESIS_R, 2), true))
+      {
+        if(sidex_Variant_Table_Check(svSubscriptions))
+        {
+          SIDEX_INT32 iRows = 0;
+          m_iErr = sidex_Variant_Table_Rows(svSubscriptions, &iRows);
+          if(checkForSuccess(tmlrtT("sidex_Variant_Table_Rows()")))
+          {
+            success = checkForValue(tmlrt_cat(debugText, tmlrtT(" Event subscription count")),
+                                    nExpectedSubscriptions, iRows, true);
+          }
+        }
+        sidex_Variant_DecRef(svSubscriptions);
+      }
+    }
+  }
+  return(success);
+}
+
+bool TmlTester::checkBalancerSubscriptionCount(int iCore, int nExpectedSubscriptions, SIDEX_TCHAR* sProfile, SIDEX_TCHAR* debugText)
+{
+  bool success = false;
+  if((iCore >= 0) && (iCore < MAX_CORES))
+  {
+    if(m_core[iCore] != TML_HANDLE_TYPE_NULL)
+    {
+      SIDEX_VARIANT svSubscriptions = SIDEX_HANDLE_TYPE_NULL;
+      m_iErr = tml_Bal_Get_Subscribed_MessageDestinations(m_core[iCore], sProfile, &svSubscriptions);
+      if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Bal_Get_Subscribed_MessageDestinations(Core"),
+                                   tmlrt_cat(tmlrt_itoa(iCore),
+                                             tmlrtT(", "),
+                                             sProfile, 1),
+                                   S_PARENTHESIS_R, 2), true))
+      {
+        if(sidex_Variant_Table_Check(svSubscriptions))
+        {
+          SIDEX_INT32 iRows = 0;
+          m_iErr = sidex_Variant_Table_Rows(svSubscriptions, &iRows);
+          if(checkForSuccess(tmlrtT("sidex_Variant_Table_Rows()")))
+          {
+            success = checkForValue(tmlrt_cat(debugText, tmlrtT(" Balancer subscription count")),
+                                    nExpectedSubscriptions, iRows, true);
+          }
+        }
+        sidex_Variant_DecRef(svSubscriptions);
+      }
     }
   }
   return(success);
@@ -356,7 +420,7 @@ SIDEX_TCHAR* TmlTester::getSidexListStringItem(SIDEX_VARIANT vList, SIDEX_INT32 
                                  debugText ? tmlrtT(" - ") : NULL,
                                  tmlrt_cat(tmlrtT("sidex_Variant_List_Get("),
                                            tmlrt_itoa(index),
-                                           tmlrtT(")"), 2), 4), true))
+                                           S_PARENTHESIS_R, 2), 4), true))
     {
       if(sidex_Variant_String_Check(vString) == SIDEX_TRUE)
       {
@@ -389,7 +453,7 @@ bool TmlTester::setCommandID(TML_COMMAND_HANDLE hCommand, TML_COMMAND_ID_TYPE cm
   m_iErr = tml_Cmd_Header_SetCommand(hCommand, cmdID);
   return(checkForSuccess(tmlrt_cat(tmlrtT("tml_Cmd_Header_SetCommand(ID = "),
                                    tmlrt_itoa(cmdID),
-                                   tmlrtT(")"), 2), true));
+                                   S_PARENTHESIS_R, 2), true));
 }
 
 TML_COMMAND_ID_TYPE TmlTester::getCommandID(TML_COMMAND_HANDLE hCommand, TML_COMMAND_ID_TYPE iDefault)
