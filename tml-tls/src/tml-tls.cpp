@@ -252,11 +252,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_OnError(TML_CORE_HANDLE co
 /**
  * @brief    Start tls negotiation for the requested connection
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation (TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted);
-/**
- * char* API
-**/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_CONNECTION_HANDLE connectionHandle, char* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
@@ -277,7 +273,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_
         // start the TLS profile negotiation process
         VortexStatus status;
         char* status_message;
-        VortexConnection* tls_connection = vortex_tls_start_negotiation_sync(connection, serverName, 
+        VortexConnection* tls_connection = vortex_tls_start_negotiation_sync(connection, NULL, 
                                       &status, &status_message);
 
         ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg(status_message);
@@ -322,67 +318,12 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_
   }
   return iRet;
 };
-/**
- * wchar_t* API
-**/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_X (TML_CONNECTION_HANDLE connectionHandle, wchar_t* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted){
-  TML_INT32 iRet = TML_SUCCESS;
 
-  TML_INT32 iLengthUtf8;
-  char* utf8Str = NULL;
-  try{
-    if (NULL == serverName){
-      iRet = tml_Tls_Connection_StartNegotiation_A (connectionHandle, utf8Str, bAllowTlsFailures, bEncrypted);
-    }
-    else{
-      utf8Str = UTF32toUTF8((wchar_t*)serverName, &iLengthUtf8);
-      if (NULL != utf8Str){
-        iRet = tml_Tls_Connection_StartNegotiation_A (connectionHandle, utf8Str, bAllowTlsFailures, bEncrypted);
-
-        delete[] utf8Str;
-      }
-    }
-  }
-  catch (...){
-    iRet = TML_ERR_COMMON;
-  }
-  return iRet;
-};
-/**
- * char16_t* API
-**/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_W (TML_CONNECTION_HANDLE connectionHandle, char16_t* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted){
-  TML_INT32 iRet = TML_SUCCESS;
-
-  TML_INT32 iLengthUtf8;
-  char* utf8Str = NULL;
-  try{
-    if (NULL == serverName){
-      iRet = tml_Tls_Connection_StartNegotiation_A (connectionHandle, utf8Str, bAllowTlsFailures, bEncrypted);
-    }
-    else{
-      char* utf8Str = UTF16toUTF8((wchar_t*)serverName, &iLengthUtf8);
-      if (NULL != utf8Str){
-        iRet = tml_Tls_Connection_StartNegotiation_A (connectionHandle, utf8Str, bAllowTlsFailures, bEncrypted);
-
-        delete[] utf8Str;
-      }
-    }
-  }
-  catch (...){
-    iRet = TML_ERR_COMMON;
-  }
-  return iRet;
-};
 
 /**
  * @brief   Allows to activate TLS profile automatic negotiation for every connection created.
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, TML_CTSTR* serverName);
-/**
- * char* API
-**/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_A (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char* serverName){
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
@@ -396,60 +337,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_A (TML_COR
       vortex_tls_set_auto_tls(ctx, 
                               (TML_TRUE==bEnabled)? axl_true : axl_false, 
                               (TML_TRUE==bAllowTlsFailures)? axl_true : axl_false,
-                              serverName);
+                              NULL);
     }
-  }
-  return iRet;
-};
-/**
- * wchar_t* API
-**/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_X (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, wchar_t* serverName){
-  TML_INT32 iRet = TML_SUCCESS;
-
-  TML_INT32 iLengthUtf8;
-  char* utf8Str = NULL;
-  try{
-    if (NULL == serverName){
-      iRet = tml_Tls_Core_Set_AutoNegotiation_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
-    }
-    else{
-      utf8Str = UTF32toUTF8((wchar_t*)serverName, &iLengthUtf8);
-      if (NULL != utf8Str){
-        iRet = tml_Tls_Core_Set_AutoNegotiation_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
-
-        delete[] utf8Str;
-      }
-    }
-  }
-  catch (...){
-    iRet = TML_ERR_COMMON;
-  }
-  return iRet;
-};
-/**
- * char16_t* API
-**/
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation_W (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char16_t* serverName){
-  TML_INT32 iRet = TML_SUCCESS;
-
-  TML_INT32 iLengthUtf8;
-  char* utf8Str = NULL;
-  try{
-    if (NULL == serverName){
-      iRet = tml_Tls_Core_Set_AutoNegotiation_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
-    }
-    else{
-      char* utf8Str = UTF16toUTF8((wchar_t*)serverName, &iLengthUtf8);
-      if (NULL != utf8Str){
-        iRet = tml_Tls_Core_Set_AutoNegotiation_A (coreHandle, bEnabled, bAllowTlsFailures, utf8Str);
-
-        delete[] utf8Str;
-      }
-    }
-  }
-  catch (...){
-    iRet = TML_ERR_COMMON;
   }
   return iRet;
 };
@@ -640,8 +529,6 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, Tml
 };
 
 
-
-
 /**
  * @brief    Allows to create a digest from the provided string
  */
@@ -735,6 +622,136 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML
           iRet = TML_ERR_UNICODE;
         }
         axl_free(sRet);
+      }
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
+    }
+  }
+  return iRet;
+};
+
+/**
+ * @brief   Allows to return the certificate digest from the a local certificate file (this is also called the certificate fingerprint).
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, TML_CTSTR* sPathName, TML_CTSTR** sDigest);
+/**
+ * char* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char* sPathName, char** sDigest){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+
+  if (NULL != sDigest){
+    iRet = TML_ERR_MISSING_OBJ;
+
+    if (TML_HANDLE_TYPE_NULL != connectionHandle){
+      iRet = TML_SUCCESS;
+      VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+
+      char* sAxlRet = vortex_tls_get_ssl_digest (sPathName, (VortexDigestMethod)method); 
+      if (NULL == sAxlRet){
+        iRet = TML_ERR_INFORMATION_UNDEFINED;
+      }
+      else{
+        int iLength = strlen(sAxlRet);
+        char* sRet = new char[iLength+1];
+
+      #if defined (LINUX) || defined (MINGW_BUILD)
+        strncpy(sRet, sAxlRet, iLength);
+      #else
+        strncpy_s(sRet, iLength+1, sAxlRet, iLength);
+      #endif
+        sRet[iLength] = '\0';
+
+        *sDigest = sRet;
+        axl_free(sAxlRet);
+      }
+    }
+  }
+  return iRet;
+};
+/**
+ * wchar_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, wchar_t* sPathName, wchar_t** sDigest){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+
+  if (NULL != sDigest){
+    iRet = TML_ERR_MISSING_OBJ;
+    if (TML_HANDLE_TYPE_NULL != connectionHandle){
+      iRet = TML_SUCCESS;
+
+      TML_INT32 iLengthUtf8;
+      TML_INT32 iLengthUtf32;
+      try{
+        char* utf8PathName = UTF32toUTF8((wchar_t*)sPathName, &iLengthUtf8);
+        if (NULL != utf8PathName){
+          VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+
+          char* sRet = vortex_tls_get_ssl_digest (utf8PathName, (VortexDigestMethod)method); 
+          if (NULL == sRet){
+            iRet = TML_ERR_INFORMATION_UNDEFINED;
+          }
+          else{
+            wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
+            if (NULL != utf32Str){
+              *sDigest = utf32Str;
+            }
+            else{
+              iRet = TML_ERR_UNICODE;
+            }
+            axl_free(sRet);
+          }
+          delete[] utf8PathName;
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
+      }
+      catch (...){
+        iRet = TML_ERR_COMMON;
+      }
+    }
+  }
+  return iRet;
+};
+/**
+ * char16_t* API
+**/
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char16_t* sPathName, char16_t** sDigest){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+
+  if (NULL != sDigest){
+    iRet = TML_ERR_MISSING_OBJ;
+    if (TML_HANDLE_TYPE_NULL != connectionHandle){
+      iRet = TML_SUCCESS;
+
+      TML_INT32 iLengthUtf8;
+      TML_INT32 iLengthUtf16;
+      try{
+        char* utf8PathName = UTF16toUTF8((wchar_t*)sPathName, &iLengthUtf8);
+        if (NULL != utf8PathName){
+          VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+
+          char* sRet = vortex_tls_get_ssl_digest (utf8PathName, (VortexDigestMethod)method); 
+          if (NULL == sRet){
+            iRet = TML_ERR_INFORMATION_UNDEFINED;
+          }
+          else{
+            char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
+            if (NULL != utf16Str){
+              *sDigest = utf16Str;
+            }
+            else{
+              iRet = TML_ERR_UNICODE;
+            }
+            axl_free(sRet);
+          }
+          delete[] utf8PathName;
+        }
+        else{
+          iRet = TML_ERR_UNICODE;
+        }
       }
       catch (...){
         iRet = TML_ERR_COMMON;
