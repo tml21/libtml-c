@@ -367,6 +367,11 @@ public:
     void DeregisterConnectionLost();
 
     /**
+     * @brief   Remove the tmlConnectionManageObj out of the connection object hashtable
+     */
+    void RemoveConnectionFromHT(tmlConnectionManageObj* tmlConnectionMngObj);
+
+    /**
      * @brief   Deregister connection lost callback messages
      */
     void DeregisterConnectionLost(tmlConnectionManageObj* connectionMgr);

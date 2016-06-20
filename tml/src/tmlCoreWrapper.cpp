@@ -2860,6 +2860,8 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
     if (connectionHandle == tmpConnection){
       bFound = true;
       sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
+      // The Object has to be removed out of the sender connection object hashtable:
+      m_sender->RemoveConnectionFromHT((tmlConnectionManageObj*)tmpConnection);
       // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
       delete (tmlConnectionManageObj*)tmpConnection;
     }
