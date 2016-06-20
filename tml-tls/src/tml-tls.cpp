@@ -445,22 +445,29 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsD
   TML_INT32 iRet = TML_ERR_UNICODE;
 
   if (NULL != sDigest){
-    iRet = TML_SUCCESS;
+    if (0 < strlen (string)){
+      iRet = TML_SUCCESS;
 
-    char* sAxlRet = vortex_tls_get_digest ((VortexDigestMethod)method, string); 
+      char* sAxlRet = vortex_tls_get_digest ((VortexDigestMethod)method, string); 
 
-    int iLength = strlen(sAxlRet);
-    char* sRet = new char[iLength+1];
+      int iLength = strlen(sAxlRet);
+      if (0 < iLength){
+        char* sRet = new char[iLength+1];
 
-  #if defined (LINUX) || defined (MINGW_BUILD)
-    strncpy(sRet, sAxlRet, iLength);
-  #else
-    strncpy_s(sRet, iLength+1, sAxlRet, iLength);
-  #endif
-    sRet[iLength] = '\0';
+      #if defined (LINUX) || defined (MINGW_BUILD)
+        strncpy(sRet, sAxlRet, iLength);
+      #else
+        strncpy_s(sRet, iLength+1, sAxlRet, iLength);
+      #endif
+        sRet[iLength] = '\0';
 
-    *sDigest = sRet;
-    axl_free(sAxlRet);
+        *sDigest = sRet;
+        axl_free(sAxlRet);
+      }
+      else{
+        iRet = TML_ERR_UNICODE;
+       }
+     }
   }
   return iRet;
 };
@@ -477,16 +484,24 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlT
     try{
       char* utf8Str = UTF32toUTF8((wchar_t*)string, &iLengthUtf8);
       if (NULL != utf8Str){
-        char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
-        wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
-        if (NULL != utf32Str){
-          *sDigest = utf32Str;
+        if (0 < iLengthUtf8){
+          char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
+          wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
+          if (NULL != utf32Str){
+            *sDigest = utf32Str;
+            axl_free(sRet);
+          }
+          else{
+            iRet = TML_ERR_UNICODE;
+          }
         }
         else{
           iRet = TML_ERR_UNICODE;
         }
         delete[] utf8Str;
-        axl_free(sRet);
+      }
+      else{
+        iRet = TML_ERR_UNICODE;
       }
     }
     catch (...){
@@ -494,7 +509,6 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlT
     }
   }
   return iRet;
-
 };
 /**
  * char16_t* API
@@ -509,16 +523,24 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, Tml
     try{
       char* utf8Str = UTF16toUTF8((wchar_t*)string, &iLengthUtf8);
       if (NULL != utf8Str){
-        char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
-        char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
-        if (NULL != utf16Str){
-          *sDigest = utf16Str;
+        if (0 < iLengthUtf8){
+          char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
+          char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
+          if (NULL != utf16Str){
+            *sDigest = utf16Str;
+            axl_free(sRet);
+          }
+          else{
+            iRet = TML_ERR_UNICODE;
+          }
         }
         else{
           iRet = TML_ERR_UNICODE;
         }
         delete[] utf8Str;
-        axl_free(sRet);
+      }
+      else{
+        iRet = TML_ERR_UNICODE;
       }
     }
     catch (...){
