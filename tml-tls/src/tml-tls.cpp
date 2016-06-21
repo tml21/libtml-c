@@ -444,7 +444,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (TML_CTSTR* string, TmlT
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsDigestMethod method, char** sDigest){
   TML_INT32 iRet = TML_ERR_UNICODE;
 
-  if (NULL != sDigest){
+  if (NULL != sDigest && NULL != string){
     if (0 < strlen (string)){
       iRet = TML_SUCCESS;
 
@@ -477,7 +477,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsD
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlTlsDigestMethod method, wchar_t** sDigest){
   TML_INT32 iRet = TML_ERR_UNICODE;
 
-  if (NULL != sDigest){
+  if (NULL != sDigest && NULL != string){
     iRet = TML_SUCCESS;
     TML_INT32 iLengthUtf8;
     TML_INT32 iLengthUtf32;
@@ -516,7 +516,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlT
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, TmlTlsDigestMethod method, char16_t** sDigest){
   TML_INT32 iRet = TML_ERR_UNICODE;
 
-  if (NULL != sDigest){
+  if (NULL != sDigest && NULL != string){
     iRet = TML_SUCCESS;
     TML_INT32 iLengthUtf8;
     TML_INT32 iLengthUtf16;
