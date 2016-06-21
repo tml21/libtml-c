@@ -653,16 +653,17 @@ bool TmlTLSTester::testTLS()
                                 // - - - - - String SHA1 - - - - -
 
                                 m_iErr = tml_Tls_Get_Digest(NULL, TML_TLS_SHA1, &sDigest);
-                                checkForSuccess(tmlrtT("tml_Tls_Get_Digest(NoInput, SHA1)"));
-                                checkForValue(tmlrtT("Null digest (SHA1)"), S_EMPTY, sDigest, false);
+                                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Get_Digest(NoInput, SHA1)"));
+                                checkForValue(tmlrtT("Null test (NoInput, SHA1)"), NULL, sDigest, false);
                                 if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 m_iErr = tml_Tls_Get_Digest(S_EMPTY, TML_TLS_SHA1, &sDigest);
                                 checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Get_Digest(EmptyInput, SHA1)"));
+                                checkForValue(tmlrtT("Null test (EmptyInput, SHA1)"), NULL, sDigest, false);
                                 if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 m_iErr = tml_Tls_Get_Digest(S_REGTEST, TML_TLS_SHA1, NULL);
-                                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Get_Digest(NoOutput, SHA1)"));
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Get_Digest(NoOutput, SHA1)"));
 
                                 m_iErr = tml_Tls_Get_Digest(S_REGTEST, TML_TLS_SHA1, &sDigest);
                                 checkForSuccess(tmlrtT("tml_Tls_Get_Digest(Input, SHA1)"));
@@ -670,6 +671,19 @@ bool TmlTLSTester::testTLS()
                                 if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 // - - - - - File SHA1 - - - - -
+
+                                m_iErr = tml_Tls_Connection_Get_SSLDigest(TML_HANDLE_TYPE_NULL, TML_TLS_SHA1, sCrtPath, &sDigest);
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_SSLDigest(NoConnection, SHA1)"));
+                                checkForValue(tmlrtT("Null test (NoConnection, SHA1, File)"), NULL, sDigest, false);
+                                if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
+
+                                m_iErr = tml_Tls_Connection_Get_SSLDigest(hConnection, TML_TLS_SHA1, NULL, &sDigest);
+                                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Connection_Get_SSLDigest(NoPath, SHA1)"));
+                                checkForValue(tmlrtT("Null test (Connection, SHA1, NoFile)"), NULL, sDigest, false);
+                                if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
+
+                                m_iErr = tml_Tls_Connection_Get_SSLDigest(hConnection, TML_TLS_SHA1, sCrtPath, NULL);
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_SSLDigest(Connection, NoOutput, SHA1)"));
 
                                 m_iErr = tml_Tls_Connection_Get_SSLDigest(hConnection, TML_TLS_SHA1, sCrtPath, &sDigest);
                                 checkForSuccess(tmlrtT("tml_Tls_Connection_Get_SSLDigest(CertPath, SHA1)"));
@@ -680,10 +694,11 @@ bool TmlTLSTester::testTLS()
 
                                 m_iErr = tml_Tls_Connection_Get_PeerSSLDigest(TML_HANDLE_TYPE_NULL, TML_TLS_SHA1, &sDigest);
                                 checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(NoConnection, SHA1)"));
+                                checkForValue(tmlrtT("Null test (NoConnection, SHA1, Peer)"), NULL, sDigest, false);
                                 if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 m_iErr = tml_Tls_Connection_Get_PeerSSLDigest(hConnection, TML_TLS_SHA1, NULL);
-                                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(Connection, NoOutput, SHA1)"));
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(Connection, NoOutput, SHA1)"));
 
                                 m_iErr = tml_Tls_Connection_Get_PeerSSLDigest(hConnection, TML_TLS_SHA1, &sDigest);
                                 checkForSuccess(tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(Connection, SHA1)"));
@@ -693,16 +708,17 @@ bool TmlTLSTester::testTLS()
                                 // - - - - - String MD5 - - - - -
 
                                 m_iErr = tml_Tls_Get_Digest(NULL, TML_TLS_MD5, &sDigest);
-                                checkForSuccess(tmlrtT("tml_Tls_Get_Digest(NoInput, MD5)"));
-                                checkForValue(tmlrtT("Null digest (MD5)"), S_EMPTY, sDigest, false);
+                                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Get_Digest(NoInput, MD5)"));
+                                checkForValue(tmlrtT("Null test (NoInput, MD5)"), NULL, sDigest, false);
                                 if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 m_iErr = tml_Tls_Get_Digest(S_EMPTY, TML_TLS_MD5, &sDigest);
                                 checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Get_Digest(EmptyInput, MD5)"));
+                                checkForValue(tmlrtT("Null test (EmptyInput, MD5)"), NULL, sDigest, false);
                                 if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 m_iErr = tml_Tls_Get_Digest(S_REGTEST, TML_TLS_MD5, NULL);
-                                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Get_Digest(NoOutput, MD5)"));
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Get_Digest(NoOutput, MD5)"));
 
                                 m_iErr = tml_Tls_Get_Digest(S_REGTEST, TML_TLS_MD5, &sDigest);
                                 checkForSuccess(tmlrtT("tml_Tls_Get_Digest(Input, MD5)"));
@@ -710,6 +726,19 @@ bool TmlTLSTester::testTLS()
                                 if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 // - - - - - File MD5 - - - - -
+
+                                m_iErr = tml_Tls_Connection_Get_SSLDigest(TML_HANDLE_TYPE_NULL, TML_TLS_MD5, sCrtPath, &sDigest);
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_SSLDigest(NoConnection, MD5)"));
+                                checkForValue(tmlrtT("Null test (NoConnection, MD5, File)"), NULL, sDigest, false);
+                                if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
+
+                                m_iErr = tml_Tls_Connection_Get_SSLDigest(hConnection, TML_TLS_MD5, NULL, &sDigest);
+                                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Connection_Get_SSLDigest(NoPath, MD5)"));
+                                checkForValue(tmlrtT("Null test (Connection, MD5, NoFile)"), NULL, sDigest, false);
+                                if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
+
+                                m_iErr = tml_Tls_Connection_Get_SSLDigest(hConnection, TML_TLS_MD5, sCrtPath, NULL);
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_SSLDigest(Connection, NoOutput, MD5)"));
 
                                 m_iErr = tml_Tls_Connection_Get_SSLDigest(hConnection, TML_TLS_MD5, sCrtPath, &sDigest);
                                 checkForSuccess(tmlrtT("tml_Tls_Connection_Get_SSLDigest(CertPath, MD5)"));
@@ -720,10 +749,11 @@ bool TmlTLSTester::testTLS()
 
                                 m_iErr = tml_Tls_Connection_Get_PeerSSLDigest(TML_HANDLE_TYPE_NULL, TML_TLS_MD5, &sDigest);
                                 checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(NoConnection, MD5)"));
+                                checkForValue(tmlrtT("Null test (NoConnection, MD5, Peer)"), NULL, sDigest, false);
                                 if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 m_iErr = tml_Tls_Connection_Get_PeerSSLDigest(hConnection, TML_TLS_MD5, NULL);
-                                checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(Connection, NoOutput, MD5)"));
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(Connection, NoOutput, MD5)"));
 
                                 m_iErr = tml_Tls_Connection_Get_PeerSSLDigest(hConnection, TML_TLS_MD5, &sDigest);
                                 checkForSuccess(tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(Connection, MD5)"));
