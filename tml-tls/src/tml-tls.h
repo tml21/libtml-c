@@ -213,7 +213,6 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_AcceptNegotiation(TML_CORE_HAN
  * @param   bEncrypted         reference to encryption status.TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted);
@@ -228,8 +227,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation (TML_CO
  * @param   bAllowTlsFailures configure how to handle errors produced while activating automatic TLS negotiation
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid handle
+ *          TML_ERR_MISSING_OBJ invalid coreHandle handle
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures);
 
@@ -318,7 +316,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
  *                           Must be deallocated using the data type API sidex_Free_ReadString()
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (TML_CTSTR* string, TmlTlsDigestMethod method, TML_CTSTR** sDigest);
@@ -379,7 +377,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML
  *                           Must be deallocated using the data type API sidex_Free_ReadString()
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid connection handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED wrong sPathName or sPathName refers no valid certificate file
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, TML_CTSTR* sPathName, TML_CTSTR** sDigest);
@@ -408,7 +406,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_A (TML_CON
  * @param   pErrorData        reference to optional user data to be passed into the function when the handler is called
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid handle
+ *          TML_ERR_MISSING_OBJ invalid core handle
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_OnError(TML_CORE_HANDLE coreHandle, TML_ON_TLS_ERROR_CB_FUNC pErrorCB, void* pErrorData);
 #ifdef __cplusplus
