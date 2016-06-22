@@ -107,6 +107,7 @@ axl_bool check_and_accept_tls_request (VortexConnection* connection,
   return bRet;  
 }
 
+
 // returns certificate file location
 char* certificate_file_location (VortexConnection* connection, 
                                                        const char* serverName)
@@ -140,6 +141,7 @@ char* certificate_file_location (VortexConnection* connection,
   }
   return pathname;  
 }
+
 
 // returns private key file location
 char* private_key_file_location (VortexConnection* connection, 
@@ -652,6 +654,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML
   }
   return iRet;
 };
+
 
 /**
  * @brief   Allows to return the certificate digest from the a local certificate file (this is also called the certificate fingerprint).
