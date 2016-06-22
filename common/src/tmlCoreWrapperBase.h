@@ -43,6 +43,8 @@
 #endif // _MSC_VER > 1000
 
 #include <vortex.h>
+#include "tmlCriticalSectionObj.h"
+#include "tmlStdTypes.h"
 
 class  tmlCoreWrapperBase
 {
@@ -50,6 +52,15 @@ class  tmlCoreWrapperBase
 private:
     /* data */
 
+    /**
+     * @brief    Reference to mutex necessary for m_registeredCloseObjs
+     */
+    tmlCriticalSectionObj* m_csCloseHandling;
+
+    /**
+     * @brief    Reference to list containing registered connection close callbacks
+     */
+    SIDEX_VARIANT          m_registeredCloseObjs;
 
 protected: 
     /* data */
@@ -83,6 +94,18 @@ public:
      * @returns the Vortex execution context
      */
     VortexCtx* getVortexCtx();
+
+
+    /**
+     * @brief    returns mutex protecting m_registeredCloseObjs
+     */
+    tmlCriticalSectionObj* getCsCloseHandling();
+
+
+    /**
+      * @brief    Get registered connection close list.
+      */
+    SIDEX_VARIANT Get_ConnectionCloseList();
 
 
     /**

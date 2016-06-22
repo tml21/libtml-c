@@ -58,19 +58,9 @@ private:
     /* data */
 
     /**
-     * @brief    Reference to list containing registered connection close callbacks
-     */
-    SIDEX_VARIANT          m_registeredCloseObjs;
-
-    /**
      * @brief    Reference to mutex necessary for tmlSingleCall::getConnection
      */
     tmlCriticalSectionObj* m_csGetConnection;
-
-    /**
-     * @brief    Reference to mutex necessary for m_registeredCloseObjs
-     */
-    tmlCriticalSectionObj* m_csCloseHandling;
 
     /**
      * @brief    Reference to list containing listener objects
@@ -1912,12 +1902,6 @@ public:
 
 
     /**
-     * @brief    returns mutex protecting m_registeredCloseObjs
-     */
-    tmlCriticalSectionObj* getCsCloseHandling();
-
-
-    /**
      * @brief    returns mutex protecting tmlSingleCall::getConnection
      */
     tmlCriticalSectionObj* getCsGetConnection();
@@ -2255,11 +2239,5 @@ public:
      *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested network address don't exist
      */
     TML_INT32 tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, char* sPort, TML_CONNECTION_HANDLE* connectionHandle);
-
-    /**
-      * @brief    Get registered connection close list.
-      */
-    SIDEX_VARIANT Get_ConnectionCloseList();
-
 };
 #endif  // TMLCOREWRAPPER_H
