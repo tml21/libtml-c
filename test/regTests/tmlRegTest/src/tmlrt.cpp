@@ -139,10 +139,10 @@
         wcout << "----------------------------------------" << endl;
         wcout << endl;
 
-        //if(!testTmlConnections()) break;            // test the connection API
-        //if(!testTmlMultiListeners()) break;         // test the multi listener API
+        if(!testTmlConnections()) break;            // test the connection API
+        if(!testTmlMultiListeners()) break;         // test the multi listener API
         if(!testTmlTLS()) break;                    // test the TLS encryption API
-        //if(!testTmlSendingCommands()) break;        // test the sending commands API
+        if(!testTmlSendingCommands()) break;        // test the sending commands API
 
         i++;
       }
