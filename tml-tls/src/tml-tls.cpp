@@ -354,7 +354,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_VerifyCert (TML_CONNECTI
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   axl_bool bVerified = axl_false;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != bVerifyOk){
     iRet = TML_SUCCESS;
     VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
     bVerified = vortex_tls_verify_cert(connection);
@@ -377,7 +377,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CO
   // It can only be configured in the tml_Tls_Connection_StartNegotiation().
   // tml_Tls_Core_SetAuto_Negation has no handler to get this information.
   // 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != bEncrypted){
     iRet = TML_SUCCESS;
     *bEncrypted = ((tmlConnectionManageObjBase*) connectionHandle)->isEncrpyted();
   }
@@ -396,7 +396,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != statusMsg){
     iRet = ((tmlConnectionManageObjBase*) connectionHandle)->getTlsStatusMsg_A(statusMsg);
     if(TML_SUCCESS != iRet){
       iRet = TML_ERR_INFORMATION_UNDEFINED;
@@ -411,7 +411,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != statusMsg){
     iRet = ((tmlConnectionManageObjBase*) connectionHandle)->getTlsStatusMsg_X(statusMsg);
     if(TML_SUCCESS != iRet){
       iRet = TML_ERR_INFORMATION_UNDEFINED;
@@ -426,7 +426,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
   TML_BOOL bEncryptedVal = TML_FALSE;
 
-  if (TML_HANDLE_TYPE_NULL != connectionHandle){
+  if (TML_HANDLE_TYPE_NULL != connectionHandle && NULL != statusMsg){
     iRet = ((tmlConnectionManageObjBase*) connectionHandle)->getTlsStatusMsg_W(statusMsg);
     if(TML_SUCCESS != iRet){
       iRet = TML_ERR_INFORMATION_UNDEFINED;
@@ -446,8 +446,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (TML_CTSTR* string, TmlT
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsDigestMethod method, char** sDigest){
   TML_INT32 iRet = TML_ERR_UNICODE;
 
-  if (NULL != sDigest && NULL != string){
-    if (0 < strlen (string)){
+  if (NULL != string && 0 < strlen (string)){
+    if (NULL != sDigest){
       iRet = TML_SUCCESS;
 
       char* sAxlRet = vortex_tls_get_digest ((VortexDigestMethod)method, string); 
@@ -468,8 +468,11 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsD
       }
       else{
         iRet = TML_ERR_UNICODE;
-       }
-     }
+        }
+      }
+      else{
+        iRet = TML_ERR_MISSING_OBJ;
+      }
   }
   return iRet;
 };
@@ -479,35 +482,40 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsD
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlTlsDigestMethod method, wchar_t** sDigest){
   TML_INT32 iRet = TML_ERR_UNICODE;
 
-  if (NULL != sDigest && NULL != string){
-    iRet = TML_SUCCESS;
-    TML_INT32 iLengthUtf8;
-    TML_INT32 iLengthUtf32;
-    try{
-      char* utf8Str = UTF32toUTF8((wchar_t*)string, &iLengthUtf8);
-      if (NULL != utf8Str){
-        if (0 < iLengthUtf8){
-          char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
-          wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
-          if (NULL != utf32Str){
-            *sDigest = utf32Str;
-            axl_free(sRet);
+  if (NULL != string){
+    if (NULL != sDigest){
+      iRet = TML_SUCCESS;
+      TML_INT32 iLengthUtf8;
+      TML_INT32 iLengthUtf32;
+      try{
+        char* utf8Str = UTF32toUTF8((wchar_t*)string, &iLengthUtf8);
+        if (NULL != utf8Str){
+          if (0 < iLengthUtf8){
+            char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
+            wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
+            if (NULL != utf32Str){
+              *sDigest = utf32Str;
+              axl_free(sRet);
+            }
+            else{
+              iRet = TML_ERR_UNICODE;
+            }
           }
           else{
             iRet = TML_ERR_UNICODE;
           }
+          delete[] utf8Str;
         }
         else{
           iRet = TML_ERR_UNICODE;
         }
-        delete[] utf8Str;
       }
-      else{
-        iRet = TML_ERR_UNICODE;
+      catch (...){
+        iRet = TML_ERR_COMMON;
       }
     }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+    else{
+      iRet = TML_ERR_MISSING_OBJ;
     }
   }
   return iRet;
@@ -518,35 +526,40 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlT
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_W (char16_t* string, TmlTlsDigestMethod method, char16_t** sDigest){
   TML_INT32 iRet = TML_ERR_UNICODE;
 
-  if (NULL != sDigest && NULL != string){
-    iRet = TML_SUCCESS;
-    TML_INT32 iLengthUtf8;
-    TML_INT32 iLengthUtf16;
-    try{
-      char* utf8Str = UTF16toUTF8((wchar_t*)string, &iLengthUtf8);
-      if (NULL != utf8Str){
-        if (0 < iLengthUtf8){
-          char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
-          char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
-          if (NULL != utf16Str){
-            *sDigest = utf16Str;
-            axl_free(sRet);
+  if (NULL != string){
+    if (NULL != sDigest){
+      iRet = TML_SUCCESS;
+      TML_INT32 iLengthUtf8;
+      TML_INT32 iLengthUtf16;
+      try{
+        char* utf8Str = UTF16toUTF8((wchar_t*)string, &iLengthUtf8);
+        if (NULL != utf8Str){
+          if (0 < iLengthUtf8){
+            char* sRet = vortex_tls_get_digest ((VortexDigestMethod)method, utf8Str); 
+            char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
+            if (NULL != utf16Str){
+              *sDigest = utf16Str;
+              axl_free(sRet);
+            }
+            else{
+              iRet = TML_ERR_UNICODE;
+            }
           }
           else{
             iRet = TML_ERR_UNICODE;
           }
+          delete[] utf8Str;
         }
         else{
           iRet = TML_ERR_UNICODE;
         }
-        delete[] utf8Str;
       }
-      else{
-        iRet = TML_ERR_UNICODE;
+      catch (...){
+        iRet = TML_ERR_COMMON;
       }
     }
-    catch (...){
-      iRet = TML_ERR_COMMON;
+    else{
+      iRet = TML_ERR_MISSING_OBJ;
     }
   }
   return iRet;
@@ -561,11 +574,9 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_C
  * char* API
 **/
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char** sDigest){
-  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
   if (NULL != sDigest){
-    iRet = TML_ERR_MISSING_OBJ;
-
     if (TML_HANDLE_TYPE_NULL != connectionHandle){
       iRet = TML_SUCCESS;
       VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
@@ -593,10 +604,9 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML
  * wchar_t* API
 **/
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, wchar_t** sDigest){
-  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
   if (NULL != sDigest){
-    iRet = TML_ERR_MISSING_OBJ;
     if (TML_HANDLE_TYPE_NULL != connectionHandle){
       iRet = TML_SUCCESS;
 
@@ -625,11 +635,9 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML
  * char16_t* API
 **/
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char16_t** sDigest){
-  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
   if (NULL != sDigest){
-    iRet = TML_ERR_MISSING_OBJ;
-
     if (TML_HANDLE_TYPE_NULL != connectionHandle){
       iRet = TML_SUCCESS;
 
@@ -664,32 +672,34 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest (TML_CONNE
  * char* API
 **/
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char* sPathName, char** sDigest){
-  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
   if (NULL != sDigest){
-    iRet = TML_ERR_MISSING_OBJ;
-
     if (TML_HANDLE_TYPE_NULL != connectionHandle){
       iRet = TML_SUCCESS;
-      VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+      if (NULL != sPathName && 0 < strlen(sPathName)){
 
-      char* sAxlRet = vortex_tls_get_ssl_digest (sPathName, (VortexDigestMethod)method); 
-      if (NULL == sAxlRet){
-        iRet = TML_ERR_INFORMATION_UNDEFINED;
+        char* sAxlRet = vortex_tls_get_ssl_digest (sPathName, (VortexDigestMethod)method); 
+        if (NULL == sAxlRet){
+          iRet = TML_ERR_INFORMATION_UNDEFINED;
+        }
+        else{
+          int iLength = strlen(sAxlRet);
+          char* sRet = new char[iLength+1];
+
+        #if defined (LINUX) || defined (MINGW_BUILD)
+          strncpy(sRet, sAxlRet, iLength);
+        #else
+          strncpy_s(sRet, iLength+1, sAxlRet, iLength);
+        #endif
+          sRet[iLength] = '\0';
+
+          *sDigest = sRet;
+          axl_free(sAxlRet);
+        }
       }
       else{
-        int iLength = strlen(sAxlRet);
-        char* sRet = new char[iLength+1];
-
-      #if defined (LINUX) || defined (MINGW_BUILD)
-        strncpy(sRet, sAxlRet, iLength);
-      #else
-        strncpy_s(sRet, iLength+1, sAxlRet, iLength);
-      #endif
-        sRet[iLength] = '\0';
-
-        *sDigest = sRet;
-        axl_free(sAxlRet);
+        iRet = TML_ERR_UNICODE;
       }
     }
   }
@@ -699,10 +709,9 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_A (TML_CON
  * wchar_t* API
 **/
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, wchar_t* sPathName, wchar_t** sDigest){
-  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
   if (NULL != sDigest){
-    iRet = TML_ERR_MISSING_OBJ;
     if (TML_HANDLE_TYPE_NULL != connectionHandle){
       iRet = TML_SUCCESS;
 
@@ -711,21 +720,24 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_X (TML_CON
       try{
         char* utf8PathName = UTF32toUTF8((wchar_t*)sPathName, &iLengthUtf8);
         if (NULL != utf8PathName){
-          VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
-
-          char* sRet = vortex_tls_get_ssl_digest (utf8PathName, (VortexDigestMethod)method); 
-          if (NULL == sRet){
-            iRet = TML_ERR_INFORMATION_UNDEFINED;
-          }
-          else{
-            wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
-            if (NULL != utf32Str){
-              *sDigest = utf32Str;
+          if (0 < iLengthUtf8){
+            char* sRet = vortex_tls_get_ssl_digest (utf8PathName, (VortexDigestMethod)method); 
+            if (NULL == sRet){
+              iRet = TML_ERR_INFORMATION_UNDEFINED;
             }
             else{
-              iRet = TML_ERR_UNICODE;
+              wchar_t* utf32Str = UTF8toUTF32(sRet, &iLengthUtf32);
+              if (NULL != utf32Str){
+                *sDigest = utf32Str;
+              }
+              else{
+                iRet = TML_ERR_UNICODE;
+              }
+              axl_free(sRet);
             }
-            axl_free(sRet);
+          }
+          else{
+            iRet = TML_ERR_UNICODE;
           }
           delete[] utf8PathName;
         }
@@ -744,10 +756,9 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_X (TML_CON
  * char16_t* API
 **/
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char16_t* sPathName, char16_t** sDigest){
-  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iRet = TML_ERR_MISSING_OBJ;
 
   if (NULL != sDigest){
-    iRet = TML_ERR_MISSING_OBJ;
     if (TML_HANDLE_TYPE_NULL != connectionHandle){
       iRet = TML_SUCCESS;
 
@@ -756,21 +767,25 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_W (TML_CON
       try{
         char* utf8PathName = UTF16toUTF8((wchar_t*)sPathName, &iLengthUtf8);
         if (NULL != utf8PathName){
-          VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+          if (0 < iLengthUtf8){
 
-          char* sRet = vortex_tls_get_ssl_digest (utf8PathName, (VortexDigestMethod)method); 
-          if (NULL == sRet){
-            iRet = TML_ERR_INFORMATION_UNDEFINED;
-          }
-          else{
-            char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
-            if (NULL != utf16Str){
-              *sDigest = utf16Str;
+            char* sRet = vortex_tls_get_ssl_digest (utf8PathName, (VortexDigestMethod)method); 
+            if (NULL == sRet){
+              iRet = TML_ERR_INFORMATION_UNDEFINED;
             }
             else{
-              iRet = TML_ERR_UNICODE;
+              char16_t* utf16Str = (char16_t*)UTF8toUTF16(sRet, &iLengthUtf16);
+              if (NULL != utf16Str){
+                *sDigest = utf16Str;
+              }
+              else{
+                iRet = TML_ERR_UNICODE;
+              }
+              axl_free(sRet);
             }
-            axl_free(sRet);
+          }
+          else{
+            iRet = TML_ERR_UNICODE;
           }
           delete[] utf8PathName;
         }
