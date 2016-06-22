@@ -35,73 +35,46 @@
  *    wobe-systems GmbH
  */
 
-#ifndef TML_CONNECTION_TESTER_H
-#define TML_CONNECTION_TESTER_H
+#ifndef TML_TLS_TESTER_H
+#define TML_TLS_TESTER_H
 
 #include "TmlTester.h"
 
-#define MAX_ADDRESSES 10
+//------------------------------------------------------------------------------
+
+class TmlTLSTester;
 
 //------------------------------------------------------------------------------
 
-class TmlConnectionTester;
-
-//------------------------------------------------------------------------------
-
-enum cbType_t
+struct cbData_t_TLS
 {
-  cbtOnConnect = 0, cbtOnDisconnect,
-  cbtOnCommand, cbtOnCmdConnectionCommand,
-  cbt_TypeCount // type count in enum
-};
-// Note: keep cbType_t and cbt_Name in sync! (same item count)
-extern SIDEX_TCHAR* cbt_Name[];
-
-struct cbData_t
-{
-  TmlConnectionTester* tester;
-  cbType_t             type;
-  int                  iCore;
-  int                  iValue;
-  SIDEX_TCHAR*         sValue;
-  bool                 bDeleteString;
+  TmlTLSTester* tester;
+  int           iCore;
+  int           iValue;
+  SIDEX_TCHAR*  sValue;
+  bool          bDeleteString;
 };
 
 //------------------------------------------------------------------------------
 
-class TmlConnectionTester : public TmlTester
+class TmlTLSTester : public TmlTester
 {
 private:
-  volatile int  m_cbLog_Connection;
-  volatile int  m_cbLog_Disconnection;
-  volatile int  m_cbLog_Command;
+  volatile int m_cbLog_Command;
 
 protected:
   virtual void _prepare();
   virtual void _cleanup();
 
 public:
-  void OnDisConnectionCallback(TML_CONNECTION_HANDLE hConnection, cbData_t* cbData);
-  void OnCommandCallback(TML_COMMAND_HANDLE hCommand, cbData_t* cbData);
-  void OnCommandConnectionCallback(TML_COMMAND_HANDLE hCommand, cbData_t* cbData);
+  void OnCommandCallback(TML_COMMAND_HANDLE hCommand, cbData_t_TLS* cbData);
 
 public:
-  TmlConnectionTester(SIDEX_TCHAR* testProcessName = NULL);
-  ~TmlConnectionTester();
+  TmlTLSTester(SIDEX_TCHAR* testProcessName = NULL);
+  ~TmlTLSTester();
 
-  bool testConnect();
-  bool testClose();
-  bool testGetAddress();
-  bool testGetRemoteProfiles();
-  bool testValidate();
-  bool testGetConnectionCount();
-  bool testGetConnection_Core();
-  bool testGetConnectionByAddress();
-  bool testSetOnConnect();
-  bool testSetOnDisconnect();
-  bool testSendSync();
-  bool testSendAsync();
-  bool testGetConnection_Cmd();
+  bool testTLS();
+  void startRepeater();
 };
 
-#endif  // TML_CONNECTION_TESTER_H
+#endif  // TML_TLS_TESTER_H

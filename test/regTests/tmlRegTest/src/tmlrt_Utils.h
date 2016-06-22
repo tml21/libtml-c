@@ -64,15 +64,27 @@
 using namespace std;
 #include <sidex.h>
 #include <tmlCore.h>
+#include <tml-tls.h>
 
 //constants for reuse
 extern SIDEX_TCHAR* S_EMPTY;
+extern SIDEX_TCHAR* S_QUOTE;
+extern SIDEX_TCHAR* S_SLASH;
+extern SIDEX_TCHAR* S_BACKSLASH;
+extern SIDEX_TCHAR* S_SPACE;
+extern SIDEX_TCHAR* S_COLON;
+extern SIDEX_TCHAR* S_PARENTHESIS_L;
+extern SIDEX_TCHAR* S_PARENTHESIS_R;
 extern SIDEX_TCHAR* S_UNNAMED;
 extern SIDEX_TCHAR* S_START;
 extern SIDEX_TCHAR* S_FINISH_SUCCESS;
 extern SIDEX_TCHAR* S_FINISH_FAILED;
 extern SIDEX_TCHAR* S_GROUP_TEST;
 extern SIDEX_TCHAR* S_KEY_INDEX;
+extern SIDEX_TCHAR* S_REGTEST;
+extern SIDEX_TCHAR* S_BOOL_TRUE;
+extern SIDEX_TCHAR* S_BOOL_FALSE;
+extern SIDEX_TCHAR* S_CALLBACK_PREFIX;
 
 extern SIDEX_TCHAR* S_DOCUMENT;
 extern SIDEX_TCHAR* S_wDOCUMENT;
@@ -130,6 +142,7 @@ SIDEX_TCHAR* tmlrt_cat(SIDEX_TCHAR* first, SIDEX_TCHAR* second = NULL, SIDEX_TCH
 SIDEX_TCHAR* tmlrt_cpy(SIDEX_TCHAR* source);
 int          tmlrt_cmp(SIDEX_TCHAR* first, SIDEX_TCHAR* second);
 SIDEX_TCHAR* tmlrt_itoa(int value);
+SIDEX_TCHAR* tmlrt_delimiters(SIDEX_TCHAR* path, bool delStr = false);
 
 #define DELETE_STR(s) { if(s) { delete[](s); s = NULL; } }
 #define DELETE_OBJ(o) { if(o) { delete(o);   o = NULL; } }

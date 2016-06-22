@@ -46,12 +46,23 @@ bool linux = true;
 #endif
 
 SIDEX_TCHAR* S_EMPTY                          = tmlrtT("");
+SIDEX_TCHAR* S_QUOTE                          = tmlrtT("\"");
+SIDEX_TCHAR* S_SLASH                          = tmlrtT("/");
+SIDEX_TCHAR* S_BACKSLASH                      = tmlrtT("\\");
+SIDEX_TCHAR* S_SPACE                          = tmlrtT(" ");
+SIDEX_TCHAR* S_COLON                          = tmlrtT(":");
+SIDEX_TCHAR* S_PARENTHESIS_L                  = tmlrtT("(");
+SIDEX_TCHAR* S_PARENTHESIS_R                  = tmlrtT(")");
 SIDEX_TCHAR* S_UNNAMED                        = tmlrtT("<unnamed>");
 SIDEX_TCHAR* S_START                          = tmlrtT("Start...");
 SIDEX_TCHAR* S_FINISH_SUCCESS                 = tmlrtT("Finish. (Success)");
 SIDEX_TCHAR* S_FINISH_FAILED                  = tmlrtT("Finish. (Failed)");
 SIDEX_TCHAR* S_GROUP_TEST                     = tmlrtT("Test");
 SIDEX_TCHAR* S_KEY_INDEX                      = tmlrtT("Index");
+SIDEX_TCHAR* S_REGTEST                        = tmlrtT("RegTest");
+SIDEX_TCHAR* S_BOOL_TRUE                      = tmlrtT("<True>");
+SIDEX_TCHAR* S_BOOL_FALSE                     = tmlrtT("<False>");
+SIDEX_TCHAR* S_CALLBACK_PREFIX                = tmlrtT("  <Callback>  ");
 
 SIDEX_TCHAR* S_DOCUMENT                       = tmlrtT("Document");
 SIDEX_TCHAR* S_wDOCUMENT                      = tmlrtT("Doc<ument");
@@ -163,7 +174,7 @@ SIDEX_TCHAR* tmlrt_cat(SIDEX_TCHAR* first, SIDEX_TCHAR* second, SIDEX_TCHAR* thi
 
 /** @ingroup Wrapping_Sidex_TChar
 * @brief Helper function for copying a string
-* @param const SIDEX_TCHAR* source : String to copy
+* @param SIDEX_TCHAR* source : String to copy
 * @returns SIDEX_TCHAR* : Returns copied string (has to be deleted after use)
 */
 SIDEX_TCHAR* tmlrt_cpy(SIDEX_TCHAR* source)
@@ -173,8 +184,8 @@ SIDEX_TCHAR* tmlrt_cpy(SIDEX_TCHAR* source)
 
 /** @ingroup Wrapping_Sidex_TChar
 * @brief Helper function for comparing two strings
-* @param const SIDEX_TCHAR* first : First string
-* @param const SIDEX_TCHAR* second : Second string
+* @param SIDEX_TCHAR* first : First string
+* @param SIDEX_TCHAR* second : Second string
 * @returns int : 0 = first equals second, >0 = first higher second, <0 = first lower second
 */
 int tmlrt_cmp(SIDEX_TCHAR* first, SIDEX_TCHAR* second)
@@ -234,6 +245,43 @@ SIDEX_TCHAR* tmlrt_itoa(int value)
     }
     DELETE_STR(buffer);
   }
+  return(result);
+}
+
+/** @ingroup Wrapping_Sidex_TChar
+* @brief Helper function for correcting path delimiters
+* @param SIDEX_TCHAR* path : path with delimiters
+* @param bool delStr : (optional) true = delete string "path"
+* @returns SIDEX_TCHAR* : Returns corrected path (has to be deleted after use)
+*/
+SIDEX_TCHAR* tmlrt_delimiters(SIDEX_TCHAR* path, bool delStr)
+{
+  SIDEX_TCHAR* result = tmlrt_cpy(path);
+  if(result)
+  {
+    int i = 0;
+    while(result[i])
+    {
+      if(result[i] ==
+         #ifdef LINUX
+           '\\'
+         #else
+           '/'
+         #endif
+        )
+      {
+        result[i] =
+          #ifdef LINUX
+            '/'
+          #else
+            '\\'
+          #endif
+          ;
+      }
+      i++;
+    }
+  }
+  if(delStr) DELETE_STR(path);
   return(result);
 }
 
