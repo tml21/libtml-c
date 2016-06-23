@@ -527,9 +527,6 @@ bool TmlTLSTester::testTLS()
                              checkForValue(tmlrtT("tml_Tls_Connection_VerifyCert : bVerifyOk (OwnWrongKey)"),
                                            SIDEX_INT32(TML_FALSE), SIDEX_INT32(bVerifyOk)))
                           {
-                            // wait a little bit for the OnError callbacks...
-                            TmlSleep(1000);
-
                             checkForValue(tmlrtT("TlsErrorDetector (OwnWrongKey)"), 3, g_TlsErrorDetector);
                             g_TlsErrorDetector = 0;
                           }
@@ -591,9 +588,6 @@ bool TmlTLSTester::testTLS()
                            checkForValue(tmlrtT("tml_Tls_Connection_StartNegotiation : bEncrypted (Own)"),
                                          SIDEX_INT32(TML_TRUE), SIDEX_INT32(bEncrypted)))
                         {
-                          // wait a little bit; maybe the OnError callbacks will signal errors...
-                          TmlSleep(1000);
-
                           checkForValue(tmlrtT("TlsErrorDetector (Own, StartNegotiation)"), 0, g_TlsErrorDetector);
                           g_TlsErrorDetector = 0;
 
