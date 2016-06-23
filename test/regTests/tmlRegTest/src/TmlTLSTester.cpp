@@ -835,7 +835,8 @@ bool TmlTLSTester::testTLS()
                   deleteListener(0, 0);
                 } // createListener 0, 0, addr 1
 
-                checkForValue(tmlrtT("TlsErrorDetector (AutoWrongKey)"), 3, g_TlsErrorDetector);
+                //checkForValue(tmlrtT("TlsErrorDetector (AutoWrongKey)"), 3, g_TlsErrorDetector);
+                checkForValue(tmlrtT("TlsErrorDetector (AutoWrongKey)"), SIDEX_INT32(TML_TRUE), SIDEX_INT32(g_TlsErrorDetector != 0));
               }
             }
 
