@@ -296,7 +296,7 @@ void CallbackHandler_OnTlsError(TML_CONNECTION_HANDLE connection, SIDEX_VARIANT 
 
     if(enterGlobalMutex())
     {
-      wcout << S_CALLBACK_PREFIX << "CallbackHandler_OnTlsError: Core" << data->iCore;
+      wcout << S_CALLBACK_PREFIX << "CallbackHandler_OnTlsError : Core" << data->iCore;
       if(!g_TlsHideErrorMsg) wcout << S_SPACE << S_COLON << S_SPACE << sErrMsg;
       wcout << endl;
       leaveGlobalMutex();
@@ -308,7 +308,7 @@ void CallbackHandler_OnTlsError(TML_CONNECTION_HANDLE connection, SIDEX_VARIANT 
   {
     if(enterGlobalMutex())
     {
-      wcout << "CallbackHandler_OnTlsError: no data!" << endl;
+      wcout << "CallbackHandler_OnTlsError : no data!" << endl;
       leaveGlobalMutex();
     }
   }
