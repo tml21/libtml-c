@@ -527,7 +527,8 @@ bool TmlTLSTester::testTLS()
                              checkForValue(tmlrtT("tml_Tls_Connection_VerifyCert : bVerifyOk (OwnWrongKey)"),
                                            SIDEX_INT32(TML_FALSE), SIDEX_INT32(bVerifyOk)))
                           {
-                            checkForValue(tmlrtT("TlsErrorDetector (OwnWrongKey)"), 3, g_TlsErrorDetector);
+                            //checkForValue(tmlrtT("TlsErrorDetector (OwnWrongKey)"), 3, g_TlsErrorDetector);
+                            checkForValue(tmlrtT("TlsErrorDetector (OwnWrongKey)"), SIDEX_INT32(TML_TRUE), SIDEX_INT32(g_TlsErrorDetector != 0));
                             g_TlsErrorDetector = 0;
                           }
                         }
@@ -834,7 +835,8 @@ bool TmlTLSTester::testTLS()
                   deleteListener(0, 0);
                 } // createListener 0, 0, addr 1
 
-                checkForValue(tmlrtT("TlsErrorDetector (AutoWrongKey)"), 3, g_TlsErrorDetector);
+                //checkForValue(tmlrtT("TlsErrorDetector (AutoWrongKey)"), 3, g_TlsErrorDetector);
+                checkForValue(tmlrtT("TlsErrorDetector (AutoWrongKey)"), SIDEX_INT32(TML_TRUE), SIDEX_INT32(g_TlsErrorDetector != 0));
               }
             }
 
