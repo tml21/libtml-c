@@ -85,6 +85,47 @@ void tmlSingleCall::DeregisterConnectionLost(tmlConnectionManageObj* connectionM
 }
 
 /**
+ * @brief   Remove the tmlConnectionManageObj out of the connection object hashtable
+ */
+void tmlSingleCall::RemoveConnectionFromHT(tmlConnectionManageObj* tmlConnectionMngObj){
+  enterCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlSingleCall", "LogValueToOpenConnections", "Vortex CMD", "vortex_mutex_lock");
+
+  int iSize;
+  TML_INT32 iRet = m_ConnectionElementHT->hashSize(&iSize);
+
+  if (TML_SUCCESS == iRet && 0 < iSize){
+    TML_INT64* iKeys;
+    iRet = m_ConnectionElementHT->getKeys(&iKeys);
+    if (TML_SUCCESS == iRet){
+      tmlConnectionManageObj* refConnectionMgrObj = TML_HANDLE_TYPE_NULL;
+      tmlConnectionObj*  connectionObj;
+      
+      bool bFound = false;
+      for (int i = 0; i < iSize && !bFound;++i){
+        iRet = m_ConnectionElementHT->getValue(iKeys[i], (void**) &connectionObj);
+        connectionObj->getConnectionManageObj(&refConnectionMgrObj);
+        if (refConnectionMgrObj == tmlConnectionMngObj){
+          bFound = true;
+          //////////////////////////////////////
+          // Now I can delete the list element:
+          m_ConnectionElementHT->removeEntry(iKeys[i]);
+          ////////////////////////////////////////
+          // Delete the value stored in the hash:
+          delete (connectionObj);
+          ////////////////////////////////////////
+          connectionObj = NULL;
+        }
+      }
+      delete (iKeys);
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  leaveCriticalSection (TML_LOG_VORTEX_MUTEX, &m_mutexCriticalSection, &m_iMutexCriticalSectionLockCount, "tmlSingleCall", "LogValueToOpenConnections", "Vortex CMD", "vortex_mutex_unlock");
+}
+
+
+/**
  * @brief   Deregister connection lost callback messages
  */
 void tmlSingleCall::DeregisterConnectionLost()
@@ -633,9 +674,6 @@ void tmlSingleCall::RemoveMarkedSenderOutOfConnectionList(bool bLockCritical)
               ////////////////////////////////////////
               // Wait until pending cmd is finished:
               sender->TMLCoreSender_WaitForPendingAsyncCmd();
-              ////////////////////////////////////////
-              // free memory:
-              delete (sender);
               //////////////////////////////////////
               // Now I can delete the list element:
               m_ConnectionElementHT->removeEntry(iKeys[i]);

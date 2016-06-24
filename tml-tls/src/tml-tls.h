@@ -116,6 +116,11 @@ typedef enum {
 	 * @brief Allows to especify the DIGEST method MD5.
 	 */
 	TML_TLS_MD5 = 2,
+
+  	/** 
+	 * @internal Internal value. Do not modify.
+	 */
+	TML_DIGEST_NUM
 } TmlTlsDigestMethod;
 
 
@@ -177,20 +182,13 @@ typedef  void (*TML_ON_TLS_ERROR_CB_FUNC)(TML_CONNECTION_HANDLE connection, SIDE
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  * @param   pAcceptCB reference to callback handler method executed to notify user app level that a TLS request was received,<br>
- *          allowing to accept or deny it according to the return value of the handler.<br>You can use NULL value for this parameter.
- *          This will make libtml-tls to set the default accept handler which always accept every TLS negotiation
- * @param   pCertReqCB reference to callback handler method executed to know where is located the certificate file to be used to cipher the session.<br>
- *          You can use NULL value for this parameter. This will make libtml-tls Library to set the default certificate handler which returns a path
- *          to a test certificate. It is highly recommended to set this handler, however you can use NULL value for development environment
- * @param   pPrivateKeyReqCB reference to callback method executed to know where is located the private key file to be used to cipher the session.<br>
- *          You can use NULL value for this parameter. This will make libtml-tls Library to set the default private key handler which returns a path
- *          to the test private key. It is highly recommended to set this handler, however you can use NULL values under development environment
+ *          allowing to accept or deny it according to the return value of the handler.
+ * @param   pCertReqCB reference to callback handler method executed to know where is located the certificate file to be used to cipher the session.
+ * @param   pPrivateKeyReqCB reference to callback method executed to know where is located the private key file to be used to cipher the session.
  * @param   bAccept TML_TRUE if the current core instance could accept incoming TLS connections, otherwise TML_FALSE is returned
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
- *
- * @note    It is highly recommended to set the handler on production environment because the private key and certificate file are public !
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_AcceptNegotiation(TML_CORE_HANDLE coreHandle, 
                                                                      TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC pAcceptCB, 
@@ -204,29 +202,13 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_AcceptNegotiation(TML_CORE_HAN
  * @brief   Starts the TLS transport security negotiation on the given connection.
  *
  * @param   connectionHandle   TML connection handle (TML_CONNECTION_HANDLE)
- * @param   serverName         optional / may be NULL. A server name value to be notified to the remote peer so it could react in a different way depending on this value
  * @param   bAllowTlsFailures  configure how to handle errors produced while activating TLS negotiation. TML_TRUE - connection will be used unencrypted if possible.
  * @param   bEncrypted         reference to encryption status.TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid connection handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation (TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_X (TML_CONNECTION_HANDLE connectionHandle, wchar_t* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_W (TML_CONNECTION_HANDLE connectionHandle, char16_t* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_CONNECTION_HANDLE connectionHandle, char* serverName, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted);
-#if !defined (DOXYGEN_GENERATION)
-  #ifdef TML_UNICODE
-    #define tml_Tls_Connection_StartNegotiation tml_Tls_Connection_StartNegotiation_X
-  #else
-    #ifdef TML_UNICODE_16
-      #define tml_Tls_Connection_StartNegotiation  tml_Tls_Connection_StartNegotiation_W
-    #else
-      #define tml_Tls_Connection_StartNegotiation  tml_Tls_Connection_StartNegotiation_A
-    #endif // TML_UNICODE_16
-  #endif // TML_UNICODE
-#endif // DOXYGEN_GENERATION
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bAllowTlsFailures, TML_BOOL* bEncrypted);
 
 
 /**
@@ -236,27 +218,11 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation_A (TML_
  * @param   coreHandle TML    core handle (TML_CORE_HANDLE)
  * @param   bEnabled          TML_TRUE to activate the automatic TLS profile negotiation for every connection created, TML_FALSE to disable it
  * @param   bAllowTlsFailures configure how to handle errors produced while activating automatic TLS negotiation
- * @param   serverName        optional / may be NULL. A server name value to be notified to the remote peer on negation so it could react in a different way depending on this value
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_MISSING_OBJ invalid coreHandle handle
  */
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, TML_CTSTR* serverName);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_X (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, wchar_t* serverName);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_W (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char16_t* serverName);
-TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_A (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures, char* serverName);
-#if !defined (DOXYGEN_GENERATION)
-  #ifdef TML_UNICODE
-    #define tml_Tls_Core_Set_AutoNegotion tml_Tls_Core_Set_AutoNegotion_X
-  #else
-    #ifdef TML_UNICODE_16
-      #define tml_Tls_Core_Set_AutoNegotion  tml_Tls_Core_Set_AutoNegotion_W
-    #else
-      #define tml_Tls_Core_Set_AutoNegotion  tml_Tls_Core_Set_AutoNegotion_A
-    #endif // TML_UNICODE_16
-  #endif // TML_UNICODE
-#endif // DOXYGEN_GENERATION
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation (TML_CORE_HANDLE coreHandle, TML_BOOL bEnabled, TML_BOOL bAllowTlsFailures);
 
 
 /**
@@ -267,7 +233,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotion_A (TML_CORE_H
  * @param   bVerifyOk        reference to verification result.TML_TRUE if certificate verification status is ok, otherwise TML_FALSE 
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid connection handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_VerifyCert (TML_CONNECTION_HANDLE connectionHandle, TML_BOOL* bVerifyOk);
 
@@ -284,7 +250,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_VerifyCert (TML_CONNECTI
  * @param   bEncrypted       reference to encryption status.TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid connection handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
   // TODO: 
   // The connectionHandle->isEncrpyted() flag cannot be set using tml_Tls_Core_SetAuto_Negation().
@@ -312,7 +278,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CO
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INFORMATION_UNDEFINED if no status message exists<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid connection handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Tls_Connection_StartNegotiation()
  */
@@ -343,7 +309,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
  *                           Must be deallocated using the data type API sidex_Free_ReadString()
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest (TML_CTSTR* string, TmlTlsDigestMethod method, TML_CTSTR** sDigest);
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_X (wchar_t* string, TmlTlsDigestMethod method, wchar_t** sDigest);
@@ -373,7 +340,7 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsD
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid connection handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, TML_CTSTR** sDigest);
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, wchar_t** sDigest);
@@ -390,6 +357,38 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML
     #endif // TML_UNICODE_16
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup tlsGeneral
+ * @brief   Allows to return the certificate digest from a local stored certificate file (this is also called the certificate fingerprint).
+ *
+ * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   method           the digest method to use
+ * @param   sPathName        reference to pathname of the certificate file
+ * @param   sDigest          reference to string representing a newly allocated fingerprint or NULL if it fails.<br>
+ *                           Must be deallocated using the data type API sidex_Free_ReadString()
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
+ *          TML_ERR_INFORMATION_UNDEFINED wrong sPathName or sPathName refers no valid certificate file
+ */
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, TML_CTSTR* sPathName, TML_CTSTR** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_X (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, wchar_t* sPathName, wchar_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_W (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char16_t* sPathName, char16_t** sDigest);
+TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_A (TML_CONNECTION_HANDLE connectionHandle, TmlTlsDigestMethod method, char* sPathName, char** sDigest);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Tls_Connection_Get_SSLDigest tml_Tls_Connection_Get_SSLDigest_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Tls_Connection_Get_SSLDigest  tml_Tls_Connection_Get_SSLDigest_W
+    #else
+      #define tml_Tls_Connection_Get_SSLDigest  tml_Tls_Connection_Get_SSLDigest_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
 
 /**
  * @ingroup tlsGeneral

@@ -36,6 +36,7 @@
  */
 
 #include "tmlCoreWrapperBase.h"
+#include "sidex.h"
 
 
 /**
@@ -49,6 +50,12 @@ tmlCoreWrapperBase::tmlCoreWrapperBase()
   m_pTLS_AcceptCB        = NULL;
   m_pTLS_CertReqCB       = NULL;
   m_pTLS_PrivateKeyReqCB = NULL;
+  ////////////////////////////////
+  // mutex to protect m_registeredCloseObjs
+  m_csCloseHandling = new tmlCriticalSectionObj();
+  ////////////////////////////////
+  // list containing the connection manager objects
+  m_registeredCloseObjs = sidex_Variant_New_List();
 }
 
 
@@ -58,6 +65,8 @@ tmlCoreWrapperBase::tmlCoreWrapperBase()
 tmlCoreWrapperBase::~tmlCoreWrapperBase()
 {
   m_ctx = NULL;
+  delete (m_csCloseHandling);
+  sidex_Variant_DecRef(m_registeredCloseObjs);
 }
 
 
@@ -66,6 +75,22 @@ tmlCoreWrapperBase::~tmlCoreWrapperBase()
  */
 VortexCtx* tmlCoreWrapperBase::getVortexCtx(){
   return m_ctx;
+}
+
+
+/**
+ * @brief    returns mutex protecting m_registeredCloseObjs
+ */
+tmlCriticalSectionObj* tmlCoreWrapperBase::getCsCloseHandling(){
+  return m_csCloseHandling;
+}
+
+
+/**
+  * @brief    Get registered connection close list.
+  */
+SIDEX_VARIANT tmlCoreWrapperBase::Get_ConnectionCloseList(){
+  return m_registeredCloseObjs;
 }
 
 

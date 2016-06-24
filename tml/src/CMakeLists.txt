@@ -42,13 +42,14 @@ set(SIDEXINCLUDE ../../sidex/src)
 #######################################################
 ## Source & Header
 set  (TML_COMMON_SOURCES_HEADER 
-                    ${COMMON_SRC_PATH}/globalDefines.h 
-                    ${COMMON_SRC_PATH}/logValues.h 
-                    ${COMMON_SRC_PATH}/stdIntTypes.h 
-                    ${COMMON_SRC_PATH}/systemBase.h 
-                    ${COMMON_SRC_PATH}/tmlConnectionManageObjBase.h
-                    ${COMMON_SRC_PATH}/tmlCoreWrapperBase.h
-                    ${COMMON_SRC_PATH}/unicode.h )
+                    ${COMMON_INCLUDE_PATH}/globalDefines.h 
+                    ${COMMON_INCLUDE_PATH}/tmlCriticalSectionObj.h
+                    ${COMMON_INCLUDE_PATH}/tmlConnectionManageObjBase.h
+                    ${COMMON_INCLUDE_PATH}/tmlCoreWrapperBase.h
+                    ${COMMON_INCLUDE_PATH}/logValues.h 
+                    ${COMMON_INCLUDE_PATH}/stdIntTypes.h 
+                    ${COMMON_INCLUDE_PATH}/systemBase.h 
+                    ${COMMON_INCLUDE_PATH}/unicode.h )
 
 set  (TML_INSTALL_SOURCES_HEADER tmlCore.h
                       tmlErrors.h
@@ -67,7 +68,6 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlCoreListener.h
                       tmlCoreSender.h
                       tmlCoreWrapper.h
-                      tmlCriticalSectionObj.h
                       tmlDestinationAddressHandlingHashValue.h
                       tmlDispatcher.h
                       tmlEventCall.h
@@ -89,6 +89,7 @@ set  (TML_SOURCES_HEADER tmlCCallback.h
                       tmlUniversalHashTable.h )
                       
 set (TML_COMMON_SOURCES ${COMMON_SRC_PATH}/systemBase.cpp
+                      ${COMMON_SRC_PATH}/tmlCriticalSectionObj.cpp
                       ${COMMON_SRC_PATH}/tmlConnectionManageObjBase.cpp
                       ${COMMON_SRC_PATH}/tmlCoreWrapperBase.cpp
                       ${COMMON_SRC_PATH}/unicode.cpp )        
@@ -103,7 +104,6 @@ set (TML_SOURCES      tmlCollectCall.cpp
                       tmlCoreListener.cpp
                       tmlCoreSender.cpp
                       tmlCoreWrapper.cpp
-                      tmlCriticalSectionObj.cpp
                       tmlDestinationAddressHandlingHashValue.cpp
                       tmlDispatcher.cpp
                       tmlEventCall.cpp
@@ -439,5 +439,7 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
 #######################################################
 ## Install
-install (TARGETS ${TMLLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
-install (FILES ${TML_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+if (${GEN_TML_INSTALLER_FILES} STREQUAL yes)
+  install (TARGETS ${TMLLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
+  install (FILES ${TML_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
+endif (${GEN_TML_INSTALLER_FILES} STREQUAL yes)

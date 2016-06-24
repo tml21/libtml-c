@@ -77,7 +77,7 @@ void listenerFrameReceivedCallback (VortexChannel* channel,
   ///////////////////////////
   // Der Port:
   callbackData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listenerFrameReceivedCallback", "Vortex CMD", "vortex_connection_get_local_port");
-  const char* sPort = vortex_connection_get_local_port(connection);
+  const char* sPort = vortex_connection_get_port(connection);
   ///////////////////////////
   // Die Channel ID:
   callbackData->pLog->log (TML_LOG_VORTEX_CMD, "TMLCoreListener", "listenerFrameReceivedCallback", "Vortex CMD", "vortex_channel_get_number");

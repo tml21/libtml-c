@@ -168,9 +168,6 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
   // list containing the connection manager objects
   m_connectionMgrObjs = sidex_Variant_New_List();
   ////////////////////////////////
-  // list containing the connection manager objects
-  m_registeredCloseObjs = sidex_Variant_New_List();
-  ////////////////////////////////
   // The debug log handler
   m_log = new tmlLogHandler();
   ////////////////////////////////
@@ -180,9 +177,6 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   
   m_csObj = new tmlCriticalSectionObj();
-  ////////////////////////////////
-  // mutex to protect m_registeredCloseObjs
-  m_csCloseHandling = new tmlCriticalSectionObj();
   ////////////////////////////////
   // mutex to protect tmlSingleCall::getConnection
   m_csGetConnection = new tmlCriticalSectionObj();
@@ -448,14 +442,27 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
               }
             }
             break;
+      case CMD_INTERNAL_CONNECTION_EVENT_SUBSCRIPTION_REQUEST:
       case CMD_INTERNAL_EVENT_SUBSCRIPTION_REQUEST:
-            m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_EVENT_SUBSCRIPTION_REQUEST");
-            iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, &sProfile, &iLength);
-            if (TML_SUCCESS == iRet){
-              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_HOST, &sHost, &iLength);
+            if (CMD_INTERNAL_EVENT_SUBSCRIPTION_REQUEST == iCmd){
+              m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_EVENT_SUBSCRIPTION_REQUEST");
+              if (TML_SUCCESS == iRet){
+                iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_HOST, &sHost, &iLength);
+              }
+              if (TML_SUCCESS == iRet){
+                iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PORT, &sPort, &iLength);
+              }
+            }
+            else{
+              m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_CONNECTION_EVENT_SUBSCRIPTION_REQUEST");
+              // The connection Handle:
+              TML_CONNECTION_HANDLE conObjHandle;
+              ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Get_Connection(&conObjHandle);
+              ((tmlConnectionManageObj*)conObjHandle)->getHost(&sHost);
+              ((tmlConnectionManageObj*)conObjHandle)->getPort(&sPort);
             }
             if (TML_SUCCESS == iRet){
-              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PORT, &sPort, &iLength);
+              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, &sProfile, &iLength);
             }
             if (TML_SUCCESS == iRet){
               // Don't mind of the return value because it may be 51 in case of a non registered callback:
@@ -513,14 +520,27 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
               }
             }
             break;
+      case CMD_INTERNAL_CONNECTION_EVENT_UNSUBSCRIPTION_REQUEST:
       case CMD_INTERNAL_EVENT_UNSUBSCRIPTION_REQUEST:
-            m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_EVENT_UNSUBSCRIPTION_REQUEST");
-            iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, &sProfile, &iLength);
-            if (TML_SUCCESS == iRet){
-              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_HOST, &sHost, &iLength);
+            if (CMD_INTERNAL_EVENT_UNSUBSCRIPTION_REQUEST == iCmd){
+              m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_EVENT_UNSUBSCRIPTION_REQUEST");
+              if (TML_SUCCESS == iRet){
+                iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_HOST, &sHost, &iLength);
+              }
+              if (TML_SUCCESS == iRet){
+                iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PORT, &sPort, &iLength);
+              }
+            }
+            else{
+              m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_CONNECTION_EVENT_UNSUBSCRIPTION_REQUEST");
+              // The connection Handle:
+              TML_CONNECTION_HANDLE conObjHandle;
+              ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Get_Connection(&conObjHandle);
+              ((tmlConnectionManageObj*)conObjHandle)->getHost(&sHost);
+              ((tmlConnectionManageObj*)conObjHandle)->getPort(&sPort);
             }
             if (TML_SUCCESS == iRet){
-              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PORT, &sPort, &iLength);
+              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, &sProfile, &iLength);
             }
             if (TML_SUCCESS == iRet){
               // Don't mind of the return value because it may be 51 in case of a non registered callback:
@@ -578,14 +598,27 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
               }
             }
             break;
+      case CMD_INTERNAL_CONNECTION_LOAD_BALANCED_SUBSCRIPTION_REQUEST:
       case CMD_INTERNAL_LOAD_BALANCED_SUBSCRIPTION_REQUEST:
-            m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_LOAD_BALANCED_SUBSCRIPTION_REQUEST");
-            iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, &sProfile, &iLength);
-            if (TML_SUCCESS == iRet){
-              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_HOST, &sHost, &iLength);
+             if (CMD_INTERNAL_LOAD_BALANCED_SUBSCRIPTION_REQUEST == iCmd){
+              m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_LOAD_BALANCED_SUBSCRIPTION_REQUEST");
+              if (TML_SUCCESS == iRet){
+                iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_HOST, &sHost, &iLength);
+              }
+              if (TML_SUCCESS == iRet){
+                iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PORT, &sPort, &iLength);
+              }
+            }
+            else{
+              m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_CONNECTION_LOAD_BALANCED_SUBSCRIPTION_REQUEST");
+              // The connection Handle:
+              TML_CONNECTION_HANDLE conObjHandle;
+              ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Get_Connection(&conObjHandle);
+              ((tmlConnectionManageObj*)conObjHandle)->getHost(&sHost);
+              ((tmlConnectionManageObj*)conObjHandle)->getPort(&sPort);
             }
             if (TML_SUCCESS == iRet){
-              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PORT, &sPort, &iLength);
+              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, &sProfile, &iLength);
             }
             if (TML_SUCCESS == iRet){
               // Don't mind of the return value because it may be 51 in case of a non registered callback:
@@ -643,14 +676,27 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
               }
             }
             break;
+      case CMD_INTERNAL_CONNECTION_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST:
       case CMD_INTERNAL_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST:
-            m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST");
-            iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, &sProfile, &iLength);
-            if (TML_SUCCESS == iRet){
-              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_HOST, &sHost, &iLength);
+            if (CMD_INTERNAL_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST == iCmd){
+              m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST");
+              if (TML_SUCCESS == iRet){
+                iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_HOST, &sHost, &iLength);
+              }
+              if (TML_SUCCESS == iRet){
+                iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PORT, &sPort, &iLength);
+              }
+            }
+            else{
+              m_log->log (TML_LOG_INTERNAL_DISPATCH, "tmlCoreWrapper", "internalCmdDispatch", "Got CMD", "CMD_INTERNAL_CONNECTION_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST");
+              // The connection Handle:
+              TML_CONNECTION_HANDLE conObjHandle;
+              ((tmlObjWrapper*)tmlhandle)->tmlObjWrapper_Get_Connection(&conObjHandle);
+              ((tmlConnectionManageObj*)conObjHandle)->getHost(&sHost);
+              ((tmlConnectionManageObj*)conObjHandle)->getPort(&sPort);
             }
             if (TML_SUCCESS == iRet){
-              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PORT, &sPort, &iLength);
+              iRet = sidex_String_Read(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, &sProfile, &iLength);
             }
             if (TML_SUCCESS == iRet){
               // Don't mind of the return value because it may be 51 in case of a non registered callback:
@@ -746,12 +792,23 @@ int tmlCoreWrapper::internalCmdDispatch(TML_COMMAND_HANDLE tmlhandle, TML_COMMAN
   }
   /////////////////
   // Free Memory:
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // No sidex_Free_ReadString() for sHosts and sPort in case of Connection subscriptions:
+  switch (iCmd){
+    case CMD_INTERNAL_CONNECTION_EVENT_SUBSCRIPTION_REQUEST:
+    case CMD_INTERNAL_CONNECTION_EVENT_UNSUBSCRIPTION_REQUEST:
+    case CMD_INTERNAL_CONNECTION_LOAD_BALANCED_SUBSCRIPTION_REQUEST:
+    case CMD_INTERNAL_CONNECTION_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST:
+         break;
+    default:
+         if (NULL != sHost)
+           sidex_Free_ReadString(sHost);
+         if (NULL != sPort)
+           sidex_Free_ReadString(sPort);
+         break;
+  }
   if (NULL != sProfile)
     sidex_Free_ReadString(sProfile);
-  if (NULL != sHost)
-    sidex_Free_ReadString(sHost);
-  if (NULL != sPort)
-    sidex_Free_ReadString(sPort);
   return (int)iRet;
 }
 
@@ -943,7 +1000,6 @@ tmlCoreWrapper::~tmlCoreWrapper()
 
   sidex_Variant_DecRef(m_connectionMgrObjs);
   sidex_Variant_DecRef(m_listenerObjs);
-  sidex_Variant_DecRef(m_registeredCloseObjs);
 
 
 ///////////////////////////////////////
@@ -990,7 +1046,6 @@ vortex_ctx_unref (&m_ctx);
   ////////////////////////////////
   // Critical section object
   delete (m_csObj);
-  delete (m_csCloseHandling);
   delete (m_csGetConnection);
 }
 
@@ -1813,6 +1868,38 @@ int tmlCoreWrapper::tmlCoreWrapper_EventSendSubscriptionRequest(const char* prof
 
 
 /**
+ * @brief    Send an event subscription request.
+ */
+int tmlCoreWrapper::tmlCoreWrapper_Connection_EventSendSubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, unsigned int iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  tmlObjWrapper* command = new tmlObjWrapper();
+ ///////////////////////////////////////////////
+  // Acquire critical section use: 
+  SIDEX_HANDLE sHandle;
+  command->tmlObjWrapper_Acquire_Sidex_Handle(&sHandle, (char*)"tmlCoreWrapper::tmlCoreWrapper_Connection_EventSendSubscriptionRequest");
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Flag for internal command:
+  iRet = sidex_Boolean_Write (sHandle, TML_CMD_HEADER_GROUP, TML_CMD_HEADER_KEY_INTERNAL_COMMAND, true);
+  if (TML_SUCCESS == iRet)
+    iRet = sidex_String_Write(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, sProfile);
+  ///////////////////////////////////////////////
+  // Now I can release the critical section use: 
+  command->tmlObjWrapper_Release_Sidex_Handle((char*)"tmlCoreWrapper::tmlCoreWrapper_Connection_EventSendSubscriptionRequest");
+  if (TML_SUCCESS == iRet)
+    iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_CONNECTION_EVENT_SUBSCRIPTION_REQUEST);
+  if (TML_SUCCESS == iRet)
+    iRet = m_sender->sender_SendSyncMessage(sProfile, connectionHandle, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout + m_log->getAdditionalTimeout(), NULL, true, TMLCOM_MODE_SYNC);
+
+  //////////////////////////////////////////////////////////////////////////////
+  // in case of an error I have to free for the TML_COMMAND_HANDLE:
+  delete (command);
+
+  return (int)iRet;
+}
+
+
+/**
  * @brief    Register a callback method for the case of a peer subscription / unsubscription request for event messages.
  */
 int tmlCoreWrapper::tmlCoreWrapper_EventRegisterOnPeerCallback(const char* profile, TML_ON_PEER_REGISTRATION_CB_FUNC pCBFunc, TML_POINTER pCBData, tmlUnicodeID iUnicode){
@@ -1849,6 +1936,38 @@ int tmlCoreWrapper::tmlCoreWrapper_EventSendUnsubscriptionRequest(const char* pr
 
   if (TML_SUCCESS == iRet)
     iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
+
+  //////////////////////////////////////////////////////////////////////////////
+  // in case of an error I have to free for the TML_COMMAND_HANDLE:
+  delete (command);
+
+  return (int)iRet;
+}
+
+
+/**
+ * @brief    Send an event unsubscription request.
+ */
+int tmlCoreWrapper::tmlCoreWrapper_Connection_EventSendUnsubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, unsigned int iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  tmlObjWrapper* command = new tmlObjWrapper();
+ ///////////////////////////////////////////////
+  // Acquire critical section use: 
+  SIDEX_HANDLE sHandle;
+  command->tmlObjWrapper_Acquire_Sidex_Handle(&sHandle, (char*)"tmlCoreWrapper::tmlCoreWrapper_Connection_EventSendSubscriptionRequest");
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Flag for internal command:
+  iRet = sidex_Boolean_Write (sHandle, TML_CMD_HEADER_GROUP, TML_CMD_HEADER_KEY_INTERNAL_COMMAND, true);
+  if (TML_SUCCESS == iRet)
+    iRet = sidex_String_Write(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, sProfile);
+  ///////////////////////////////////////////////
+  // Now I can release the critical section use: 
+  command->tmlObjWrapper_Release_Sidex_Handle((char*)"tmlCoreWrapper::tmlCoreWrapper_Connection_EventSendSubscriptionRequest");
+  if (TML_SUCCESS == iRet)
+    iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_CONNECTION_EVENT_UNSUBSCRIPTION_REQUEST);
+  if (TML_SUCCESS == iRet)
+    iRet = m_sender->sender_SendSyncMessage(sProfile, connectionHandle, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout + m_log->getAdditionalTimeout(), NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -1996,6 +2115,39 @@ int tmlCoreWrapper::tmlCoreWrapper_LoadBalancedSendSubscriptionRequest(const cha
 
 
 /**
+ * @brief    Send a load balanced subscription request.
+ */
+int tmlCoreWrapper::tmlCoreWrapper_Connection_LoadBalancedSendSubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, unsigned int iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  tmlObjWrapper* command = new tmlObjWrapper();
+ ///////////////////////////////////////////////
+  // Acquire critical section use: 
+  SIDEX_HANDLE sHandle;
+  command->tmlObjWrapper_Acquire_Sidex_Handle(&sHandle, (char*)"tmlCoreWrapper::tmlCoreWrapper_Connection_LoadBalancedSendSubscriptionRequest");
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Flag for internal command:
+  iRet = sidex_Boolean_Write (sHandle, TML_CMD_HEADER_GROUP, TML_CMD_HEADER_KEY_INTERNAL_COMMAND, true);
+  if (TML_SUCCESS == iRet)
+    iRet = sidex_String_Write(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, sProfile);
+  ///////////////////////////////////////////////
+  // Now I can release the critical section use: 
+  command->tmlObjWrapper_Release_Sidex_Handle((char*)"tmlCoreWrapper::tmlCoreWrapper_Connection_LoadBalancedSendSubscriptionRequest");
+  if (TML_SUCCESS == iRet)
+    iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_CONNECTION_LOAD_BALANCED_SUBSCRIPTION_REQUEST);
+  if (TML_SUCCESS == iRet)
+    iRet = m_sender->sender_SendSyncMessage(sProfile, connectionHandle, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout + m_log->getAdditionalTimeout(), NULL, true, TMLCOM_MODE_SYNC);
+
+  //////////////////////////////////////////////////////////////////////////////
+  // in case of an error I have to free for the TML_COMMAND_HANDLE:
+  delete (command);
+
+  return (int)iRet;
+}
+
+
+
+/**
  * @brief    Register a callback method for the case of a peer subscription / unsubscription request for load balanced messages.
  */
 int tmlCoreWrapper::tmlCoreWrapper_LoadBalancedRegisterOnPeerCallback(const char* profile, TML_ON_PEER_REGISTRATION_CB_FUNC pCBFunc, TML_POINTER pCBData, tmlUnicodeID iUnicode){
@@ -2033,6 +2185,38 @@ int tmlCoreWrapper::tmlCoreWrapper_LoadBalancedSendUnsubscriptionRequest(const c
 
   if (TML_SUCCESS == iRet)
     iRet = m_sender->sender_SendSyncMessage(profile, sDestHost, sDestPort, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout, NULL, true, TMLCOM_MODE_SYNC);
+
+  //////////////////////////////////////////////////////////////////////////////
+  // in case of an error I have to free for the TML_COMMAND_HANDLE:
+  delete (command);
+
+  return (int)iRet;
+}
+
+
+/**
+ * @brief    Send an event unsubscription request.
+ */
+int tmlCoreWrapper::tmlCoreWrapper_Connection_LoadBalancedSendUnsubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, unsigned int iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+
+  tmlObjWrapper* command = new tmlObjWrapper();
+ ///////////////////////////////////////////////
+  // Acquire critical section use: 
+  SIDEX_HANDLE sHandle;
+  command->tmlObjWrapper_Acquire_Sidex_Handle(&sHandle, (char*)"tmlCoreWrapper::tmlCoreWrapper_Connection_LoadBalancedSendUnsubscriptionRequest");
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Flag for internal command:
+  iRet = sidex_Boolean_Write (sHandle, TML_CMD_HEADER_GROUP, TML_CMD_HEADER_KEY_INTERNAL_COMMAND, true);
+  if (TML_SUCCESS == iRet)
+    iRet = sidex_String_Write(sHandle, TML_CMD_INTERNAL_GROUP, TML_CMD_INTERNAL_KEY_PROFILE, sProfile);
+  ///////////////////////////////////////////////
+  // Now I can release the critical section use: 
+  command->tmlObjWrapper_Release_Sidex_Handle((char*)"tmlCoreWrapper::tmlCoreWrapper_Connection_LoadBalancedSendUnsubscriptionRequest");
+  if (TML_SUCCESS == iRet)
+    iRet = command->tmlObjWrapper_Header_SetCommand (CMD_INTERNAL_CONNECTION_LOAD_BALANCED_UNSUBSCRIPTION_REQUEST);
+  if (TML_SUCCESS == iRet)
+    iRet = m_sender->sender_SendSyncMessage(sProfile, connectionHandle, m_iWindowSize, (TML_COMMAND_HANDLE) command, iTimeout + m_log->getAdditionalTimeout(), NULL, true, TMLCOM_MODE_SYNC);
 
   //////////////////////////////////////////////////////////////////////////////
   // in case of an error I have to free for the TML_COMMAND_HANDLE:
@@ -2301,14 +2485,6 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
   }
   m_csObj->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_IsAccessible");
   return iRet;
-}
-
-
-/**
- * @brief    returns mutex protecting m_registeredCloseObjs
- */
-tmlCriticalSectionObj* tmlCoreWrapper::getCsCloseHandling(){
-  return m_csCloseHandling;
 }
 
 
@@ -2583,6 +2759,7 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bExi
       if (connection){
         wrapper = (tmlConnectionManageObj*)connection;
         if (wrapper->isEqual(sAddress)){
+          *connectionHandle = (TML_CONNECTION_HANDLE) wrapper;
           bFound = true;
         }
       }
@@ -2600,6 +2777,10 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Connect(const char* sAddress, bool bExi
       switch (iRet){
         case TML_ERR_NET_BINDING :
                            // The network address is not correct:
+                           delete wrapper;
+                           break;
+        case TML_ERR_SENDER_INVALID_PARAMS:
+                           // The destination is not available
                            delete wrapper;
                            break;
         case TML_SUCCESS : // No Break here
@@ -2679,6 +2860,8 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
     if (connectionHandle == tmpConnection){
       bFound = true;
       sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
+      // The Object has to be removed out of the sender connection object hashtable:
+      m_sender->RemoveConnectionFromHT((tmlConnectionManageObj*)tmpConnection);
       // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
       delete (tmlConnectionManageObj*)tmpConnection;
     }
@@ -2849,12 +3032,4 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, ch
   delete[]sNetAddress;
 
   return iRet;
-}
-
-
-/**
-  * @brief    Get registered connection close list.
-  */
-SIDEX_VARIANT tmlCoreWrapper::Get_ConnectionCloseList(){
-  return m_registeredCloseObjs;
 }

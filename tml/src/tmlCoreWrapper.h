@@ -58,19 +58,9 @@ private:
     /* data */
 
     /**
-     * @brief    Reference to list containing registered connection close callbacks
-     */
-    SIDEX_VARIANT          m_registeredCloseObjs;
-
-    /**
      * @brief    Reference to mutex necessary for tmlSingleCall::getConnection
      */
     tmlCriticalSectionObj* m_csGetConnection;
-
-    /**
-     * @brief    Reference to mutex necessary for m_registeredCloseObjs
-     */
-    tmlCriticalSectionObj* m_csCloseHandling;
 
     /**
      * @brief    Reference to list containing listener objects
@@ -1066,6 +1056,27 @@ public:
 
 
     /**
+     * @brief    Send an event subscription request.
+     *
+     * This request will be send by a server to auto subscribe event commands.
+
+     * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+     * @param   sProfile         profile identification string
+     * @param   iTimeout         Timeout for the command execution (in ms).
+     *
+     * @returns TML_SUCCESS in case of success.<br>
+     *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>
+     *          TML_ERR_CHANNEL_NOT_INITIALIZED if the channel initialization failled.<br>
+     *          ERR_DUMPCONTENT if there is a problem converting the tmlhandle into a string.<br>
+     *          TML_ERR_TIMEOUT_ON_WAIT_FOR_ASYNC timeout during wait for end of async cmd execution.<br>
+     *          TML_ERR_SENDER_COMMUNICATION in case of a communication error.
+     *
+     * @see tmlErrors.h
+     */
+    int tmlCoreWrapper_Connection_EventSendSubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, unsigned int iTimeout);
+
+
+    /**
      * @brief    Register a callback method for the case of a peer subscription / unsubscription request for event messages.
      *
      * This will register a callback method that will be called in case of a peer subscription request for event messages.<br>
@@ -1111,6 +1122,27 @@ public:
      * @see tmlErrors.h
      */
     int tmlCoreWrapper_EventSendUnsubscriptionRequest(const char* profile, const char* sSourceHost, const char* sSourcePort, const char* sDestHost, const char* sDestPort, unsigned int iTimeout);
+
+
+    /**
+     * @brief    Send an event unsubscription request.
+     *
+     * This request will be send by a server to auto unsubscribe event commands.
+
+     * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+     * @param   sProfile         profile identification string
+     * @param   iTimeout         Timeout for the command execution (in ms).
+     *
+     * @returns TML_SUCCESS in case of success.<br>
+     *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>
+     *          TML_ERR_CHANNEL_NOT_INITIALIZED if the channel initialization failled.<br>
+     *          ERR_DUMPCONTENT if there is a problem converting the tmlhandle into a string.<br>
+     *          TML_ERR_TIMEOUT_ON_WAIT_FOR_ASYNC timeout during wait for end of async cmd execution.<br>
+     *          TML_ERR_SENDER_COMMUNICATION in case of a communication error.
+     *
+     * @see tmlErrors.h
+     */
+    int tmlCoreWrapper_Connection_EventSendUnsubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, unsigned int iTimeout);
 
 
     /**
@@ -1311,6 +1343,27 @@ public:
 
 
     /**
+     * @brief    Send a load balanced subscription request.
+     *
+     * This request will be send by a server to auto subscribe load balanced commands.
+
+     * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+     * @param   sProfile         profile identification string
+     * @param   iTimeout         Timeout for the command execution (in ms).
+     *
+     * @returns TML_SUCCESS in case of success.<br>
+     *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>
+     *          TML_ERR_CHANNEL_NOT_INITIALIZED if the channel initialization failled.<br>
+     *          ERR_DUMPCONTENT if there is a problem converting the tmlhandle into a string.<br>
+     *          TML_ERR_TIMEOUT_ON_WAIT_FOR_ASYNC timeout during wait for end of async cmd execution.<br>
+     *          TML_ERR_SENDER_COMMUNICATION in case of a communication error.
+     *
+     * @see tmlErrors.h
+     */
+    int tmlCoreWrapper_Connection_LoadBalancedSendSubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, unsigned int iTimeout);
+
+
+    /**
      * @brief    Register a callback method for the case of a peer subscription / unsubscription request for load balanced messages.
      *
      * This will register a callback method that will be called in case of a peer subscription request for load balanced messages.<br>
@@ -1356,6 +1409,27 @@ public:
      * @see tmlErrors.h
      */
     int tmlCoreWrapper_LoadBalancedSendUnsubscriptionRequest(const char* profile, const char* sSourceHost, const char* sSourcePort, const char* sDestHost, const char* sDestPort, unsigned int iTimeout);
+
+
+    /**
+     * @brief    Send a load balanced unsubscription request.
+     *
+     * This request will be send by a server to auto unsubscribe load balanced commands.
+
+     * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+     * @param   sProfile         profile identification string
+     * @param   iTimeout         Timeout for the command execution (in ms).
+     *
+     * @returns TML_SUCCESS in case of success.<br>
+     *          TML_ERR_SENDER_NOT_INITIALIZED if the connection initialization failed.<br>
+     *          TML_ERR_CHANNEL_NOT_INITIALIZED if the channel initialization failled.<br>
+     *          ERR_DUMPCONTENT if there is a problem converting the tmlhandle into a string.<br>
+     *          TML_ERR_TIMEOUT_ON_WAIT_FOR_ASYNC timeout during wait for end of async cmd execution.<br>
+     *          TML_ERR_SENDER_COMMUNICATION in case of a communication error.
+     *
+     * @see tmlErrors.h
+     */
+    int tmlCoreWrapper_Connection_LoadBalancedSendUnsubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, unsigned int iTimeout);
 
 
     /**
@@ -1828,12 +1902,6 @@ public:
 
 
     /**
-     * @brief    returns mutex protecting m_registeredCloseObjs
-     */
-    tmlCriticalSectionObj* getCsCloseHandling();
-
-
-    /**
      * @brief    returns mutex protecting tmlSingleCall::getConnection
      */
     tmlCriticalSectionObj* getCsGetConnection();
@@ -2171,11 +2239,5 @@ public:
      *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested network address don't exist
      */
     TML_INT32 tmlCoreWrapper_Get_ConnectionByAddress(char* sHost, char* sPort, TML_CONNECTION_HANDLE* connectionHandle);
-
-    /**
-      * @brief    Get registered connection close list.
-      */
-    SIDEX_VARIANT Get_ConnectionCloseList();
-
 };
 #endif  // TMLCOREWRAPPER_H

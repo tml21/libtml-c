@@ -1131,6 +1131,36 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Subscribe_MessageDestination_A(TML_
 
 /**
  * @ingroup  eventIO
+ * @brief    Subscribe event receiver.
+ *
+ * @param   connectionHandle  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   sProfile          profile identification string
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
+ *
+ * @see tml_Connection_Evt_Unsubscribe_MessageDestination()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestination_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* profile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestination_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* profile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestination_A(TML_CONNECTION_HANDLE connectionHandle, const char* profile);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_Evt_Subscribe_MessageDestination  tml_Connection_Evt_Subscribe_MessageDestination_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_Evt_Subscribe_MessageDestination  tml_Connection_Evt_Subscribe_MessageDestination_W
+    #else
+      #define tml_Connection_Evt_Subscribe_MessageDestination  tml_Connection_Evt_Subscribe_MessageDestination_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  eventIO
  * @brief    Get event receiver list.
  *
  * @param   coreHandle    TML core handle (TML_CORE_HANDLE)
@@ -1189,6 +1219,36 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_MessageDestination_A(TM
       #define tml_Evt_Unsubscribe_MessageDestination  tml_Evt_Unsubscribe_MessageDestination_W
     #else
       #define tml_Evt_Unsubscribe_MessageDestination  tml_Evt_Unsubscribe_MessageDestination_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  eventIO
+ * @brief    Unsubscribe event receiver.
+ *
+ * @param   connectionHandle  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   sProfile          profile identification string
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
+ *
+ * @see tml_Connection_Evt_Subscribe_MessageDestination()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* profile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* profile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination_A(TML_CONNECTION_HANDLE connectionHandle, const char* profile);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_Evt_Unsubscribe_MessageDestination  tml_Connection_Evt_Unsubscribe_MessageDestination_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_Evt_Unsubscribe_MessageDestination  tml_Connection_Evt_Unsubscribe_MessageDestination_W
+    #else
+      #define tml_Connection_Evt_Unsubscribe_MessageDestination  tml_Connection_Evt_Unsubscribe_MessageDestination_A
     #endif // TML_UNICODE_16
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION
@@ -1375,12 +1435,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_Message_A(TML_CORE_HANDLE core
  * @param   iTimeout    timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
- *          TML_ERR_INITIALIZATION initialization error<br>
- *          TML_ERR_SENDER_NOT_INITIALIZED sender initialization failed<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
- *          TML_ERR_UNICODE unicode conversion error<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          ERR_DUMPCONTENT internal data format error<br>
+ *          TML_ERR_SENDER_COMMUNICATION communication error<br>
+ *          TML_ERR_TIMEOUT timeout before receiving reply<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Evt_Send_UnsubscriptionRequest()
  */
@@ -1396,6 +1460,47 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_SubscriptionRequest_A(TML_CORE
       #define tml_Evt_Send_SubscriptionRequest  tml_Evt_Send_SubscriptionRequest_W
     #else
       #define tml_Evt_Send_SubscriptionRequest  tml_Evt_Send_SubscriptionRequest_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  eventIO
+ * @brief    Send an event subscription request.
+ *
+ * With this function a command receiver can subscribe itself to receive event messages.
+ *
+ * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param  sProfile         profile identification string
+ * @param  iTimeout         timeout in milliseconds
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          ERR_DUMPCONTENT internal data format error<br>
+ *          TML_ERR_SENDER_COMMUNICATION communication error<br>
+ *          TML_ERR_TIMEOUT timeout before receiving reply<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
+ *
+ * @see tml_Connection_Evt_Send_UnsubscriptionRequest()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_SubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_SubscriptionRequest_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_SubscriptionRequest_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_SubscriptionRequest_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_UINT32 iTimeout);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_Evt_Send_SubscriptionRequest  tml_Connection_Evt_Send_SubscriptionRequest_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_Evt_Send_SubscriptionRequest  tml_Connection_Evt_Send_SubscriptionRequest_W
+    #else
+      #define tml_Connection_Evt_Send_SubscriptionRequest  tml_Connection_Evt_Send_SubscriptionRequest_A
     #endif // TML_UNICODE_16
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION
@@ -1438,6 +1543,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPeerRegister_A(TML_CORE_HANDL
  * @ingroup  eventIO
  * @brief    Unregister an event message receiver.
  *
+ * With this function a command receiver can unsubscribe itself to receive event messages.
+ *
  * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
  * @param   profile     profile name
  * @param   sSourceHost host name / IP addresse of the subscriber
@@ -1447,12 +1554,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPeerRegister_A(TML_CORE_HANDL
  * @param   iTimeout    timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
- *          TML_ERR_INITIALIZATION initialization error<br>
- *          TML_ERR_SENDER_NOT_INITIALIZED sender initialization failed<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
- *          TML_ERR_UNICODE unicode conversion error<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          ERR_DUMPCONTENT internal data format error<br>
+ *          TML_ERR_SENDER_COMMUNICATION communication error<br>
+ *          TML_ERR_TIMEOUT timeout before receiving reply<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Evt_Send_SubscriptionRequest()
  */
@@ -1468,6 +1579,47 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_UnsubscriptionRequest_A(TML_CO
       #define tml_Evt_Send_UnsubscriptionRequest  tml_Evt_Send_UnsubscriptionRequest_W
     #else
       #define tml_Evt_Send_UnsubscriptionRequest  tml_Evt_Send_UnsubscriptionRequest_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  eventIO
+ * @brief    Unregister an event message receiver.
+ *
+ * With this function a command receiver can unsubscribe itself to receive event messages.
+ *
+ * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param  sProfile         profile identification string
+ * @param  iTimeout         timeout in milliseconds
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          ERR_DUMPCONTENT internal data format error<br>
+ *          TML_ERR_SENDER_COMMUNICATION communication error<br>
+ *          TML_ERR_TIMEOUT timeout before receiving reply<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
+ *
+ * @see tml_Connection_Evt_Send_SubscriptionRequest()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_UnsubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_UnsubscriptionRequest_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_UnsubscriptionRequest_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_UnsubscriptionRequest_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_UINT32 iTimeout);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_Evt_Send_UnsubscriptionRequest  tml_Connection_Evt_Send_UnsubscriptionRequest_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_Evt_Send_UnsubscriptionRequest  tml_Connection_Evt_Send_UnsubscriptionRequest_W
+    #else
+      #define tml_Connection_Evt_Send_UnsubscriptionRequest  tml_Connection_Evt_Send_UnsubscriptionRequest_A
     #endif // TML_UNICODE_16
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION
@@ -1500,6 +1652,36 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Subscribe_MessageDestination_A(TML_
       #define tml_Bal_Subscribe_MessageDestination  tml_Bal_Subscribe_MessageDestination_W
     #else
       #define tml_Bal_Subscribe_MessageDestination  tml_Bal_Subscribe_MessageDestination_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  loadbalancedIO
+ * @brief    Add a command receiver for load balanced calls.
+ *
+ * @param   connectionHandle  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   sProfile          profile identification string
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
+ *
+ * @see tml_Connection_Bal_Unsubscribe_MessageDestination()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Subscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Subscribe_MessageDestination_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* profile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Subscribe_MessageDestination_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* profile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Subscribe_MessageDestination_A(TML_CONNECTION_HANDLE connectionHandle, const char* profile);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_Bal_Subscribe_MessageDestination  tml_Connection_Bal_Subscribe_MessageDestination_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_Bal_Subscribe_MessageDestination  tml_Connection_Bal_Subscribe_MessageDestination_W
+    #else
+      #define tml_Connection_Bal_Subscribe_MessageDestination  tml_Connection_Bal_Subscribe_MessageDestination_A
     #endif // TML_UNICODE_16
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION
@@ -1565,6 +1747,36 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_MessageDestination_A(TM
       #define tml_Bal_Unsubscribe_MessageDestination  tml_Bal_Unsubscribe_MessageDestination_W
     #else
       #define tml_Bal_Unsubscribe_MessageDestination  tml_Bal_Unsubscribe_MessageDestination_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  loadbalancedIO
+ * @brief    Unsubscribe a command receiver for load balanced calls.
+ *
+ * @param   connectionHandle  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param   sProfile          profile identification string
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
+ *
+ * @see tml_Connection_Bal_Subscribe_MessageDestination()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* profile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* profile);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination_A(TML_CONNECTION_HANDLE connectionHandle, const char* profile);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_Bal_Unsubscribe_MessageDestination  tml_Connection_Bal_Unsubscribe_MessageDestination_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_Bal_Unsubscribe_MessageDestination  tml_Connection_Bal_Unsubscribe_MessageDestination_W
+    #else
+      #define tml_Connection_Bal_Unsubscribe_MessageDestination  tml_Connection_Bal_Unsubscribe_MessageDestination_A
     #endif // TML_UNICODE_16
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION
@@ -1809,13 +2021,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_AsyncMessage_A(TML_CORE_HANDLE
  * @param   iTimeout    timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
  *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
  *          ERR_DUMPCONTENT internal data format error<br>
- *          TML_ERR_TIMEOUT_ON_WAIT_FOR_ASYNC internal timeout<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_SENDER_COMMUNICATION communication error
+ *          TML_ERR_SENDER_COMMUNICATION communication error<br>
+ *          TML_ERR_TIMEOUT timeout before receiving reply<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Bal_Send_UnsubscriptionRequest()
  */
@@ -1831,6 +2046,47 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SubscriptionRequest_A(TML_CORE
       #define tml_Bal_Send_SubscriptionRequest  tml_Bal_Send_SubscriptionRequest_W
     #else
       #define tml_Bal_Send_SubscriptionRequest  tml_Bal_Send_SubscriptionRequest_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  loadbalancedIO
+ * @brief    Send a load balancing subscription request.
+ *
+ * With this function a command receiver can subscribe itself to receive load balanced commands.
+ *
+ * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param  sProfile         profile identification string
+ * @param  iTimeout         timeout in milliseconds
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          ERR_DUMPCONTENT internal data format error<br>
+ *          TML_ERR_SENDER_COMMUNICATION communication error<br>
+ *          TML_ERR_TIMEOUT timeout before receiving reply<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
+ *
+ * @see tml_Connection_Bal_Send_UnsubscriptionRequest()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_SubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_SubscriptionRequest_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_SubscriptionRequest_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_SubscriptionRequest_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_UINT32 iTimeout);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_Bal_Send_SubscriptionRequest  tml_Connection_Bal_Send_SubscriptionRequest_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_Bal_Send_SubscriptionRequest  tml_Connection_Bal_Send_SubscriptionRequest_W
+    #else
+      #define tml_Connection_Bal_Send_SubscriptionRequest  tml_Connection_Bal_Send_SubscriptionRequest_A
     #endif // TML_UNICODE_16
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION
@@ -1873,6 +2129,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPeerRegister_A(TML_CORE_HANDL
  * @ingroup  loadbalancedIO
  * @brief    Unregister a load balancing command receiver.
  *
+ * With this function a command receiver can unsubscribe itself to receive load balanced commands.
+ *
  * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
  * @param   profile     profile name
  * @param   sSourceHost host name / IP address of the subscriber
@@ -1882,13 +2140,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPeerRegister_A(TML_CORE_HANDL
  * @param   iTimeout    timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
  *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
  *          ERR_DUMPCONTENT internal data format error<br>
- *          TML_ERR_TIMEOUT_ON_WAIT_FOR_ASYNC internal timeout<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_SENDER_COMMUNICATION communication error
+ *          TML_ERR_SENDER_COMMUNICATION communication error<br>
+ *          TML_ERR_TIMEOUT timeout before receiving reply<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Bal_Send_SubscriptionRequest()
  */
@@ -1904,6 +2165,47 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_UnsubscriptionRequest_A(TML_CO
       #define tml_Bal_Send_UnsubscriptionRequest  tml_Bal_Send_UnsubscriptionRequest_W
     #else
       #define tml_Bal_Send_UnsubscriptionRequest  tml_Bal_Send_UnsubscriptionRequest_A
+    #endif // TML_UNICODE_16
+  #endif // TML_UNICODE
+#endif // DOXYGEN_GENERATION
+
+
+/**
+ * @ingroup  loadbalancedIO
+ * @brief    Unregister a load balancing command receiver.
+ *
+ * With this function a command receiver can unsubscribe itself to receive load balanced commands.
+ *
+ * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
+ * @param  sProfile         profile identification string
+ * @param  iTimeout         timeout in milliseconds
+ *
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
+ *          TML_ERR_SYSTEMRESOURCES system resource error<br>
+ *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
+ *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
+ *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
+ *          ERR_DUMPCONTENT internal data format error<br>
+ *          TML_ERR_SENDER_COMMUNICATION communication error<br>
+ *          TML_ERR_TIMEOUT timeout before receiving reply<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
+ *
+ * @see tml_Connection_Bal_Send_SubscriptionRequest()
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_UnsubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_UnsubscriptionRequest_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_UnsubscriptionRequest_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_UINT32 iTimeout);
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_UnsubscriptionRequest_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_UINT32 iTimeout);
+#if !defined (DOXYGEN_GENERATION)
+  #ifdef TML_UNICODE
+    #define tml_Connection_Bal_Send_UnsubscriptionRequest  tml_Connection_Bal_Send_UnsubscriptionRequest_X
+  #else
+    #ifdef TML_UNICODE_16
+      #define tml_Connection_Bal_Send_UnsubscriptionRequest  tml_Connection_Bal_Send_UnsubscriptionRequest_W
+    #else
+      #define tml_Connection_Bal_Send_UnsubscriptionRequest  tml_Connection_Bal_Send_UnsubscriptionRequest_A
     #endif // TML_UNICODE_16
   #endif // TML_UNICODE
 #endif // DOXYGEN_GENERATION

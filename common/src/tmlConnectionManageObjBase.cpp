@@ -79,7 +79,48 @@ VortexConnection* tmlConnectionManageObjBase::getVortexConnection(){
   * @brief   Set Vortex connection 
   */
 void tmlConnectionManageObjBase::setVortexConnection(VortexConnection* connection){
-  m_vortexConnection = connection;
+  if (connection != m_vortexConnection){
+    tmlCriticalSectionObj* mutex = ((tmlCoreWrapper*)m_coreHandle)->getCsCloseHandling();
+    mutex->tmlCriticalSectionEnter("tmlConnectionManageObjBase::setVortexConnection");
+
+    SIDEX_VARIANT list = ((tmlCoreWrapper*)m_coreHandle)->Get_ConnectionCloseList();
+
+    SIDEX_INT32 iSize = 0;
+    bool bFound = false; 
+    SIDEX_INT32 iRet = sidex_Variant_List_Size(list, &iSize);
+    if (SIDEX_SUCCESS == iRet){
+      SIDEX_VARIANT dictItem;
+      for (SIDEX_INT32 i = 0; SIDEX_SUCCESS == iRet && !bFound && i < iSize; ++i){
+        iRet = sidex_Variant_List_Get(list, i, &dictItem);
+        SIDEX_VARIANT connectionItem;
+        if (SIDEX_SUCCESS == iRet){
+          iRet = sidex_Variant_Dict_Get(dictItem, (char*)"VortexConnection", &connectionItem);
+          SIDEX_INT64 iVal;
+          if (SIDEX_SUCCESS == iRet){
+            iRet = sidex_Variant_As_Integer(connectionItem, &iVal);
+            if (SIDEX_SUCCESS == iRet){
+              if (((VortexConnection*) iVal) == m_vortexConnection){
+                bFound = true;
+                if (NULL != connection){
+                  SIDEX_INT64 iVal;
+                  iVal = (SIDEX_INT64) connection;
+                  SIDEX_VARIANT newConnectionItem = sidex_Variant_New_Integer(iVal);
+                  iRet = sidex_Variant_Dict_Set(dictItem, (char*)"VortexConnection", newConnectionItem);
+                  sidex_Variant_DecRef(newConnectionItem);
+                }
+                else{
+                  // New Value is NULL:
+                  sidex_Variant_List_DeleteItem (list, i);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    mutex->tmlCriticalSectionLeave("tmlConnectionManageObjBase::setVortexConnection");
+    m_vortexConnection = connection;  
+  }
 }
 
 

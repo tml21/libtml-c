@@ -1812,6 +1812,91 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Subscribe_MessageDestination_W(TML_
   return iRet;
 }
 
+
+/**
+ * @brief    Subscribe event receiver.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile);
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestination_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile)
+{
+  TML_INT32 iRet = TML_SUCCESS;
+
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Evt_Subscribe_MessageDestination");
+
+            char* sHost;
+            char* sPort;
+            ((tmlConnectionManageObj*)connectionHandle)->getHost(&sHost);
+            ((tmlConnectionManageObj*)connectionHandle)->getPort(&sPort);
+            iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventSubscribeMessageDestination(sProfile, sHost, sPort);
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestination_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  try{
+    TML_INT32 iLengthUtf8;
+
+    char* utf8ProfileName = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+    if (NULL != utf8ProfileName){
+      iRet = tml_Connection_Evt_Subscribe_MessageDestination_A(connectionHandle, utf8ProfileName);
+      delete[] utf8ProfileName;
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestination_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  try{
+    TML_INT32 iLengthUtf8;
+
+    char* utf8ProfileName = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+    if (NULL != utf8ProfileName){
+      iRet = tml_Connection_Evt_Subscribe_MessageDestination_A(connectionHandle, utf8ProfileName);
+      delete[] utf8ProfileName;
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+}
+
+
 /**
  * @brief    Get subscribed destinations for event messages for the provided profile.
  */
@@ -1988,6 +2073,91 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_MessageDestination_W(TM
   }
   return iRet;
 }
+
+
+/**
+ * @brief    Unsubscribe event receiver.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile);
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile)
+{
+  TML_INT32 iRet = TML_SUCCESS;
+
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Evt_Unsubscribe_MessageDestination");
+
+            char* sHost;
+            char* sPort;
+            ((tmlConnectionManageObj*)connectionHandle)->getHost(&sHost);
+            ((tmlConnectionManageObj*)connectionHandle)->getPort(&sPort);
+            iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_EventUnsubscribeMessageDestination(sProfile, sHost, sPort);
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  try{
+    TML_INT32 iLengthUtf8;
+
+    char* utf8ProfileName = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+    if (NULL != utf8ProfileName){
+      iRet = tml_Connection_Evt_Unsubscribe_MessageDestination_A(connectionHandle, utf8ProfileName);
+      delete[] utf8ProfileName;
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDestination_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  try{
+    TML_INT32 iLengthUtf8;
+
+    char* utf8ProfileName = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+    if (NULL != utf8ProfileName){
+      iRet = tml_Connection_Evt_Unsubscribe_MessageDestination_A(connectionHandle, utf8ProfileName);
+      delete[] utf8ProfileName;
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+}
+
 
 /**
  * @brief    Unsubscribe all destinations for event messages for the provided profile.
@@ -2547,6 +2717,89 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_SubscriptionRequest_W(TML_CORE
 
 
 /**
+ * @brief    Send an event subscription request.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_SubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_UINT32 iTimeout);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_SubscriptionRequest_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_Evt_Send_SubscriptionRequest_A(connectionHandle, utf8Profile, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_SubscriptionRequest_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_Evt_Send_SubscriptionRequest_A(connectionHandle, utf8Profile, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_SubscriptionRequest_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Evt_Send_SubscriptionRequest");
+            iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_EventSendSubscriptionRequest(connectionHandle, sProfile, (unsigned int)iTimeout);
+            if (TML_SUCCESS == iRet){
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_Evt_Send_SubscriptionRequest", sProfile, " succeeded");
+            }
+            else{
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_Evt_Send_SubscriptionRequest", sProfile, " failed !");
+            }
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
+/**
  * @brief    Register a callback method for the case of a peer (un)subscription request for event messages.
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPeerRegister(TML_CORE_HANDLE coreHandle, const TML_CTSTR* profile, TML_ON_PEER_REGISTRATION_CB_FUNC pCBFunc, TML_POINTER pCBData);
@@ -2642,7 +2895,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPeerRegister_W(TML_CORE_HANDL
 }
 
 /**
- * @brief    Send an event unsubscription request.
+ * @brief    Unregister an event message receiver.
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_UnsubscriptionRequest(TML_CORE_HANDLE coreHandle, const TML_CTSTR* profile, const TML_CTSTR* sSourceHost, const TML_CTSTR* sSourcePort, const TML_CTSTR* sDestHost, const TML_CTSTR* sDestPort, TML_UINT32 iTimeout);
 /**
@@ -2741,6 +2994,90 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_UnsubscriptionRequest_W(TML_CO
   return iRet;
 }
 
+
+/**
+ * @brief    Unregister an event message receiver.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_UnsubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_UINT32 iTimeout);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_UnsubscriptionRequest_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_Evt_Send_UnsubscriptionRequest_A(connectionHandle, utf8Profile, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_UnsubscriptionRequest_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_Evt_Send_UnsubscriptionRequest_A(connectionHandle, utf8Profile, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_UnsubscriptionRequest_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Evt_Send_UnsubscriptionRequest");
+            iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_EventSendUnsubscriptionRequest(connectionHandle, sProfile, (unsigned int)iTimeout);
+            if (TML_SUCCESS == iRet){
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_Evt_Send_UnsubscriptionRequest", sProfile, " succeeded");
+            }
+            else{
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_Evt_Send_UnsubscriptionRequest", sProfile, " failed !");
+            }
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
 /**
  * @brief    Subscribe a destination for load balanced messages.
  */
@@ -2816,6 +3153,90 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Subscribe_MessageDestination_W(TML_
         }
         delete[] utf8HostName;
       }
+      delete[] utf8ProfileName;
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Subscribe a destination for load balanced messages.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Subscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile);
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Subscribe_MessageDestination_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile)
+{
+  TML_INT32 iRet = TML_SUCCESS;
+
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Bal_Subscribe_MessageDestination");
+
+            char* sHost;
+            char* sPort;
+            ((tmlConnectionManageObj*)connectionHandle)->getHost(&sHost);
+            ((tmlConnectionManageObj*)connectionHandle)->getPort(&sPort);
+            iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedSubscribeMessageDestination(sProfile, sHost, sPort);
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Subscribe_MessageDestination_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  try{
+    TML_INT32 iLengthUtf8;
+
+    char* utf8ProfileName = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+    if (NULL != utf8ProfileName){
+      iRet = tml_Connection_Bal_Subscribe_MessageDestination_A(connectionHandle, utf8ProfileName);
+      delete[] utf8ProfileName;
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Subscribe_MessageDestination_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  try{
+    TML_INT32 iLengthUtf8;
+
+    char* utf8ProfileName = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+    if (NULL != utf8ProfileName){
+      iRet = tml_Connection_Bal_Subscribe_MessageDestination_A(connectionHandle, utf8ProfileName);
       delete[] utf8ProfileName;
     }
   }
@@ -2992,6 +3413,90 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_MessageDestination_W(TM
         }
         delete[] utf8HostName;
       }
+      delete[] utf8ProfileName;
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+}
+
+
+/**
+ * @brief    Unsubscribe a command receiver for load balanced calls.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile);
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile)
+{
+  TML_INT32 iRet = TML_SUCCESS;
+
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Bal_Unsubscribe_MessageDestination");
+
+            char* sHost;
+            char* sPort;
+            ((tmlConnectionManageObj*)connectionHandle)->getHost(&sHost);
+            ((tmlConnectionManageObj*)connectionHandle)->getPort(&sPort);
+            iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_LoadBalancedUnsubscribeMessageDestination(sProfile, sHost, sPort);
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  try{
+    TML_INT32 iLengthUtf8;
+
+    char* utf8ProfileName = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+    if (NULL != utf8ProfileName){
+      iRet = tml_Connection_Bal_Unsubscribe_MessageDestination_A(connectionHandle, utf8ProfileName);
+      delete[] utf8ProfileName;
+    }
+  }
+  catch (...){
+    iRet = TML_ERR_COMMON;
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  try{
+    TML_INT32 iLengthUtf8;
+
+    char* utf8ProfileName = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+    if (NULL != utf8ProfileName){
+      iRet = tml_Connection_Bal_Unsubscribe_MessageDestination_A(connectionHandle, utf8ProfileName);
       delete[] utf8ProfileName;
     }
   }
@@ -3607,6 +4112,90 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SubscriptionRequest_W(TML_CORE
   return iRet;
 }
 
+
+/**
+ * @brief    Send a load balancing subscription request.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_SubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_UINT32 iTimeout);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_SubscriptionRequest_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_Bal_Send_SubscriptionRequest_A(connectionHandle, utf8Profile, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_SubscriptionRequest_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_Bal_Send_SubscriptionRequest_A(connectionHandle, utf8Profile, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_SubscriptionRequest_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Bal_Send_SubscriptionRequest");
+            iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_LoadBalancedSendSubscriptionRequest(connectionHandle, sProfile, (unsigned int)iTimeout);
+            if (TML_SUCCESS == iRet){
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_Bal_Send_SubscriptionRequest", sProfile, " succeeded");
+            }
+            else{
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_Bal_Send_SubscriptionRequest", sProfile, " failed !");
+            }
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
+
 /**
  * @brief    Register a callback method for the case of a peer (un)subscription request for load balanced messages.
  */
@@ -3801,6 +4390,90 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_UnsubscriptionRequest_W(TML_CO
   }
   return iRet;
 }
+
+
+/**
+ * @brief    Unregister a load balancing command receiver.
+ */
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_UnsubscriptionRequest(TML_CONNECTION_HANDLE connectionHandle, const TML_CTSTR* sProfile, TML_UINT32 iTimeout);
+/**
+ * wchar_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_UnsubscriptionRequest_X(TML_CONNECTION_HANDLE connectionHandle, const wchar_t* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF32toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_Bal_Send_UnsubscriptionRequest_A(connectionHandle, utf8Profile, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char16_t* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_UnsubscriptionRequest_W(TML_CONNECTION_HANDLE connectionHandle, const char16_t* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_ERR_UNICODE;
+  TML_INT32 iLengthUtf8;
+
+  char* utf8Profile = UTF16toUTF8((wchar_t*)sProfile, &iLengthUtf8);
+  if (NULL != utf8Profile){
+    try{
+      iRet = tml_Connection_Bal_Send_UnsubscriptionRequest_A(connectionHandle, utf8Profile, iTimeout);
+      delete[] utf8Profile;
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+/**
+ * char* API
+**/
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_UnsubscriptionRequest_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile, TML_UINT32 iTimeout){
+  TML_INT32 iRet = TML_SUCCESS;
+  if (TML_HANDLE_TYPE_NULL == connectionHandle){
+    iRet = TML_ERR_MISSING_OBJ;
+  }
+  else{
+    try{
+      TML_CORE_HANDLE coreHandle = ((tmlConnectionManageObj*)connectionHandle)->getCoreHandle();
+      if (TML_HANDLE_TYPE_NULL == coreHandle){
+        iRet = TML_ERR_MISSING_OBJ;
+      }
+      else{
+        if (NULL == sProfile){
+          iRet = TML_ERR_UNICODE;
+        }
+        else{
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
+          if (TML_SUCCESS == iRet){
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Connection_Bal_Send_UnsubscriptionRequest");
+            iRet = (TML_INT32)((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connection_LoadBalancedSendUnsubscriptionRequest(connectionHandle, sProfile, (unsigned int)iTimeout);
+            if (TML_SUCCESS == iRet){
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_Bal_Send_UnsubscriptionRequest", sProfile, " succeeded");
+            }
+            else{
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Connection_Bal_Send_UnsubscriptionRequest", sProfile, " failed !");
+            }
+          }
+        }
+      }
+    }
+    catch (...){
+      iRet = TML_ERR_COMMON;
+    }
+  }
+  return iRet;
+}
+
 
 /**
  * @brief    Set the maximum load balanced connection fail count value.
@@ -5821,23 +6494,28 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE 
       iRet = TML_ERR_MISSING_OBJ;
     }
     else{
-      try{
-        ////////////////////////////////////////////////////////////////////////////
-        // Core is in shutdown process:
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-        if (TML_SUCCESS == iRet){
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Listener_Create");
-          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Create(sAddress, listenerHandle);
+      if (NULL == sAddress){
+        iRet = TML_ERR_UNICODE;
+      }
+      else{
+        try{
+          ////////////////////////////////////////////////////////////////////////////
+          // Core is in shutdown process:
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
           if (TML_SUCCESS == iRet){
-            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Listener_Create", sAddress, " succeeded");
-          }
-          else{
-            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Listener_Create", sAddress, " failed !");
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Listener_Create");
+            iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Listener_Create(sAddress, listenerHandle);
+            if (TML_SUCCESS == iRet){
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Listener_Create", sAddress, " succeeded");
+            }
+            else{
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Listener_Create", sAddress, " failed !");
+            }
           }
         }
-      }
-      catch (...){
-        iRet = TML_ERR_COMMON;
+        catch (...){
+          iRet = TML_ERR_COMMON;
+        }
       }
     }
   }
@@ -6086,12 +6764,17 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_A(TML_CORE_H
       iRet = TML_ERR_MISSING_OBJ;
     }
     else{
-      try{
-        ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_ListenerByAddress");
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_ListenerByAddress(sAddress, listenerHandle);
+      if (NULL == sAddress){
+        iRet = TML_ERR_UNICODE;
       }
-      catch (...){
-        iRet = TML_ERR_COMMON;
+      else{
+        try{
+          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Get_ListenerByAddress");
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Get_ListenerByAddress(sAddress, listenerHandle);
+        }
+        catch (...){
+          iRet = TML_ERR_COMMON;
+        }
       }
     }
   }
@@ -6219,23 +6902,28 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
       iRet = TML_ERR_MISSING_OBJ;
     }
     else{
-      try{
-        ////////////////////////////////////////////////////////////////////////////
-        // Core is in shutdown process:
-        iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
-        if (TML_SUCCESS == iRet){
-          ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Connect");
-          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connect(sAddress, true, connectionHandle, NULL);
+      if (NULL == sAddress){
+        iRet = TML_ERR_UNICODE;
+      }
+      else{
+        try{
+          ////////////////////////////////////////////////////////////////////////////
+          // Core is in shutdown process:
+          iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_IsAccessible();
           if (TML_SUCCESS == iRet){
-            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " succeeded");
-          }
-          else{
-            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " failed !");
+            ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "API", "Cmd", "tml_Core_Connect");
+            iRet = ((tmlCoreWrapper*)coreHandle)->tmlCoreWrapper_Connect(sAddress, true, connectionHandle, NULL);
+            if (TML_SUCCESS == iRet){
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " succeeded");
+            }
+            else{
+              ((tmlCoreWrapper*)coreHandle)->log (TML_LOG_CORE_API, "TMLCore", "tml_Core_Connect", sAddress, " failed !");
+            }
           }
         }
-      }
-      catch (...){
-        iRet = TML_ERR_COMMON;
+        catch (...){
+          iRet = TML_ERR_COMMON;
+        }
       }
     }
   }
