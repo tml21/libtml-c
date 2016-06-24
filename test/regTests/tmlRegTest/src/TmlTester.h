@@ -66,6 +66,8 @@ protected:
 
   bool checkConnectionCount(int iCore, int nExpectedConnections, SIDEX_TCHAR* debugText = NULL);
   bool checkRemoteProfileCount(TML_CONNECTION_HANDLE hConnection, int nExpectedProfiles, SIDEX_TCHAR* debugText = NULL);
+  bool checkEventSubscriptionCount(int iCore, int nExpectedSubscriptions, SIDEX_TCHAR* sProfile, SIDEX_TCHAR* debugText = NULL);
+  bool checkBalancerSubscriptionCount(int iCore, int nExpectedSubscriptions, SIDEX_TCHAR* sProfile, SIDEX_TCHAR* debugText = NULL);
 
   SIDEX_INT32  getSidexListCount(SIDEX_VARIANT vList, SIDEX_TCHAR* debugText = NULL);
   SIDEX_TCHAR* getSidexListStringItem(SIDEX_VARIANT vList, SIDEX_INT32 index, SIDEX_TCHAR* debugText = NULL); // delete after use!
