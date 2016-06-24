@@ -182,20 +182,13 @@ typedef  void (*TML_ON_TLS_ERROR_CB_FUNC)(TML_CONNECTION_HANDLE connection, SIDE
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  * @param   pAcceptCB reference to callback handler method executed to notify user app level that a TLS request was received,<br>
- *          allowing to accept or deny it according to the return value of the handler.<br>You can use NULL value for this parameter.
- *          This will make libtml-tls to set the default accept handler which always accept every TLS negotiation
- * @param   pCertReqCB reference to callback handler method executed to know where is located the certificate file to be used to cipher the session.<br>
- *          You can use NULL value for this parameter. This will make libtml-tls Library to set the default certificate handler which returns a path
- *          to a test certificate. It is highly recommended to set this handler, however you can use NULL value for development environment
- * @param   pPrivateKeyReqCB reference to callback method executed to know where is located the private key file to be used to cipher the session.<br>
- *          You can use NULL value for this parameter. This will make libtml-tls Library to set the default private key handler which returns a path
- *          to the test private key. It is highly recommended to set this handler, however you can use NULL values under development environment
+ *          allowing to accept or deny it according to the return value of the handler.
+ * @param   pCertReqCB reference to callback handler method executed to know where is located the certificate file to be used to cipher the session.
+ * @param   pPrivateKeyReqCB reference to callback method executed to know where is located the private key file to be used to cipher the session.
  * @param   bAccept TML_TRUE if the current core instance could accept incoming TLS connections, otherwise TML_FALSE is returned
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
- *
- * @note    It is highly recommended to set the handler on production environment because the private key and certificate file are public !
  */
 TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_AcceptNegotiation(TML_CORE_HANDLE coreHandle, 
                                                                      TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC pAcceptCB, 
