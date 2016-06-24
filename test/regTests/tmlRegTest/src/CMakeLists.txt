@@ -38,6 +38,7 @@
 set(COMMON_INCLUDE_PATH ../../../../common/src)
 set(SIDEX_INCLUDE_PATH ../../../../sidex/src)
 set(TML_INCLUDE_PATH ../../../../tml/src)
+set(TMLTLS_INCLUDE_PATH ../../../../tml-tls/src)
 set(AXL_INCLUDE_PATH2 ../../${AXLINCLUDE})
 set(VORTEX_INCLUDE_PATH2 ../../${VORTEXINCLUDE})
 
@@ -205,12 +206,14 @@ set	 (TEST_SOURCES_HEADER
   "TmlConnectionTester.h"
   "TmlCore.h"
   "TmlMultipleListenersTester.h"
-  "TmlSendingCommandsTester.h"
   "tmlrt_Connections.h"
   "tmlrt_MultipleListeners.h"
   "tmlrt_SendingCommands.h"
+  "tmlrt_TLS.h"
   "tmlrt_Utils.h"
-  "TmlTester.h")
+  "TmlSendingCommandsTester.h"
+  "TmlTester.h"
+  "TmlTLSTester.h")
 set  (TEST_SOURCES
   "TestingForReturns.cpp"
   "TestingProcess.cpp"
@@ -218,13 +221,15 @@ set  (TEST_SOURCES
   "TmlConnectionTester.cpp"
   "TmlCore.cpp"
   "TmlMultipleListenersTester.cpp"
-  "TmlSendingCommandsTester.cpp"
   "tmlrt.cpp"
   "tmlrt_Connections.cpp"
   "tmlrt_MultipleListeners.cpp"
   "tmlrt_SendingCommands.cpp"
+  "tmlrt_TLS.cpp"
   "tmlrt_Utils.cpp"
+  "TmlSendingCommandsTester.cpp"
   "TmlTester.cpp"
+  "TmlTLSTester.cpp"
   "../../../../common/src/unicode.cpp")
 
 add_executable(${TARGETNAME_LOCAL} 
@@ -243,6 +248,7 @@ INCLUDE_DIRECTORIES (${AXLINCLUDE})
 INCLUDE_DIRECTORIES (${VORTEXINCLUDE})
 INCLUDE_DIRECTORIES (${SIDEX_INCLUDE_PATH})
 INCLUDE_DIRECTORIES (${TML_INCLUDE_PATH})
+INCLUDE_DIRECTORIES (${TMLTLS_INCLUDE_PATH})
 INCLUDE_DIRECTORIES (".")
 INCLUDE_DIRECTORIES (${COMMON_INCLUDE_PATH})
 
@@ -251,5 +257,6 @@ INCLUDE_DIRECTORIES (${COMMON_INCLUDE_PATH})
 #######################################################
 TARGET_LINK_LIBRARIES(${TARGET} ${SIDEXLIBNAME})
 TARGET_LINK_LIBRARIES(${TARGET} ${TMLLIBNAME})
+TARGET_LINK_LIBRARIES(${TARGET} ${TLSLIBNAME})
 TARGET_LINK_LIBRARIES(${TARGET} ${AXLLIB})
 TARGET_LINK_LIBRARIES(${TARGET} ${VORTEXLIB})

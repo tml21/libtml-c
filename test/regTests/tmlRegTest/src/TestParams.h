@@ -39,15 +39,55 @@
 
 #include "tmlrt_Utils.h"
 
-extern SIDEX_TCHAR* S_TP_TESTPARAMS;
-extern SIDEX_TCHAR* S_TP_NETWORK;
+/*
+  Used abbreviations:
+  -------------------
+  S_  = String
+  TN  = Test params document name
+  TG  = Group
+  TP  = Parameter
+  TD  = Default value
+  CRT = Certificate
+  FP  = Fingerprint
+*/
+
+// document name
+extern SIDEX_TCHAR* S_TN_TESTPARAMS;
+
+// group names
+extern SIDEX_TCHAR* S_TG_NETWORK;
+extern SIDEX_TCHAR* S_TG_TEST;
+extern SIDEX_TCHAR* S_TG_TLS;
+
+// parameter names
 extern SIDEX_TCHAR* S_TP_CARDS;
-extern SIDEX_TCHAR* S_TP_127_0_0_1;
 extern SIDEX_TCHAR* S_TP_FIRSTPORTNUMBER;
-extern SIDEX_TCHAR* S_TP_TEST;
+
 extern SIDEX_TCHAR* S_TP_LOOPCOUNT;
 
-#define DEFAULT_PORTNUMBER 42042
+extern SIDEX_TCHAR* S_TP_ISREPEATER;
+extern SIDEX_TCHAR* S_TP_MAXIDLETIME;
+extern SIDEX_TCHAR* S_TP_TLSREPEATERHOST;
+extern SIDEX_TCHAR* S_TP_TLSREPEATERPORT;
+
+extern SIDEX_TCHAR* S_TP_LOCATION;
+extern SIDEX_TCHAR* S_TP_CRT;
+extern SIDEX_TCHAR* S_TP_CRT2;
+extern SIDEX_TCHAR* S_TP_KEY;
+extern SIDEX_TCHAR* S_TP_KEY2;
+extern SIDEX_TCHAR* S_TP_FP_SHA1;
+extern SIDEX_TCHAR* S_TP_FP_MD5;
+
+// default values
+extern SIDEX_TCHAR* S_TD_127_0_0_1;
+
+extern SIDEX_TCHAR* S_TD_TLS_LOCATION;
+extern SIDEX_TCHAR* S_TD_TLS_CRT;
+extern SIDEX_TCHAR* S_TD_TLS_CRT2;
+extern SIDEX_TCHAR* S_TD_TLS_KEY;
+extern SIDEX_TCHAR* S_TD_TLS_KEY2;
+extern SIDEX_TCHAR* S_TD_TLS_FP_SHA1;
+extern SIDEX_TCHAR* S_TD_TLS_FP_MD5;
 
 class CTestParams
 {
@@ -70,6 +110,19 @@ public:
   int          getFirstPortNumber();
 
   int          getTestLoopCount();
+
+  bool         isActingAsRepeater();
+  int          getMaxIdleTime();
+  SIDEX_TCHAR* getTlsRepeaterHost();              // returned string has to be freed after use
+  int          getTlsRepeaterPort();
+
+  SIDEX_TCHAR* getTlsLocation();                  // returned string has to be freed after use
+  SIDEX_TCHAR* getTlsCrt();                       // returned string has to be freed after use
+  SIDEX_TCHAR* getTlsCrt2();                      // returned string has to be freed after use
+  SIDEX_TCHAR* getTlsKey();                       // returned string has to be freed after use
+  SIDEX_TCHAR* getTlsKey2();                      // returned string has to be freed after use
+  SIDEX_TCHAR* getTlsFingerprintSHA1();           // returned string has to be freed after use
+  SIDEX_TCHAR* getTlsFingerprintMD5();            // returned string has to be freed after use
 };
 
 extern CTestParams* TestParams;

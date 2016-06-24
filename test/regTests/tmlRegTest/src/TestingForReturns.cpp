@@ -100,7 +100,7 @@ void TestingForReturns::messageOutput(SIDEX_TCHAR* messageText, bool withProcess
       {
         if(m_testSectionName[0])
         {
-          if(hasText) wcout << ":";
+          if(hasText) wcout << S_COLON;
           wcout << m_testSectionName;
           hasText = true;
         }
@@ -152,11 +152,11 @@ void TestingForReturns::errorOutput(SIDEX_TCHAR* messageText, bool withErrorCode
     wcout << "Test failed at " << m_testProcessName;
     if(m_testSectionName)
     {
-      if(m_testSectionName[0]) wcout << ":" << m_testSectionName;
+      if(m_testSectionName[0]) wcout << S_COLON << m_testSectionName;
     }
     if(messageText)
     {
-      if(messageText[0]) wcout << ":" << messageText;
+      if(messageText[0]) wcout << S_COLON << messageText;
     }
     if(withErrorCode) wcout << " with ErrorCode " << m_iErr;
     wcout << endl;
@@ -202,5 +202,60 @@ bool TestingForReturns::checkForValue(SIDEX_TCHAR* name, SIDEX_INT32 desiredValu
                           tmlrt_itoa(actualValue), 5), false, true);
   }
   if(deleteName && name) DELETE_STR(name);
+  return(result);
+}
+
+bool TestingForReturns::checkForValue(SIDEX_TCHAR* name, SIDEX_TCHAR* desiredValue, SIDEX_TCHAR* actualValue,
+                                      bool deleteName, bool deleteDesiredVal, bool deleteActualVal)
+{
+  if(!desiredValue) desiredValue = S_EMPTY;
+  if(!actualValue)  actualValue  = S_EMPTY;
+  bool result = (tmlrt_cmp(actualValue, desiredValue) == 0);
+  if(!result)
+  {
+    errorOutput(tmlrt_cat(tmlrt_cat(name,
+                                    tmlrtT(" expected as "),
+                                    desiredValue),
+                          tmlrtT(", but is "),
+                          actualValue, 1), false, true);
+  }
+  if(deleteName       && name        ) DELETE_STR(name);
+  if(deleteDesiredVal && desiredValue) DELETE_STR(desiredValue);
+  if(deleteActualVal  && actualValue ) DELETE_STR(actualValue);
+  return(result);
+}
+
+bool TestingForReturns::checkForDisparity(SIDEX_TCHAR* name, SIDEX_INT32 firstValue, SIDEX_INT32 secondValue, bool deleteName)
+{
+  bool result = (secondValue != firstValue);
+  if(!result)
+  {
+    errorOutput(tmlrt_cat(tmlrt_cat(name,
+                                    tmlrtT(" expected as different to "),
+                                    tmlrt_itoa(firstValue), 4),
+                          tmlrtT(", but is equal!"),
+                          NULL, 1), false, true);
+  }
+  if(deleteName && name) DELETE_STR(name);
+  return(result);
+}
+
+bool TestingForReturns::checkForDisparity(SIDEX_TCHAR* name, SIDEX_TCHAR* firstValue, SIDEX_TCHAR* secondValue,
+                                          bool deleteName, bool deleteFirstVal, bool deleteSecondVal)
+{
+  if(!firstValue)  firstValue  = S_EMPTY;
+  if(!secondValue) secondValue = S_EMPTY;
+  bool result = (tmlrt_cmp(secondValue, firstValue) != 0);
+  if(!result)
+  {
+    errorOutput(tmlrt_cat(tmlrt_cat(name,
+                                    tmlrtT(" expected as different to "),
+                                    firstValue),
+                          tmlrtT(", but is equal!"),
+                          NULL, 1), false, true);
+  }
+  if(deleteName      && name       ) DELETE_STR(name);
+  if(deleteFirstVal  && firstValue ) DELETE_STR(firstValue);
+  if(deleteSecondVal && secondValue) DELETE_STR(secondValue);
   return(result);
 }

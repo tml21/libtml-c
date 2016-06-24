@@ -78,6 +78,9 @@ public:
   bool checkForExpectedReturnCode(TML_INT32 expectedReturnCode, SIDEX_TCHAR* messageText = NULL, bool deleteText = false);
   bool checkForSuccess(SIDEX_TCHAR* messageText = NULL, bool deleteText = false);
   bool checkForValue(SIDEX_TCHAR* name, SIDEX_INT32 desiredValue, SIDEX_INT32 actualValue, bool deleteName = false);
+  bool checkForValue(SIDEX_TCHAR* name, SIDEX_TCHAR* desiredValue, SIDEX_TCHAR* actualValue, bool deleteName = false, bool deleteDesiredVal = false, bool deleteActualVal = false);
+  bool checkForDisparity(SIDEX_TCHAR* name, SIDEX_INT32 firstValue, SIDEX_INT32 secondValue, bool deleteName = false);
+  bool checkForDisparity(SIDEX_TCHAR* name, SIDEX_TCHAR* firstValue, SIDEX_TCHAR* secondValue, bool deleteName = false, bool deleteFirstVal = false, bool deleteSecondVal = false);
 };
 
 #endif  //TESTINGFORRETURNS_H
