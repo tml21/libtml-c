@@ -126,6 +126,7 @@
       wcout << endl;
 
       startRepeater();
+      result = 0;
     }
     else
     {
