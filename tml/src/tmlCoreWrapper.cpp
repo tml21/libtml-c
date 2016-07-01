@@ -2836,6 +2836,10 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
 void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
 
   TML_UINT32 iCount = 0;
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
+
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
   for (TML_INT32 i = iCount-1; i >= 0; --i){
     TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
@@ -2844,6 +2848,9 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
       ((tmlConnectionManageObj*)connection)->deregisterConnnectionLost();
     }
   }
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
 }
      
 /**
@@ -2852,6 +2859,9 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
 void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle){
 
   TML_UINT32 iCount = 0;
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem");
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
   bool bFound = false;
   for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
@@ -2866,6 +2876,9 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
       delete (tmlConnectionManageObj*)tmpConnection;
     }
   }
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem");
 }
 
      
@@ -2876,7 +2889,15 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDL
   SIDEX_INT32 iRet;
   SIDEX_INT32 iPos;
   SIDEX_VARIANT vObj = sidex_Variant_New_Integer(connectionHandle);
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem");
+
   iRet = sidex_Variant_List_Append(m_connectionMgrObjs, vObj, &iPos);
+
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem");
   sidex_Variant_DecRef(vObj);
   return iRet;
 }
@@ -2889,7 +2910,15 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount(TML_UINT32* iCount)
   TML_INT32 iRet = TML_SUCCESS;
 
   TML_INT32 iSize = 0;
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount");
+
   iRet = sidex_Variant_List_Size (m_connectionMgrObjs, &iSize);
+
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount");
   *iCount = (TML_UINT32)iSize;
 
   if (SIDEX_SUCCESS != iRet){
@@ -2905,6 +2934,11 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CO
   TML_INT32 iRet = TML_SUCCESS;
 
   SIDEX_VARIANT vObj;
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Get_Connection");
+
+
   iRet = sidex_Variant_List_Get(m_connectionMgrObjs, index, &vObj);
   if (SIDEX_SUCCESS == iRet){
     SIDEX_INT64 iHandle = 0;
@@ -2916,6 +2950,10 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CO
   if (SIDEX_SUCCESS != iRet){
     iRet = TML_ERR_INFORMATION_UNDEFINED;
   }
+
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Get_Connection");
   return iRet;
 }
 
