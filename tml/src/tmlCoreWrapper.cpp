@@ -2843,10 +2843,16 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
   for (TML_INT32 i = iCount-1; i >= 0; --i){
     TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
+    ///////////////////////////////////////////////////////////////////////////
+    // Begin of critical section
+    getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
     tmlCoreWrapper_Get_Connection (i, &connection);
     if (connection){
       ((tmlConnectionManageObj*)connection)->deregisterConnnectionLost();
     }
+    ///////////////////////////////////////////////////////////////////////////
+    // End of critical section
+    getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
   }
   ///////////////////////////////////////////////////////////////////////////
   // End of critical section
@@ -2869,7 +2875,13 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
     tmlCoreWrapper_Get_Connection (i, &tmpConnection);
     if (connectionHandle == tmpConnection){
       bFound = true;
+      ///////////////////////////////////////////////////////////////////////////
+      // Begin of critical section
+      getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem");
       sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
+      ///////////////////////////////////////////////////////////////////////////
+      // End of critical section
+      getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem");
       // The Object has to be removed out of the sender connection object hashtable:
       m_sender->RemoveConnectionFromHT((tmlConnectionManageObj*)tmpConnection);
       // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
