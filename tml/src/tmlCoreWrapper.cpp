@@ -2836,10 +2836,6 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_CloseAll(){
 void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
 
   TML_UINT32 iCount = 0;
-  ///////////////////////////////////////////////////////////////////////////
-  // Begin of critical section
-  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
-
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
   for (TML_INT32 i = iCount-1; i >= 0; --i){
     TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
@@ -2854,9 +2850,6 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
     // End of critical section
     getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
   }
-  ///////////////////////////////////////////////////////////////////////////
-  // End of critical section
-  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
 }
      
 /**
@@ -2865,9 +2858,6 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
 void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE connectionHandle){
 
   TML_UINT32 iCount = 0;
-  ///////////////////////////////////////////////////////////////////////////
-  // Begin of critical section
-  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem");
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
   bool bFound = false;
   for (TML_UINT32 i = 0; i < iCount && !bFound; ++i){
@@ -2888,9 +2878,6 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
       delete (tmlConnectionManageObj*)tmpConnection;
     }
   }
-  ///////////////////////////////////////////////////////////////////////////
-  // End of critical section
-  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem");
 }
 
      
