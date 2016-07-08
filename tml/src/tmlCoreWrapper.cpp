@@ -1,6 +1,6 @@
 /* 
  *  libTML:  A BEEP based Messaging Suite
- *  Copyright (C) 2015 wobe-systems GmbH
+ *  Copyright (C) 2016 wobe-systems GmbH
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public License
