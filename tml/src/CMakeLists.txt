@@ -382,7 +382,7 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 
 #######################################################
-## If LINUX ARM32 (or more?)
+## If LINUX ARM32 add current versions to shared library suffix:
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(TML_VERSION_MAJOR 1)
