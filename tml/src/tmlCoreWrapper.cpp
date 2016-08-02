@@ -177,10 +177,6 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   
   m_csObj = new tmlCriticalSectionObj();
-  ////////////////////////////////
-  // mutex to protect tmlSingleCall::getConnection
-  m_csGetConnection = new tmlCriticalSectionObj();
-
   //m_ctx = ctx;
   ///////////////////////////////////////////////////////////////////
   // The Vortex ececution context will be created in the DllMain now
@@ -1046,7 +1042,6 @@ vortex_ctx_unref (&m_ctx);
   ////////////////////////////////
   // Critical section object
   delete (m_csObj);
-  delete (m_csGetConnection);
 }
 
 
@@ -2489,14 +2484,6 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
 
 
 /**
- * @brief    returns mutex protecting tmlSingleCall::getConnection
- */
-tmlCriticalSectionObj* tmlCoreWrapper::getCsGetConnection(){
-  return m_csGetConnection;
-}
-
-
-/**
  */
 int tmlCoreWrapper::getLogFileIndex(){
   return m_iLogFileIndex;
@@ -2837,19 +2824,19 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
 
   TML_UINT32 iCount = 0;
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
   for (TML_INT32 i = iCount-1; i >= 0; --i){
     TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
-    ///////////////////////////////////////////////////////////////////////////
-    // Begin of critical section
-    getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
     tmlCoreWrapper_Get_Connection (i, &connection);
     if (connection){
       ((tmlConnectionManageObj*)connection)->deregisterConnnectionLost();
     }
-    ///////////////////////////////////////////////////////////////////////////
-    // End of critical section
-    getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
   }
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
 }
      
 /**
