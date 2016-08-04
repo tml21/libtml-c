@@ -49,6 +49,7 @@ tmlConnectionManageObjBase::tmlConnectionManageObjBase()
   m_coreHandle       = TML_HANDLE_TYPE_NULL;
   m_vortexConnection = NULL;
   m_bEncrypted       = TML_FALSE;
+  m_bConnectionLostRegistered = TML_FALSE;
 }
 
 /**
@@ -80,7 +81,7 @@ VortexConnection* tmlConnectionManageObjBase::getVortexConnection(){
   */
 void tmlConnectionManageObjBase::setVortexConnection(VortexConnection* connection){
   if (connection != m_vortexConnection){
-    tmlCriticalSectionObj* mutex = ((tmlCoreWrapper*)m_coreHandle)->getCsCloseHandling();
+    tmlCriticalSectionObj* mutex = ((tmlCoreWrapper*)m_coreHandle)->getCsGetConnection();
     mutex->tmlCriticalSectionEnter("tmlConnectionManageObjBase::setVortexConnection");
 
     SIDEX_VARIANT list = ((tmlCoreWrapper*)m_coreHandle)->Get_ConnectionCloseList();
