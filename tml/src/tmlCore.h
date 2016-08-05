@@ -302,7 +302,7 @@ TML_CORE_API void DLL_CALL_CONV tml_Core_Get_Copyright_A(char** sValue, TML_INT3
  * @param    pPassWord   password (case insensitive)
  *
  * @returns  TML_SUCCESS in case of success<br>
- *           TML_ERR_UNICODE error in unicode conversion
+ *           TML_ERR_UNICODE error in unicode conversion or string reference is NULL
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_Password(const TML_CTSTR* pUserName, const TML_CTSTR* pPassWord);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_Password_X(const wchar_t* pUserName, const wchar_t* pPassWord);
@@ -381,7 +381,8 @@ TML_CORE_API void DLL_CALL_CONV tml_Configure_Thread_Pool_Handling(TML_INT32 iIn
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INITIALIZATION initialization error<br>
- *          TML_ERR_LISTENER_NOT_INITIALIZED listener initialization error
+ *          TML_ERR_LISTENER_NOT_INITIALIZED listener initialization error<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Open(TML_CORE_HANDLE* coreHandle, TML_INT32 iLogValue);
 
@@ -391,7 +392,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Open(TML_CORE_HANDLE* coreHandle, 
  *
  * @param   coreHandle reference to TML core handle (TML_CORE_HANDLE)
  *
- * @returns TML_SUCCESS or error code
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Close(TML_CORE_HANDLE* coreHandle);
 
@@ -404,7 +406,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Close(TML_CORE_HANDLE* coreHandle)
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  *
- * @returns TML_SUCCESS or error code
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_GeneralDeregistration(TML_CORE_HANDLE coreHandle);
 
@@ -467,7 +470,9 @@ TML_CORE_API void DLL_CALL_CONV tml_Sys_Free(TML_POINTER ptr);
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  * @param   profile    profile name
  *
- * @returns TML_SUCCESS or error code
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register(TML_CORE_HANDLE coreHandle, const TML_CTSTR* profile);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_X(TML_CORE_HANDLE coreHandle, const wchar_t* profile);
@@ -495,6 +500,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_A(TML_CORE_HANDLE core
  * @param   profile    profile name
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_DISPATCHER_NOT_CREATED profile not registered
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Unregister(TML_CORE_HANDLE coreHandle, const TML_CTSTR* profile);
@@ -521,7 +528,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Unregister_A(TML_CORE_HANDLE co
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  * @param   iSize      reference to profile count
  *
- * @returns TML_SUCCESS or error code
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_Registered_Count(TML_CORE_HANDLE coreHandle, TML_INT32* iSize);
 
@@ -539,7 +547,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_Registered_Count(TML_CORE_H
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_HASH invalid hashtable<br>
  *          TML_ERR_NOPROFILES no profiles are registered<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_Registered(TML_CORE_HANDLE coreHandle, SIDEX_VARIANT* profiles);
 
@@ -556,8 +564,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_Registered(TML_CORE_HANDLE 
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_HASH invalid hashtable<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_RegisterState(TML_CORE_HANDLE coreHandle, TML_CTSTR* profile, TML_BOOL* bRegistered);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_RegisterState_X(TML_CORE_HANDLE coreHandle, wchar_t* profile, TML_BOOL* bRegistered);
@@ -590,10 +598,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Get_RegisterState_A(TML_CORE_HA
  *                     Use tml_Profile_Set_OnDeleteCmd() callback registration to release memory allocated by pCBData.
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_DISPATCHER_CMD_NOT_REGISTERED try to unregister a non existing command handler<br>
  *          TML_ERR_DISPATCHER_NOT_CREATED invalid profile<br>
- *          TML_ERR_UNICODE unicode conversion error<br>
+ *          TML_ERR_UNICODE unicode conversion error or string reference is NULL
  *
  * @see tml_Profile_Set_OnDeleteCmd(), TML_ON_CMD_DISPATCH_CB_FUNC()
  */
@@ -626,8 +634,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Register_Cmd_A(TML_CORE_HANDLE 
  * @param   pCBData    user data or NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_DISPATCHER_NOT_CREATED invalid profile
  *
  * @see TML_ON_CMD_DELETION_CB_FUNC()
@@ -663,8 +671,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnDeleteCmd_A(TML_CORE_HAND
  * @param   pCBData    user data or NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_DISPATCHER_NOT_CREATED invalid profile
  *
  * @see TML_ON_CMD_CUSTOM_DISPATCH_CB_FUNC()
@@ -690,11 +698,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Profile_Set_OnCustomDispatch_A(TML_CORE
  * @brief  Set listener port.
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
- * @param   sPort      port number, 0 = random port number, default 44000
+ * @param   sPort      port number, "0" = random port number, default 44000
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_NOT_OPERABLE_AT_THE_MOMENT listener enable<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_MISSING_OBJ invalid port or core handle
  *
  * @see tml_Core_Get_ListenerPort()
@@ -724,8 +732,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerPort_A(TML_CORE_HANDLE
  * @param   sPort      borrowed reference to port number
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Core_Set_ListenerPort()
  */
@@ -750,16 +758,16 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerPort_A(TML_CORE_HANDLE
  * @ingroup  coreManagement
  * @brief   Set listener interface (IP)
  *
- * The listener can be assigned to a specific network interface or to all network interfaces available ("0.0.0.0) 
- * which is the default.
+ * The listener can be assigned to a specific network interface or to all network interfaces available / "0.0.0.0" 
+ * which is also the default.
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  * @param   sIP        interface IP
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_NOT_OPERABLE_AT_THE_MOMENT listener is already enabled<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle or interface address
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Core_Get_ListenerIP()
  */
@@ -788,8 +796,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerIP_A(TML_CORE_HANDLE c
  * @param   sIP        borrowed reference to interface IP
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Core_Set_ListenerIP()
  */
@@ -823,9 +831,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerIP_A(TML_CORE_HANDLE c
  * @param   bEnable      TML_TRUE to enable, TML_FALSE to disable the listener
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_LISTENER_ADDRESS_BINDING listener start failed - invalid port number or interface<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_LISTENER_NOT_INITIALIZED listener not initialized<br>
  *          TML_ERR_LISTENER_ALREADY_STARTED listener already enabled
  *
@@ -842,7 +849,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_ListenerEnabled(TML_CORE_HANDL
  * @param   bEnable    reference to listener status (TML_FALSE, TML_TRUE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Core_Set_ListenerEnabled()
  */
@@ -865,7 +872,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerEnabled(TML_CORE_HANDL
  * @param   iWindowSize The window size.
  *
  * @returns TML_SUCCESS in case of success.<br>
- *          TML_ERR_MISSING_OBJ in case of an invalid coreHandle.
+ *          TML_ERR_MISSING_OBJ invalid handle.
  *
  * @see tml_Core_Get_WindowSize()
  */
@@ -880,10 +887,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_WindowSize(TML_CORE_HANDLE cor
  * By default the window size is 32768 byte.
  *
  * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
- * @param   iWindowSize Reference to the return value.
+ * @param   iWindowSize reference to the return value.
  *
  * @returns TML_SUCCESS in case of success.<br>
- *          TML_ERR_MISSING_OBJ in case of an invalid coreHandle.
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter.
  *
  * @see tml_Core_Set_WindowSize()
  */
@@ -919,7 +926,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_WindowSize(TML_CORE_HANDLE cor
  * @param   iLogValue  debug log value
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Core_Get_LoggingValue()
  */
@@ -931,10 +938,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_LoggingValue(TML_CORE_HANDLE c
  * @brief   Get current log value.
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
- * @param   iLogValue  debug log value 
+ * @param   iLogValue  reference to debug log value 
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter.
  *
  * @see tml_Core_Set_LoggingValue()
  */
@@ -964,8 +971,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_LoggingValue(TML_CORE_HANDLE c
  *          ERR_DUMPCONTENT internal data format error<br>
  *          TML_ERR_SENDER_COMMUNICATION communication error<br>
  *          TML_ERR_TIMEOUT timeout before receiving reply<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Send_AsyncMessage(), tml_Bal_Send_AsyncMessage(), tml_Bal_Send_SyncMessage()
  */
@@ -1007,8 +1014,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_SyncMessage_A(TML_CORE_HANDLE core
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
  *          TML_ERR_SENDER_INVALID_PARAMS invalid address (host,IP,port)<br>
  *          TML_ERR_SENDER_PROFILE_NOT_SUPPORTED profile not supported by receiver<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Send_SyncMessage(), tml_Bal_Send_SyncMessage(), tml_Bal_Send_AsyncMessage()
  */
@@ -1075,7 +1082,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncProgressReply(TML_COMMAND_HAN
  *          TML_ERR_COMMAND_REPLY_TYPE_UNDEFINED reply type not allowed<br>
  *          TML_ERR_LISTENER_NOT_INITIALIZED listener initialization failed<br>
  *          TML_ERR_TIMEOUT_ON_WAIT_FOR_ASYNC internal timeout error<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_LISTENER_COMMUNICATION communication error
  *
  * @see tml_Cmd_Register_StatusReply()
@@ -1107,8 +1114,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Send_AsyncStatusReply_A(TML_COMMAND_HAN
  * @param   sPort       port number
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Evt_Get_Subscribed_MessageDestinations(), tml_Evt_Unsubscribe_MessageDestination()
  */
@@ -1137,7 +1144,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Subscribe_MessageDestination_A(TML_
  * @param   sProfile          profile identification string
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Connection_Evt_Unsubscribe_MessageDestination()
@@ -1165,13 +1172,14 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Subscribe_MessageDestina
  *
  * @param   coreHandle    TML core handle (TML_CORE_HANDLE)
  * @param   profile       profile name<br>
- *                        An empty string or TML_HANDLE_TYPE_NULL will return event receivers for all registered profiles.
+ *                        An empty string or NULL will return event receivers for all registered profiles.
  * @param   subscriptions reference to a table with event receiver data<br>
  *                        The table has to be released with sidex_Variant_DecRef().<br>
  *                        Table columns are "PROFILE", "HOST" and "PORT".<br>
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Evt_Subscribe_MessageDestination()
  */
@@ -1202,8 +1210,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_
  * @param   sPort       port number
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Evt_Subscribe_MessageDestination(), tml_Evt_Unsubscribe_All_MessageDestinations()
  */
@@ -1232,7 +1240,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_MessageDestination_A(TM
  * @param   sProfile          profile identification string
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Connection_Evt_Subscribe_MessageDestination()
@@ -1260,10 +1268,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Unsubscribe_MessageDesti
  *
  * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
  * @param   profile     profile name<br>
- *                      An empty string or TML_HANDLE_TYPE_NULL will unsubscribe all event receivers for any registered profile.
+ *                      An empty string or NULL will unsubscribe all event receivers for any registered profile.
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Evt_Unsubscribe_MessageDestination()
  */
@@ -1294,8 +1302,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_All_MessageDestinations
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL.
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see TML_ON_EVT_ERROR_CB_FUNC()
  */
@@ -1329,8 +1337,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnError_A(TML_CORE_HANDLE coreH
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL.
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Evt_Get_MaxQueuedEventMessages(), tml_Evt_Set_MaxQueuedEventMessages(), tml_Evt_Send_Message(), TML_ON_EVT_QUEUE_OVERFLOW_CB_FUNC()
  */
@@ -1363,8 +1371,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnQueueOverflow_A(TML_CORE_HAND
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see  tml_Evt_Send_Message(), TML_ON_POPULATE_CB_FUNC()
  */
@@ -1394,12 +1402,12 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPopulate_A(TML_CORE_HANDLE co
  * @param   profile     profile name
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INITIALIZATION initialization error<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED sender initialization failed<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
- *          TML_ERR_UNICODE unicode conversion error<br>
+ *          TML_ERR_UNICODE unicode conversion error or string reference is NULL
  *
  * @see tml_Evt_Subscribe_MessageDestination(), tml_Evt_Set_OnPopulate(), tml_Evt_Get_MaxQueuedEventMessages(), tml_Evt_Set_MaxQueuedEventMessages(), tml_Evt_Set_OnQueueOverflow()
  */
@@ -1435,7 +1443,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_Message_A(TML_CORE_HANDLE core
  * @param   iTimeout    timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -1476,7 +1484,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_SubscriptionRequest_A(TML_CORE
  * @param  iTimeout         timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -1518,8 +1526,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_SubscriptionRequest
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Evt_Send_SubscriptionRequest(), tml_Evt_Send_UnsubscriptionRequest(), TML_ON_PEER_REGISTRATION_CB_FUNC()
  */
@@ -1554,7 +1562,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_OnPeerRegister_A(TML_CORE_HANDL
  * @param   iTimeout    timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -1595,7 +1603,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_UnsubscriptionRequest_A(TML_CO
  * @param  iTimeout         timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -1635,8 +1643,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Evt_Send_UnsubscriptionReque
  * @param   sPort       port number
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Bal_Get_Subscribed_MessageDestinations(), tml_Bal_Unsubscribe_MessageDestination() 
  */
@@ -1665,7 +1673,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Subscribe_MessageDestination_A(TML_
  * @param   sProfile          profile identification string
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Connection_Bal_Unsubscribe_MessageDestination()
@@ -1693,13 +1701,13 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Subscribe_MessageDestina
  *
  * @param   coreHandle    TML core handle (TML_CORE_HANDLE)
  * @param   profile       profile name<br>
- *                        An empty string or TML_HANDLE_TYPE_NULL will return receivers for all registered profiles.
+ *                        An empty string or NULL will return receivers for all registered profiles.
  * @param   subscriptions reference to a table with command receiver data<br>
  *                        The table has to be released with sidex_Variant_DecRef().
  *                        Table columns are "PROFILE", "HOST" and "PORT".
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Bal_Subscribe_MessageDestination()
  */
@@ -1730,8 +1738,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_
  * @param   sPort       port number
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Bal_Subscribe_MessageDestination, tml_Bal_Unsubscribe_All_MessageDestinations()
  */
@@ -1760,7 +1768,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_MessageDestination_A(TM
  * @param   sProfile          profile identification string
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Connection_Bal_Subscribe_MessageDestination()
@@ -1788,10 +1796,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDesti
  *
  * @param   coreHandle  TML core handle (TML_CORE_HANDLE)
  * @param   profile       profile name<br>
- *                        If empty or TML_HANDLE_TYPE_NULL all receiver list of all registered profiles are cleared.
+ *                        If empty or NULL all receiver list of all registered profiles are cleared.
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Bal_Unsubscribe_MessageDestination()
  */
@@ -1825,8 +1833,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_All_MessageDestinations
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Bal_Send_AsyncMessage(), tml_Bal_Send_SyncMessage(), TML_ON_POPULATE_CB_FUNC() 
  */
@@ -1862,8 +1870,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPopulate_A(TML_CORE_HANDLE co
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see TML_ON_BAL_BUSYSTATUS_REQ_CB_FUNC(), tml_Bal_Set_OnCalculation()
  */
@@ -1896,8 +1904,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnBusyStatusRequest_A(TML_CORE_
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Bal_Send_SyncMessage(), tml_Bal_Send_AsyncMessage(), tml_Bal_Set_OnBusyStatusRequest(), TML_ON_BAL_CALCULATION_REQ_CB_FUNC() 
  */
@@ -1937,10 +1945,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnCalculation_A(TML_CORE_HANDLE
  *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
  *          ERR_DUMPCONTENT internal data format error<br>
  *          TML_ERR_SENDER_COMMUNICATION communication error<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_DESTINATION_OBJ_NOT_FOUND no command receiver registered<br>
  *          TML_ERR_TIMEOUT timeout before reply<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_LOAD_BALANCE_CALCULATION error in load balancing calculation<br>
  *
  * @see tml_Send_SyncMessage(), tml_Bal_Send_AsyncMessage()
@@ -1981,10 +1989,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SyncMessage_A(TML_CORE_HANDLE 
  *          TML_ERR_CHANNEL_NOT_INITIALIZED sender channel not initialized<br>
  *          ERR_DUMPCONTENT internal data format error<br>
  *          TML_ERR_SENDER_COMMUNICATION communication error<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_DESTINATION_OBJ_NOT_FOUND no command receiver registered<br>
  *          TML_ERR_TIMEOUT timeout before reply<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_LOAD_BALANCE_CALCULATION error in load balancing calculation<br>
  *
  * @see tml_Send_AsyncMessage(), tml_Bal_Send_SyncMessage()
@@ -2021,7 +2029,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_AsyncMessage_A(TML_CORE_HANDLE
  * @param   iTimeout    timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -2062,7 +2070,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SubscriptionRequest_A(TML_CORE
  * @param  iTimeout         timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -2104,8 +2112,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_SubscriptionRequest
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Bal_Send_SubscriptionRequest(), tml_Bal_Send_UnsubscriptionRequest(), TML_ON_PEER_REGISTRATION_CB_FUNC()
  */
@@ -2140,7 +2148,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_OnPeerRegister_A(TML_CORE_HANDL
  * @param   iTimeout    timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -2181,7 +2189,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_UnsubscriptionRequest_A(TML_CO
  * @param  iTimeout         timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -2222,7 +2230,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Send_UnsubscriptionReque
  * @param   iCount      maximum fail count
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Bal_Get_MaxConnectionFailCount()
  */
@@ -2240,7 +2248,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Set_MaxConnectionFailCount(TML_CORE
  * @param   iCount      reference to maximum fail count
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Bal_Set_MaxConnectionFailCount()
  */
@@ -2258,7 +2266,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_MaxConnectionFailCount(TML_CORE
  * @param   iCount      maximum fail count
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Evt_Get_MaxConnectionFailCount()
  */
@@ -2276,7 +2284,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_MaxConnectionFailCount(TML_CORE
  * @param   iCount      reference to maximum fail count
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Evt_Set_MaxConnectionFailCount()
  */
@@ -2294,7 +2302,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_MaxConnectionFailCount(TML_CORE
  * @param   iMaximum      maximum queue count
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Evt_Send_Message(), tml_Evt_Get_MaxQueuedEventMessages(), tml_Evt_Set_OnQueueOverflow()
  */
@@ -2312,7 +2320,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Set_MaxQueuedEventMessages(TML_CORE
  * @param   iMaximum      reference to maximum queue count
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Evt_Send_Message(), tml_Evt_Set_MaxQueuedEventMessages(), tml_Evt_Set_OnQueueOverflow()
  */
@@ -2326,7 +2334,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_MaxQueuedEventMessages(TML_CORE
  * @param    tmlhandle reference to a TML commandhandle (TML_COMMAND_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_INITIALIZATION initialization error
+ *          TML_ERR_INITIALIZATION initialization error<br>
+ *          TML_ERR_MISSING_OBJ invalid handle reference
  *
  * @see tml_Cmd_Free()
  */
@@ -2340,7 +2349,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Create(TML_COMMAND_HANDLE* tmlhandl
  * @param   tmlhandle reference to a TML command handle (TML_COMMAND_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid TML command handle
+ *          TML_ERR_MISSING_OBJ invalid handle reference
  *
  * @see tml_Cmd_Create()
  */
@@ -2357,7 +2366,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Free(TML_COMMAND_HANDLE* tmlhandle)
  * @param   pCBFunc    function or NULL (deregistration of previously registered handler)
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
- * @returns  TML_SUCCESS in case of success.
+ * @returns TML_SUCCESS in case of success.<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Send_AsyncProgressReply(), TML_ON_PROGRESS_REPLY_CB_FUNC(), tml_Cmd_Registered_Progress()
  */
@@ -2374,7 +2384,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_Progress(TML_COMMAND_HANDL
  * @param   pCBFunc    reference to handler function or NULL
  * @param   pCBData    reference to custom data or TML_HANDLE_TYPE_NULL
  *
- * @returns  TML_SUCCESS in case of success
+ * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Cmd_Register_Progress()
  */
@@ -2391,7 +2402,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_Progress(TML_COMMAND_HAN
  * @param   pCBFunc    handler function or NULL (deregistration of previously registered handler)
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
- * @returns  TML_SUCCESS in case of success.
+ * @returns TML_SUCCESS in case of success.<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Send_AsyncStatusReply(), TML_ON_STATUS_REPLY_CB_FUNC(), tml_Cmd_Registered_StatusReply()
  */
@@ -2421,7 +2433,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_StatusReply_A(TML_COMMAND_
  * @param   pCBFunc    reference to handler function or NULL
  * @param   pCBData    reference to custom data or TML_HANDLE_TYPE_NULL
  *
- * @returns  TML_SUCCESS in case of success 
+ * @returns TML_SUCCESS in case of success.<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Send_AsyncStatusReply(), tml_Cmd_Register_StatusReply()
  */
@@ -2437,7 +2450,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_StatusReply(TML_COMMAND_
  * @param   pCBFunc    handler function or NULL (deregistration of previously registered handler)
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
- * @returns  TML_SUCCESS in case of success
+ * @returns TML_SUCCESS in case of success.<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Send_AsyncMessage(), tml_Connection_SendAsync(), tml_Bal_Send_AsyncMessage(), TML_ON_COMMAND_READY_CB_FUNC(), tml_Cmd_Registered_CommandReady()
  */
@@ -2451,7 +2465,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Register_CommandReady(TML_COMMAND_H
  * @param   pCBFunc    reference to handler function or NULL
  * @param   pCBData    reference to custom data or TML_HANDLE_TYPE_NULL
  *
- * @returns  TML_SUCCESS in case of success 
+ * @returns TML_SUCCESS in case of success.<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see TML_ON_COMMAND_READY_CB_FUNC(), tml_Cmd_Register_CommandReady() 
  */
@@ -2473,7 +2488,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Registered_CommandReady(TML_COMMAND
  * @param   tmlhandle      TML command handle (TML_COMMAND_HANDLE)
  * @param   tmlcorehandle  TML core handle (TML_CORE_HANDLE)
  *
- * @returns  TML_SUCCESS in case of success
+ * @returns TML_SUCCESS in case of success.<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Cmd_Attr_Get_Core_Reference()
  */
@@ -2485,11 +2501,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Core_Reference(TML_COMMAND
  * @brief    Get listener core reference. 
  *
  * @param   tmlhandle      TML command handle (TML_COMMAND_HANDLE)
- * @param   tmlcorehandle  TML core handle (TML_CORE_HANDLE)
+ * @param   tmlcorehandle  reference to TML core handle (TML_CORE_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_ATTRIBUTE_NOT_SET missing attribute
+ *          TML_ERR_ATTRIBUTE_NOT_SET missing attribute<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Cmd_Attr_Set_Core_Reference()
  */
@@ -2507,7 +2523,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Core_Reference(TML_COMMAND
  * @param   profile   profile name
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Cmd_Attr_Get_Profile()
  */
@@ -2536,7 +2553,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Profile_A(TML_COMMAND_HAND
  * @param   profile   borrowed reference to profile name
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_ATTRIBUTE_NOT_SET missing attribute
  *
  * @see tml_Cmd_Attr_Set_Profile()
@@ -2568,7 +2585,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Profile_A(TML_COMMAND_HAND
  * @param   tmlhandle TML command handle (TML_COMMAND_HANDLE)
  * @param   iSesionID session id
  *
- * @returns  TML_SUCCESS in case of success
+ * @returns  TML_SUCCESS in case of success<br>
+ *           TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Cmd_Attr_Get_Session_ID()
  */
@@ -2583,6 +2601,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Session_ID(TML_COMMAND_HAN
  * @param   iSesionID reference to session id
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_ATTRIBUTE_NOT_SET missing attribute
  *
  * @see tml_Cmd_Attr_Set_Session_ID()
@@ -2600,7 +2619,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Session_ID(TML_COMMAND_HAN
  * @param   tmlhandle TML command handle (TML_COMMAND_HANDLE)
  * @param   channel TML channel
  *
- * @returns  TML_SUCCESS in case of success
+ * @returns  TML_SUCCESS in case of success<br>
+ *           TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Cmd_Attr_Get_Channel()
  */
@@ -2615,6 +2635,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Channel(TML_COMMAND_HANDLE
  * @param   channel reference to TML channel
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_ATTRIBUTE_NOT_SET missing attribute
  *
  * @see tml_Cmd_Attr_Set_Channel()
@@ -2632,7 +2653,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Channel(TML_COMMAND_HANDLE
  * @param   tmlhandle TML command handle (TML_COMMAND_HANDLE)
  * @param   channelID channel id
  *
- * @returns  TML_SUCCESS in case of success
+ * @returns  TML_SUCCESS in case of success<br>
+ *           TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Cmd_Attr_Get_Channel_ID()
  */
@@ -2647,6 +2669,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Channel_ID(TML_COMMAND_HAN
  * @param   channelID reference to channel id
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_ATTRIBUTE_NOT_SET missing attribute
  *
  * @see tml_Cmd_Attr_Set_Channel_ID()
@@ -2664,7 +2687,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Channel_ID(TML_COMMAND_HAN
  * @param   tmlhandle TML command handle (TML_COMMAND_HANDLE)
  * @param   iMessageID message id
  *
- * @returns  TML_SUCCESS in case of success
+ * @returns  TML_SUCCESS in case of success<br>
+ *           TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Cmd_Attr_Get_Message_ID()
  */
@@ -2679,6 +2703,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Set_Message_ID(TML_COMMAND_HAN
  * @param   iMessageID reference to message id
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_ATTRIBUTE_NOT_SET missing attribute.
  *
  * @see tml_Cmd_Attr_Set_Message_ID()
@@ -2703,6 +2728,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Attr_Get_Message_ID(TML_COMMAND_HAN
  *             Must be deallocated using the data type API sidex_Free_ReadString().
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_INFORMATION_UNDEFINED information is missing
  *
@@ -2742,8 +2768,9 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetCreationTime_A(TML_COMMAN
  *             YYYY = year, MM = month, DD= day, hh = hour, mm = minute, ss = second, ttt = miliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INITIALIZATION initialization error<br>
- *          TML_ERR_UNICODE error in unicode conversion
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL
  *
  * @see tml_Cmd_Header_GetCreationTime()
  */
@@ -2778,6 +2805,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCreationTime_A(TML_COMMAN
  * @param cmd       reference to command id
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED information is missing
  *
  * @see tml_Cmd_Header_SetCommand()
@@ -2795,6 +2823,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCreationTime_A(TML_COMMAN
  * @param cmd       command id
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INITIALIZATION initialization error
  *
  * @see tml_Cmd_Header_GetCommand()
@@ -2814,6 +2843,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetCommand(TML_COMMAND_HANDL
  * @param error reference to the error code
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED information is missing
  *
  * @see tml_Cmd_Header_SetError()
@@ -2832,6 +2862,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetError(TML_COMMAND_HANDLE 
  * @param error     error code
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INITIALIZATION initialization error<br>
  *
  * @see tml_Cmd_Header_GetError()
@@ -2848,6 +2879,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetError(TML_COMMAND_HANDLE 
  * @param iMsgLength reference to message length
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_INFORMATION_UNDEFINED information is missing
  *
@@ -2882,8 +2914,9 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetErrorMessage_A(TML_COMMAN
  * @param iMsgLength message length
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INITIALIZATION initialization error<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL
  *
  * @see tml_Cmd_Header_GetErrorMessage()
  */
@@ -2921,6 +2954,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetErrorMessage_A(TML_COMMAN
  * @param state reference to execution state
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED information is missing
  *
  * @see tml_Cmd_Header_SetState()
@@ -2939,6 +2973,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetState(TML_COMMAND_HANDLE 
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_COMMAND_STATE_UNDEFINED unknown command state<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INITIALIZATION initialization error<br>
  *
  * @see tml_Cmd_Header_GetState()
@@ -2961,6 +2996,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetState(TML_COMMAND_HANDLE 
  * @param mode      reference to execution mode
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED information is missing
  *
  * @see tml_Cmd_Header_SetMode()
@@ -2980,6 +3016,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetMode(TML_COMMAND_HANDLE t
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_COMMAND_MODE_UNDEFINED unknown execution mode<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INITIALIZATION initialization error
  *
  * @see tml_Cmd_Header_GetMode()
@@ -3007,6 +3044,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetMode(TML_COMMAND_HANDLE t
  * @param type      reference to reply type
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED information is missing
  *
  * @see tml_Cmd_Header_SetReplyType(), tml_Send_AsyncStatusReply()
@@ -3026,6 +3064,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetReplyType(TML_COMMAND_HAN
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_COMMAND_REPLY_TYPE_UNDEFINED unknown reply type<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INITIALIZATION initialization error
  *
  * @see tml_Cmd_Header_GetReplyType()
@@ -3043,6 +3082,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetReplyType(TML_COMMAND_HAN
  * @param progress Reference to the command execution progress (in percent).
  *
  * @returns TML_SUCCESS in case of success.<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED if the information is missing.
  *
  * @see tml_Cmd_Header_SetProgress(), tml_Send_AsyncProgressReply()
@@ -3060,6 +3100,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetProgress(TML_COMMAND_HAND
  * @param progress  progress value (0-100)
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_COMMAND_PROGRESS_RANGE progress not in range (0-100)
  *
  * @see tml_Cmd_Header_GetProgress(), tml_Send_AsyncProgressReply() 
@@ -3075,7 +3116,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetProgress(TML_COMMAND_HAND
  * @param iMsgLength reference to message length
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED information is missing
  *
  * @see tml_Send_AsyncStatusReply(), tml_Cmd_Header_SetReplyMessage(), sidex_Free_ReadString()
@@ -3107,7 +3149,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_GetReplyMessage_A(TML_COMMAN
  *
  * @returns TML_SUCCESS in case of success.<br>
  *          TML_ERR_INITIALIZATION initialization error<br>
- *          TML_ERR_UNICODE error in unicode conversion
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL
  *
  * @see tml_Send_AsyncStatusReply(), tml_Cmd_Header_GetReplyMessage()
  */
@@ -3141,6 +3184,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Header_SetReplyMessage_A(TML_COMMAN
  * @param   shandle   reference to SIDEX_HANDLE
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_CRITICAL_SECTION unsuccessful acquire
  *
  * @see tml_Cmd_Release_Sidex_Handle()
@@ -3158,6 +3202,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Acquire_Sidex_Handle(TML_COMMAND_HA
  * @param   tmlhandle TML command handle (TML_COMMAND_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_CRITICAL_SECTION unsuccessful release
  *
  * @see tml_Cmd_Acquire_Sidex_Handle()
@@ -3178,7 +3223,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Release_Sidex_Handle(TML_COMMAND_HA
  *
  * @param   tmlhandle TML command handle (TML_COMMAND_HANDLE)
  * @returns TML_SUCCESS in case of success.<br>
- *          TML_ERR_MISSING_OBJ in case of an invalid tmlhandle.
+ *          TML_ERR_MISSING_OBJ invalid handle.
  *
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Debug(TML_COMMAND_HANDLE tmlhandle);
@@ -3203,8 +3248,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Debug(TML_COMMAND_HANDLE tmlhandle)
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_STREAM_ALREADY_IN_USE stream already in use - can't be opened for a second time<br>
  *          TML_ERR_STREAM_OPEN_ADDRESS_MISMATCH retain open error / profile,host or port don't match withID<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_STREAM_INVALID_ADDRESS invalid destination address
  *
  * @see tml_SndStream_Open(), tml_RecStream_Close()
@@ -3235,7 +3280,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Open_A(TML_CORE_HANDLE coreHa
  * @param   bRetainOpen If this value is TML_TRUE the stream can be opened again with a call to tml_RecStream_Open().
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
  * @see tml_RecStream_Open()
@@ -3252,7 +3297,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Close(TML_CORE_HANDLE coreHan
  * @param   rsize       reference to stream size
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_STREAM_INVALID_IDENTIFIER invalid stream ID<br>
  *          TML_ERR_STREAM_INVALID_CALLBACK callback for size calculation on sender side not registered<br>
  *          TML_ERR_STREAM_SIZE_NOT_AVAILABLE size is not available<br>
@@ -3281,7 +3326,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_GetSize(TML_CORE_HANDLE coreH
  * @param   origin      offset origin
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_STREAM_INVALID_IDENTIFIER invalid stream identification<br>
  *          TML_ERR_STREAM_INVALID_CALLBACK seek callback on sender side not registered<br>
  *          TML_ERR_STREAM_SEEK_NOT_OPERABLE error on seek operation<br>
@@ -3301,7 +3346,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Seek(TML_CORE_HANDLE coreHand
  * @param   rposition   reference to the position
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ in invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_STREAM_INVALID_IDENTIFIER invalid stream identification<br>
  *          TML_ERR_STREAM_INVALID_CALLBACK get postion callback on sender side not registered<br>
  *          TML_ERR_STREAM_POSITION_NOT_AVAILABLE error on position request<br>
@@ -3323,7 +3368,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_GetPosition(TML_CORE_HANDLE c
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_STREAM_INVALID_CALLBACK stream write handler not registered at sender side<br>
- *          TML_ERR_MISSING_OBJ invalid core handler<br>
+ *          TML_ERR_MISSING_OBJ invalid handler<br>
  *          TML_ERR_STREAM_WRITE_FAILED error writing to stream<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
@@ -3344,7 +3389,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Write(TML_CORE_HANDLE coreHan
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_STREAM_INVALID_CALLBACK stream read handler not registered at sender side<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_STREAM_READ_FAILED error reading from stream<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
@@ -3366,7 +3411,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_Read(TML_CORE_HANDLE coreHand
  * @param   count       byte count to read
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_STREAM_INVALID_CALLBACK stream read handler not registered at sender side<br>
  *          TML_ERR_STREAM_READ_FAILED error reading from stream<br>
  *          TML_ERR_STREAM_READBUFFER_EOF end of stream before reading count bytes<br>
@@ -3395,7 +3440,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_ReadBuffer(TML_CORE_HANDLE co
  * @param   pCBDataDldFinish  download finished handler data
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_STREAM_DOWNLOAD_CANCELED download canceled<br>
  *          TML_ERR_STREAM_DOWNLOAD_FAILED error while downloading<br>
  *          TML_ERR_STREAM_DOWNLOAD_WRITE_FAILED write operation failed<br>
@@ -3418,8 +3463,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_RecStream_DownloadData(TML_CORE_HANDLE 
  * @param   sPort       destination port number
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_STREAM_INVALID_ADDRESS invalid destination address
  *
  * @see tml_SndStream_Close()
@@ -3449,7 +3494,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Open_A(TML_CORE_HANDLE coreHa
  * @param   iID         clear stream identifiation.
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
  * @see tml_SndStream_Open(), tml_SndStream_Register_Close()
@@ -3467,7 +3512,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Close(TML_CORE_HANDLE coreHan
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
  * @see tml_RecStream_GetSize(), TML_ON_SND_STRM_GET_SIZE_CB_FUNC()
@@ -3485,7 +3530,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Register_GetSize (TML_CORE_HA
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
  * @see tml_RecStream_Seek(), TML_ON_SND_STRM_SEEK_CB_FUNC() 
@@ -3503,7 +3548,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Register_Seek (TML_CORE_HANDL
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
  * @see tml_RecStream_GetPosition(), TML_ON_SND_STRM_GET_POSITION_CB_FUNC()
@@ -3521,7 +3566,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Register_GetPosition (TML_COR
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
  * @see tml_RecStream_Read(), TML_ON_SND_STRM_READ_CB_FUNC()
@@ -3539,7 +3584,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Register_Read (TML_CORE_HANDL
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
  * @see tml_RecStream_Write(), TML_ON_SND_STRM_WRITE_CB_FUNC()
@@ -3557,7 +3602,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Register_Write (TML_CORE_HAND
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
  * @see tml_SndStream_Close(), TML_ON_SND_STRM_CLOSE_CB_FUNC()
@@ -3575,7 +3620,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Register_Close (TML_CORE_HAND
  * @param   pCBData    custom data or TML_HANDLE_TYPE_NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle<br>
  *          TML_ERR_INFORMATION_UNDEFINED invalid iID
  *
  * @see TML_ON_SND_STRM_COM_FAULT_CB_FUNC(), tml_SndStream_Open()
@@ -3601,7 +3646,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_SndStream_Register_OnError(TML_CORE_HAN
  * @param   sLog     Fourth reference to log
  *
  * @returns TML_SUCCESS in case of success.<br>
- *          TML_ERR_UNICODE if an error happened in the unicode string conversion.
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL.
  *
  * @see globalDefines.h, tmlStdTypes.h, tmlErrors.h
  */
@@ -3634,7 +3679,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_log_A(TML_INT32 iLogMask, const char* s
  * @param   iVal     Fourth reference to log
  *
  * @returns TML_SUCCESS in case of success.<br>
- *          TML_ERR_UNICODE if an error happened in the unicode string conversion.
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL.
  *
  * @see globalDefines.h, tmlStdTypes.h, tmlErrors.h
  */
@@ -3675,9 +3720,9 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
  * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_LISTENER_ALREADY_EXISTS a listener for the requested network address already exists<br> 
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  * @see tml_Listener_Set_Enabled(), tml_Listener_Get_Address()
 */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
@@ -3704,7 +3749,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE 
  * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* listenerHandle);
 
@@ -3719,7 +3764,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* lis
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_NET_BINDING network binding syntax error<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address(TML_LISTENER_HANDLE listenerHandle, TML_CTSTR** sAddress);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_X(TML_LISTENER_HANDLE listenerHandle, wchar_t** sAddress);
@@ -3746,7 +3791,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_A(TML_LISTENER_HAN
  * @param   iCount     reference to the number of listeners
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount);
 
@@ -3760,7 +3805,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerCount(TML_CORE_HANDLE 
  * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED  a listener for the requested index don't exist
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_LISTENER_HANDLE* listenerHandle);
@@ -3775,8 +3820,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreH
  * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_INFORMATION_UNDEFINED  a listener for the requested network binding address don't exist
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress(TML_CORE_HANDLE coreHandle, TML_CTSTR* sAddress, TML_LISTENER_HANDLE* listenerHandle);
@@ -3806,7 +3851,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_A(TML_CORE_H
  * @param   bEnable        TML_TRUE to enable, TML_FALSE to disable the listener
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see tml_Core_Set_ListenerEnabled()
  */
@@ -3821,7 +3866,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Set_Enabled(TML_LISTENER_HANDL
  * @param   bEnable        reference to listener enable status
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid core handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  *
  * @see tml_Listener_Set_Enabled()
  */
@@ -3840,11 +3885,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDL
  * @param   connectionHandle reference to a new TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED  error initializing sender<br> 
  *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
  *          TML_ERR_NET_BINDING network binding syntax error<br>
- *          TML_ERR_MISSING_OBJ invalid handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_CONNECTION_ALREADY_EXISTS a connection for the requested network address already exists
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect(TML_CORE_HANDLE coreHandle, const TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
@@ -3886,7 +3931,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE*
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_NET_BINDING network binding syntax error<br>
- *          TML_ERR_MISSING_OBJ invalid handle<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter<br>
  *          TML_ERR_INFORMATION_UNDEFINED  information is missing
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address(TML_CONNECTION_HANDLE connectionHandle, TML_CTSTR** sAddress);
@@ -3918,7 +3963,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
- *          TML_ERR_MISSING_OBJ invalid handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNECTION_HANDLE connectionHandle, SIDEX_VARIANT* lProfiles);
 
@@ -3932,11 +3977,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNE
  * @param   bConnected       reference to the connection status, TML_TRUE if the connection is valid
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED  error initializing sender<br> 
  *          TML_ERR_SENDER_INVALID_PARAMS invalid network address<br>
  *          TML_ERR_NET_BINDING network binding syntax error<br>
- *          TML_ERR_MISSING_OBJ invalid handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HANDLE connectionHandle, TML_BOOL bReconnect, TML_BOOL* bConnected);
 
@@ -3950,7 +3994,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HAND
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INFORMATION_UNDEFINED  information is missing<br>
- *          TML_ERR_MISSING_OBJ invalid handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDLE coreHandle, TML_UINT32* iCount);
 
@@ -3965,7 +4009,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDL
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INFORMATION_UNDEFINED a connection for the requested index don't exist<br>
- *          TML_ERR_MISSING_OBJ invalid handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE coreHandle, TML_UINT32 index, TML_CONNECTION_HANDLE* connectionHandle);
 
@@ -3980,8 +4024,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE cor
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_INFORMATION_UNDEFINED  a connection for the requested network address don't exist<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
- *          TML_ERR_MISSING_OBJ invalid handle
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress(TML_CORE_HANDLE coreHandle, TML_CTSTR* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_X(TML_CORE_HANDLE coreHandle, wchar_t* sAddress, TML_CONNECTION_HANDLE* connectionHandle);
@@ -4014,7 +4058,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_A(TML_CORE
  * @param  iTimeout         timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -4054,7 +4098,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_A(TML_CONNECTION_H
  * @param  iTimeout         timeout in milliseconds
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_UNICODE error in unicode conversion<br>
+ *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_SENDER_NOT_INITIALIZED error initializing sender<br>
  *          TML_ERR_SYSTEMRESOURCES system resource error<br>
  *          TML_ERR_SENDER_PROFILE_REGISTRATION profile not registered<br>
@@ -4092,7 +4136,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_A(TML_CONNECTION_HA
  * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid handle
+ *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Get_Connection(TML_COMMAND_HANDLE cmdHandle, TML_CONNECTION_HANDLE* connectionHandle);
 
@@ -4108,7 +4152,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Get_Connection(TML_COMMAND_HANDLE c
  * @param   pCBData    user data or NULL
  *
  * @returns TML_SUCCESS in case of success<br>
- *          TML_ERR_MISSING_OBJ invalid handle<
+ *          TML_ERR_MISSING_OBJ invalid handle
  *
  * @see TML_ON_CONNECT_CB_FUNC()
  */

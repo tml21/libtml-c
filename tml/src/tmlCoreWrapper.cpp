@@ -1,6 +1,6 @@
 /* 
  *  libTML:  A BEEP based Messaging Suite
- *  Copyright (C) 2015 wobe-systems GmbH
+ *  Copyright (C) 2016 wobe-systems GmbH
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public License
@@ -177,10 +177,6 @@ void tmlCoreWrapper::initWrapper(int iLogValue, TML_INT32 iInitialThreadPoolSize
 
   
   m_csObj = new tmlCriticalSectionObj();
-  ////////////////////////////////
-  // mutex to protect tmlSingleCall::getConnection
-  m_csGetConnection = new tmlCriticalSectionObj();
-
   //m_ctx = ctx;
   ///////////////////////////////////////////////////////////////////
   // The Vortex ececution context will be created in the DllMain now
@@ -1046,7 +1042,6 @@ vortex_ctx_unref (&m_ctx);
   ////////////////////////////////
   // Critical section object
   delete (m_csObj);
-  delete (m_csGetConnection);
 }
 
 
@@ -2489,14 +2484,6 @@ int tmlCoreWrapper::tmlCoreWrapper_IsAccessible (){
 
 
 /**
- * @brief    returns mutex protecting tmlSingleCall::getConnection
- */
-tmlCriticalSectionObj* tmlCoreWrapper::getCsGetConnection(){
-  return m_csGetConnection;
-}
-
-
-/**
  */
 int tmlCoreWrapper::getLogFileIndex(){
   return m_iLogFileIndex;
@@ -2837,6 +2824,9 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
 
   TML_UINT32 iCount = 0;
   tmlCoreWrapper_Get_ConnectionCount(&iCount);
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
   for (TML_INT32 i = iCount-1; i >= 0; --i){
     TML_CONNECTION_HANDLE connection = TML_HANDLE_TYPE_NULL;
     tmlCoreWrapper_Get_Connection (i, &connection);
@@ -2844,6 +2834,9 @@ void tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost(){
       ((tmlConnectionManageObj*)connection)->deregisterConnnectionLost();
     }
   }
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Connection_Deregister_ConnnectionLost");
 }
      
 /**
@@ -2859,7 +2852,13 @@ void tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem(TML_CONNECTION_HANDLE 
     tmlCoreWrapper_Get_Connection (i, &tmpConnection);
     if (connectionHandle == tmpConnection){
       bFound = true;
+      ///////////////////////////////////////////////////////////////////////////
+      // Begin of critical section
+      getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem");
       sidex_Variant_List_DeleteItem (m_connectionMgrObjs, i);
+      ///////////////////////////////////////////////////////////////////////////
+      // End of critical section
+      getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Delete_ConnectionItem");
       // The Object has to be removed out of the sender connection object hashtable:
       m_sender->RemoveConnectionFromHT((tmlConnectionManageObj*)tmpConnection);
       // Do make the cast to (tmlConnectionManageObj*) / In that case the delete will call the destructor automatically via the scalar destructor:
@@ -2876,7 +2875,15 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem(TML_CONNECTION_HANDL
   SIDEX_INT32 iRet;
   SIDEX_INT32 iPos;
   SIDEX_VARIANT vObj = sidex_Variant_New_Integer(connectionHandle);
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem");
+
   iRet = sidex_Variant_List_Append(m_connectionMgrObjs, vObj, &iPos);
+
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Add_ConnectionItem");
   sidex_Variant_DecRef(vObj);
   return iRet;
 }
@@ -2889,7 +2896,15 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount(TML_UINT32* iCount)
   TML_INT32 iRet = TML_SUCCESS;
 
   TML_INT32 iSize = 0;
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount");
+
   iRet = sidex_Variant_List_Size (m_connectionMgrObjs, &iSize);
+
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Get_ConnectionCount");
   *iCount = (TML_UINT32)iSize;
 
   if (SIDEX_SUCCESS != iRet){
@@ -2905,6 +2920,11 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CO
   TML_INT32 iRet = TML_SUCCESS;
 
   SIDEX_VARIANT vObj;
+  ///////////////////////////////////////////////////////////////////////////
+  // Begin of critical section
+  getCsGetConnection()->tmlCriticalSectionEnter("tmlCoreWrapper::tmlCoreWrapper_Get_Connection");
+
+
   iRet = sidex_Variant_List_Get(m_connectionMgrObjs, index, &vObj);
   if (SIDEX_SUCCESS == iRet){
     SIDEX_INT64 iHandle = 0;
@@ -2916,6 +2936,10 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Get_Connection(TML_UINT32 index, TML_CO
   if (SIDEX_SUCCESS != iRet){
     iRet = TML_ERR_INFORMATION_UNDEFINED;
   }
+
+  ///////////////////////////////////////////////////////////////////////////
+  // End of critical section
+  getCsGetConnection()->tmlCriticalSectionLeave("tmlCoreWrapper::tmlCoreWrapper_Get_Connection");
   return iRet;
 }
 
