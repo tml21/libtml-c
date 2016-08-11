@@ -114,28 +114,28 @@ bool TmlSendingCommandsTester::testSyncMessage()
 
 
             // tml_Send_SyncMessage timeout is 1000ms. The callBackSyncCmd waits 1000ms which results in a timeout error
-            m_iErr = tml_Send_SyncMessage( getCore(0), tCommandSleep, S_IO_PROFILE , S_TP_127_0_0_1, sPort, 1000);
+            m_iErr = tml_Send_SyncMessage( getCore(0), tCommandSleep, S_IO_PROFILE , S_TD_127_0_0_1, sPort, 1000);
             checkForExpectedReturnCode(TML_ERR_TIMEOUT, tmlrtT("tml_Send_SyncMessage(Timeout)"));
 
             // A valid test call for tml_Send_SyncMessage
-            m_iErr = tml_Send_SyncMessage( getCore(0), tCommand, S_IO_PROFILE , S_TP_127_0_0_1, sPort, 3000);
+            m_iErr = tml_Send_SyncMessage( getCore(0), tCommand, S_IO_PROFILE , S_TD_127_0_0_1, sPort, 3000);
             checkForSuccess();
 
             // Check for missing core handle
-            m_iErr = tml_Send_SyncMessage(TML_HANDLE_TYPE_NULL, tCommand, S_IO_PROFILE , S_TP_127_0_0_1, sPort, 3000);
+            m_iErr = tml_Send_SyncMessage(TML_HANDLE_TYPE_NULL, tCommand, S_IO_PROFILE , S_TD_127_0_0_1, sPort, 3000);
             checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_SyncMessage(NoCoreHandle)"));
 
             // to be implemented
-            //m_iErr = tml_Send_SyncMessage(getCore(0), tCommandEmpty, S_IO_PROFILE , S_TP_127_0_0_1, sPort, 3000);
+            //m_iErr = tml_Send_SyncMessage(getCore(0), tCommandEmpty, S_IO_PROFILE , S_TD_127_0_0_1, sPort, 3000);
             //checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_SyncMessage(NoCoreHandle)"));
 
             // Check for wrong profile
-            m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TP_127_0_0_1, sPort, 3000);
+            m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TD_127_0_0_1, sPort, 3000);
             checkForExpectedReturnCode(TML_ERR_SENDER_PROFILE_NOT_SUPPORTED, tmlrtT("tml_Send_SyncMessage(WrongProfile)"));            
 
             #if defined(SIDEX_UNICODE) || defined(TML_UNICODE)
             // Check for invalid Unicode error
-            m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, NULL , S_TP_127_0_0_1, sPort, 3000);
+            m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, NULL , S_TD_127_0_0_1, sPort, 3000);
             checkForExpectedReturnCode(SIDEX_ERR_UNICODE, tmlrtT("tml_Send_SyncMessage(Unicode error)"));
             #endif
 
@@ -329,16 +329,16 @@ bool TmlSendingCommandsTester::testAsyncMessage()
             /***********************************  START Test tml_Send_AsyncMessage  *******************************/
 
             // Check for missing core handle
-            m_iErr = tml_Send_AsyncMessage(TML_HANDLE_TYPE_NULL, tCommand, S_IO_PROFILE , S_TP_127_0_0_1, sPort, 3000);
+            m_iErr = tml_Send_AsyncMessage(TML_HANDLE_TYPE_NULL, tCommand, S_IO_PROFILE , S_TD_127_0_0_1, sPort, 3000);
             checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AyncMessage(NoCoreHandle)"));
 
             // Check for wrong profile
-            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TP_127_0_0_1, sPort, 3000);
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TD_127_0_0_1, sPort, 3000);
             checkForExpectedReturnCode(TML_ERR_SENDER_PROFILE_NOT_SUPPORTED, tmlrtT("tml_Send_AsyncMessage(WrongProfile)")); 
 
             #if defined(SIDEX_UNICODE) || defined(TML_UNICODE)
             // Check for Unicode Error
-            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, NULL , S_TP_127_0_0_1, sPort, 3000);
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, NULL , S_TD_127_0_0_1, sPort, 3000);
             checkForExpectedReturnCode(SIDEX_ERR_UNICODE, tmlrtT("tml_Send_AsyncMessage(InvalidProfileType)"));
             #endif
 
@@ -385,13 +385,13 @@ bool TmlSendingCommandsTester::testAsyncMessage()
 
             // A valid test call for tml_Send_AsyncMessage.  
             // This call also triggers the tml_Send_AsyncProgressReply and tml_Send_AsyncStatusReply regression tests.
-            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE , S_TP_127_0_0_1, sPort, 10000);
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE , S_TD_127_0_0_1, sPort, 10000);
             checkForSuccess();
 
             TmlSleep(1000);
 
             // This call tests the async behaviour of the libTML library
-            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand2, S_IO_PROFILE , S_TP_127_0_0_1, sPort, 10000);
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand2, S_IO_PROFILE , S_TD_127_0_0_1, sPort, 10000);
             checkForSuccess();
 
             while(!(aData.blockUntilAsyncReturn)){
