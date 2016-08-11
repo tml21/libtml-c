@@ -56,7 +56,7 @@ bool testTmlMultiListeners()
       if(!tester->testTmlCoreGetListenerCountErrorCodes()) break;
       if(!tester->testTmlCoreGetListenerErrorCodes()) break;
       if(!tester->testTmlListenerGetSetEnabledForErrorCodes()) break;
-//      if(!tester->testTmlCoreListenerCreateCloseErrorCodes()) break;
+      if(!tester->testTmlCoreListenerCreateCloseErrorCodes()) break;
       if(!tester->testTmlMultiListenerLoadBalancingMessages()) break;
       if(!tester->testTmlMultiListenerEventMessages()) break;
       if(!tester->testTmlListenerGetAddressErrorCodes()) break;

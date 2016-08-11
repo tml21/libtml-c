@@ -224,6 +224,13 @@ bool TmlConnectionTester::testConnect()
 
       checkConnectionCount(0, 0, tmlrtT(" (after NoCoreHandle)"));
 
+	  // Test with invalid NULL core handle...TODO
+	  //hConnection1 = TML_HANDLE_TYPE_NULL;
+	  //m_iErr = tml_Core_Connect(NULL, sAddress1, &hConnection1);
+	  //checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Connect(NULL as CoreHandle)"));
+
+	  //checkConnectionCount(0, 0, tmlrtT(" (after NULL as CoreHandle)"));
+
       // Test with invalid connection handle parameter...
       m_iErr = tml_Core_Connect(getCore(0), sAddress1, NULL);
       checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Connect(NoConnectionHandleParameter)"));
@@ -237,12 +244,19 @@ bool TmlConnectionTester::testConnect()
 
       checkConnectionCount(0, 0, tmlrtT(" (after InvalidAddress)"));
 
+	  // Test with NULL as address...
+	  hConnection1 = TML_HANDLE_TYPE_NULL;
+	  m_iErr = tml_Core_Connect(getCore(0), NULL, &hConnection1);
+	  checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Core_Connect(NULL as Address)"));
+
+	  checkConnectionCount(0, 0, tmlrtT(" (after NULL as Address Address)"));
+
       // Test with invalid port...
       hConnection1 = TML_HANDLE_TYPE_NULL;
       m_iErr = tml_Core_Connect(getCore(0), tmlrtT("127.0.0.1:Wrong"), &hConnection1);
       checkForExpectedReturnCode(TML_ERR_NET_BINDING, tmlrtT("tml_Core_Connect(InvalidPort)"));
 
-      checkConnectionCount(0, 0, tmlrtT(" (after InvalidAddress)"));
+      checkConnectionCount(0, 0, tmlrtT(" (after InvalidPort)"));
 
       // Test connection without listener...
       hConnection1 = TML_HANDLE_TYPE_NULL;
@@ -449,6 +463,11 @@ bool TmlConnectionTester::testGetAddress()
               pAddress = NULL;
               m_iErr = tml_Connection_Get_Address(TML_HANDLE_TYPE_NULL, &pAddress);
               checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Get_Address(NoConnectionHandle)"));
+
+			  // Test with NULL as connection handle...TODO
+			 // pAddress = NULL;
+			 // m_iErr = tml_Connection_Get_Address(NULL, &pAddress);
+			 // checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Get_Address(NULLConnectionHandle)"));
 
               // Test getting address...
               pAddress = NULL;
