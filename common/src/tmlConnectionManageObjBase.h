@@ -72,6 +72,11 @@ protected:
      */
     SIDEX_VARIANT m_tlsStatusMsg;
 
+    /**
+     * @brief    TML_TRUE if connection lost callback is registered
+     */
+    TML_BOOL m_bConnectionLostRegistered;
+
 public:
 	  /* methods */
 

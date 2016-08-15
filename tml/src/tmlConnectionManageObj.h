@@ -105,7 +105,7 @@ protected:
     TCallback<tmlConnectionManageObj> m_internalConnectionCloseHandlerMethod;
 
     /**
-     * @brief    true is the vortexConnection was allocated new
+     * @brief    true if the vortexConnection was allocated new
      */
     bool m_bIsOwner;
 
