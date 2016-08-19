@@ -53,9 +53,9 @@ private:
     /* data */
 
     /**
-     * @brief    Reference to mutex necessary for m_registeredCloseObjs
+     * @brief    Reference to mutex necessary for tmlSingleCall::getConnection
      */
-    tmlCriticalSectionObj* m_csCloseHandling;
+    tmlCriticalSectionObj* m_csGetConnection;
 
     /**
      * @brief    Reference to list containing registered connection close callbacks
@@ -97,9 +97,9 @@ public:
 
 
     /**
-     * @brief    returns mutex protecting m_registeredCloseObjs
+     * @brief    returns mutex protecting "registered connection close list" and the "connection manager objects list"
      */
-    tmlCriticalSectionObj* getCsCloseHandling();
+    tmlCriticalSectionObj* getCsGetConnection();
 
 
     /**

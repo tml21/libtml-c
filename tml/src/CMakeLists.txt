@@ -381,6 +381,16 @@ if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
   set_target_properties(${TMLLIBNAME_LOCAL} PROPERTIES PREFIX "")
 endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-64_mingw)
 
+#######################################################
+## If LINUX ARM32 add current versions to shared library suffix:
+#######################################################
+if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
+  set(TML_VERSION_MAJOR 1)
+  set(TML_VERSION_MINOR 1)
+  set(TML_VERSION_PATCH 5)
+  set(TML_VERSION ${TML_VERSION_MAJOR}.${TML_VERSION_MINOR}.${TML_VERSION_PATCH})
+  set_target_properties(${TMLLIBNAME_LOCAL} PROPERTIES VERSION ${TML_VERSION} SOVERSION ${TML_VERSION_MAJOR})
+endif(${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 
 #######################################################
 ## Include- directories:

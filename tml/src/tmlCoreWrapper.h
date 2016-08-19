@@ -58,11 +58,6 @@ private:
     /* data */
 
     /**
-     * @brief    Reference to mutex necessary for tmlSingleCall::getConnection
-     */
-    tmlCriticalSectionObj* m_csGetConnection;
-
-    /**
      * @brief    Reference to list containing listener objects
      */
     SIDEX_VARIANT          m_listenerObjs;
@@ -1899,12 +1894,6 @@ public:
      * @brief    returns the index of the contiguous log file
      */
     int getLogFileIndex();
-
-
-    /**
-     * @brief    returns mutex protecting tmlSingleCall::getConnection
-     */
-    tmlCriticalSectionObj* getCsGetConnection();
 
 
     /**
