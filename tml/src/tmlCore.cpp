@@ -333,7 +333,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Open(TML_CORE_HANDLE* coreHandle, 
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Close(TML_CORE_HANDLE* coreHandle){
   TML_INT32 iRet = TML_ERR_MISSING_OBJ;
-  if (NULL != coreHandle){
+  if (NULL != coreHandle && TML_HANDLE_TYPE_NULL != coreHandle){
     try{
       ////////////////////////////////////////////////////////////////////////////
       // Core is in shutdown process:
@@ -1941,6 +1941,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations(
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_A(TML_CORE_HANDLE coreHandle, const char* profile, SIDEX_VARIANT* subscriptions)
 {
+  // A profile value of NULL /TML_HANDLE_TYPE_NULL her is valid - see API documentation
   TML_INT32 iRet = TML_SUCCESS;
   if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
@@ -1966,6 +1967,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_X(TML_CORE_HANDLE coreHandle, const wchar_t* profile, SIDEX_VARIANT* subscriptions)
 {
+  // A profile value of NULL /TML_HANDLE_TYPE_NULL her is valid - see API documentation
   TML_INT32 iRet = TML_SUCCESS;
   if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
@@ -1997,6 +1999,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Get_Subscribed_MessageDestinations_W(TML_CORE_HANDLE coreHandle, const char16_t* profile, SIDEX_VARIANT* subscriptions)
 {
+  // A profile value of NULL /TML_HANDLE_TYPE_NULL her is valid - see API documentation
   TML_INT32 iRet = TML_SUCCESS;
   if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
@@ -3318,6 +3321,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations(
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_A(TML_CORE_HANDLE coreHandle, const char* profile, SIDEX_VARIANT* subscriptions)
 {
+  // A profile value of NULL /TML_HANDLE_TYPE_NULL her is valid - see API documentation
   TML_INT32 iRet = TML_SUCCESS;
   if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
@@ -3343,6 +3347,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_X(TML_CORE_HANDLE coreHandle, const wchar_t* profile, SIDEX_VARIANT* subscriptions)
 {
+  // A profile value of NULL /TML_HANDLE_TYPE_NULL her is valid - see API documentation
   TML_INT32 iRet = TML_SUCCESS;
   if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
@@ -3373,6 +3378,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_
 **/
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Get_Subscribed_MessageDestinations_W(TML_CORE_HANDLE coreHandle, const char16_t* profile, SIDEX_VARIANT* subscriptions)
 {
+  // A profile value of NULL /TML_HANDLE_TYPE_NULL her is valid - see API documentation
   TML_INT32 iRet = TML_SUCCESS;
   if (TML_HANDLE_TYPE_NULL == coreHandle || NULL == subscriptions){
     iRet = TML_ERR_MISSING_OBJ;
@@ -3497,7 +3503,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDesti
 /**
  * char* API
 **/
-TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile)
+TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Bal_Unsubscribe_MessageDestination_A(TML_CONNECTION_HANDLE connectionHandle, const char* sProfile)
 {
   TML_INT32 iRet = TML_SUCCESS;
 
@@ -3933,7 +3939,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SyncMessage_A(TML_CORE_HANDLE 
   tml_logI(0xFFFFFFFF, "tmlCore", "tml_Bal_Send_SyncMessage", "begin", tmlhandle);
 #endif //TIMEOUT_LOGGING
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == coreHandle){
+  if (TML_HANDLE_TYPE_NULL == coreHandle || TML_HANDLE_TYPE_NULL == tmlhandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
@@ -6887,11 +6893,11 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE 
  */
 TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* listenerHandle){
   TML_INT32 iRet = TML_SUCCESS;
-  if (TML_HANDLE_TYPE_NULL == *listenerHandle){
+  if (NULL == listenerHandle){
     iRet = TML_ERR_MISSING_OBJ;
   }
   else{
-    if (NULL == listenerHandle){
+    if (TML_HANDLE_TYPE_NULL == *listenerHandle){
       iRet = TML_ERR_MISSING_OBJ;
     }
     else{

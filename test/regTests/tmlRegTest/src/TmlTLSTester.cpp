@@ -353,8 +353,8 @@ bool TmlTLSTester::testTLS()
         m_iErr = tml_Tls_Core_AcceptNegotiation(TML_HANDLE_TYPE_NULL, NULL, NULL, NULL, &bAccept);
         checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Core_AcceptNegotiation(NoCoreHandle)"));
 
-		m_iErr = tml_Tls_Core_AcceptNegotiation(NULL, NULL, NULL, NULL, &bAccept);
-		checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Core_AcceptNegotiation(NULLasCoreHandle)"));
+        m_iErr = tml_Tls_Core_AcceptNegotiation((TML_CORE_HANDLE)NULL, NULL, NULL, NULL, &bAccept);
+        checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Core_AcceptNegotiation(NULLasCoreHandle)"));
 
         m_iErr = tml_Tls_Core_AcceptNegotiation(getCore(0), NULL, NULL, NULL, NULL);
         checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Core_AcceptNegotiation(Core0, NoAcceptParameter)"));
@@ -362,11 +362,11 @@ bool TmlTLSTester::testTLS()
         m_iErr = tml_Tls_Core_Set_OnError(TML_HANDLE_TYPE_NULL, &CallbackHandler_OnTlsError, NULL);
         checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Core_Set_OnError(NoCoreHandle)"));
 
-		m_iErr = tml_Tls_Core_Set_OnError(NULL, &CallbackHandler_OnTlsError, NULL);
-		checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Core_Set_OnError(NULLasCoreHandle)"));
+        m_iErr = tml_Tls_Core_Set_OnError((TML_CORE_HANDLE)NULL, &CallbackHandler_OnTlsError, (void*)NULL);
+        checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Core_Set_OnError(NULLasCoreHandle)"));
 
-		m_iErr = tml_Tls_Core_Set_OnError(getCore(0), NULL, NULL);
-		checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Core_Set_OnError(NULLasCallbackHandler)"));
+        m_iErr = tml_Tls_Core_Set_OnError(getCore(0), NULL, NULL);
+        checkForExpectedReturnCode(TML_SUCCESS, tmlrtT("tml_Tls_Core_Set_OnError(NULLasCallbackHandler)"));
       }
 
       cbData_t_TLS* pData0 = prepareCallbackData_TLS(this, 0);
@@ -411,20 +411,20 @@ bool TmlTLSTester::testTLS()
                       m_iErr = tml_Tls_Connection_StartNegotiation(TML_HANDLE_TYPE_NULL, TML_FALSE, &bEncrypted);
                       checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_StartNegotiation(NoConnectionHandle) - Default"));
 
-					  m_iErr = tml_Tls_Connection_StartNegotiation(NULL, TML_FALSE, &bEncrypted);
-					  checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_StartNegotiation(NULLasConnectionHandle) - Default"));
+                      m_iErr = tml_Tls_Connection_StartNegotiation((TML_CONNECTION_HANDLE)NULL, TML_FALSE, &bEncrypted);
+                      checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_StartNegotiation(NULLasConnectionHandle) - Default"));
 
                       m_iErr = tml_Tls_Connection_StartNegotiation(hConnection, TML_FALSE, NULL);
                       checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_StartNegotiation(NoEncryptionParameter) - Default"));
 
-					  m_iErr = tml_Tls_Connection_StartNegotiation(hConnection, NULL, &bEncrypted);
-					  checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_StartNegotiation(NoBoolParameter) - Default"));
+                      m_iErr = tml_Tls_Connection_StartNegotiation(hConnection, (TML_BOOL)NULL, &bEncrypted);
+                      checkForExpectedReturnCode(TML_SUCCESS, tmlrtT("tml_Tls_Connection_StartNegotiation(NoBoolParameter NULL will be handled as TML_FALSE) - Default"));
 
                       m_iErr = tml_Tls_Connection_VerifyCert(TML_HANDLE_TYPE_NULL, &bVerifyOk);
                       checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_VerifyCert(NoConnectionHandle) - Default"));
 
-					  m_iErr = tml_Tls_Connection_VerifyCert(NULL, &bVerifyOk);
-					  checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_VerifyCert(NULLasConnectionHandle) - Default"));
+                      m_iErr = tml_Tls_Connection_VerifyCert((TML_CONNECTION_HANDLE)NULL, &bVerifyOk);
+                      checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_VerifyCert(NULLasConnectionHandle) - Default"));
 
                       bEncrypted = TML_FALSE;
                       m_iErr = tml_Tls_Connection_StartNegotiation(hConnection, TML_FALSE, &bEncrypted);
@@ -432,8 +432,8 @@ bool TmlTLSTester::testTLS()
                          checkForValue(tmlrtT("tml_Tls_Connection_StartNegotiation : bEncrypted (Default)"),
                                        SIDEX_INT32(TML_TRUE), SIDEX_INT32(bEncrypted)))
                       {
-						m_iErr = tml_Tls_Connection_VerifyCert(hConnection, NULL);
-						checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_VerifyCert(NoConnectionHandle) - Default"));
+                        m_iErr = tml_Tls_Connection_VerifyCert(hConnection, NULL);
+                        checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_VerifyCert(NoConnectionHandle) - Default"));
 
                         bVerifyOk = TML_FALSE;
                         // Note: The default certificate wasn't signed by a certificate authority!
@@ -699,10 +699,10 @@ bool TmlTLSTester::testTLS()
                                 checkForValue(tmlrtT("Null test (NoConnection, SHA1, File)"), NULL, sDigest, false);
                                 if(sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
-								m_iErr = tml_Tls_Connection_Get_SSLDigest(NULL, TML_TLS_SHA1, sCrtPath, &sDigest);
-								checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_SSLDigest(NULLasConnection, SHA1)"));
-								checkForValue(tmlrtT("Null test (NULLasConnection, SHA1, File)"), NULL, sDigest, false);
-								if (sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
+                                m_iErr = tml_Tls_Connection_Get_SSLDigest((TML_CONNECTION_HANDLE)NULL, TML_TLS_SHA1, sCrtPath, &sDigest);
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_SSLDigest(NULLasConnection, SHA1)"));
+                                checkForValue(tmlrtT("Null test (NULLasConnection, SHA1, File)"), NULL, sDigest, false);
+                                if (sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 m_iErr = tml_Tls_Connection_Get_SSLDigest(hConnection, TML_TLS_SHA1, NULL, &sDigest);
                                 checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Tls_Connection_Get_SSLDigest(NoPath, SHA1)"));
@@ -719,10 +719,10 @@ bool TmlTLSTester::testTLS()
 
                                 // - - - - - Peer SHA1 - - - - -
 
-								m_iErr = tml_Tls_Connection_Get_PeerSSLDigest(NULL, TML_TLS_SHA1, &sDigest);
-								checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(NULLasConnection, SHA1)"));
-								checkForValue(tmlrtT("Null test (NULLasConnection, SHA1, Peer)"), NULL, sDigest, false);
-								if (sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
+                                m_iErr = tml_Tls_Connection_Get_PeerSSLDigest((TML_CONNECTION_HANDLE)NULL, TML_TLS_SHA1, &sDigest);
+                                checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(NULLasConnection, SHA1)"));
+                                checkForValue(tmlrtT("Null test (NULLasConnection, SHA1, Peer)"), NULL, sDigest, false);
+                                if (sDigest) sidex_Free_ReadString(sDigest); sDigest = NULL;
 
                                 m_iErr = tml_Tls_Connection_Get_PeerSSLDigest(TML_HANDLE_TYPE_NULL, TML_TLS_SHA1, &sDigest);
                                 checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Tls_Connection_Get_PeerSSLDigest(NoConnection, SHA1)"));

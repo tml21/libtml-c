@@ -2534,9 +2534,15 @@ TML_INT32 tmlCoreWrapper::tmlCoreWrapper_Listener_Create(const char* sAddress, T
   }
   if (!bFound){
     wrapper = new tmlListenerObj((TML_CORE_HANDLE)this, sAddress);
-    iRet = tmlCoreWrapper_Add_ListenerItem((TML_LISTENER_HANDLE) wrapper);
-    if (TML_SUCCESS == iRet){
-      *listenerHandle = (TML_LISTENER_HANDLE) wrapper;
+    iRet = wrapper->getLastErr();
+    if (TML_SUCCESS != iRet){
+      delete wrapper;
+    }
+    else{
+      iRet = tmlCoreWrapper_Add_ListenerItem((TML_LISTENER_HANDLE) wrapper);
+      if (TML_SUCCESS == iRet){
+        *listenerHandle = (TML_LISTENER_HANDLE) wrapper;
+      }
     }
   }
   else{

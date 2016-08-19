@@ -224,12 +224,12 @@ bool TmlConnectionTester::testConnect()
 
       checkConnectionCount(0, 0, tmlrtT(" (after NoCoreHandle)"));
 
-	  // Test with invalid NULL core handle...TODO
-	  //hConnection1 = TML_HANDLE_TYPE_NULL;
-	  //m_iErr = tml_Core_Connect(NULL, sAddress1, &hConnection1);
-	  //checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Connect(NULL as CoreHandle)"));
+      // Test with invalid NULL core handle...
+      hConnection1 = TML_HANDLE_TYPE_NULL;
+      m_iErr = tml_Core_Connect((TML_CORE_HANDLE)NULL, sAddress1, &hConnection1);
+      checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Core_Connect(NULL as CoreHandle)"));
 
-	  //checkConnectionCount(0, 0, tmlrtT(" (after NULL as CoreHandle)"));
+      checkConnectionCount(0, 0, tmlrtT(" (after NULL as CoreHandle)"));
 
       // Test with invalid connection handle parameter...
       m_iErr = tml_Core_Connect(getCore(0), sAddress1, NULL);
@@ -244,12 +244,12 @@ bool TmlConnectionTester::testConnect()
 
       checkConnectionCount(0, 0, tmlrtT(" (after InvalidAddress)"));
 
-	  // Test with NULL as address...
-	  hConnection1 = TML_HANDLE_TYPE_NULL;
-	  m_iErr = tml_Core_Connect(getCore(0), NULL, &hConnection1);
-	  checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Core_Connect(NULL as Address)"));
+      // Test with NULL as address...
+      hConnection1 = TML_HANDLE_TYPE_NULL;
+      m_iErr = tml_Core_Connect(getCore(0), NULL, &hConnection1);
+      checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Core_Connect(NULL as Address)"));
 
-	  checkConnectionCount(0, 0, tmlrtT(" (after NULL as Address Address)"));
+      checkConnectionCount(0, 0, tmlrtT(" (after NULL as Address Address)"));
 
       // Test with invalid port...
       hConnection1 = TML_HANDLE_TYPE_NULL;
@@ -464,10 +464,10 @@ bool TmlConnectionTester::testGetAddress()
               m_iErr = tml_Connection_Get_Address(TML_HANDLE_TYPE_NULL, &pAddress);
               checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Get_Address(NoConnectionHandle)"));
 
-			  // Test with NULL as connection handle...TODO
-			 // pAddress = NULL;
-			 // m_iErr = tml_Connection_Get_Address(NULL, &pAddress);
-			 // checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Get_Address(NULLConnectionHandle)"));
+              // Test with NULL as connection handle...
+              pAddress = NULL;
+              m_iErr = tml_Connection_Get_Address((TML_CONNECTION_HANDLE)NULL, &pAddress);
+              checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Connection_Get_Address(NULLConnectionHandle)"));
 
               // Test getting address...
               pAddress = NULL;
@@ -565,25 +565,41 @@ bool TmlConnectionTester::testGetRemoteProfiles()
                 m_iErr = tml_Core_Connect(getCore(0), sAddress2, &hConnection2);
                 if(checkForSuccess(tmlrt_cat(tmlrtT("tml_Core_Connect("), sAddress2, S_PARENTHESIS_R), true))
                 {
+                  TmlSleep(500);  // wait a little bit for the list
+
                   checkRemoteProfileCount(hConnection2, 1, tmlrtT("One profile on connection2"));
 
                   m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE_TWO);
                   checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), S_IO_PROFILE_TWO, S_PARENTHESIS_R), true);
+
+                  TmlSleep(500);  // wait a little bit for the list
+
                   // We still have only one remote profile on established connection2:
                   checkRemoteProfileCount(hConnection2, 1, tmlrtT("Two profiles on connection2"));
 
                   m_iErr = tml_Profile_Register(getCore(1), S_IO_PROFILE_THREE);
                   checkForSuccess(tmlrt_cat(tmlrtT("tml_Profile_Register(Core1, "), S_IO_PROFILE_THREE, S_PARENTHESIS_R), true);
+
+                  TmlSleep(500);  // wait a little bit for the list
+
                   // We still have only one remote profile on established connection2:
                   checkRemoteProfileCount(hConnection2, 1, tmlrtT("Three profiles on connection2"));
 
                   // restart listener and renew connection to get all profiles visible...
                   stopListener(1, 1);
+
+                  TmlSleep(500);  // wait a little bit for the list
+
                   startListener(1, 1);
+                  
+                  TmlSleep(500);  // wait a little bit for the list
+
                   TML_BOOL bConnected = TML_FALSE;
                   m_iErr = tml_Connection_Validate(hConnection2, TML_TRUE, &bConnected);
                   checkForSuccess(tmlrtT("tml_Connection_Validate(Connection2)"));
                   checkForValue(tmlrtT("tml_Connection_Validate(Connection2)"), TML_TRUE, bConnected, false);
+
+                  TmlSleep(500);  // wait a little bit for the list
 
                   // Now we have all registered profiles visible for connection2:
                   checkRemoteProfileCount(hConnection2, 3, tmlrtT("Three profiles on connection2"));

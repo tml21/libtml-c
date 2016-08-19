@@ -100,7 +100,12 @@ void tmlListenerObj::initListenerObj(TML_CORE_HANDLE coreHandle, const char* sNe
 
   m_iRefCounter = 1;
 
-  m_iErr = TML_SUCCESS;
+  if (m_binding->isValid()){
+    m_iErr = TML_SUCCESS;
+  }
+  else{
+    m_iErr = TML_ERR_NET_BINDING;
+  }
 }
 
 
