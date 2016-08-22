@@ -128,7 +128,6 @@ endif (${TML_TARGET_PLATFORM} STREQUAL win_x86-32)
 ## Windows / 64 bit
 #######################################################
 if (${TML_TARGET_PLATFORM} STREQUAL win_x86-64)
-  set_source_files_properties(tmlCore.rc PROPERTIES LANGUAGE RC)
 
   set(AXLLIB libaxl.lib)
   set(VORTEXLIB libvortex-1.1.lib)

@@ -54,22 +54,17 @@
 /**
 * @brief    API version number
 */
-#define API_VERSION_NUMBER 101
+#define API_VERSION_NUMBER 102
 
 /**
 * @brief    Library version number
 */
-#define LIB_VERSION_NUMBER  10105
+#define LIB_VERSION_NUMBER  10200
 
 /**
 * @brief    Library version string
 */
-#define LIB_VERSION_STRING_A  (char*) "1.1.5"
-
-/**
-* @brief    Sub version number 2
-*/
-#define SUB_VERSION_NUMBER2 1
+#define LIB_VERSION_STRING_A  (char*) "1.2.0"
 
 /**
 * @brief    Typedefinition of SIDEX_DOC
