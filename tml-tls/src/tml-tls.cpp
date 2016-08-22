@@ -261,55 +261,62 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation (TML_CO
   if (NULL != bEncrypted){
     if (TML_HANDLE_TYPE_NULL != connectionHandle){
       iRet = TML_SUCCESS;
-      TML_CORE_HANDLE  coreHandle = ((tmlConnectionManageObjBase*) connectionHandle)->getCoreHandle();
-      VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
-      VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
-      VortexConnection* retValue = connection;
-
-      // initialize and check if current vortex library supports TLS
-
-      if (! vortex_tls_init (ctx)) {
-        ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg((char*)"Unable to activate TLS, Vortex is not prepared");
+      if (((tmlConnectionManageObjBase*) connectionHandle)->isEncrpyted()){
+        // Do not do it a second time
+        bEncryptedVal = TML_TRUE;
       }
-      else{
-        // start the TLS profile negotiation process
-        VortexStatus status;
-        char* status_message;
-        VortexConnection* tls_connection = vortex_tls_start_negotiation_sync(connection, NULL, 
-                                      &status, &status_message);
+      else
+      {
+        TML_CORE_HANDLE  coreHandle = ((tmlConnectionManageObjBase*) connectionHandle)->getCoreHandle();
+        VortexCtx* ctx = ((tmlCoreWrapperBase*) coreHandle)->getVortexCtx();
+        VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
+        VortexConnection* retValue = connection;
 
-        ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg(status_message);
+        // initialize and check if current vortex library supports TLS
 
-        switch (status) {
-        case VortexOk:
-            /*
-            printf ("TLS negotiation OK! over the new connection %ld\n",
-                      vortex_connection_get_id (tls_connection));
-            printf ("TLS negotiation message: %s\n",
-                      status_message);
-            */
-            // use the new connection reference provided by this function.
-            retValue = tls_connection;
-            bEncryptedVal = TML_TRUE;
-            break;
-        case VortexError: 
-        default:
-            // printf ("TLS negotiation have failed, message: %s\n", status_message);
-            // ok, TLS process have failed but, do we have a connection
-            // still working?
-            if (bAllowTlsFailures && vortex_connection_is_ok (tls_connection, axl_false)) {
-              // well we don't have TLS activated but the connection still works / use unencrypted
-              retValue = tls_connection;
-            } 
-            else{
-              // Negotiation fail:
-              retValue = NULL;
-            }
-            break;
+        if (! vortex_tls_init (ctx)) {
+          ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg((char*)"Unable to activate TLS, Vortex is not prepared");
         }
+        else{
+          // start the TLS profile negotiation process
+          VortexStatus status;
+          char* status_message;
+          VortexConnection* tls_connection = vortex_tls_start_negotiation_sync(connection, NULL, 
+                                        &status, &status_message);
+
+          ((tmlConnectionManageObjBase*) connectionHandle)->setTlsStatusMsg(status_message);
+
+          switch (status) {
+          case VortexOk:
+              /*
+              printf ("TLS negotiation OK! over the new connection %ld\n",
+                        vortex_connection_get_id (tls_connection));
+              printf ("TLS negotiation message: %s\n",
+                        status_message);
+              */
+              // use the new connection reference provided by this function.
+              retValue = tls_connection;
+              bEncryptedVal = TML_TRUE;
+              break;
+          case VortexError: 
+          default:
+              // printf ("TLS negotiation have failed, message: %s\n", status_message);
+              // ok, TLS process have failed but, do we have a connection
+              // still working?
+              if (bAllowTlsFailures && vortex_connection_is_ok (tls_connection, axl_false)) {
+                // well we don't have TLS activated but the connection still works / use unencrypted
+                retValue = tls_connection;
+              } 
+              else{
+                // Negotiation fail:
+                retValue = NULL;
+              }
+              break;
+          }
+        }
+        ((tmlConnectionManageObjBase*) connectionHandle)->setVortexConnection(retValue);
+        ((tmlConnectionManageObjBase*) connectionHandle)->setEncrypted(bEncryptedVal);
       }
-      ((tmlConnectionManageObjBase*) connectionHandle)->setVortexConnection(retValue);
-      ((tmlConnectionManageObjBase*) connectionHandle)->setEncrypted(bEncryptedVal);
       *bEncrypted = bEncryptedVal;
     }
   }
@@ -358,9 +365,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_VerifyCert (TML_CONNECTI
     iRet = TML_SUCCESS;
     VortexConnection* connection = ((tmlConnectionManageObjBase*) connectionHandle)->getVortexConnection();
     bVerified = vortex_tls_verify_cert(connection);
+    *bVerifyOk = (axl_true == bVerified);
   }
-
-  *bVerifyOk = (axl_true == bVerified);
   return iRet;
 }
 

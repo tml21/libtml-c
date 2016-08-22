@@ -395,8 +395,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_A (TML_CON
  * @brief   Allows to configure an error handler that will be called when a failure is found at SSL level or during the handshake with the particular function failing.
  *
  * @param   coreHandle TML    core handle (TML_CORE_HANDLE)
- * @param   pErrorCB          the error handler to be called when an error is found
- * @param   pErrorData        reference to optional user data to be passed into the function when the handler is called
+ * @param   pErrorCB          the error handler to be called when an error is found or NULL (deregistration of previously registered handler)
+ * @param   pErrorData        reference to optional user data to be passed into the function when the handler is called or TML_HANDLE_TYPE_NULL.
  *
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_MISSING_OBJ invalid core handle

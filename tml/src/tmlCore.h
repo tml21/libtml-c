@@ -3722,6 +3722,7 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
  * @returns TML_SUCCESS in case of success<br>
  *          TML_ERR_UNICODE error in unicode conversion or string reference is NULL<br>
  *          TML_ERR_LISTENER_ALREADY_EXISTS a listener for the requested network address already exists<br> 
+ *          TML_ERR_NET_BINDING network binding syntax error<br>
  *          TML_ERR_MISSING_OBJ invalid handle / reference parameter
  * @see tml_Listener_Set_Enabled(), tml_Listener_Get_Address()
 */
