@@ -22,6 +22,19 @@ Currently the following target systems are tested:
 
 ----------
 
+<a name="TLSOption"></a>
+## Optional libTML TLS build ##
+
+It is optional to build the libTML TLS profile supporting library.
+
+To enable the libTML TLS build option you have to add the parameter **BUILD_TLS=yes** to the make file generation command line.<br><br> 
+Example:<br> <br> 
+`cmake .. -G "Unix Makefiles" -DTML_TARGET_PLATFORM=linux_x86-32 -DBUILD_TLS=yes`
+
+<br>
+
+----------
+
 <a name="RequiredLibs"></a>
 ## Library dependencies ##
 
@@ -42,6 +55,8 @@ The AXL library is an XML 1.0 implementation. It is optimized for speed and a sm
     	make install
 
 If you want to use a Windows installer, download the Vortex installer instead of the AXL installer. It includes the AXL library. During the installation you need to select to install the development libraries and include files along with the binaries.
+
+We recommend do use the AXL library within our binary distribution. 
 
 #### Vortex ####
 
@@ -71,6 +86,9 @@ Building Vortex on OS X may show errors. Use the options to work around them.
 
 The Vortex Windows installer includes all binaries for Windows. During the installation you need to select to install the development libraries and include files along with the binaries.
 
+
+We recommend do use the Vortex library within our binary distribution.
+
 #### libiconv ####
 
 For Unicode and string encoding support, libTML is using the libiconv library.
@@ -87,6 +105,18 @@ For Unicode and string encoding support, libTML is using the libiconv library.
     
 On Windows the libiconv library is not required. 
 
+#### openSSL ####
+
+In order to activate the [optional libTML TLS profile support](#TLSOption) it is also required openssl to be installed.
+
+- **Homepage:** [`(http://www.openssl.org`](http://www.openssl.org)
+- **Download:**  [`(http://www.openssl.org/source/`](http://www.openssl.org/source/)
+- **Documentation:** [`(http://www.openssl.org/docs/`](http://www.openssl.org/docs/)
+- **Required for:** libTML-TLS
+- **Remarks:** This software is commonly found on every Unix/GNU/Linux installation. Binaries are also available for Microsoft Windows platforms.
+
+
+Keep in mind that libTML Library design allows to use it without TLS support. As a consequence, TLS profile dependencies are optional.
 <br>
 
 ----------
@@ -178,8 +208,9 @@ To build libTML-c win32 binaries on Windows with MinGW, the settings for the too
 - Build with cmake<br>`cmake --build . --clean-first`
 
 	- The binaries are located in:
-		- `build\win_x86-32_mingw\sidex\sidex11.dll`
-		- `build\win_x86-32_mingw\tml\tmlcore11.dll`
+		- `build\win_x86-32_mingw\sidex\sidex12.dll`
+		- `build\win_x86-32_mingw\tml\tmlcore12.dll`
+		- `build\win_x86-32_mingw\tml-tls\tml-tls12.dll` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-32_mingw\test\libTmlTest.exe`
 
 
@@ -209,8 +240,9 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 - Build with cmake<br>`cmake --build . --clean-first`
 
 	- the binaries are located in:
-		- `build\win_x86-64_mingw\sidex\sidex11_64.dll`
-		- `build\win_x86-64_mingw\tml\tmlcore11_64.dll`
+		- `build\win_x86-64_mingw\sidex\sidex12_64.dll`
+		- `build\win_x86-64_mingw\tml\tmlcore12_64.dll`
+		- `build\win_x86-64_mingw\tml-tls\tml-tls12_64.dll` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-64_mingw\test\libTmlTest64.exe`
 
 <br>
@@ -237,16 +269,20 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 - Depending on the `TML_TARGET_PLATFORM` parameter the binaries are located in:
 
 	* win_x86-32:
-		- `build\win_x86-32\sidex\Release\sidex11.dll`
-		- `build\win_x86-32\sidex\Release\sidex11.lib`
-		- `build\win_x86-32\tml\Release\tmlcore11.dll`
-		- `build\win_x86-32\tml\Release\tmlcore11.lib`
+		- `build\win_x86-32\sidex\Release\sidex12.dll`
+		- `build\win_x86-32\sidex\Release\sidex12.lib`
+		- `build\win_x86-32\tml\Release\tmlcore12.dll`
+		- `build\win_x86-32\tml\Release\tmlcore12.lib`
+		- `build\win_x86-32\tml-tls\Release\tml-tls12.dll` [*)TLS build option enabled](#TLSOption)
+		- `build\win_x86-32\tml-tls\Release\tml-tls12.lib` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-32\test\Release\libTmlTest.exe`
 	* win_x86-64:
-	    - `build\win_x86-64\sidex\Release\sidex11_64.dll`
-	    - `build\win_x86-64\sidex\Release\sidex11_64.lib`
-		- `build\win_x86-64\tml\Release\tmlcore11_64.dll`
-		- `build\win_x86-64\tml\Release\tmlcore11_64.lib`
+	    - `build\win_x86-64\sidex\Release\sidex12_64.dll`
+	    - `build\win_x86-64\sidex\Release\sidex12_64.lib`
+		- `build\win_x86-64\tml\Release\tmlcore12_64.dll`
+		- `build\win_x86-64\tml\Release\tmlcore12_64.lib`
+		- `build\win_x86-64\tml-tls\Release\tml-tls12_64.dll` [*)TLS build option enabled](#TLSOption)
+		- `build\win_x86-64\tml-tls\Release\tml-tls12_64.lib` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-64\test\Release\libTmlTest64.exe`
 
 <br>
@@ -272,12 +308,14 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Depending on the `TML_TARGET_PLATFORM` parameter the binaries are located in:
 	* linux_x86-32
-		- `build\linux_x86-32\sidex\libsidex11.so`
-		- `build\linux_x86-32\tml\libtmlcore11.so`
+		- `build\linux_x86-32\sidex\libsidex12.so`
+		- `build\linux_x86-32\tml\libtmlcore12.so`
+		- `build\linux_x86-32\tml-tls\libtml-tls12.so` [*)TLS build option enabled](#TLSOption)
 		- `build\linux_x86-32\test\libTmlTest`
 	* linux_x86-64
-		- `build\linux_x86-64\sidex\libsidex11_64.so`
-		- `build\linux_x86-64\tml\libtmlcore11_64.so`
+		- `build\linux_x86-64\sidex\libsidex12_64.so`
+		- `build\linux_x86-64\tml\libtmlcore12_64.so`
+		- `build\linux_x86-64\tml-tls\libtml-tls12_64.so` [*)TLS build option enabled](#TLSOption)
 		- `build\linux_x86-64\test\libTmlTest64`
 
 
@@ -306,12 +344,14 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Depending on the `TML_TARGET_PLATFORM` parameter the binaries are located in:
 	- osx_x86-32
-		- `build\osx_x86-32\sidex\libsidex11.dylib`
-		- `build\osx_x86-32\tml\libtmlcore11.dylib`
+		- `build\osx_x86-32\sidex\libsidex12.dylib`
+		- `build\osx_x86-32\tml\libtmlcore12.dylib`
+		- `build\osx_x86-32\tml-tls\libtml-tls12.dylib` [*)TLS build option enabled](#TLSOption)
 		- `build\osx_x86-32\test\libTmlTest`
 	- osx_x86-64
-		- `build\osx_x86-64\sidex\libsidex11_64.dylib`
-		- `build\osx_x86-64\tml\libtmlcore11_64.dylib`
+		- `build\osx_x86-64\sidex\libsidex12_64.dylib`
+		- `build\osx_x86-64\tml\libtmlcore12_64.dylib`
+		- `build\osx_x86-64\tml-tls\libtml-tls12_64.dylib` [*)TLS build option enabled](#TLSOption)
 		- `build\osx_x86-64\test\libTmlTest64`
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
@@ -334,8 +374,9 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 - Build with cmake<br>`cmake --build . --clean-first`
 
 - the binaries are located in:
-	- `build\linux_arm32\sidex\libsidex11.so`
-	- `build\linux_arm32\tml\libtmlcore11.so`
+	- `build\linux_arm32\sidex\libsidex12.so`
+	- `build\linux_arm32\tml\libtmlcore12.so`
+	- `build\linux_arm32\tml-tls\libtml-tls12.so` [*)TLS build option enabled](#TLSOption)
 	- `build\linux_arm32\test\libTmlTest`
 
 
@@ -375,8 +416,9 @@ A cross compile for Android on Windows requires [MinGW](http://www.mingw.org/) w
 - Build with cmake<br>`cmake --build . --clean-first`
 
 - the binaries are located in:
-	- `build\android_arm32\sidex\libsidex11.so`
-	- `build\android_arm32\tml\libtmlcore11.so`
+	- `build\android_arm32\sidex\libsidex12.so`
+	- `build\android_arm32\tml\libtmlcore12.so`
+	- `build\android_arm32\tml-tls\libtml-tls12.so` [\*)TLS build  option enabled](#TLSOption)
 
 <br>
 
@@ -401,12 +443,14 @@ A cross compile for Android on Windows requires [MinGW](http://www.mingw.org/) w
 
 - Depending on the `TML_TARGET_PLATFORM` parameter the binaries are located in:
 	* freeBSD_x86-32
-		- `build\freeBSD_x86-32\sidex\libsidex11.so`
-		- `build\freeBSD_x86-32\tml\libtmlcore11.so`
+		- `build\freeBSD_x86-32\sidex\libsidex12.so`
+		- `build\freeBSD_x86-32\tml\libtmlcore12.so`
+		- `build\freeBSD_x86-32\tml-tls\libtml-tls12.so` [*)TLS build option enabled](#TLSOption)
 		- `build\freeBSD_x86-32\test\libTmlTest`
 	* freeBSD_x86-64
-		- `build\freeBSD_x86-64\sidex\libsidex11_64.so`
-		- `build\freeBSD_x86-64\tml\libtmlcore11_64.so`
+		- `build\freeBSD_x86-64\sidex\libsidex12_64.so`
+		- `build\freeBSD_x86-64\tml\libtmlcore12_64.so`
+		- `build\freeBSD_x86-64\tml-tls\libtml-tls12_64.so` [*)TLS build option enabled](#TLSOption)
 		- `build\freeBSD_x86-64\test\libTmlTest64`
 
 

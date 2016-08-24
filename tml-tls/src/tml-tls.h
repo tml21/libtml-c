@@ -128,6 +128,8 @@ typedef enum {
  * @ingroup tlsGeneral
  * @brief   Callback function to accept TLS requests.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   serverName SIDEX string Variant containing the server name
  *
  * @returns TML_TRUE if TLS request is accepted, otherwise TML_FALSE
@@ -140,6 +142,8 @@ typedef  TML_BOOL (*TML_ON_ACCEPT_TLS_REQUEST_CB_FUNC)(SIDEX_VARIANT vServerName
 /**
  * @ingroup tlsGeneral
  * @brief   Callback function to get TLS certificate file location.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   serverName SIDEX string Variant containing the server name
  *
@@ -154,6 +158,8 @@ typedef  SIDEX_VARIANT (*TML_ON_CERTIFICATE_FILE_LOCATION_CB_FUNC)(SIDEX_VARIANT
  * @ingroup tlsGeneral
  * @brief   Callback function to get TLS private key file location.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   serverName SIDEX string Variant containing the server name
  *
  * @returns pathname of private key file as content of a SIDEX string Variant allocated by the callback function.<br>It has to be freed by the caller using sidex_Variant_DecRef()
@@ -167,6 +173,8 @@ typedef  SIDEX_VARIANT (*TML_ON_CERTIFICATE_PRIVATE_KEY_LOCATION_CB_FUNC)(SIDEX_
  * @ingroup tlsGeneral
  * @brief   Callback function called when an error is found during TLS handshake.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   errorMessage     string Variant containing the errorMessage
  * @param   pErrorData       reference to optional user data configured in tml_Tls_Core_Set_OnError() 
@@ -179,6 +187,8 @@ typedef  void (*TML_ON_TLS_ERROR_CB_FUNC)(TML_CONNECTION_HANDLE connection, SIDE
 /**
  * @ingroup tlsGeneral
  * @brief   Allows to configure if the provided tml core will accept TLS incoming connections.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  * @param   pAcceptCB reference to callback handler method executed to notify user app level that a TLS request was received,<br>
@@ -201,6 +211,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_AcceptNegotiation(TML_CORE_HAN
  * @ingroup tlsGeneral
  * @brief   Starts the TLS transport security negotiation on the given connection.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   connectionHandle   TML connection handle (TML_CONNECTION_HANDLE)
  * @param   bAllowTlsFailures  configure how to handle errors produced while activating TLS negotiation. TML_TRUE - connection will be used unencrypted if possible.
  * @param   bEncrypted         reference to encryption status.TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE
@@ -215,6 +227,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_StartNegotiation (TML_CO
  * @ingroup tlsGeneral
  * @brief   Allows to activate TLS profile automatic negotiation for every connection created.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   coreHandle TML    core handle (TML_CORE_HANDLE)
  * @param   bEnabled          TML_TRUE to activate the automatic TLS profile negotiation for every connection created, TML_FALSE to disable it
  * @param   bAllowTlsFailures configure how to handle errors produced while activating automatic TLS negotiation
@@ -228,6 +242,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Core_Set_AutoNegotiation (TML_CORE_
 /**
  * @ingroup tlsGeneral
  * @brief   Allows to verify peer certificate after successfully establish TLS session. 
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   bVerifyOk        reference to verification result.TML_TRUE if certificate verification status is ok, otherwise TML_FALSE 
@@ -245,6 +261,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_VerifyCert (TML_CONNECTI
 /**
  * @ingroup tlsGeneral
  * @brief   Is encrption enabled for the requested connection.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   bEncrypted       reference to encryption status.TML_TRUE if the current connection instance is encrypted, otherwise TML_FALSE
@@ -270,6 +288,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Valid (TML_CO
 /**
  * @ingroup tlsGeneral
  * @brief   Get the encrption status message created during the start of the TLS transport security negotiation.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   statusMsg        reference to string containing encryption status message.<br>
@@ -303,6 +323,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Encryption_Get_StatusMes
  * @ingroup tlsGeneral
  * @brief   Allows to create a digest from the provided string.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   string	         the string to digest
  * @param   method           the digest method to use
  * @param   sDigest          reference to string with the hash value that represents the string provided.<br>
@@ -332,6 +354,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Get_Digest_A (char* string, TmlTlsD
 /**
  * @ingroup tlsGeneral
  * @brief   Allows to return the certificate digest from the remote peer given TLS session is activated (this is also called the certificate fingerprint).
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   method           the digest method to use
@@ -363,6 +387,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_PeerSSLDigest_A (TML
  * @ingroup tlsGeneral
  * @brief   Allows to return the certificate digest from a local stored certificate file (this is also called the certificate fingerprint).
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   method           the digest method to use
  * @param   sPathName        reference to pathname of the certificate file
@@ -393,6 +419,8 @@ TLS_CORE_API TML_INT32 DLL_CALL_CONV tml_Tls_Connection_Get_SSLDigest_A (TML_CON
 /**
  * @ingroup tlsGeneral
  * @brief   Allows to configure an error handler that will be called when a failure is found at SSL level or during the handshake with the particular function failing.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   coreHandle TML    core handle (TML_CORE_HANDLE)
  * @param   pErrorCB          the error handler to be called when an error is found or NULL (deregistration of previously registered handler)
