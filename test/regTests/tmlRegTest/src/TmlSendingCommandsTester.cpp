@@ -124,9 +124,21 @@ bool TmlSendingCommandsTester::testSyncMessage()
             m_iErr = tml_Send_SyncMessage(TML_HANDLE_TYPE_NULL, tCommand, S_IO_PROFILE , S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
             checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_SyncMessage(NoCoreHandle)"));
 
-            // to be implemented
-            //m_iErr = tml_Send_SyncMessage(getCore(0), tCommandEmpty, S_IO_PROFILE , S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
-            //checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_SyncMessage(NoCoreHandle)"));
+            // Check for NULL as core handle
+            m_iErr = tml_Send_SyncMessage((TML_CORE_HANDLE)NULL, tCommandEmpty, S_IO_PROFILE , S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_SyncMessage(NULLasCoreHandle)"));
+
+            // Check for NULL as command handle
+            m_iErr = tml_Send_SyncMessage(getCore(0), (TML_COMMAND_HANDLE)NULL, S_IO_PROFILE, S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_SyncMessage(NULLasCommandHandle)"));
+
+            // Check for NULL as address
+            m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, S_IO_PROFILE, NULL, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Send_SyncMessage(address)"));
+
+            // Check for NULL as port
+            m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, S_IO_PROFILE, S_TD_127_0_0_1, NULL, 3000);
+            checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Send_SyncMessage(NULLasPort)"));
 
             // Check for wrong profile
             m_iErr = tml_Send_SyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
@@ -209,6 +221,10 @@ void TmlSendingCommandsTester::listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TM
     check.m_iErr = tml_Send_AsyncProgressReply(TML_HANDLE_TYPE_NULL, 1);
     check.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncProgressReply(MissingObj)"));
 
+    // Check for NULL as TML command handle
+    check.m_iErr = tml_Send_AsyncProgressReply((TML_CORE_HANDLE)NULL, 1);
+    check.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncProgressReply(MissingObj)"));
+
     // Check if the progress count is out of range
     check.m_iErr = tml_Send_AsyncProgressReply(tmlhandle, -1);
     check.checkForExpectedReturnCode(TML_ERR_COMMAND_PROGRESS_RANGE, tmlrtT("tml_Send_AsyncProgressReply(CommandProgressOutOfRange)"));
@@ -245,14 +261,21 @@ void TmlSendingCommandsTester::listenerCallBack(TML_COMMAND_HANDLE tmlhandle, TM
     check.m_iErr = tml_Send_AsyncStatusReply(TML_HANDLE_TYPE_NULL , 10, tmlrtT("Test"));
     check.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncStatusReply(MissingObj)"));
 
+    // Check for NULL TML command handle
+    check.m_iErr = tml_Send_AsyncStatusReply((TML_CORE_HANDLE)NULL, 10, tmlrtT("Test"));
+    check.checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncStatusReply(MissingObj)"));
+
     // Check for not supported command handle
     check.m_iErr = tml_Send_AsyncStatusReply(CommandHdl, 10, tmlrtT("Test"));
     check.checkForExpectedReturnCode(TML_ERR_ATTRIBUTE_NOT_SET, tmlrtT("tml_Send_AsyncStatusReply(MissingObj)"));
     
-    // Check for not undefined reply type
+    // Check for not defined reply type
     check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, -1, tmlrtT("Test"));
     check.checkForExpectedReturnCode(TML_ERR_COMMAND_REPLY_TYPE_UNDEFINED, tmlrtT("tml_Send_AsyncStatusReply(AttributeNotSet)"));
 
+    // Check for NULL as reply type
+    check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, (TML_INT32)NULL, tmlrtT("Test"));
+    check.checkForExpectedReturnCode(TML_ERR_COMMAND_REPLY_TYPE_UNDEFINED, tmlrtT("tml_Send_AsyncStatusReply(MissingObj)"));
     #if defined(SIDEX_UNICODE) || defined(TML_UNICODE)
     // Check for Unicode error
     check.m_iErr = tml_Send_AsyncStatusReply(tmlhandle, -1, NULL);
@@ -315,6 +338,8 @@ bool TmlSendingCommandsTester::testAsyncMessage()
     tml_Cmd_Create(&tCommand2);
     setCommandID(tCommand2, 1235);
 
+    TML_COMMAND_HANDLE tCommandEmpty = TML_HANDLE_TYPE_NULL;
+
     if(createCore(0) && createCore(1))
     {
       if(createListener(1, 0, sAddress1))
@@ -330,6 +355,18 @@ bool TmlSendingCommandsTester::testAsyncMessage()
             m_iErr = tml_Send_AsyncMessage(TML_HANDLE_TYPE_NULL, tCommand, S_IO_PROFILE , S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
             checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AyncMessage(NoCoreHandle)"));
 
+            // Check for NULL as core handle
+            m_iErr = tml_Send_AsyncMessage((TML_CORE_HANDLE)NULL, tCommand, S_IO_PROFILE, S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AyncMessage(NULLasCoreHandle)"));
+
+            // Check for empty command handle
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommandEmpty, S_IO_PROFILE, S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncMessage(emptyCommandHandle)"));
+
+            // Check for NULL as command handle
+            m_iErr = tml_Send_AsyncMessage(getCore(0), (TML_COMMAND_HANDLE)NULL, S_IO_PROFILE, S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_MISSING_OBJ, tmlrtT("tml_Send_AsyncMessage(NULLasCommandHandle)"));
+
             // Check for wrong profile
             m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE_TWO , S_TD_127_0_0_1, tmlrt_itoa(iPort), 3000);
             checkForExpectedReturnCode(TML_ERR_SENDER_PROFILE_NOT_SUPPORTED, tmlrtT("tml_Send_AsyncMessage(WrongProfile)")); 
@@ -344,9 +381,17 @@ bool TmlSendingCommandsTester::testAsyncMessage()
             m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE , tmlrtT("127.0.5.1"), tmlrt_itoa(iPort), 3000);
             checkForExpectedReturnCode(TML_ERR_SENDER_INVALID_PARAMS, tmlrtT("tml_Send_AsyncMessage(WrongHostAddress)"));
 
+            // Check for NULL as host address
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE, NULL, tmlrt_itoa(iPort), 3000);
+            checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Send_AsyncMessage(NULLasHostAddress)"));
+
             // Check for invalid host port
             m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE , S_TD_127_0_0_1, tmlrtT("5555"), 3000);
             checkForExpectedReturnCode(TML_ERR_SENDER_INVALID_PARAMS, tmlrtT("tml_Send_AsyncMessage(WrongHostPort)"));
+
+            // Check for NULL as port
+            m_iErr = tml_Send_AsyncMessage(getCore(0), tCommand, S_IO_PROFILE, S_TD_127_0_0_1, NULL, 3000);
+            checkForExpectedReturnCode(TML_ERR_UNICODE, tmlrtT("tml_Send_AsyncMessage(NULLasPort)"));
 
             /***********************************  END Test tml_Send_AsyncMessage  *******************************/
 

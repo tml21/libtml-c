@@ -226,7 +226,6 @@ bool TmlMultipleListenersTester::testTmlCoreListenerClose()
 	initSenderSide();
 
 	checkForDecreasedListenersAfterOneIsClosed();
-	//here lies a race condition, just happens on linux
 	freeTmlCores();
 
   messageOutput(CHOICE_FINISH_MESSAGE(m_testOK));
@@ -314,21 +313,44 @@ bool TmlMultipleListenersTester::testTmlCoreListenerCreateCloseErrorCodes()
 	defaultListenerInit();
 	initSenderSide();
 
+	//invalid core handle
 	apiReturns = tml_Core_Listener_Create(TML_HANDLE_TYPE_NULL, address, &listenerHandle);
 	m_iErr = apiReturns;
 	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
+	//NULL as core handle
+	apiReturns = tml_Core_Listener_Create((TML_CORE_HANDLE)NULL, address, &listenerHandle);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//invalid address
 	tmlCore = m_coreListenerSide;
 	apiReturns = tml_Core_Listener_Create(tmlCore->getCore(), tmlrtT("21"), &listenerHandle);
-	m_iErr = apiReturns;
+  m_iErr = apiReturns;
 	checkForExpectedReturnCode(TML_ERR_NET_BINDING);
 
+	//NULL as listener handle
+	apiReturns = tml_Core_Listener_Create(tmlCore->getCore(), address, NULL);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//invalid listener handle
 	apiReturns = tml_Listener_Close(&listenerHandle);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//NULL as listener handle
+	apiReturns = tml_Listener_Close(NULL);
 	m_iErr = apiReturns;
 	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
 #if defined SIDEX_UNICODE || defined TML_UNICODE
 	tmlCore = m_coreSenderSide;
+	apiReturns = tml_Core_Listener_Create(tmlCore->getCore(), NULL, &listenerHandle);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_UNICODE);
+#else 
+	//NULL as address
 	apiReturns = tml_Core_Listener_Create(tmlCore->getCore(), NULL, &listenerHandle);
 	m_iErr = apiReturns;
 	checkForExpectedReturnCode(TML_ERR_UNICODE);
@@ -365,7 +387,18 @@ bool TmlMultipleListenersTester::testTmlCoreGetListenerCountErrorCodes()
 	initSenderSide();
 	defaultListenerInit();
 
+	//invalid listener handle
 	apiReturns = tml_Core_Get_ListenerCount(TML_HANDLE_TYPE_NULL, &count);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//NULL as listener handle
+	apiReturns = tml_Core_Get_ListenerCount((TML_CORE_HANDLE)NULL, &count);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//NULL as count parameter
+	apiReturns = tml_Core_Get_ListenerCount(m_coreListenerSide->getCore(), NULL);
 	m_iErr = apiReturns;
 	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
@@ -406,11 +439,22 @@ bool TmlMultipleListenersTester::testTmlCoreGetListenerErrorCodes()
 	defaultListenerInit();
 	initSenderSide();
 
+	tmlCore = m_coreSenderSide;
+
+	//invalid core handle
 	apiReturns = tml_Core_Get_Listener(TML_HANDLE_TYPE_NULL, indexOfListenerHandle, &listenerHandle);
 	m_iErr = apiReturns;
 	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
-	tmlCore = m_coreSenderSide;
+	//NULL as core handle
+	apiReturns = tml_Core_Get_Listener((TML_CORE_HANDLE)NULL, indexOfListenerHandle, &listenerHandle);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//NULL as listener handle
+	apiReturns = tml_Core_Get_Listener(tmlCore->getCore(), indexOfListenerHandle, (TML_LISTENER_HANDLE*)NULL);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
 	apiReturns = tml_Core_Get_Listener(tmlCore->getCore(), indexOutOfBounds, &listenerHandle);
 	m_iErr = apiReturns;
@@ -447,11 +491,37 @@ bool TmlMultipleListenersTester::testTmlListenerGetSetEnabledForErrorCodes()
 	defaultListenerInit();
 	initSenderSide();
 
+	//invalid listener parameter
 	apiReturns = tml_Listener_Set_Enabled(TML_HANDLE_TYPE_NULL, listenerEnabled);
 	m_iErr = apiReturns;
 	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
+	//NULL as listener handle
+	apiReturns = tml_Listener_Set_Enabled((TML_LISTENER_HANDLE)NULL, listenerEnabled);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//NULL as bool parameter will be handled as TML_FALSE
+	TML_LISTENER_HANDLE listenerHandle;
+	apiReturns = tml_Core_Get_Listener(m_coreListenerSide->getCore(), 0, &listenerHandle);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_SUCCESS);
+	apiReturns = tml_Listener_Set_Enabled(listenerHandle, (TML_BOOL)NULL);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_SUCCESS);
+
+	//invalid listener handle
 	apiReturns = tml_Listener_Get_Enabled(TML_HANDLE_TYPE_NULL, &listenerEnabled);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//NULL as listener handle
+	apiReturns = tml_Listener_Get_Enabled((TML_LISTENER_HANDLE)NULL, &listenerEnabled);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//NULL as bool parameter
+	apiReturns = tml_Listener_Get_Enabled(m_coreListenerSide->getCore(), NULL);
 	m_iErr = apiReturns;
 	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
@@ -483,11 +553,23 @@ bool TmlMultipleListenersTester::testTmlListenerGetAddressErrorCodes()
 	SIDEX_TCHAR* address;
 	TML_LISTENER_HANDLE listenerHandle = TML_HANDLE_TYPE_NULL;
 	TML_INT32 apiReturns = 0;
+	TmlCore* tmlcore = TML_HANDLE_TYPE_NULL;
 
 	initSenderSide();
 	defaultListenerInit();
 
+	//invalid core handle
 	apiReturns = tml_Listener_Get_Address(TML_HANDLE_TYPE_NULL, &address);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//NULL as core handle
+	apiReturns = tml_Listener_Get_Address((TML_LISTENER_HANDLE)NULL, &address);
+	m_iErr = apiReturns;
+	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
+
+	//NULL as address
+	apiReturns = tml_Listener_Get_Address(m_coreListenerSide->getCore(), NULL);
 	m_iErr = apiReturns;
 	checkForExpectedReturnCode(TML_ERR_MISSING_OBJ);
 
