@@ -35,7 +35,7 @@
  *    wobe-systems GmbH
  */
 
-#define VERSION "1.1.5"
+#define VERSION "1.2.0"
 
 #include <stdio.h>
 #include <string.h>
