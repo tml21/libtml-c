@@ -296,8 +296,10 @@ typedef  void (*TML_ON_CMD_DISPATCH_CB_FUNC)(TML_COMMAND_HANDLE tmlhandle, TML_P
 
 
 /**
- * @brief   Callback function to signal a new connection.
  * @ingroup tmlCBFunctions
+ * @brief   Callback function to signal a new connection.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle  TML connection handle (TML_CONNECTION_HANDLE)
  * @param   pCBData   custom data from handler registration (tml_Core_Set_OnConnect()) or TML_HANDLE_TYPE_NULL
@@ -308,8 +310,10 @@ typedef  void (*TML_ON_CONNECT_CB_FUNC)(TML_CONNECTION_HANDLE connectionHandle, 
 
 
 /**
- * @brief   Callback function to signal a closed connection.
  * @ingroup tmlCBFunctions
+ * @brief   Callback function to signal a closed connection.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle  TML connection handle (TML_CONNECTION_HANDLE)
  * @param   pCBData   custom data from handler registration (tml_Core_Set_OnDisconnect()) or TML_HANDLE_TYPE_NULL

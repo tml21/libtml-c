@@ -1140,6 +1140,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Subscribe_MessageDestination_A(TML_
  * @ingroup  eventIO
  * @brief    Subscribe event receiver.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   connectionHandle  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   sProfile          profile identification string
  *
@@ -1235,6 +1237,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Unsubscribe_MessageDestination_A(TM
 /**
  * @ingroup  eventIO
  * @brief    Unsubscribe event receiver.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   sProfile          profile identification string
@@ -1479,6 +1483,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_SubscriptionRequest_A(TML_CORE
  *
  * With this function a command receiver can subscribe itself to receive event messages.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param  sProfile         profile identification string
  * @param  iTimeout         timeout in milliseconds
@@ -1598,6 +1604,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Evt_Send_UnsubscriptionRequest_A(TML_CO
  *
  * With this function a command receiver can unsubscribe itself to receive event messages.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param  sProfile         profile identification string
  * @param  iTimeout         timeout in milliseconds
@@ -1668,6 +1676,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Subscribe_MessageDestination_A(TML_
 /**
  * @ingroup  loadbalancedIO
  * @brief    Add a command receiver for load balanced calls.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   sProfile          profile identification string
@@ -1763,6 +1773,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Unsubscribe_MessageDestination_A(TM
 /**
  * @ingroup  loadbalancedIO
  * @brief    Unsubscribe a command receiver for load balanced calls.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   sProfile          profile identification string
@@ -2065,6 +2077,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_SubscriptionRequest_A(TML_CORE
  *
  * With this function a command receiver can subscribe itself to receive load balanced commands.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param  sProfile         profile identification string
  * @param  iTimeout         timeout in milliseconds
@@ -2183,6 +2197,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Bal_Send_UnsubscriptionRequest_A(TML_CO
  * @brief    Unregister a load balancing command receiver.
  *
  * With this function a command receiver can unsubscribe itself to receive load balanced commands.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param  sProfile         profile identification string
@@ -3711,6 +3727,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
  * @ingroup  multiListener
  * @brief    Create a new listener.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
  * @param   sAddress         network address for listener binding.<br><br>
  *                           <host>:<port><br>
@@ -3747,6 +3765,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Listener_Create_A(TML_CORE_HANDLE 
  * @ingroup  multiListener
  * @brief    Close a listener and release resources.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   listenerHandle reference to TML listener handle (TML_LISTENER_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
@@ -3758,6 +3778,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Close(TML_LISTENER_HANDLE* lis
 /**
  * @ingroup  multiListener
  * @brief    Returns the listener's network binding address.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   listenerHandle   TML listener handle (TML_LISTENER_HANDLE)
  * @param   sAddress         borrowed reference to network binding address
@@ -3788,6 +3810,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Address_A(TML_LISTENER_HAN
  * @ingroup  multiListener
  * @brief    Get the number of listeners.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   coreHandle TML core handle
  * @param   iCount     reference to the number of listeners
  *
@@ -3800,6 +3824,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerCount(TML_CORE_HANDLE 
 /**
  * @ingroup  multiListener
  * @brief    Get listener's handle from a TML core.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   coreHandle TML core handle
  * @param   index index of listener
@@ -3815,6 +3841,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Listener(TML_CORE_HANDLE coreH
 /**
  * @ingroup  multiListener
  * @brief    Get listener's handle from a TML core.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   coreHandle TML core handle
  * @param   sAddress network binding address
@@ -3846,6 +3874,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ListenerByAddress_A(TML_CORE_H
  * @ingroup  multiListener
  * @brief    Enable/disable a listener.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * To enable / disable all listeners, use tml_Core_Set_ListenerEnabled().
  *
  * @param   listenerHandle TML listener handle
@@ -3863,6 +3893,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Set_Enabled(TML_LISTENER_HANDL
  * @ingroup  multiListener
  * @brief    Get enable status of a listener.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   listenerHandle TML listener handle
  * @param   bEnable        reference to listener enable status
  *
@@ -3877,6 +3909,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Listener_Get_Enabled(TML_LISTENER_HANDL
 /**
  * @ingroup  connectionManagement
  * @brief    Create a new connection.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   coreHandle       TML core handle (TML_CORE_HANDLE)
  * @param   sAddress         network address.<br><br>
@@ -3914,6 +3948,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Connect_A(TML_CORE_HANDLE coreHand
  * @ingroup  connectionManagement
  * @brief    Close a connection and release resources.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   connectionHandle reference to a TML connection handle (TML_CONNECTION_HANDLE)
  *
  * @returns TML_SUCCESS in case of success<br>
@@ -3925,6 +3961,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Close(TML_CONNECTION_HANDLE*
 /**
  * @ingroup  connectionManagement
  * @brief    Returns the network address of remote peer.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   sAddress         borrowed reference to network address
@@ -3958,6 +3996,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_Address_A(TML_CONNECTION
  *
  * A SIDEX list containing SIDEX strings with profile names is returned.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   lProfiles   reference to profile list.<br>
  *                      The list has to be released with sidex_Variant_DecRef()
@@ -3972,6 +4012,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Get_RemoteProfiles(TML_CONNE
 /**
  * @ingroup  connectionManagement
  * @brief    Validate a connection.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param   bReconnect       TML_TRUE = try to reconnect if disconnected / TML_FALSE = don't try to reconnect
@@ -3990,6 +4032,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_Validate(TML_CONNECTION_HAND
  * @ingroup  connectionManagement
  * @brief    Returns the number of connections.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param   coreHandle TML core handle
  * @param   iCount     reference to the number of connections
  *
@@ -4003,6 +4047,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionCount(TML_CORE_HANDL
 /**
  * @ingroup  connectionManagement
  * @brief    Get connection handle from a TML core.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   coreHandle TML core handle
  * @param   index index of connection
@@ -4018,6 +4064,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_Connection(TML_CORE_HANDLE cor
 /**
  * @ingroup  connectionManagement
  * @brief    Get connection handle from a TML core.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   coreHandle TML core handle
  * @param   sAddress network address
@@ -4052,6 +4100,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Get_ConnectionByAddress_A(TML_CORE
  * The call returns after sending the message without waiting for a reply. 
  * The result of the command execution and possible error needs to be handled in a callback function registered with tml_Cmd_Register_CommandReady().
  * In the callback function you also have to free the TML command handle using tml_Cmd_Free(). 
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param  sProfile         profile identification string
@@ -4093,6 +4143,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendAsync_A(TML_CONNECTION_H
  * Sending a message synchronously means that the call returns after the result of the message call
  * was received or an error occurred.
  *
+ * <B><I>New in version 1.2</I></B>
+ *
  * @param  connectionHandle TML connection handle (TML_CONNECTION_HANDLE)
  * @param  sProfile         profile identification string
  * @param  tmlhandle        TML command handle
@@ -4130,8 +4182,10 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Connection_SendSync_A(TML_CONNECTION_HA
 
 
 /**
- * @ingroup  connectionManagement
+ * @ingroup  tmlHandle
  * @brief    Get the connection on which the command was previously sent/received.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   cmdHandle TML command handle (TML_COMMAND_HANDLE)
  * @param   connectionHandle reference to the TML connection handle (TML_CONNECTION_HANDLE)
@@ -4147,6 +4201,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Cmd_Get_Connection(TML_COMMAND_HANDLE c
  * @brief    Set callback function to signal a new connection.
  *
  * Read TML_ON_CONNECT_CB_FUNC() for further reference.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  * @param   pCBFunc    callback function or NULL to remove previously registered function
@@ -4165,6 +4221,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_Core_Set_OnConnect(TML_CORE_HANDLE core
  * @brief    Callback function to signal a closed connection.
  *
  * Read TML_ON_DISCONNECT_CB_FUNC() for further reference.
+ *
+ * <B><I>New in version 1.2</I></B>
  *
  * @param   coreHandle TML core handle (TML_CORE_HANDLE)
  * @param   pCBFunc    callback function or NULL to remove previously registered function
