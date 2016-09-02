@@ -56,7 +56,7 @@ The AXL library is an XML 1.0 implementation. It is optimized for speed and a sm
 
 If you want to use a Windows installer, download the Vortex installer instead of the AXL installer. It includes the AXL library. During the installation you need to select to install the development libraries and include files along with the binaries.
 
-We recommend do use the AXL library within our binary distribution. 
+**Note:** Our binary distribution package includes the AXL library. 
 
 #### Vortex ####
 
@@ -68,9 +68,9 @@ Vortex is a BEEP core implementation.
 - **Required for:** libTML
 - **Remarks:** On Unix-like systems the Vortex library can be compiled from source
 
-To build the TLS and SASL modules, the GNU SASL library (libgsasl7-dev) and the SSL development libraries (libssl-dev) are required. On Debian wheezy, for example, you can install the libraries with using apt-get. 
+To build the TLS module, the SSL development library (libssl-dev) is required. On Debian wheezy, for example, you can install the libraries with using apt-get. 
 
-	apt-get install libgsasl7-dev libssl-dev	
+	apt-get install libssl-dev	
 
 The normal sequence of commands to build Vortex from source:
 
@@ -87,7 +87,7 @@ Building Vortex on OS X may show errors. Use the options to work around them.
 The Vortex Windows installer includes all binaries for Windows. During the installation you need to select to install the development libraries and include files along with the binaries.
 
 
-We recommend do use the Vortex library within our binary distribution.
+**Note:** Our binary distribution package includes the Vortex library. 
 
 #### libiconv ####
 
