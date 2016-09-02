@@ -109,9 +109,9 @@ On Windows the libiconv library is not required.
 
 In order to activate the [optional libTML TLS profile support](#TLSOption) it is also required openssl to be installed.
 
-- **Homepage:** [`(http://www.openssl.org`](http://www.openssl.org)
-- **Download:**  [`(http://www.openssl.org/source/`](http://www.openssl.org/source/)
-- **Documentation:** [`(http://www.openssl.org/docs/`](http://www.openssl.org/docs/)
+- **Homepage:** [`http://www.openssl.org`](http://www.openssl.org)
+- **Download:**  [`http://www.openssl.org/source/`](http://www.openssl.org/source/)
+- **Documentation:** [`http://www.openssl.org/docs/`](http://www.openssl.org/docs/)
 - **Required for:** libTML-TLS
 - **Remarks:** This software is commonly found on every Unix/GNU/Linux installation. Binaries are also available for Microsoft Windows platforms.
 
