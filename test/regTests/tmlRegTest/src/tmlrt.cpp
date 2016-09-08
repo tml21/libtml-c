@@ -41,6 +41,7 @@
 #include "tmlrt_MultipleListeners.h"
 #include "tmlrt_TLS.h"
 #include "tmlrt_SendingCommands.h"
+#include "tmlrt_GetVersion.h"
 
 /** @brief Main function, accepts command line parameters
 * @param int argc : contains amount of arguments in argv
@@ -144,6 +145,7 @@
         if(!testTmlMultiListeners()) break;         // test the multi listener API
         if(!testTmlTLS()) break;                    // test the TLS encryption API
         if(!testTmlSendingCommands()) break;        // test the sending commands API
+		if(!testTmlGetVersion()) break;				// test the API get_version function 
 
         i++;
       }

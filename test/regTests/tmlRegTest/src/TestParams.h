@@ -56,6 +56,7 @@ extern SIDEX_TCHAR* S_TN_TESTPARAMS;
 
 // group names
 extern SIDEX_TCHAR* S_TG_NETWORK;
+extern SIDEX_TCHAR* S_TG_VERSION;
 extern SIDEX_TCHAR* S_TG_TEST;
 extern SIDEX_TCHAR* S_TG_TLS;
 
@@ -66,6 +67,9 @@ extern SIDEX_TCHAR* S_TP_FIRSTPORTNUMBER;
 extern SIDEX_TCHAR* S_TP_LOOPCOUNT;
 
 extern SIDEX_TCHAR* S_TP_ISREPEATER;
+extern SIDEX_TCHAR* S_TP_API;
+extern SIDEX_TCHAR* S_TP_LIB;
+extern SIDEX_TCHAR* S_TP_VER;
 extern SIDEX_TCHAR* S_TP_MAXIDLETIME;
 extern SIDEX_TCHAR* S_TP_TLSREPEATERHOST;
 extern SIDEX_TCHAR* S_TP_TLSREPEATERPORT;
@@ -80,6 +84,7 @@ extern SIDEX_TCHAR* S_TP_FP_MD5;
 
 // default values
 extern SIDEX_TCHAR* S_TD_127_0_0_1;
+extern SIDEX_TCHAR* S_TD_VERSION;
 
 extern SIDEX_TCHAR* S_TD_TLS_LOCATION;
 extern SIDEX_TCHAR* S_TD_TLS_CRT;
@@ -88,6 +93,9 @@ extern SIDEX_TCHAR* S_TD_TLS_KEY;
 extern SIDEX_TCHAR* S_TD_TLS_KEY2;
 extern SIDEX_TCHAR* S_TD_TLS_FP_SHA1;
 extern SIDEX_TCHAR* S_TD_TLS_FP_MD5;
+
+extern TML_INT32 DEFAULT_APIVERSION;
+extern TML_INT32 DEFAULT_LIBVERSION;
 
 class CTestParams
 {
@@ -110,6 +118,9 @@ public:
   int          getFirstPortNumber();
 
   int          getTestLoopCount();
+
+  int		   getAPIVersion();
+  int		   getLIBVersion();
 
   bool         isActingAsRepeater();
   int          getMaxIdleTime();

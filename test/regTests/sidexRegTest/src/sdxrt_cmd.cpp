@@ -63,8 +63,9 @@ using namespace std;
 #include "sdxrt_test_binary.h"
 #include "sdxrt_test_list.h"
 #include "sdxrt_test_table.h"
+#include "sdxrt_test_get_version.h"
 
-enum Test {no_test=0, test_int=1, test_float=2, test_bool=3, test_none=4, test_doc=5, test_date=6, test_dict=7, test_string=8, test_bin=9, test_list=10, test_table=11};
+enum Test {no_test=0, test_int=1, test_float=2, test_bool=3, test_none=4, test_doc=5, test_date=6, test_dict=7, test_string=8, test_bin=9, test_list=10, test_table=11, test_get_version=12};
 
 /** @brief goes through all tests without stopping if a subtest fails
 * @param bool stop: returns after a subtest fails
@@ -160,6 +161,15 @@ int option_all(bool stop) {
             returnVal = -1;
         }
     }
+	if (!stop && returnVal != -1) {
+		if (test_sidex_get_version()) {
+			cout << "test_sidex_get_version OK " << endl;
+		}
+		else {
+			cout << "test_sidex_get_version FAILED" << endl;
+			returnVal = -1;
+		}
+	}
     return returnVal;
 }
 
@@ -286,6 +296,17 @@ int option_specific_test(bool stop, int test, int subtest) {
             returnVal = -1;
             break;
         }
+	case 12:
+		if (test_sidex_get_version()) {
+			cout << "test_sidex_get_version OK " << endl;
+			returnVal = 0;
+			break;
+		}
+		else {
+			cout << "test_sidex_get_version FAILED" << endl;
+			returnVal = -1;
+			break;
+		}
     default:
         returnVal = -1;
     }
@@ -320,7 +341,9 @@ int return_specific_test(char* test) {
         returnValue = 10;
     } else if (strcmp(test, "test_table") == 0) {
         returnValue = 11;
-    }
+    } else if (strcmp(test, "test_get_version") == 0) {
+		returnValue = 12;
+	}
     
     return returnValue;
 }
@@ -384,6 +407,11 @@ bool memLeaks(int test, int index) {
             test_sidex_table(0, false);
         }
         break;
+	case 12:
+		for (int i = 0; i < index; i++) {
+			test_sidex_get_version();
+		}
+		break;
     }
     return true;
 }
@@ -468,7 +496,7 @@ bool memLeaks(int test, int index) {
             cout << "+option '<specific test> [number] go': same as without go. Program executes the specific test, if the optional number was given, only that one subtest, and does not stop if one subtest fails" << endl;
             cout << "+option '<specific test> [number] stop': program executes the specific test, if the optional number was given, only that one subtest, and stops if one subtest fails" << endl;
             cout << "+testnames: test_int : <1-8> | test_float : <1-7> | test_bool : <1-7> | test_none : <1-4> | test_doc : <1-7> | test_dict : <1-11>" << endl;
-            cout << "test_string : <1-9> | test_bin : <1-7> | test_list : <1-11> | test_table : <1-17>" << endl;
+            cout << "test_string : <1-9> | test_bin : <1-7> | test_list : <1-11> | test_table : <1-17> | test_version : <1>" << endl;
             return 0;
         } else if (strcmp(opt1, "all") == 0) {
             //execute all tests and don't stop if a subtest fails
