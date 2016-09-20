@@ -10,6 +10,7 @@
   - [Install libTML-c binary package](\ref tml_bin_install)
   - [Install libTML-c from source](\ref tml_install)
   - [Introduction to libTML-c](\ref tml_intro)
+  - [Securing a TML Connection (or How to use the TLS profile)](\ref tls_intro)
 
 
 ## Library Documentation 

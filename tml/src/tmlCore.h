@@ -3734,6 +3734,8 @@ TML_CORE_API TML_INT32 DLL_CALL_CONV tml_logI_A(TML_INT32 iLogMask, const char* 
  *                           <host>:<port><br>
  *                           <IPv4Addr>:<port><br>
  *                           \[<IPv6Addr>\]:<port><br><br>
+ *                           The network address host represents the listening network interfaces.<br>
+ *                           A network address host of "0.0.0.0" specifies listening on all available network interfaces.<br><br>
  *                           A network address port number 0 results into a random calculated free port number during tml_Listener_Set_Enabled() execution.
  * @param   listenerHandle   reference to a new TML listener handle (TML_LISTENER_HANDLE)
  *
