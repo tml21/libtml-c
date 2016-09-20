@@ -22,11 +22,24 @@ Currently the following target systems are tested:
 
 ----------
 
+<a name="TLSOption"></a>
+## Optional libTML TLS build ##
+
+It is optional to build the libTML TLS profile supporting library.
+
+To enable the libTML TLS build option you have to add the parameter **BUILD_TLS=yes** to the make file generation command line.<br><br>
+Example:<br> <br>
+`cmake .. -G "Unix Makefiles" -DTML_TARGET_PLATFORM=linux_x86-32 -DBUILD_TLS=yes`
+
+<br>
+
+----------
+
 <a name="RequiredLibs"></a>
 ## Library dependencies ##
 
 To build libTML various libraries need to be present. Refer to the documentation of the particular library for installation.
- 
+
 #### AXL ####
 
 The AXL library is an XML 1.0 implementation. It is optimized for speed and a small memory footprint.
@@ -43,6 +56,8 @@ The AXL library is an XML 1.0 implementation. It is optimized for speed and a sm
 
 If you want to use a Windows installer, download the Vortex installer instead of the AXL installer. It includes the AXL library. During the installation you need to select to install the development libraries and include files along with the binaries.
 
+We recommend do use the AXL library within our binary distribution. 
+
 #### Vortex ####
 
 Vortex is a BEEP core implementation.
@@ -53,9 +68,9 @@ Vortex is a BEEP core implementation.
 - **Required for:** libTML
 - **Remarks:** On Unix-like systems the Vortex library can be compiled from source
 
-To build the TLS and SASL modules, the GNU SASL library (libgsasl7-dev) and the SSL development libraries (libssl-dev) are required. On Debian wheezy, for example, you can install the libraries with using apt-get. 
+To build the TLS and SASL modules, the GNU SASL library (libgsasl7-dev) and the SSL development libraries (libssl-dev) are required. On Debian wheezy, for example, you can install the libraries with using apt-get.
 
-	apt-get install libgsasl7-dev libssl-dev	
+	apt-get install libgsasl7-dev libssl-dev
 
 The normal sequence of commands to build Vortex from source:
 
@@ -71,6 +86,9 @@ Building Vortex on OS X may show errors. Use the options to work around them.
 
 The Vortex Windows installer includes all binaries for Windows. During the installation you need to select to install the development libraries and include files along with the binaries.
 
+
+We recommend do use the Vortex library within our binary distribution.
+
 #### libiconv ####
 
 For Unicode and string encoding support, libTML is using the libiconv library.
@@ -84,8 +102,19 @@ For Unicode and string encoding support, libTML is using the libiconv library.
     	./configure
     	make
     	make install
-    
-On Windows the libiconv library is not required. 
+
+On Windows the libiconv library is not required.
+
+#### openSSL ####
+
+In order to use the [optional libTML TLS profile support](#TLSOption) it is required to install openssl library and binaries.
+The libTML library can be used without the optional TLS support and installing openSSL can be skipped in that case. TLS profile will not be available in this case tough.
+
+- **Homepage:** [`(http://www.openssl.org`](http://www.openssl.org)
+- **Download:**  [`(http://www.openssl.org/source/`](http://www.openssl.org/source/)
+- **Documentation:** [`(http://www.openssl.org/docs/`](http://www.openssl.org/docs/)
+- **Required for:** libTML-TLS
+- **Remarks:** This software is commonly found on every Unix/GNU/Linux installation. Binaries are also available for Microsoft Windows platforms.
 
 <br>
 
@@ -93,11 +122,11 @@ On Windows the libiconv library is not required.
 
 ## Compiler ##
 
-The libTML-c library API supports char16\_t data type. It is mandatory, to use a compiler, that supports char16\_t data type (gcc >= 4.4).
+The libTML-c library API makes use of the char16\_t data type. It is mandatory, to use a compiler, that supports char16\_t data type (gcc >= 4.4).
 
 ### Set library dependencies manually ###
 
-By default cmake finds the library and include paths automatically. If the libraries are not installed in the default location, the **CMakeLists.txt** in the root directory of libTML-c has to be modified. These modifications are usually necessary on Windows. 
+By default cmake finds the library and include paths automatically. If the libraries are not installed in the default location, the **CMakeLists.txt** in the root directory of libTML-c has to be modified. These modifications are usually necessary on Windows.
 Find the intended build target in the **CMakeLists.txt** file and modify the directories.
 
 Set include directories:
@@ -105,7 +134,7 @@ Set include directories:
 	set(AXLINCLUDE "C:\\Program Files (x86)\\AxlW32\\include\\axl")
 	set(VORTEXINCLUDE "C:\\Program Files (x86)\\VortexLibrary-1.1-W32\\include\\vortex")
 	set(ICONVINCLUDE usr/local/include/iconv)
- 
+
 Set library directories:
 
 	LINK_DIRECTORIES("C:\\Program Files (x86)\\AxlW32\\lib")
@@ -120,7 +149,7 @@ For multiple library directories add this line with a different path.
 <a name="WinLink"></a>
 ## Build libTML-c on Windows ##
 
-To build libTML-c on Windows either Visual Studio or MinGW can be uses. 
+To build libTML-c on Windows you can use either Visual Studio or MinGW.
 
 - [Build with MinGW](#MinGWLink)
 	- [Build MinGW32](#MinGWLink32)
@@ -146,7 +175,7 @@ Open the MSys console (`<MinGW Installdir>\msys\1.0\msys.bat`) and go to the roo
 
 #### win64 #####
 
-To compile 64 bit libraries with MinGW a 64 bit compiler is required. After installing MinGW for 32 bit you need to download the 64 bit MinGW package from [**here**](https://code.google.com/p/mingw-builds/downloads/detail?name=x86_64-mingw32-gcc-4.7.0-release-c,c%2b%2b,fortran-sjlj.zip&can=2&q=) 
+To compile 64 bit libraries with MinGW a 64 bit compiler is required. After installing MinGW for 32 bit you need to download the 64 bit MinGW package from [**here**](https://code.google.com/p/mingw-builds/downloads/detail?name=x86_64-mingw32-gcc-4.7.0-release-c,c%2b%2b,fortran-sjlj.zip&can=2&q=)
 Extract the package but do not overwrite the previous 32 bit MinGW installation.
 
  Use the `win_mingw64.cmake` tool chain to set the compiler path for win64 binary build.
@@ -166,7 +195,7 @@ To build libTML-c win32 binaries on Windows with MinGW, the settings for the too
 	- Root path to search on the file system for the win32 compilers and tool chain utilities e.g.<br>`set(MINGW_BIN_DIRECTORY C:/mingw/bin)`
 
 - Open MSYS development console (`<MinGW Installdir>\msys\1.0\msys.bat`) and go to the libTML directory.
- 
+
 - Create a build directory.<br/>`mkdir build`
 
 - go to the build directory<br/>`cd build`
@@ -178,8 +207,9 @@ To build libTML-c win32 binaries on Windows with MinGW, the settings for the too
 - Build with cmake<br>`cmake --build . --clean-first`
 
 	- The binaries are located in:
-		- `build\win_x86-32_mingw\sidex\sidex11.dll`
-		- `build\win_x86-32_mingw\tml\tmlcore11.dll`
+		- `build\win_x86-32_mingw\sidex\sidex12.dll`
+		- `build\win_x86-32_mingw\tml\tmlcore12.dll`
+		- `build\win_x86-32_mingw\tml-tls\tml-tls12.dll` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-32_mingw\test\libTmlTest.exe`
 
 
@@ -197,7 +227,7 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 	- Root path to search on the file system for the win64 compilers and tool chain utilities e.g.<br>`set(MINGW_BIN_DIRECTORY C:/mingw64/bin)`
 
 - Open MSYS development console (`<MinGW Installdir>\msys\1.0\msys.bat`) and go to the libTML directory.
- 
+
 - Create a build directory.<br/>`mkdir build`
 
 - go to the build directory<br/>`cd build`
@@ -209,8 +239,9 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 - Build with cmake<br>`cmake --build . --clean-first`
 
 	- the binaries are located in:
-		- `build\win_x86-64_mingw\sidex\sidex11_64.dll`
-		- `build\win_x86-64_mingw\tml\tmlcore11_64.dll`
+		- `build\win_x86-64_mingw\sidex\sidex12_64.dll`
+		- `build\win_x86-64_mingw\tml\tmlcore12_64.dll`
+		- `build\win_x86-64_mingw\tml-tls\tml-tls12_64.dll` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-64_mingw\test\libTmlTest64.exe`
 
 <br>
@@ -237,16 +268,20 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 - Depending on the `TML_TARGET_PLATFORM` parameter the binaries are located in:
 
 	* win_x86-32:
-		- `build\win_x86-32\sidex\Release\sidex11.dll`
-		- `build\win_x86-32\sidex\Release\sidex11.lib`
-		- `build\win_x86-32\tml\Release\tmlcore11.dll`
-		- `build\win_x86-32\tml\Release\tmlcore11.lib`
+		- `build\win_x86-32\sidex\Release\sidex12.dll`
+		- `build\win_x86-32\sidex\Release\sidex12.lib`
+		- `build\win_x86-32\tml\Release\tmlcore12.dll`
+		- `build\win_x86-32\tml\Release\tmlcore12.lib`
+		- `build\win_x86-32\tml-tls\Release\tml-tls12.dll` [*)TLS build option enabled](#TLSOption)
+		- `build\win_x86-32\tml-tls\Release\tml-tls12.lib` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-32\test\Release\libTmlTest.exe`
 	* win_x86-64:
-	    - `build\win_x86-64\sidex\Release\sidex11_64.dll`
-	    - `build\win_x86-64\sidex\Release\sidex11_64.lib`
-		- `build\win_x86-64\tml\Release\tmlcore11_64.dll`
-		- `build\win_x86-64\tml\Release\tmlcore11_64.lib`
+	    - `build\win_x86-64\sidex\Release\sidex12_64.dll`
+	    - `build\win_x86-64\sidex\Release\sidex12_64.lib`
+		- `build\win_x86-64\tml\Release\tmlcore12_64.dll`
+		- `build\win_x86-64\tml\Release\tmlcore12_64.lib`
+		- `build\win_x86-64\tml-tls\Release\tml-tls12_64.dll` [*)TLS build option enabled](#TLSOption)
+		- `build\win_x86-64\tml-tls\Release\tml-tls12_64.lib` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-64\test\Release\libTmlTest64.exe`
 
 <br>
@@ -272,12 +307,14 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Depending on the `TML_TARGET_PLATFORM` parameter the binaries are located in:
 	* linux_x86-32
-		- `build\linux_x86-32\sidex\libsidex11.so`
-		- `build\linux_x86-32\tml\libtmlcore11.so`
+		- `build\linux_x86-32\sidex\libsidex12.so`
+		- `build\linux_x86-32\tml\libtmlcore12.so`
+		- `build\linux_x86-32\tml-tls\libtml-tls12.so` [*)TLS build option enabled](#TLSOption)
 		- `build\linux_x86-32\test\libTmlTest`
 	* linux_x86-64
-		- `build\linux_x86-64\sidex\libsidex11_64.so`
-		- `build\linux_x86-64\tml\libtmlcore11_64.so`
+		- `build\linux_x86-64\sidex\libsidex12_64.so`
+		- `build\linux_x86-64\tml\libtmlcore12_64.so`
+		- `build\linux_x86-64\tml-tls\libtml-tls12_64.so` [*)TLS build option enabled](#TLSOption)
 		- `build\linux_x86-64\test\libTmlTest64`
 
 
@@ -306,12 +343,14 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Depending on the `TML_TARGET_PLATFORM` parameter the binaries are located in:
 	- osx_x86-32
-		- `build\osx_x86-32\sidex\libsidex11.dylib`
-		- `build\osx_x86-32\tml\libtmlcore11.dylib`
+		- `build\osx_x86-32\sidex\libsidex12.dylib`
+		- `build\osx_x86-32\tml\libtmlcore12.dylib`
+		- `build\osx_x86-32\tml-tls\libtml-tls12.dylib` [*)TLS build option enabled](#TLSOption)
 		- `build\osx_x86-32\test\libTmlTest`
 	- osx_x86-64
-		- `build\osx_x86-64\sidex\libsidex11_64.dylib`
-		- `build\osx_x86-64\tml\libtmlcore11_64.dylib`
+		- `build\osx_x86-64\sidex\libsidex12_64.dylib`
+		- `build\osx_x86-64\tml\libtmlcore12_64.dylib`
+		- `build\osx_x86-64\tml-tls\libtml-tls12_64.dylib` [*)TLS build option enabled](#TLSOption)
 		- `build\osx_x86-64\test\libTmlTest64`
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
@@ -334,8 +373,9 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 - Build with cmake<br>`cmake --build . --clean-first`
 
 - the binaries are located in:
-	- `build\linux_arm32\sidex\libsidex11.so`
-	- `build\linux_arm32\tml\libtmlcore11.so`
+	- `build\linux_arm32\sidex\libsidex12.so`
+	- `build\linux_arm32\tml\libtmlcore12.so`
+	- `build\linux_arm32\tml-tls\libtml-tls12.so` [*)TLS build option enabled](#TLSOption)
 	- `build\linux_arm32\test\libTmlTest`
 
 
@@ -359,9 +399,9 @@ A cross compile for Android on Windows requires [MinGW](http://www.mingw.org/) w
 - Set the cross compilers and tool chain utilities in `android_arm32.cmake`.
 	-	 Root path to search on the file system for the cross compilers and tool chain utilities e.g.
 		`set(CMAKE_FIND_ROOT_PATH t:/android/standalone-20/arm-linux-androideabi-4.6/arm-linux-androideabi/bin )`
-	-	 Path of C cross compiler e.g. 
+	-	 Path of C cross compiler e.g.
 		`set(CMAKE_C_COMPILER t:/android/standalone-20/arm-linux-androideabi-4.6/bin/arm-linux-androideabi-gcc.exe )`
-	-	 Path of C++ cross compiler e.g. 
+	-	 Path of C++ cross compiler e.g.
 		`set(CMAKE_CXX_COMPILER t:/android/standalone-20/arm-linux-androideabi-4.6/bin/arm-linux-androideabi-g++.exe )`
 <br><br>
 - Open MSYS development console (`<MinGW Installdir>\msys\1.0\msys.bat`) and go to the libTML directory.
@@ -375,8 +415,9 @@ A cross compile for Android on Windows requires [MinGW](http://www.mingw.org/) w
 - Build with cmake<br>`cmake --build . --clean-first`
 
 - the binaries are located in:
-	- `build\android_arm32\sidex\libsidex11.so`
-	- `build\android_arm32\tml\libtmlcore11.so`
+	- `build\android_arm32\sidex\libsidex12.so`
+	- `build\android_arm32\tml\libtmlcore12.so`
+	- `build\android_arm32\tml-tls\libtml-tls12.so` [\*)TLS build  option enabled](#TLSOption)
 
 <br>
 
@@ -401,12 +442,14 @@ A cross compile for Android on Windows requires [MinGW](http://www.mingw.org/) w
 
 - Depending on the `TML_TARGET_PLATFORM` parameter the binaries are located in:
 	* freeBSD_x86-32
-		- `build\freeBSD_x86-32\sidex\libsidex11.so`
-		- `build\freeBSD_x86-32\tml\libtmlcore11.so`
+		- `build\freeBSD_x86-32\sidex\libsidex12.so`
+		- `build\freeBSD_x86-32\tml\libtmlcore12.so`
+		- `build\freeBSD_x86-32\tml-tls\libtml-tls12.so` [*)TLS build option enabled](#TLSOption)
 		- `build\freeBSD_x86-32\test\libTmlTest`
 	* freeBSD_x86-64
-		- `build\freeBSD_x86-64\sidex\libsidex11_64.so`
-		- `build\freeBSD_x86-64\tml\libtmlcore11_64.so`
+		- `build\freeBSD_x86-64\sidex\libsidex12_64.so`
+		- `build\freeBSD_x86-64\tml\libtmlcore12_64.so`
+		- `build\freeBSD_x86-64\tml-tls\libtml-tls12_64.so` [*)TLS build option enabled](#TLSOption)
 		- `build\freeBSD_x86-64\test\libTmlTest64`
 
 
