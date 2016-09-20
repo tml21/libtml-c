@@ -11,6 +11,18 @@ Currently the following libTML-c binary packages are tested:
 
 ----------
 
+<a name="TLSOption"></a>
+## Optional libTML TLS binary package ##
+
+It is possible to use TLS encrypted connections.
+In that case you have to install the optional libTML TLS profile supporting binary package.
+
+
+
+<br>
+
+----------
+
 ## Library dependencies ##
 
 The libTML-c binary package depends on the **libiconv** library (except on Windows).
@@ -79,6 +91,8 @@ Furthermore the libtml-c dynamic link library files are installed into the syste
 	- **System32** (Windows 32 bit & Windows 64 bit target platform)
 	- **SysWOW64** (Windows 64 bit target platform)
 
+The Windows installation **includes** the [libTML TLS profile supporting libraries](#TLSOption).
+
 **Note:** The Windows binary installer doesn't change the Windows path environment.
 
 ## Windows C/C++ development environment requirements ##
@@ -96,21 +110,6 @@ To use the TML Messaging Suite for Windows C/C++ development
 ----------
 
 <a name="debianLink"></a>
-## Debian package dependencies  ##
-
-The libTML-c debian package depends on the **libaxl1** and **libvortex-1.1 debian packages** from 
-["Advanced Software Production Line (ASPL)"](http://www.aspl.es/vortex/download.html)
-
-You will find the ASPL debian packages here: 
-
-[http://www.aspl.es/debian/public/](http://www.aspl.es/debian/public/)
-
-If you don't find the libaxl1 and libvortex-1.1 debian packages for the desired platform (at the editorial deadline "armhf" was missing) , you have to build the libraries "libaxl" and "libvortex-1.1" from source.<br>
-You find the source here:<br><br>
-[http://www.aspl.es/axl/downloads/](http://www.aspl.es/axl/downloads/)<br>
-[http://www.aspl.es/vortex/downloads/](http://www.aspl.es/vortex/downloads/)<br>
-[https://github.com/ASPLes/libaxl](https://github.com/ASPLes/libaxl)<br>
-[https://github.com/ASPLes/libvortex-1.1](https://github.com/ASPLes/libvortex-1.1)<br><br>
 
 
 ## libTML-c debian package ##
@@ -120,6 +119,8 @@ Install the package using shell command
 
 
 	sudo dpkg -i /PATH/TO/PACKAGE/PACKAGENAME.deb 
+
+To use [libTML TLS profile support](#TLSOption), download and install the **libTML TLS** debian package too.
 
 ## libTML-c debian package installation content ##
 The libTML-c debian package installation contains
@@ -148,7 +149,7 @@ To use the TML Messaging Suite for debian C/C++ development
  - Download the TML Messaging Suite disk image file (.dmg) onto your OS-X target system
  - Mount the disk image file
 
-## OS-X installation content ##
+## OS-X Disk Image content ##
 The mounted TML Messaging Suite disk image file contains
 
 - `"usr"` shared library files (C API & JNI)
@@ -164,6 +165,8 @@ The mounted TML Messaging Suite disk image file contains
 	- `"graphics"`	component icons
 	- `"src"`	component source files
 	- `"packages/Lazarus"`	Lazarus component source files
+
+The OS-X Disk Image **includes** the [libTML TLS profile supporting libraries](#TLSOption).
 
 ##System Integrity Protection - using OS X 10.11 (El Capitan)##
 
@@ -212,16 +215,6 @@ To use the TML Messaging Suite for OS-X C/C++ development
 ----------
 
 <a name="freeBSDLink"></a>
-## freeBSD package dependencies  ##
-
-The TML Messaging Suite libTML-c freeBSD package depends on the **libaxl1** and **libvortex-1.1 freeBSD packages** from ["Advanced Software Production Line (ASPL)"](http://www.aspl.es/vortex/download.html)
-
-You will find the ASPL freeBSD packages here: 
-
-[http://www.aspl.es/freebsd/public/](http://www.aspl.es/freebsd/public/)
-
-
-
 ## libTML-c freeBSD package ##
 Download the libTML-c freeBSD package onto your target system.
 
@@ -230,6 +223,8 @@ Install the package using shell command
 
 	pkg install /PATH/TO/PACKAGE/PACKAGENAME.txz
 
+
+To use [libTML TLS profile support](#TLSOption), download and install the **libTML TLS** freeBSD package too.
 
 ## libTML-c freeBSD package installation content ##
 The libTML-c freeBSD package installation contains
