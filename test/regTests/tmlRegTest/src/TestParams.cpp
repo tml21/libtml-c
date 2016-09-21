@@ -44,6 +44,7 @@ SIDEX_TCHAR* S_TN_TESTPARAMS      = tmlrtT("TestParams");
 
 // group names
 SIDEX_TCHAR* S_TG_NETWORK         = tmlrtT("Network");
+SIDEX_TCHAR* S_TG_VERSION		  = tmlrtT("Version");
 SIDEX_TCHAR* S_TG_TEST            = tmlrtT("Test");
 SIDEX_TCHAR* S_TG_TLS             = tmlrtT("TLS");
 
@@ -53,6 +54,9 @@ SIDEX_TCHAR* S_TP_FIRSTPORTNUMBER = tmlrtT("FirstPortNumber");
 
 SIDEX_TCHAR* S_TP_LOOPCOUNT       = tmlrtT("LoopCount");
 SIDEX_TCHAR* S_TP_ISREPEATER      = tmlrtT("IsRepeater");
+SIDEX_TCHAR* S_TP_API			  = tmlrtT("API");
+SIDEX_TCHAR* S_TP_LIB			  = tmlrtT("Library");
+SIDEX_TCHAR* S_TP_VER			  = tmlrtT("FullVersion");
 SIDEX_TCHAR* S_TP_MAXIDLETIME     = tmlrtT("MaxIdleTime");
 SIDEX_TCHAR* S_TP_TLSREPEATERHOST = tmlrtT("TlsRepeaterHost");
 SIDEX_TCHAR* S_TP_TLSREPEATERPORT = tmlrtT("TlsRepeaterPort");
@@ -67,6 +71,7 @@ SIDEX_TCHAR* S_TP_FP_MD5          = tmlrtT("Fingerprint_MD1");
 
 // default values
 SIDEX_TCHAR* S_TD_127_0_0_1       = tmlrtT("127.0.0.1");
+SIDEX_TCHAR* S_TD_VERSION		  = tmlrtT("1.2.0");	//if versionchanges occurs, change here
 
 SIDEX_TCHAR* S_TD_TLS_LOCATION    = tmlrtT("../../../../../test/regTests/tmlRegTest/tls");
 SIDEX_TCHAR* S_TD_TLS_CRT         = tmlrtT("TmlRegTestTls.crt");
@@ -75,6 +80,9 @@ SIDEX_TCHAR* S_TD_TLS_KEY         = tmlrtT("TmlRegTestTls.key");
 SIDEX_TCHAR* S_TD_TLS_KEY2        = tmlrtT("TmlRegTestTls2.key");
 SIDEX_TCHAR* S_TD_TLS_FP_SHA1     = tmlrtT("86:57:56:05:DF:5E:D2:F2:EC:2E:91:39:3E:E6:B0:F5:CE:77:03:7D");
 SIDEX_TCHAR* S_TD_TLS_FP_MD5      = tmlrtT("E5:D1:CB:99:26:5E:F8:F1:D0:94:6F:72:C9:23:D2:18");
+
+TML_INT32 DEFAULT_APIVERSION	  = 102;		//if versionchanges occurs, change here
+TML_INT32 DEFAULT_LIBVERSION	  = 10200;		//if versionchanges occurs, change here
 
 #define DEFAULT_PORTNUMBER  42042
 #define DEFAULT_MAXIDLETIME    60
@@ -167,6 +175,24 @@ bool CTestParams::ensureDefaultParams()
       result = false;
       sidex_Boolean_Write(m_sdxParams, S_TG_TEST, S_TP_ISREPEATER, SIDEX_FALSE);
     }
+
+	if (getAPIVersion() <= 0)
+	{
+		result = false;
+		sidex_Integer_Write(m_sdxParams, S_TG_VERSION, S_TP_API, DEFAULT_APIVERSION);
+	}
+
+	if (getLIBVersion() <= 0)
+	{
+		result = false;
+		sidex_Integer_Write(m_sdxParams, S_TG_VERSION, S_TP_LIB, DEFAULT_LIBVERSION);
+	}
+
+	if (!sidex_HasKey(m_sdxParams, S_TG_VERSION, S_TP_VER))
+	{
+		result = false;
+		sidex_String_Write(m_sdxParams, S_TG_VERSION, S_TP_VER, S_TD_VERSION);
+	}
 
     if(getMaxIdleTime() < 0)
     {
@@ -355,6 +381,33 @@ bool CTestParams::isActingAsRepeater()
   return(isRepeater);
 }
 
+int CTestParams::getAPIVersion()
+{
+	int apiVersion = -1;
+	if (hasParams())
+	{
+		SIDEX_INT64  value = 0;
+		SIDEX_INT32  iErr = sidex_Integer_Read(m_sdxParams, S_TG_TLS, S_TP_FP_MD5, &value);
+		if (iErr == SIDEX_SUCCESS)
+			apiVersion = (int)value;
+	}
+	return(apiVersion);
+}
+
+
+int CTestParams::getLIBVersion()
+{
+	int libVersion = -1;
+	if (hasParams())
+	{
+		SIDEX_INT64  value = 0;
+		SIDEX_INT32  iErr = sidex_Integer_Read(m_sdxParams, S_TG_TLS, S_TP_FP_MD5, &value);
+		if (iErr == SIDEX_SUCCESS)
+			libVersion = (int)value;
+	}
+	return(libVersion);
+}
+
 int CTestParams::getMaxIdleTime()
 {
   int nSeconds = -1;
@@ -530,3 +583,4 @@ SIDEX_TCHAR* CTestParams::getTlsFingerprintMD5()
   }
   return(result);
 }
+

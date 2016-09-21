@@ -177,6 +177,7 @@ set	 (TEST_SOURCES_HEADER
 	  "sdxrt_test_none.h"
 	  "sdxrt_test_string.h"
 	  "sdxrt_test_table.h"
+      "sdxrt_test_get_version.h"
 	  "sdxrt_Utils.h")
 set  (TEST_SOURCES
 	  "sdxrt_tchar.cpp"
@@ -191,6 +192,7 @@ set  (TEST_SOURCES
 	  "sdxrt_test_none.cpp"
 	  "sdxrt_test_string.cpp"
 	  "sdxrt_test_table.cpp"
+      "sdxrt_test_get_version.cpp"
 	  "sdxrt_Utils.cpp"
 	  "sdxrt_cmd.cpp")
       
