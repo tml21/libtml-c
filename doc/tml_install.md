@@ -68,7 +68,9 @@ Vortex is a BEEP core implementation.
 - **Required for:** libTML
 - **Remarks:** On Unix-like systems the Vortex library can be compiled from source
 
-To build the TLS module, the SSL development library (libssl-dev) is required. On Debian wheezy, for example, you can install the libraries with using apt-get. 
+To build the Vortex TLS module,  [`openSSL`](http://www.gnu.org/) (on Windows) respectively the SSL development library (on Debian) is required. 
+
+On Debian, for example, you can install the libraries with using apt-get. 
 
 	apt-get install libssl-dev	
 
@@ -105,9 +107,9 @@ For Unicode and string encoding support, libTML is using the libiconv library.
 
 On Windows the libiconv library is not required.
 
-#### openSSL ####
+#### libssl / openSSL ####
 
-In order to use the [optional libTML TLS profile support](#TLSOption) it is required to install openssl library and binaries.
+In order to use the [optional libTML TLS profile support](#TLSOption) it is required to install libssl / openSSL library and binaries.
 The libTML library can be used without the optional TLS support and installing openSSL can be skipped in that case. TLS profile will not be available in this case tough.
 
 - **Homepage:** [`http://www.openssl.org`](http://www.openssl.org)
