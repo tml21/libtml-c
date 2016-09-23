@@ -64,6 +64,7 @@ using namespace std;
 #define HANDLEKEY (wchar_t*) L"handleKey"
 #define FLOATKEY (wchar_t*) L"floatKey"
 #define minStr (wchar_t*) L" "
+#define VERSION (wchar_t*) L"1.2.0"	//if versionchanges occur, change here
 #else
 #define DOCUMENT (char*) "Document"
 #define wDOCUMENT (char*) "Doc<ument"
@@ -89,7 +90,11 @@ using namespace std;
 #define HANDLEKEY (char*) "handleKey"
 #define FLOATKEY (char*) "floatKey"
 #define minStr (char*) " "
+#define VERSION (char*) "1.2.0"	//if versionchanges occur, change here
 #endif
+
+#define DEFAULT_API_VERSION 102		//if versionchanges occur, change here
+#define DEFAULT_LIB_VERSION	10200	//if versionchanges occur, change here
 
 
 
