@@ -40,7 +40,7 @@ set(COMMON_INCLUDE_PATH ../../common/src)
 set(COMMON_SRC_PATH ../../common/src)
 
 #######################################################
-## set build parameter for install (default = yes
+## set build parameter for install (default = yes)
 #######################################################
 SET (GEN_TML_INSTALLER_FILES yes CACHE STRING "set tml installer files")
 
@@ -168,6 +168,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   ADD_DEFINITIONS ("-m32")
   set(CMAKE_CXX_FLAGS "-m32")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
+
+  set(INST_PLATFORM_ID i386)
   
   set(TARGET sidex)
   set(IS64BIT false)
@@ -190,6 +192,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   
   set(TARGET sidex)
   set(IS64BIT true)
+
+  set(INST_PLATFORM_ID amd64)
   
   set (INST_LIB_PATH /usr/lib)
   set (INST_INCLUDE_PATH /usr/include/tml)
@@ -300,6 +304,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   set(TARGET sidex)
   set(IS64BIT false)
   
+  set(INST_PLATFORM_ID armhf)
+  
   set (INST_LIB_PATH /usr/lib)
   set (INST_INCLUDE_PATH /usr/include/tml)
 endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
@@ -386,6 +392,9 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 ## Install
 if (${GEN_TML_INSTALLER_FILES} STREQUAL yes)
   install (TARGETS ${SIDEXLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
+  install (FILES "../../../${TEMP_KOMP_DIR}/AXL/${AXLVER}/Debian/${INST_PLATFORM_ID}/lib/${AXLLIB}" DESTINATION ${INST_LIB_PATH})
+  install (FILES "../../../${TEMP_KOMP_DIR}/AXL/${AXLVER}/Debian/${INST_PLATFORM_ID}/lib/${AXLLIB}.0" DESTINATION ${INST_LIB_PATH})
+  install (FILES "../../../${TEMP_KOMP_DIR}/AXL/${AXLVER}/Debian/${INST_PLATFORM_ID}/lib/${AXLLIB}.0.0.0" DESTINATION ${INST_LIB_PATH})
   install (FILES ${SIDEX_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
   install (FILES ${COMMON_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
 endif (${GEN_TML_INSTALLER_FILES} STREQUAL yes)
