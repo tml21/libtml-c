@@ -50,7 +50,8 @@ The libTML-c binary package depends on the following runtime environment:
 - **Debian i386:** gcc 4.8.4
 - **Debian amd64:** gcc 4.8.4
 - **Debian armhf:** gcc 4.6.3
-- **FreeBSD:** gcc 4.9.4
+- **FreeBSD 9:** Clang 3.4.1 and gcc 4.9.4
+- **FreeBSD 10:** gcc 4.9.4
 - **OS X:** AppleClang 5.0.0
 
 <br>
