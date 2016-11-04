@@ -41,7 +41,7 @@ set(TMLINCLUDE ../../tml/src)
 set(SIDEXINCLUDE ../../sidex/src)
 
 #######################################################
-## set build parameter for install (default = yes
+## set build parameter for install (default = yes)
 #######################################################
 SET (GEN_TLS_INSTALLER_FILES yes CACHE STRING "set tls installer files")
 
@@ -157,6 +157,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-32)
   set(CMAKE_CXX_FLAGS "-m32")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
   
+  set(INST_PLATFORM_ID i386)
+  
   set(TARGET tml-tls)
   set(IS64BIT false)
   
@@ -178,6 +180,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_x86-64)
   ADD_DEFINITIONS ("-m64")
   set(CMAKE_CXX_FLAGS "-m64")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
+
+  set(INST_PLATFORM_ID amd64)
   
   set(TARGET tml-tls)
   set(IS64BIT true)
@@ -302,6 +306,8 @@ if (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
   ADD_DEFINITIONS ("-std=c++0x")
   set(PREPROCESSOR_DEF -DLINUX -DGCC4)
   
+  set(INST_PLATFORM_ID armhf)
+  
   set(TARGET tml-tls)
   set(IS64BIT false)
   
@@ -397,5 +403,8 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 ## Install
 if (${GEN_TLS_INSTALLER_FILES} STREQUAL yes)
   install (TARGETS ${TLSLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
+  install (FILES "../../../${TEMP_KOMP_DIR}/Vortex/${VORTEXVER}/Debian/${INST_PLATFORM_ID}/lib/${VORTEX-TLS-LIB}" DESTINATION ${INST_LIB_PATH})
+  install (FILES "../../../${TEMP_KOMP_DIR}/Vortex/${VORTEXVER}/Debian/${INST_PLATFORM_ID}/lib/${VORTEX-TLS-LIB}.0" DESTINATION ${INST_LIB_PATH})
+  install (FILES "../../../${TEMP_KOMP_DIR}/Vortex/${VORTEXVER}/Debian/${INST_PLATFORM_ID}/lib/${VORTEX-TLS-LIB}.0.0.0" DESTINATION ${INST_LIB_PATH})
   install (FILES ${TLS_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
 endif (${GEN_TLS_INSTALLER_FILES} STREQUAL yes)
