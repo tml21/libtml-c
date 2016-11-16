@@ -25,7 +25,7 @@ Currently the following target systems are tested:
 <a name="TLSOption"></a>
 ## Optional libTML TLS build ##
 
-It is optional to build the libTML TLS profile supporting library.
+It is optional to build the libTML TLS profile supporting library for TLS encoded connections.
 
 To enable the libTML TLS build option you have to add the parameter **BUILD_TLS=yes** to the make file generation command line.<br><br>
 Example:<br> <br>
@@ -48,27 +48,30 @@ The AXL library is an XML 1.0 implementation. It is optimized for speed and a sm
 - **Download:** [`http://www.aspl.es/axl/doc.html`](http://www.aspl.es/axl/doc.html)
 - **Documentation:** [`http://www.aspl.es/axl/doc.html`](http://www.aspl.es/axl/doc.html)
 - **Required for:** Vortex, libTML
-- **Remarks:** On Unix-like systems the AXL library can be compiled from source.
+- **Debian Remarks:**  On Debian systems you can install the debian packages  **"libaxl1"** and **"libaxl-dev"** (see Debian section in download link / Version >= 0.7.1).
+- **Unix Remarks:** On Unix-like systems the AXL library also can be compiled from source.
 
     	./configure --disable-py-axl
     	make
     	make install
 
-If you want to use a Windows installer, download the Vortex installer instead of the AXL installer. It includes the AXL library. During the installation you need to select to install the development libraries and include files along with the binaries.
+- **Windows Remarks:** If you want to use a Windows installer, download the Vortex installer instead of the AXL installer. It includes the AXL library. During the installation you need to select to install the development libraries and include files along with the binaries.
 
-**Note:** Our binary distribution package includes the AXL library. 
+
 
 #### Vortex ####
 
 Vortex is a BEEP core implementation.
 
 - **Homepage:** [`http://www.aspl.es/vortex`](http://www.aspl.es/vortex)
+
 - **Download:** [`http://www.aspl.es/vortex/download.html`](http://www.aspl.es/vortex/download.html)
 - **Documentation:** [`http://www.aspl.es/vortex/doc.html`](http://www.aspl.es/vortex/doc.html)
 - **Required for:** libTML
-- **Remarks:** On Unix-like systems the Vortex library can be compiled from source
+- **Debian Remarks:** On Debian systems you can install the  debian packages **"libvortex-1.1"** and **"libvortex-1.1-dev"** respectively **"libvortex-tls-1.1"** and **"libvortex-tls-1.1-dev"** if you want to build the libTML TLS (see Debian section in download link / Version >= 1.1.18).
+- **Unix Remarks:** On Unix-like systems the Vortex library can also be compiled from source
 
-To build the Vortex TLS module,  [`openSSL`](http://www.gnu.org/) (on Windows) respectively the SSL development library (on Debian) is required. 
+To build the Vortex TLS module, the SSL development library is required. 
 
 On Debian, for example, you can install the libraries with using apt-get. 
 
@@ -86,12 +89,14 @@ Building Vortex on OS X may show errors. Use the options to work around them.
     	make
     	make install
 
-The Vortex Windows installer includes all binaries for Windows. During the installation you need to select to install the development libraries and include files along with the binaries.
+- **Windows Remarks:** The Vortex Windows installer includes all binaries for Windows. During the installation you need to select to install the development libraries and include files along with the binaries.<br>
+If you want to build the Vortex TLS module from source,  [`openSSL`](http://www.gnu.org/) is required. 
 
 
-**Note:** Our binary distribution package includes the Vortex library. 
 
-#### libiconv ####
+ 
+
+#### libiconv (not required on Windows) ####
 
 For Unicode and string encoding support, libTML is using the libiconv library.
 
@@ -105,12 +110,13 @@ For Unicode and string encoding support, libTML is using the libiconv library.
     	make
     	make install
 
-On Windows the libiconv library is not required.
+
 
 #### libssl / openSSL ####
 
-In order to use the [optional libTML TLS profile support](#TLSOption) it is required to install libssl / openSSL library and binaries.
 The libTML library can be used without the optional TLS support and installing openSSL can be skipped in that case. TLS profile will not be available in this case tough.
+
+In order to use the [optional libTML TLS profile support](#TLSOption) it is required to install libssl / openSSL library and binaries.
 
 - **Homepage:** [`http://www.openssl.org`](http://www.openssl.org)
 - **Download:**  [`http://www.openssl.org/source/`](http://www.openssl.org/source/)

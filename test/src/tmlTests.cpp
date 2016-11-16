@@ -49,6 +49,9 @@
   #include <windows.h>
 #endif // LINUX
 
+#ifdef BUILD_TLS
+#include "tml-tls.h"
+#endif // BUILD_TLS
 
 #ifdef TML_UNICODE
   #define IO_PROFILE                    (wchar_t*) L"http://wobe-team.com/profiles/plain_profile"
@@ -60,6 +63,8 @@
 
   #define PARAMS                        (wchar_t*) L"PARAMS"
   #define SLEEP_MS                      (wchar_t*) L"SLEEP_MS"
+  #define TLS_CRT_FILE                  (wchar_t*) L"TmlTestTls.crt"
+  #define TLS_KEY_FILE                  (wchar_t*) L"TmlTestTls.key"
 
   const wchar_t* any_data1 = L"Any Data 1";
   const wchar_t* any_data2 = L"Any Data 2";
@@ -73,10 +78,11 @@
 
   #define PARAMS                        (char*) "PARAMS"
   #define SLEEP_MS                      (char*) "SLEEP_MS"
+  #define TLS_CRT_FILE                  (char*) "TmlTestTls.crt"
+  #define TLS_KEY_FILE                  (char*) "TmlTestTls.key"
 
   const char* any_data1 = "Any Data 1";
   const char* any_data2 = "Any Data 2";
-
 #endif // TML_UNICODE
 
 TML_CORE_HANDLE m_coreHandle = TML_HANDLE_TYPE_NULL;
@@ -112,7 +118,7 @@ void wait(SIDEX_INT64 milliseconds){
  * Callback method invoked in case of incomming CMD- Code 4711
  */
 void FUNC_C_DECL callbackMethodCmd4711(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data){
-  printf ("  envoke allbackMethodCmd4711\n");
+  printf ("  envoke callbackMethodCmd4711\n");
 
   TML_INT32 iErr = TML_SUCCESS;
   TML_INT64 iSleep = 0;
@@ -134,7 +140,7 @@ void FUNC_C_DECL callbackMethodCmd4711(TML_COMMAND_HANDLE cmdMsg, TML_POINTER da
  * Callback method invoked in case of incomming CMD- Code 4711
  */
 void FUNC_C_DECL callbackMethodCmd4711P2(TML_COMMAND_HANDLE cmdMsg, TML_POINTER data){
-  printf ("  envoke allbackMethodCmd4711 (PROFILE2)\n");
+  printf ("  envoke callbackMethodCmd4711 (PROFILE2)\n");
 
   TML_INT32 iErr = TML_SUCCESS;
   TML_INT64 iSleep = 0;
@@ -715,3 +721,155 @@ bool validateConnection(){
   return false;
 }
 
+#ifdef BUILD_TLS
+
+TML_BOOL check_and_accept_tls_request (SIDEX_VARIANT vServerName){
+
+  // perform some special operations against the serverName value,
+  // return TML_FALSE to deny the TLS request, or TML_TRUE to allow it
+    
+  return TML_TRUE;
+}
+
+SIDEX_VARIANT certificate_file_location (SIDEX_VARIANT vServerName)
+{
+  SIDEX_VARIANT var;
+
+  // perform some special operation to choose which 
+  // certificate file to be used, then return it
+
+  sidex_Variant_New_String(TLS_CRT_FILE, &var);
+  return var; 
+}
+
+SIDEX_VARIANT private_key_file_location (SIDEX_VARIANT vServerName)
+{
+  SIDEX_VARIANT var;
+
+  // perform some special operation to choose which 
+  // private key file to be used, then return it
+
+  sidex_Variant_New_String(TLS_KEY_FILE, &var);
+  return var; 
+}
+
+bool tlsTest()
+{
+  TML_BOOL bEncrypted = TML_FALSE;
+  TML_BOOL bAccepted = TML_FALSE;
+#ifdef TML_UNICODE
+  wchar_t* sErrormessage;
+#else// TML_UNICODE
+  char* sErrormessage;
+#endif// TML_UNICODE  
+
+  TML_INT32 iErr = TML_SUCCESS; // API return value
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to receive commands / messages 
+  TML_CORE_HANDLE coreListenerHandle = TML_HANDLE_TYPE_NULL;
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to send commands / messages 
+  TML_CORE_HANDLE coreSenderHandle = TML_HANDLE_TYPE_NULL;
+  /////////////////////////////////////////////////////////////////////////
+  // TML_COMMAND_HANDLE Command / message HANDLE (internal represented by SIDEX data)
+  TML_COMMAND_HANDLE cmdMsg  = TML_HANDLE_TYPE_NULL;
+  /////////////////////////////////////////////////////////////////////////
+  // Listener initialisation:
+  iErr = initListener(&coreListenerHandle);
+  /////////////////////////////////////////////////////////////////////////
+  // Allow to configure if the provided tml core will accept TLS incoming connections
+  if (TML_SUCCESS == iErr)
+  {
+    iErr = tml_Tls_Core_AcceptNegotiation(coreListenerHandle,
+                                          check_and_accept_tls_request,
+                                          certificate_file_location,
+                                          private_key_file_location,
+                                          &bAccepted);
+  }
+  /////////////////////////////////////////////////////////////////////////
+  // TML_CORE_HANDLE to send commands / messages 
+  if (TML_SUCCESS == iErr)
+  {
+    iErr = tml_Core_Open(&coreSenderHandle, 0);
+  }
+
+  TML_CONNECTION_HANDLE connectionHandle = TML_HANDLE_TYPE_NULL;
+  iErr = tml_Core_Connect(coreSenderHandle, DESTINATION_NETWORK_BINDING, &connectionHandle);
+  /////////////////////////////////////////////////////////////////////////
+  // Start tls negotiation for the requested connection
+  if (TML_SUCCESS == iErr)
+  {
+    iErr = tml_Tls_Connection_StartNegotiation(connectionHandle, TML_FALSE, &bEncrypted);
+  }
+
+  if (!bEncrypted)
+  {
+#ifdef TML_UNICODE
+      fwprintf (stderr, L"Cannot negotiate TLS-connection on listener side. Please insert valid \"%ls\" and certificate \"%ls\" file into executable working directory\n", TLS_KEY_FILE, TLS_CRT_FILE);
+#else// TML_UNICODE
+      printf ("Cannot negotiate TLS-connection on listener side. Please insert valid \"%s\" and certificate \"%s\" file into executable working directory\n", TLS_KEY_FILE, TLS_CRT_FILE);
+#endif// TML_UNICODE
+  }
+  else
+  {  
+    /////////////////////////////////////////////////////////////////////////
+    // Command / message creation:
+    if (TML_SUCCESS == iErr)
+    {
+      iErr = createCmd4711(&cmdMsg, false);
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+    // send a loop of command / messages
+    for (int i = 0; i < 10 && TML_SUCCESS == iErr; ++i)
+    {
+#ifdef TML_UNICODE
+      fwprintf (stderr, L"Sending sync command 4711 to %ls -->\n", DESTINATION_HOST_IP);
+#else// TML_UNICODE
+      printf ("Sending sync command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
+      iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE, cmdMsg, 10000);
+      if (TML_SUCCESS == iErr)
+      {
+#ifdef TML_UNICODE
+        fwprintf (stderr, L"Sending sync command 4711 (PROFILE2) to %ls -->\n", DESTINATION_HOST_IP);
+#else // TML_UNICODE
+        printf ("Sending sync command 4711 to %s -->\n", DESTINATION_HOST_IP);
+#endif// TML_UNICODE
+        iErr = tml_Connection_SendSync(connectionHandle, IO_PROFILE2, cmdMsg, 10000);
+      }
+    }
+    ///////////////////////////////////////////////////////////////////////
+    // Free the instance of Command / message HANDLE:
+    if (TML_HANDLE_TYPE_NULL != cmdMsg)
+    {
+      tml_Cmd_Free(&cmdMsg);
+    }
+  }
+
+  if (TML_HANDLE_TYPE_NULL != connectionHandle)
+  {
+    tml_Connection_Close(&connectionHandle);
+  }
+  ///////////////////////////////////////////////////////////////////////
+  // Free the instances of TMLCore:
+  if (TML_HANDLE_TYPE_NULL != coreSenderHandle)
+  {
+    tml_Core_Close(&coreSenderHandle);
+  }
+
+  if (TML_HANDLE_TYPE_NULL != coreListenerHandle)
+  {
+    tml_Core_Close(&coreListenerHandle);
+  }
+
+  ///////////////////////////////////////////////////////////////////////
+  // Errorhandling:
+  if (TML_SUCCESS != iErr)
+  {
+    printf ("TLS-Test / error happened - Code = %d\n", iErr);
+  }
+
+  return false;
+}
+#endif // BUILD_TLS

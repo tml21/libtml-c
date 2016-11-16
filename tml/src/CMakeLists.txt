@@ -40,6 +40,11 @@ set(COMMON_SRC_PATH ../../common/src)
 set(SIDEXINCLUDE ../../sidex/src)
 
 #######################################################
+## set build parameter for install (default = yes)
+#######################################################
+SET (GEN_TML_INSTALLER_FILES yes CACHE STRING "set tml installer files")
+
+#######################################################
 ## Source & Header
 set  (TML_COMMON_SOURCES_HEADER 
                     ${COMMON_INCLUDE_PATH}/globalDefines.h 
@@ -457,8 +462,5 @@ endif (${TML_TARGET_PLATFORM} STREQUAL linux_arm32)
 ## Install
 if (${GEN_TML_INSTALLER_FILES} STREQUAL yes)
   install (TARGETS ${TMLLIBNAME_LOCAL} DESTINATION ${INST_LIB_PATH})
-  install (FILES "../../../${TEMP_KOMP_DIR}/Vortex/${VORTEXVER}/Debian/${INST_PLATFORM_ID}/lib/${VORTEXLIB}" DESTINATION ${INST_LIB_PATH})
-  install (FILES "../../../${TEMP_KOMP_DIR}/Vortex/${VORTEXVER}/Debian/${INST_PLATFORM_ID}/lib/${VORTEXLIB}.0" DESTINATION ${INST_LIB_PATH})
-  install (FILES "../../../${TEMP_KOMP_DIR}/Vortex/${VORTEXVER}/Debian/${INST_PLATFORM_ID}/lib/${VORTEXLIB}.0.0.0" DESTINATION ${INST_LIB_PATH})
   install (FILES ${TML_INSTALL_SOURCES_HEADER} DESTINATION ${INST_INCLUDE_PATH})
 endif (${GEN_TML_INSTALLER_FILES} STREQUAL yes)
