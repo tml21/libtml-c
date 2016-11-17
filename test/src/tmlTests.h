@@ -48,7 +48,9 @@ bool sendAndListenTest02();
 bool sendAndListenTest03();
 bool sendAndListenTest04();
 bool validateConnection();
+#ifdef BUILD_TLS
+bool tlsTest();
+#endif // BUILD_TLS
 void closePossibleExistingCoreHandle();
-
 
 #endif // TMLTESTS_H

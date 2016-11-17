@@ -75,6 +75,10 @@ bool run_test(int no)
              break;
     case 11: bDone = validateConnection();// Validate (ConMgr)
              break;
+#ifdef BUILD_TLS
+    case 12: bDone = tlsTest();// TLS-encoding
+             break;    
+#endif // BUILD_TLS
     default: bDone = false;
              break;
   }
@@ -110,6 +114,9 @@ int main(int argc, char **argv)
       printf ("\"9\"     - perform TML send & listen (synchron with connection mgr)\n");
       printf ("\"10\"    - perform TML send & listen (asynchron with connection mgr)\n");
       printf ("\"11\"    - validate (connection mgr)\n");
+#ifdef BUILD_TLS
+      printf ("\"12\"    - perform TML send & listen (TLS-encoding)\n");
+#endif // BUILD_TLS
       printf ("\"sidex\" - perform all SIDEX tests\n");
       printf ("\"tml\"   - perform all TML tests\n");
       printf ("\"all\"   - perform all SIDEX and TML tests\n");
@@ -165,6 +172,9 @@ int main(int argc, char **argv)
       printf ("TML send & listen (synchron with connection mgr) - enter \"9<enter>\"\n");
       printf ("TML send & listen (asynchron with connection mgr)- enter \"10<enter>\"\n");
       printf ("validate (connection mgr)                        - enter \"11<enter>\"\n");
+#ifdef BUILD_TLS
+      printf ("TML send & listen (TLS-encoding)                 - enter \"12<enter>\"\n");
+#endif // BUILD_TLS
       printf ("Exit demo                        - enter \"exit<enter>\"\n");
       int i = scanf("%s", sInput);
       if (1 <= i){
@@ -190,6 +200,10 @@ int main(int argc, char **argv)
           bDone = run_test(10);
         if (strcmp(sInput, (char*) "11") == 0)
           bDone = run_test(11);
+#ifdef BUILD_TLS
+        if (strcmp(sInput, (char*) "12") == 0)
+          bDone = run_test(12);
+#endif // BUILD_TLS
         if (strcmp(sInput, (char*) "exit") == 0)
           bDone = true;
       }
