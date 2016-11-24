@@ -78,7 +78,7 @@ SIDEX_VARIANT certificate_file_location (SIDEX_VARIANT vServerName)
   // perform some special operation to choose which 
   // certificate file to be used, then return it
 
-  sidex_Variant_New_String((char*)"/ssl/test-certificate.pem", &var);
+  sidex_Variant_New_String((char*)"TmlTestTls.crt", &var);
   return var; 
 }
 ~~~~
@@ -92,7 +92,7 @@ SIDEX_VARIANT private_key_file_location (SIDEX_VARIANT vServerName)
   // perform some special operation to choose which 
   // private key file to be used, then return it
 
-  sidex_Variant_New_String((char*) "/ssl/test-private-key.pem", &var);
+  sidex_Variant_New_String((char*) "TmlTestTls.key", &var);
   return var; 
 }
 ~~~~
@@ -144,16 +144,16 @@ Now we have successfully configured the TLS profile.For listener side we need to
 
 Create a 1024 bits private key using:
 
-    openssl genrsa 1024 > test-private-key.pem
+    openssl genrsa 1024 > TmlTestTls.key
 
 Now create the public certificate reusing previously created key as follows:
 
 
-    openssl req -new -x509 -nodes -sha1 -days 3650 -key test-private-key.pem > test-certificate.pem
+    openssl req -new -x509 -nodes -sha1 -days 3650 -key TmlTestTls.key > TmlTestTls.crt
 
 Once finished, you can check certificate data using:
 
 
-    openssl x509 -noout -fingerprint -text < test-certificate.pem
+    openssl x509 -noout -fingerprint -text < TmlTestTls.crt
 
 
