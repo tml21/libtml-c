@@ -17,31 +17,57 @@ Currently the following libTML-c binary packages are tested:
 It is possible to use TLS encrypted connections.
 In that case you have to install the optional libTML TLS profile supporting binary package.
 
+In the case of Windows or OS-X binary package installation TLS is already included. 
 
+
+<br>
+**See also:**
+- [Securing a TML Connection (or How to use the TLS profile)](\ref tls_intro)
 
 <br>
 
 ----------
 
+<a name="RequiredLibs"></a>
 ## Library dependencies ##
 
-The libTML-c binary package depends on the **libiconv** library (except on Windows).
+The libTML-c and its optional TLS binary package depend on various libraries need to be present.
 
+#### libiconv (not required on Windows) ####
+
+For Unicode and string encoding support, libTML is using the libiconv library.
 
 - **Homepage:** [`http://www.gnu.org/software/libiconv`](http://www.gnu.org/software/libiconv)
 - **Download:** [`http://www.gnu.org/software/libiconv/#downloading`](http://www.gnu.org/software/libiconv/#downloading)
 - **Documentation:** [`http://www.gnu.org/software/libiconv/#introduction`](http://www.gnu.org/software/libiconv/#introduction)
-- **Remarks:**  If not available on the target platform, the library can be compiled from source
+- **Required for:** libTML
+- **Remarks:** If not available on the target platform, the library can be compiled from source
 
     	./configure
     	make
     	make install
-    
 
+<br>
+
+#### libssl / openSSL ####
+
+The libTML library can be used without the optional TLS support and installing openSSL can be skipped in that case. TLS profile will not be available in this case tough.
+
+In order to use the [optional libTML TLS profile support](#TLSOption) it is required to install libssl / openSSL library and binaries.
+
+- **Homepage:** [`http://www.openssl.org`](http://www.openssl.org)
+- **Download:**  [`http://www.openssl.org/source/`](http://www.openssl.org/source/)
+- **Documentation:** [`http://www.openssl.org/docs/`](http://www.openssl.org/docs/)
+- **Required for:** libTML-TLS
+- **Remarks:** This software is commonly found on every Unix/GNU/Linux installation. 
+- **Windows Remarks:** Binaries are also available for Microsoft Windows platforms.<br>
+                       Please pay attention of getting **libeay32.dll** and **ssleay32.dll** (same name for win32 and win64).<br>
+                       **Version 1.0.2.9** of these libraries **is part of our Windows binary installation package**. 
 <br>
 
 ----------
 
+<a name="Runtime"></a>
 ## Runtime environment ##
 
 The libTML-c binary package depends on the following runtime environment:
@@ -106,6 +132,9 @@ To use the TML Messaging Suite for Windows C/C++ development
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX_UNICODE_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
 
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Runtime environment](#Runtime)
+
 <br>
 
 ----------
@@ -121,7 +150,7 @@ Install the package using shell command
 
 	sudo dpkg -i /PATH/TO/PACKAGE/PACKAGENAME.deb 
 
-To use [libTML TLS profile support](#TLSOption), download and install the **libTML TLS** debian package too.
+To use [libTML TLS profile support](#TLSOption), download and install the **libTML-tls** debian package too.
 
 ## libTML-c debian package installation content ##
 The libTML-c debian package installation contains
@@ -139,6 +168,9 @@ To use the TML Messaging Suite for debian C/C++ development
 - Declare the compiler prepocessor **LINUX**
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
+
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Runtime environment](#Runtime)
 
 <br>
 
@@ -169,7 +201,7 @@ The mounted TML Messaging Suite disk image file contains
 
 The OS-X Disk Image **includes** the [libTML TLS profile supporting libraries](#TLSOption).
 
-##System Integrity Protection - using OS X 10.11 (El Capitan)##
+## System Integrity Protection - using OS X 10.11 (El Capitan) ##
 
 If the System Integrity Protection is enabled (default on El Capitan), root is not permitted to copy to `"/usr/lib"`.
     
@@ -211,6 +243,9 @@ To use the TML Messaging Suite for OS-X C/C++ development
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
 
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Runtime environment](#Runtime)
+
 <br>
 
 ----------
@@ -225,7 +260,7 @@ Install the package using shell command
 	pkg install /PATH/TO/PACKAGE/PACKAGENAME.txz
 
 
-To use [libTML TLS profile support](#TLSOption), download and install the **libTML TLS** freeBSD package too.
+To use [libTML TLS profile support](#TLSOption), download and install the **libTML-tls** freeBSD package too.
 
 ## libTML-c freeBSD package installation content ##
 The libTML-c freeBSD package installation contains
@@ -243,5 +278,8 @@ To use the TML Messaging Suite for freeBSD C/C++ development
 - Declare the compiler prepocessor **LINUX** 
 - Declare the compiler prepocessor values **SIDEX\_UNICODE** and **TML\_UNICODE** in case you want to use the **wchar_t\*** data type calling the libTML C API
 - Declare the compiler prepocessor values **SIDEX\_UNICODE\_16** and **TML\_UNICODE\_16** in case you want to use the  **char16_t\*** data type calling the libTML C API
+
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Runtime environment](#Runtime)
 
 

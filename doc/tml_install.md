@@ -33,6 +33,11 @@ Example:<br> <br>
 
 <br>
 
+**See also:**
+- [Securing a TML Connection (or How to use the TLS profile)](\ref tls_intro)
+
+<br>
+
 ----------
 
 <a name="RequiredLibs"></a>
@@ -57,7 +62,7 @@ The AXL library is an XML 1.0 implementation. It is optimized for speed and a sm
 
 - **Windows Remarks:** If you want to use a Windows installer, download the Vortex installer instead of the AXL installer. It includes the AXL library. During the installation you need to select to install the development libraries and include files along with the binaries.
 
-
+<br>
 
 #### Vortex ####
 
@@ -90,11 +95,9 @@ Building Vortex on OS X may show errors. Use the options to work around them.
     	make install
 
 - **Windows Remarks:** The Vortex Windows installer includes all binaries for Windows. During the installation you need to select to install the development libraries and include files along with the binaries.<br>
-If you want to build the Vortex TLS module from source,  [`openSSL`](http://www.gnu.org/) is required. 
+If you want to build the Vortex TLS module from source,  [`openSSL`](http://www.openssl.org) is required. 
 
-
-
- 
+<br>
 
 #### libiconv (not required on Windows) ####
 
@@ -110,7 +113,7 @@ For Unicode and string encoding support, libTML is using the libiconv library.
     	make
     	make install
 
-
+<br>
 
 #### libssl / openSSL ####
 
@@ -122,17 +125,17 @@ In order to use the [optional libTML TLS profile support](#TLSOption) it is requ
 - **Download:**  [`http://www.openssl.org/source/`](http://www.openssl.org/source/)
 - **Documentation:** [`http://www.openssl.org/docs/`](http://www.openssl.org/docs/)
 - **Required for:** libTML-TLS
-- **Remarks:** This software is commonly found on every Unix/GNU/Linux installation. Binaries are also available for Microsoft Windows platforms.
+- **Remarks:** This software is commonly found on every Unix/GNU/Linux installation. 
+- **Windows Remarks:** Binaries are also available for Microsoft Windows platforms.<br>
+                       Please pay attention of getting **libeay32.dll** and **ssleay32.dll** (same name for win32 and win64).<br>
+                       We distribute **version 1.0.2.9** of these libraries **in our Windows binary installation package**. 
 
 <br>
 
 ----------
 
-## Compiler ##
-
-The libTML-c library API makes use of the char16\_t data type. It is mandatory, to use a compiler, that supports char16\_t data type (gcc >= 4.4).
-
-### Set library dependencies manually ###
+<a name="ManLibDeps"></a>
+## Set library dependencies manually ##
 
 By default cmake finds the library and include paths automatically. If the libraries are not installed in the default location, the **CMakeLists.txt** in the root directory of libTML-c has to be modified. These modifications are usually necessary on Windows.
 Find the intended build target in the **CMakeLists.txt** file and modify the directories.
@@ -150,6 +153,14 @@ Set library directories:
 
 For multiple library directories add this line with a different path.
 
+<br>
+
+----------
+
+<a name="Compiler"></a>
+## Compiler ##
+
+The libTML-c library API makes use of the char16\_t data type. It is mandatory, to use a compiler, that supports char16\_t data type (gcc >= 4.4 on Unix-like systems and MinGW).
 <br>
 
 ----------
@@ -189,7 +200,6 @@ Extract the package but do not overwrite the previous 32 bit MinGW installation.
  Use the `win_mingw64.cmake` tool chain to set the compiler path for win64 binary build.
  (see [Build libTML-c win64 with MinGW](#MinGWLink64))
 
-
 <br>
 
 ----------
@@ -220,6 +230,9 @@ To build libTML-c win32 binaries on Windows with MinGW, the settings for the too
 		- `build\win_x86-32_mingw\tml-tls\tml-tls12.dll` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-32_mingw\test\libTmlTest.exe`
 
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Set library dependencies manually](#ManLibDeps)
+- [Compiler](#Compiler)
 
 <br>
 
@@ -251,6 +264,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 		- `build\win_x86-64_mingw\tml\tmlcore12_64.dll`
 		- `build\win_x86-64_mingw\tml-tls\tml-tls12_64.dll` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-64_mingw\test\libTmlTest64.exe`
+
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Set library dependencies manually](#ManLibDeps)
+- [Compiler](#Compiler)
 
 <br>
 
@@ -292,6 +309,9 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 		- `build\win_x86-64\tml-tls\Release\tml-tls12_64.lib` [*)TLS build option enabled](#TLSOption)
 		- `build\win_x86-64\test\Release\libTmlTest64.exe`
 
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Set library dependencies manually](#ManLibDeps)
+
 <br>
 
 ----------
@@ -328,6 +348,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
 
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Set library dependencies manually](#ManLibDeps)
+- [Compiler](#Compiler)
+
 <br>
 
 ----------
@@ -363,6 +387,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
 
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Set library dependencies manually](#ManLibDeps)
+- [Compiler](#Compiler)
+
 <br>
 
 ----------
@@ -388,6 +416,10 @@ To build libTML-c win64 binaries on Windows with MinGW, the settings for the too
 
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
+
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Set library dependencies manually](#ManLibDeps)
+- [Compiler](#Compiler)
 
 <br>
 
@@ -427,6 +459,10 @@ A cross compile for Android on Windows requires [MinGW](http://www.mingw.org/) w
 	- `build\android_arm32\tml\libtmlcore12.so`
 	- `build\android_arm32\tml-tls\libtml-tls12.so` [\*)TLS build  option enabled](#TLSOption)
 
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Set library dependencies manually](#ManLibDeps)
+- [Compiler](#Compiler)
+
 <br>
 
 ----------
@@ -462,3 +498,8 @@ A cross compile for Android on Windows requires [MinGW](http://www.mingw.org/) w
 
 
 - Install the libraries (superuser required)<br/>`make install`<br/>or<br/>`sudo make install`
+
+**See also:**
+- [Library dependencies](#RequiredLibs) and [Set library dependencies manually](#ManLibDeps)
+- [Compiler](#Compiler)
+
